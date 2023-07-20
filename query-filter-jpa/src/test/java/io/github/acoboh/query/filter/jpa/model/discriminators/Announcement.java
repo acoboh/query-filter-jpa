@@ -1,0 +1,49 @@
+package io.github.acoboh.query.filter.jpa.model.discriminators;
+
+import java.sql.Timestamp;
+import java.util.Objects;
+
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity(name = "Announcement")
+@Table(name = "announcement")
+@DiscriminatorValue("2")
+public class Announcement extends Topic {
+
+	private Timestamp validUntil;
+
+	public Timestamp getValidUntil() {
+		return validUntil;
+	}
+
+	public void setValidUntil(Timestamp validUntil) {
+		this.validUntil = validUntil;
+	}
+
+	public Announcement() {
+
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(validUntil);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Announcement other = (Announcement) obj;
+		return Objects.equals(validUntil, other.validUntil);
+	}
+
+}

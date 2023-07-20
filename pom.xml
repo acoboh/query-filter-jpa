@@ -17,7 +17,7 @@
 		filters with RHS Colon and LHS Brackets with Spring JPA easily
 	</description>
 
-	<url>https://github.com/acoboh/query-filter-jpa-private</url>
+	<url>https://github.com/acoboh/query-filter-jpa</url>
 
 	<licenses>
 		<license>
@@ -36,10 +36,10 @@
 
 	<scm>
 		<developerConnection>
-			scm:git:git@github.com:acoboh/query-filter-jpa-private.git
+			scm:git:git@github.com:acoboh/query-filter-jpa.git
 		</developerConnection>
-		<url>scm:git:git@github.com:acoboh/query-filter-jpa-private.git</url>
-		<connection>scm:git:git@github.com:acoboh/query-filter-jpa-private.git</connection>
+		<url>scm:git:git@github.com:acoboh/query-filter-jpa.git</url>
+		<connection>scm:git:git@github.com:acoboh/query-filter-jpa.git</connection>
 	</scm>
 
 	<repositories>

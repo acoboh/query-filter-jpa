@@ -1,7 +1,7 @@
-<!-- 
+
 [![License](https://img.shields.io/github/license/acoboh/query-filter-jpa.svg)](https://raw.githubusercontent.com/acoboh/query-filter-jpa/main/LICENSE)
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.acobo/query-filter-jpa.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.acobo/query-filter-jpa)
-[![javadoc](https://javadoc.io/badge2/io.github.acobo/query-filter-jpa/javadoc.svg)](https://javadoc.io/doc/io.github.acobo/query-filter-jpa) -->
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.acoboh/query-filter-jpa.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.acoboh/query-filter-jpa)
+[![javadoc](https://javadoc.io/badge2/io.github.acoboh/query-filter-jpa/javadoc.svg)](https://javadoc.io/doc/io.github.acoboh/query-filter-jpa)
 
 # Introduction
 
@@ -18,24 +18,20 @@ The QueryFilterJPA Library adds the possibility of create custom filters with RH
 
 # Installation
 
-**COMING SOON**
-
-<!-- You can install the library by adding the following dependency to your project's `pom.xml` file:
+You can install the library by adding the following dependency to your project's `pom.xml` file:
 
 ```xml
 <dependency>
     <groupId>io.github.acoboh</groupId>
     <artifactId>query-filter-jpa</artifactId>
-    <version>${project-version}</version>
+    <version>0.0.1</version>
 </dependency>
-
-<dependency>
+``` 
+<!-- <dependency>
     <groupId>io.github.acoboh</groupId>
     <artifactId>query-filter-jpa-3</artifactId>
     <version>${project-version}</version>
-</dependency>
-
-``` -->
+</dependency> -->
 
 
 # Getting Started
@@ -298,3 +294,11 @@ sort=+likes&sort=-avgNote
 ```sql
 order by likes asc, avgNote desc
 ```
+
+# MORE DOCUMENTATION COMING SOON
+
+- Subqueries
+- Array Types
+- SpEL expressions
+- Relations
+- And much more

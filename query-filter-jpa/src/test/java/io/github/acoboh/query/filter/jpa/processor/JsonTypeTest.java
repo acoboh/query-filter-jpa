@@ -24,6 +24,7 @@ import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTest;
 
 /**
  * JSON tests
+ * 
  * @author Adrián Cobo
  *
  */

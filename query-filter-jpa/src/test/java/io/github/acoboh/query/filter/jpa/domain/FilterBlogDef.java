@@ -12,6 +12,7 @@ import io.github.acoboh.query.filter.jpa.model.PostBlog;
 
 /**
  * Basic example of filter
+ * 
  * @author Adrián Cobo
  *
  */

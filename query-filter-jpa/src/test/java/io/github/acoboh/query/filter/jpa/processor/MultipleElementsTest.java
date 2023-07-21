@@ -29,6 +29,7 @@ import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTest;
 
 /**
  * Multiple elements tests
+ * 
  * @author Adrián Cobo
  *
  */

@@ -30,6 +30,7 @@ import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTest;
 
 /**
  * Relational tests
+ * 
  * @author Adrián Cobo
  *
  */

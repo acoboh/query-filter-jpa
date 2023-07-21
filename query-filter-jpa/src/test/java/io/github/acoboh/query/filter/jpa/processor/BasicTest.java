@@ -31,6 +31,7 @@ import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTest;
 
 /**
  * Basic tests
+ * 
  * @author Adrián Cobo
  *
  */

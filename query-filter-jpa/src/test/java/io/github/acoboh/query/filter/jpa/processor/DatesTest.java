@@ -29,6 +29,7 @@ import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTest;
 
 /**
  * Dates tests
+ * 
  * @author Adrián Cobo
  *
  */

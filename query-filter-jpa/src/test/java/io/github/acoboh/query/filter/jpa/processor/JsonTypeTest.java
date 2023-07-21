@@ -22,6 +22,11 @@ import io.github.acoboh.query.filter.jpa.model.jsondata.ModelJson;
 import io.github.acoboh.query.filter.jpa.repositories.ModelJsonRepository;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTest;
 
+/**
+ * JSON tests
+ * @author Adrián Cobo
+ *
+ */
 @SpringJUnitWebConfig(SpringIntegrationTest.Config.class)
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration

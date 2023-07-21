@@ -25,8 +25,17 @@ import io.github.acoboh.query.filter.jpa.exceptions.QFUnsopportedSQLException;
 import io.github.acoboh.query.filter.jpa.processor.QFElementMatch;
 import io.github.acoboh.query.filter.jpa.processor.QFJsonElementMatch;
 
+/**
+ * Enumerated with all the operations
+ * 
+ * @author Adrián Cobo
+ *
+ */
 public enum QFOperationEnum implements QFPredicateResolutor {
 
+	/**
+	 * Equal operation
+	 */
 	EQUAL("eq", true, false, ArrayFunction.EQUAL) {
 		@Override
 		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
@@ -55,6 +64,9 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 		}
 
 	},
+	/**
+	 * Not equal operation
+	 */
 	NOT_EQUAL("ne", true, false, ArrayFunction.NOT_EQUAL) {
 		@Override
 		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
@@ -80,6 +92,9 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 			return finalPredicate;
 		}
 	},
+	/**
+	 * Greater than operation
+	 */
 	GREATER_THAN("gt", true, false, ArrayFunction.GREATER_THAN) {
 		@Override
 		@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -95,10 +110,13 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 
 		@Override
 		public Predicate generateJsonPredicate(Path<?> path, CriteriaBuilder cb, QFJsonElementMatch match) {
-			throw new QFUnsopportedSQLException(this);
+			throw new QFUnsopportedSQLException(this, match.getDefinition().getFilterName());
 		}
 	},
-	GREATER_THAN_EQUAL("gte", true, false, ArrayFunction.GREATER_EQUAL_THAN) {
+	/**
+	 * Greater or equal than
+	 */
+	GREATER_EQUAL_THAN("gte", true, false, ArrayFunction.GREATER_EQUAL_THAN) {
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		@Override
 		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
@@ -113,9 +131,12 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 
 		@Override
 		public Predicate generateJsonPredicate(Path<?> path, CriteriaBuilder cb, QFJsonElementMatch match) {
-			throw new QFUnsopportedSQLException(this);
+			throw new QFUnsopportedSQLException(this, match.getDefinition().getFilterName());
 		}
 	},
+	/**
+	 * Less than operation
+	 */
 	LESS_THAN("lt", true, false, ArrayFunction.LESS_THAN) {
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		@Override
@@ -131,10 +152,13 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 
 		@Override
 		public Predicate generateJsonPredicate(Path<?> path, CriteriaBuilder cb, QFJsonElementMatch match) {
-			throw new QFUnsopportedSQLException(this);
+			throw new QFUnsopportedSQLException(this, match.getDefinition().getFilterName());
 		}
 	},
-	LESS_THAN_EQUAL("lte", true, false, ArrayFunction.LESS_EQUAL_THAN) {
+	/**
+	 * Less or equal than
+	 */
+	LESS_EQUAL_THAN("lte", true, false, ArrayFunction.LESS_EQUAL_THAN) {
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		@Override
 		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
@@ -149,9 +173,12 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 
 		@Override
 		public Predicate generateJsonPredicate(Path<?> path, CriteriaBuilder cb, QFJsonElementMatch match) {
-			throw new QFUnsopportedSQLException(this);
+			throw new QFUnsopportedSQLException(this, match.getDefinition().getFilterName());
 		}
 	},
+	/**
+	 * Like operation for strings
+	 */
 	LIKE("like", false, false, null) {
 		@Override
 		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
@@ -176,6 +203,9 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 			return finalPredicate;
 		}
 	},
+	/**
+	 * Starts with operation for strings
+	 */
 	STARTS_WITH("starts", false, false, null) {
 		@Override
 		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
@@ -200,6 +230,9 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 			return finalPredicate;
 		}
 	},
+	/**
+	 * Ends with operation for strings
+	 */
 	ENDS_WITH("ends", false, false, null) {
 		@Override
 		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
@@ -224,6 +257,9 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 			return finalPredicate;
 		}
 	},
+	/**
+	 * IN operation
+	 */
 	IN("in", true, false, ArrayFunction.CONTAINS) {
 		@Override
 		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
@@ -243,9 +279,12 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 
 		@Override
 		public Predicate generateJsonPredicate(Path<?> path, CriteriaBuilder cb, QFJsonElementMatch match) {
-			throw new QFUnsopportedSQLException(this);
+			throw new QFUnsopportedSQLException(this, match.getDefinition().getFilterName());
 		}
 	},
+	/**
+	 * Not in operation
+	 */
 	NOT_IN("nin", true, false, null) {
 		@Override
 		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
@@ -266,9 +305,12 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 
 		@Override
 		public Predicate generateJsonPredicate(Path<?> path, CriteriaBuilder cb, QFJsonElementMatch match) {
-			throw new QFUnsopportedSQLException(this);
+			throw new QFUnsopportedSQLException(this, match.getDefinition().getFilterName());
 		}
 	},
+	/**
+	 * Is null operation
+	 */
 	ISNULL("null", true, false, null) {
 		@Override
 		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
@@ -282,9 +324,12 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 
 		@Override
 		public Predicate generateJsonPredicate(Path<?> path, CriteriaBuilder cb, QFJsonElementMatch match) {
-			throw new QFUnsopportedSQLException(this);
+			throw new QFUnsopportedSQLException(this, match.getDefinition().getFilterName());
 		}
 	},
+	/**
+	 * Overlap operation for PostgreSQL Arrays
+	 */
 	OVERLAP("ovlp", true, true, ArrayFunction.OVERLAP) {
 		@Override
 		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
@@ -292,15 +337,18 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 			if (match.getDefinition().isArrayTyped()) {
 				return defaultArrayPredicate(path, cb, match, index, getArrayFunction(), mlContext);
 			}
-			throw new QFUnsopportedSQLException(this);
+			throw new QFUnsopportedSQLException(this, match.getDefinition().getFilterName());
 		}
 
 		@Override
 		public Predicate generateJsonPredicate(Path<?> path, CriteriaBuilder cb, QFJsonElementMatch match) {
-			throw new QFUnsopportedSQLException(this);
+			throw new QFUnsopportedSQLException(this, match.getDefinition().getFilterName());
 		}
 
 	},
+	/**
+	 * Contained by for PostgreSQL Arrays
+	 */
 	CONTAINED("containedBy", true, true, ArrayFunction.IS_CONTAINED_BY) {
 		@Override
 		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
@@ -308,12 +356,12 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 			if (match.getDefinition().isArrayTyped()) {
 				return defaultArrayPredicate(path, cb, match, index, getArrayFunction(), mlContext);
 			}
-			throw new QFUnsopportedSQLException(this);
+			throw new QFUnsopportedSQLException(this, match.getDefinition().getFilterName());
 		}
 
 		@Override
 		public Predicate generateJsonPredicate(Path<?> path, CriteriaBuilder cb, QFJsonElementMatch match) {
-			throw new QFUnsopportedSQLException(this);
+			throw new QFUnsopportedSQLException(this, match.getDefinition().getFilterName());
 		}
 	};
 
@@ -341,18 +389,40 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 		this.arrayFunction = arrayFunction;
 	}
 
+	/**
+	 * Get parameter value on string filter
+	 * 
+	 * @return value
+	 */
 	public String getValue() {
 		return value;
 	}
 
+	/**
+	 * Get if the operation can be array typed
+	 * 
+	 * @return true if can be array typed
+	 */
 	public boolean isArrayTyped() {
 		return arrayTyped;
 	}
 
+	/**
+	 * Get the array operation of PostgreSQL
+	 * 
+	 * @return array function for PostgreSQL
+	 */
 	public ArrayFunction getArrayFunction() {
 		return arrayFunction;
 	}
 
+	/**
+	 * Find operation from the parameter value
+	 * 
+	 * @param value parameter value
+	 * @return operation found
+	 * @throws QFOperationNotFoundException if the operation is not found
+	 */
 	public static QFOperationEnum fromValue(String value) throws QFOperationNotFoundException {
 		QFOperationEnum constant = CONSTANTS.get(value);
 		if (constant == null) {
@@ -361,6 +431,13 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 		return constant;
 	}
 
+	/**
+	 * Get allowed operations of any class
+	 * 
+	 * @param clazz        class to check
+	 * @param isArrayTyped if the field is array typed
+	 * @return set of operations
+	 */
 	public static Set<QFOperationEnum> getOperationsOfClass(Class<?> clazz, boolean isArrayTyped) {
 
 		if (isArrayTyped) {
@@ -377,9 +454,9 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 
 			switch (op) {
 			case GREATER_THAN:
-			case GREATER_THAN_EQUAL:
+			case GREATER_EQUAL_THAN:
 			case LESS_THAN:
-			case LESS_THAN_EQUAL:
+			case LESS_EQUAL_THAN:
 				if (Comparable.class.isAssignableFrom(clazz) || clazz.isPrimitive()) {
 					ret.add(op);
 				}
@@ -403,13 +480,23 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 
 	private static final Set<QFOperationEnum> DISCRIMINATOR_OPERATIONS = Sets.newHashSet(EQUAL, NOT_EQUAL, IN, NOT_IN);
 
-	public static Set<QFOperationEnum> getOperrationsOfDiscriminators() {
+	/**
+	 * Get set of discriminator operations
+	 * 
+	 * @return discriminator operations
+	 */
+	public static Set<QFOperationEnum> getOperationsOfDiscriminators() {
 		return DISCRIMINATOR_OPERATIONS;
 	}
 
 	private static final Set<QFOperationEnum> JSON_OPERATIONS = Sets.newHashSet(EQUAL, NOT_EQUAL, LIKE, STARTS_WITH,
 			ENDS_WITH);
 
+	/**
+	 * Get set of JSON operations
+	 * 
+	 * @return set of JSON operations
+	 */
 	public static Set<QFOperationEnum> getOperationsOfJson() {
 		return JSON_OPERATIONS;
 	}

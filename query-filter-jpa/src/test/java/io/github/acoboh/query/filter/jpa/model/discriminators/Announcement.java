@@ -7,6 +7,12 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+/**
+ * Announcement entity class
+ * 
+ * @author Adrián Cobo
+ *
+ */
 @Entity(name = "Announcement")
 @Table(name = "announcement")
 @DiscriminatorValue("2")
@@ -14,14 +20,27 @@ public class Announcement extends Topic {
 
 	private Timestamp validUntil;
 
+	/**
+	 * Valid until
+	 * 
+	 * @return valid until
+	 */
 	public Timestamp getValidUntil() {
 		return validUntil;
 	}
 
+	/**
+	 * Set valid until
+	 * 
+	 * @param validUntil new valid until
+	 */
 	public void setValidUntil(Timestamp validUntil) {
 		this.validUntil = validUntil;
 	}
 
+	/**
+	 * Default constructor
+	 */
 	public Announcement() {
 
 	}

@@ -1,4 +1,4 @@
-package io.github.acoboh.query.filter.jpa.utils;
+package io.github.acoboh.query.filter.jpa.processor;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -17,14 +17,13 @@ import io.github.acoboh.query.filter.jpa.exceptions.definition.QFElementExceptio
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFFieldLevelException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFMissingFieldException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFTypeException;
-import io.github.acoboh.query.filter.jpa.processor.QFPath;
 
 /**
  * Class utils to parse filter classes
  *
  * @author Adrián Cobo
  */
-public class ClassUtils {
+class ClassUtils {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ClassUtils.class);
 
@@ -32,7 +31,23 @@ public class ClassUtils {
 
 	}
 
-	public static Class<?> checkAbstractObject(String fullPath, String actualField, String nextFieldPath,
+	/**
+	 * Check base abstract object for query filter utilities
+	 * 
+	 * @param fullPath      Full path of the property
+	 * @param actualField   Actual field level
+	 * @param nextFieldPath Next field level
+	 * @param objectField   Field object
+	 * @param fieldClass    Field class
+	 * @param list          List of paths
+	 * @param isEndObject   if the field must be final type
+	 * @return Final class
+	 * @throws QFTypeException         it the field can not be parsed
+	 * @throws QFMissingFieldException if the field is missing
+	 * @throws QFFieldLevelException   if the field can access more levels or has no nested fields
+	 * @throws QFElementException      if the field is not present on any class
+	 */
+	protected static Class<?> checkAbstractObject(String fullPath, String actualField, String nextFieldPath,
 			Field objectField, Class<?> fieldClass, List<QFPath> list, boolean isEndObject)
 			throws QFTypeException, QFMissingFieldException, QFFieldLevelException, QFElementException {
 
@@ -81,6 +96,8 @@ public class ClassUtils {
 	}
 
 	/**
+	 * Check the array field
+	 * 
 	 * @param fullPath       Full path of field
 	 * @param actualField    Actual field name
 	 * @param nextLevelField Next levels fields

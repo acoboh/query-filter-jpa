@@ -14,12 +14,19 @@ import javax.persistence.criteria.Predicate;
  */
 public enum PredicateOperation {
 
+	/**
+	 * And operator
+	 */
 	AND("AND") {
 		@Override
 		public Predicate getPredicate(CriteriaBuilder cb) {
 			return cb.conjunction();
 		}
 	},
+
+	/**
+	 * Or operator
+	 */
 	OR("OR") {
 		@Override
 		public Predicate getPredicate(CriteriaBuilder cb) {
@@ -39,12 +46,29 @@ public enum PredicateOperation {
 		this.value = value;
 	}
 
+	/**
+	 * Get the enumerated from the string value
+	 * 
+	 * @param value String value of operation to be found
+	 * @return predicate operation found. Null if the operation is not found
+	 */
 	public static PredicateOperation getOperator(String value) {
 		return map.get(value);
 	}
 
+	/**
+	 * Resolve the predicate with criteria builder
+	 * 
+	 * @param cb criteria builder
+	 * @return predicated resolved
+	 */
 	public abstract Predicate getPredicate(CriteriaBuilder cb);
 
+	/**
+	 * Get the value of the predicate
+	 * 
+	 * @return value of the predicate
+	 */
 	public String getValue() {
 		return value;
 	}

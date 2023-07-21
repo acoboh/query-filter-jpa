@@ -4,17 +4,50 @@ import org.springframework.http.HttpStatus;
 
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 
+/**
+ * Exception when operation is not allowed on SQL database
+ * 
+ * @author Adrián Cobo
+ *
+ */
 public class QFUnsopportedSQLException extends QueryFilterException {
 
 	private static final long serialVersionUID = 1L;
 	private static final String MESSAGE = "The operation {} is unsupported";
 
-	public enum TYPE {
-		VALUE, JSON
+	private final Object[] args;
+	private final String field;
+	private final QFOperationEnum operation;
+
+	/**
+	 * Default constructor
+	 * 
+	 * @param operation operation not allowed
+	 * @param field     field
+	 */
+	public QFUnsopportedSQLException(QFOperationEnum operation, String field) {
+		super(MESSAGE, operation);
+		args = new Object[] { operation, field };
+		this.operation = operation;
+		this.field = field;
 	}
 
-	public QFUnsopportedSQLException(QFOperationEnum operation) {
-		super(MESSAGE, operation);
+	/**
+	 * Get field
+	 * 
+	 * @return field
+	 */
+	public String getField() {
+		return field;
+	}
+
+	/**
+	 * Get operation
+	 * 
+	 * @return operation
+	 */
+	public QFOperationEnum getOperation() {
+		return operation;
 	}
 
 	@Override
@@ -24,14 +57,12 @@ public class QFUnsopportedSQLException extends QueryFilterException {
 
 	@Override
 	public Object[] getArguments() {
-		// TODO Auto-generated method stub
-		return null;
+		return args;
 	}
 
 	@Override
 	public String getMessageCode() {
-		// TODO Auto-generated method stub
-		return null;
+		return "qf.exceptions.operationFieldNotValid";
 	}
 
 }

@@ -44,6 +44,12 @@ import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
  */
 public class SpringIntegrationTest {
 
+	/**
+	 * Basic configuration tests
+	 * 
+	 * @author Adrián Cobo
+	 *
+	 */
 	@Configuration
 	@EnableJpaRepositories(basePackageClasses = PostBlogRepository.class)
 	@EnableTransactionManagement
@@ -51,6 +57,9 @@ public class SpringIntegrationTest {
 	@EnableQueryFilter(basePackageClasses = FilterBlogDef.class)
 	public static class Config {
 
+		/**
+		 * PostgreSQL Container
+		 */
 		@Container
 		public static PostgreSQLContainer<?> psqlContainer = new PostgreSQLContainer<>("postgres:14-alpine")
 				.withDatabaseName("test_db").withUsername("user").withPassword("password");
@@ -121,6 +130,11 @@ public class SpringIntegrationTest {
 			return new JdbcTemplate(dataSource);
 		}
 
+		/**
+		 * Hibernate properties
+		 * 
+		 * @return hibernate properties
+		 */
 		protected Properties properties() {
 			Properties properties = new Properties();
 			properties.setProperty("hibernate.dialect", PostgreSQL10Dialect.class.getName());
@@ -129,11 +143,21 @@ public class SpringIntegrationTest {
 			return properties;
 		}
 
+		/**
+		 * Additional properties
+		 * 
+		 * @param properties properties base
+		 */
 		protected void additionalProperties(Properties properties) {
 			properties.setProperty("hibernate.metadata_builder_contributor",
 					PostgresqlArrayBuilderContributor.class.getName());
 		}
 
+		/**
+		 * Packages to scan
+		 * 
+		 * @return packages to scan
+		 */
 		protected String[] packagesToScan() {
 			return new String[] { "io.github.acoboh.query.filter.jpa.model",
 					"io.github.acoboh.query.filter.jpa.model.discriminators" };

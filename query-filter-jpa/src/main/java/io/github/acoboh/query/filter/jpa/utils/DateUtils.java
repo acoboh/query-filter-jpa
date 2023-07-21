@@ -13,12 +13,24 @@ import java.time.format.DateTimeFormatterBuilder;
 import io.github.acoboh.query.filter.jpa.annotations.QFDate;
 import io.github.acoboh.query.filter.jpa.annotations.QFDate.QFDateDefault;
 
+/**
+ * Class with common utilities for date formatting
+ * 
+ * @author Adrián Cobo
+ *
+ */
 public class DateUtils {
 
 	private DateUtils() {
 
 	}
 
+	/**
+	 * Get the formatter for any {@linkplain QFDate} annotation
+	 * 
+	 * @param dateAnnotation Annotation
+	 * @return new formatter
+	 */
 	public static DateTimeFormatter getFormatter(QFDate dateAnnotation) {
 		DateTimeFormatter formatter;
 
@@ -41,6 +53,15 @@ public class DateUtils {
 		return formatter;
 	}
 
+	/**
+	 * Parse any date for a custom {@linkplain QFDate} annotation
+	 * 
+	 * @param formatter      Date formatter
+	 * @param value          original string value
+	 * @param finalClass     final class to be parsed
+	 * @param dateAnnotation annotation
+	 * @return the date parsed
+	 */
 	public static Object parseDate(DateTimeFormatter formatter, String value, Class<?> finalClass,
 			QFDate dateAnnotation) {
 		if (Timestamp.class.isAssignableFrom(finalClass)) {

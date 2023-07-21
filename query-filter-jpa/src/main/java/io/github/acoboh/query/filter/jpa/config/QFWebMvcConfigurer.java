@@ -13,6 +13,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import io.github.acoboh.query.filter.jpa.converters.QFCustomConverter;
 import io.github.acoboh.query.filter.jpa.processor.QFProcessor;
 
+/**
+ * Class to enable custom converters for Spring Boot Controllers via {@linkplain WebMvcConfigurer} converters
+ * 
+ * @author Adrián Cobo
+ *
+ */
 @Configuration
 @EnableWebMvc
 public class QFWebMvcConfigurer implements WebMvcConfigurer {

@@ -6,6 +6,12 @@ import io.github.acoboh.query.filter.jpa.annotations.QFElement;
 import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 
+/**
+ * Example with basic spel expressions
+ * 
+ * @author Adrián Cobo
+ *
+ */
 @QFDefinitionClass(PostBlog.class)
 public class FilterBlogSpELDef {
 

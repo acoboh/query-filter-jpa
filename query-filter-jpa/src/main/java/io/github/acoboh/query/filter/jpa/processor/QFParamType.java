@@ -2,19 +2,42 @@ package io.github.acoboh.query.filter.jpa.processor;
 
 import java.util.regex.Pattern;
 
+/**
+ * Enumeration for all parsing standards
+ * 
+ * @author Adrián Cobo
+ *
+ */
 public enum QFParamType {
 
-	// @formatter:off
-    RHS_COLON(
-            "[a-zA-Z0-9\\.]+\\=(?:[a-zA-Z]+|\\~|\\^|\\$)\\:[a-zA-Z0-9\\p{L}\\,\\s\\:\\-\\_\\.\\*\\%/\\(\\)\\@\\+\\{\\}\\'\\=]*",
-            "([a-zA-Z0-9\\.]+)\\=([a-zA-Z]+)\\:([a-zA-Z0-9\\p{L}\\,\\s\\:\\-\\_\\.\\*\\%/\\(\\)\\@\\+\\{\\}\\'\\=]*)",
-            "RHS Colon"),
+	/**
+	 * RHS Colon standard
+	 * <p>
+	 * Example:
+	 * <p>
+	 * <code>
+	 * authorName=eq:Adrian
+	 * </code>
+	 * 
+	 */
+	RHS_COLON(
+			"[a-zA-Z0-9\\.]+\\=(?:[a-zA-Z]+|\\~|\\^|\\$)\\:[a-zA-Z0-9\\p{L}\\,\\s\\:\\-\\_\\.\\*\\%/\\(\\)\\@\\+\\{\\}\\'\\=]*", // Full regex
+			"([a-zA-Z0-9\\.]+)\\=([a-zA-Z]+)\\:([a-zA-Z0-9\\p{L}\\,\\s\\:\\-\\_\\.\\*\\%/\\(\\)\\@\\+\\{\\}\\'\\=]*)", // Pattern Regex
+			"RHS Colon"),
 
-    LHS_BRACKETS(
-            "[a-zA-Z0-9\\.]+\\[[a-zA-Z]+]\\=[a-zA-Z0-9\\p{L}\\,\\s\\:\\-\\_\\.\\*\\%/\\(\\)\\@\\+\\{\\}\\=\\']*",
-            "([a-zA-Z0-9\\.])+\\[([a-zA-Z]+)]\\=([a-zA-Z0-9\\p{L}\\,\\s\\:\\-\\_\\.\\*\\%/\\(\\)\\@\\+\\{\\}\\=\\']*)",
-            "LHS Brackets");
-    // @formatter:on
+	/**
+	 * LHS Brackets standard
+	 * <p>
+	 * Example:
+	 * <p>
+	 * <code>
+	 * authorName[eq]=Adrian
+	 * </code>
+	 * 
+	 */
+	LHS_BRACKETS("[a-zA-Z0-9\\.]+\\[[a-zA-Z]+]\\=[a-zA-Z0-9\\p{L}\\,\\s\\:\\-\\_\\.\\*\\%/\\(\\)\\@\\+\\{\\}\\=\\']*", // Full regex
+			"([a-zA-Z0-9\\.])+\\[([a-zA-Z]+)]\\=([a-zA-Z0-9\\p{L}\\,\\s\\:\\-\\_\\.\\*\\%/\\(\\)\\@\\+\\{\\}\\=\\']*)", // Pattern Regex
+			"LHS Brackets"); // Name
 
 	private final String fullRegex;
 
@@ -28,14 +51,29 @@ public enum QFParamType {
 		this.beatifulName = beatifulName;
 	}
 
+	/**
+	 * Get full regex
+	 * 
+	 * @return full regex
+	 */
 	public String getFullRegex() {
 		return fullRegex;
 	}
 
+	/**
+	 * Get pattern for parsing
+	 * 
+	 * @return pattern
+	 */
 	public Pattern getPattern() {
 		return pattern;
 	}
 
+	/**
+	 * Beautiful name for documentation
+	 * 
+	 * @return beautiful name
+	 */
 	public String getBeatifulName() {
 		return beatifulName;
 	}

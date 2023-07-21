@@ -22,6 +22,8 @@ import org.hibernate.annotations.TypeDef;
 import io.hypersistence.utils.hibernate.type.array.StringArrayType;
 
 /**
+ * Post Blog entity model
+ * 
  * @author acobo
  *
  */
@@ -29,8 +31,21 @@ import io.hypersistence.utils.hibernate.type.array.StringArrayType;
 @TypeDef(name = "string-array", typeClass = StringArrayType.class)
 public class PostBlog {
 
+	/**
+	 * Post Type enumeration
+	 * 
+	 * @author Adrián Cobo
+	 *
+	 */
 	public enum PostType {
-		VIDEO, TEXT
+		/**
+		 * Video type
+		 */
+		VIDEO,
+		/**
+		 * Text type
+		 */
+		TEXT
 	}
 
 	@Id
@@ -60,6 +75,9 @@ public class PostBlog {
 	@Column(columnDefinition = "varchar[]")
 	private String[] tags;
 
+	/**
+	 * Default constructor
+	 */
 	public PostBlog() {
 		super();
 	}
@@ -86,90 +104,200 @@ public class PostBlog {
 				&& Arrays.equals(tags, other.tags);
 	}
 
+	/**
+	 * Get UUID
+	 * 
+	 * @return UUID
+	 */
 	public UUID getUuid() {
 		return uuid;
 	}
 
+	/**
+	 * Set new uuid
+	 * 
+	 * @param uuid new uuid
+	 */
 	public void setUuid(UUID uuid) {
 		this.uuid = uuid;
 	}
 
+	/**
+	 * Get author
+	 * 
+	 * @return author
+	 */
 	public String getAuthor() {
 		return author;
 	}
 
+	/**
+	 * Set new author
+	 * 
+	 * @param author new author
+	 */
 	public void setAuthor(String author) {
 		this.author = author;
 	}
 
+	/**
+	 * Get text
+	 * 
+	 * @return text
+	 */
 	public String getText() {
 		return text;
 	}
 
+	/**
+	 * Set new text
+	 * 
+	 * @param text new text
+	 */
 	public void setText(String text) {
 		this.text = text;
 	}
 
+	/**
+	 * Get average note
+	 * 
+	 * @return average note
+	 */
 	public double getAvgNote() {
 		return avgNote;
 	}
 
+	/**
+	 * Set new average note
+	 * 
+	 * @param avgNote average note
+	 */
 	public void setAvgNote(double avgNote) {
 		this.avgNote = avgNote;
 	}
 
+	/**
+	 * Get likes
+	 * 
+	 * @return likes
+	 */
 	public int getLikes() {
 		return likes;
 	}
 
+	/**
+	 * Set likes
+	 * 
+	 * @param likes new likes
+	 */
 	public void setLikes(int likes) {
 		this.likes = likes;
 	}
 
+	/**
+	 * Get create date
+	 * 
+	 * @return create date
+	 */
 	public LocalDateTime getCreateDate() {
 		return createDate;
 	}
 
+	/**
+	 * Set new create date
+	 * 
+	 * @param createDate new create date
+	 */
 	public void setCreateDate(LocalDateTime createDate) {
 		this.createDate = createDate;
 	}
 
+	/**
+	 * Get last timestamp
+	 * 
+	 * @return last timestamp
+	 */
 	public Timestamp getLastTimestamp() {
 		return lastTimestamp;
 	}
 
+	/**
+	 * Set new last timestamp
+	 * 
+	 * @param lastTimestamp new last timestamp
+	 */
 	public void setLastTimestamp(Timestamp lastTimestamp) {
 		this.lastTimestamp = lastTimestamp;
 	}
 
+	/**
+	 * Get if is published
+	 * 
+	 * @return published
+	 */
 	public boolean isPublished() {
 		return published;
 	}
 
+	/**
+	 * Set published
+	 * 
+	 * @param published new status
+	 */
 	public void setPublished(boolean published) {
 		this.published = published;
 	}
 
+	/**
+	 * Get post type
+	 * 
+	 * @return post type
+	 */
 	public PostType getPostType() {
 		return postType;
 	}
 
+	/**
+	 * Set new post type
+	 * 
+	 * @param postType new post type
+	 */
 	public void setPostType(PostType postType) {
 		this.postType = postType;
 	}
 
+	/**
+	 * Get comments
+	 * 
+	 * @return comments
+	 */
 	public Set<Comments> getComments() {
 		return comments;
 	}
 
+	/**
+	 * Set new comments
+	 * 
+	 * @param comments new comments
+	 */
 	public void setComments(Set<Comments> comments) {
 		this.comments = comments;
 	}
 
+	/**
+	 * Get tags
+	 * 
+	 * @return tags
+	 */
 	public String[] getTags() {
 		return tags;
 	}
 
+	/**
+	 * Set new tags
+	 * 
+	 * @param tags new tags
+	 */
 	public void setTags(String[] tags) {
 		this.tags = tags;
 	}

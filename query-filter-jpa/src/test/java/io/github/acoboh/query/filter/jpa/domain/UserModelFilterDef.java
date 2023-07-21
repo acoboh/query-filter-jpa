@@ -4,6 +4,12 @@ import io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass;
 import io.github.acoboh.query.filter.jpa.annotations.QFElement;
 import io.github.acoboh.query.filter.jpa.model.subquery.UserModel;
 
+/**
+ * Basic example with subquery on query filter definition
+ * 
+ * @author Adrián Cobo
+ *
+ */
 @QFDefinitionClass(UserModel.class)
 public class UserModelFilterDef {
 
@@ -12,7 +18,7 @@ public class UserModelFilterDef {
 
 	@QFElement(value = "roles.name", subquery = true)
 	private String role;
-	
+
 	@QFElement(value = "roles.name")
 	private String roleNotSub;
 

@@ -36,6 +36,11 @@ public class OpenApiCustomiserImpl implements OpenApiCustomiser {
 
 	private List<QFEndpoint> endpoints;
 
+	/**
+	 * Default constructor
+	 * 
+	 * @param endpoints endpoints
+	 */
 	public OpenApiCustomiserImpl(List<QFEndpoint> endpoints) {
 		Assert.notNull(endpoints, "Query filter endpoints must not be null");
 		this.endpoints = endpoints;
@@ -112,7 +117,7 @@ public class OpenApiCustomiserImpl implements OpenApiCustomiser {
 			}
 
 			if (def.isDiscriminatorFilter()) {
-				Set<QFOperationEnum> qfOperations = QFOperationEnum.getOperrationsOfDiscriminators();
+				Set<QFOperationEnum> qfOperations = QFOperationEnum.getOperationsOfDiscriminators();
 				builder.append(" Operations: [<i>");
 				String operationsAvailable = qfOperations.stream().map(QFOperationEnum::getValue)
 						.collect(Collectors.joining(","));

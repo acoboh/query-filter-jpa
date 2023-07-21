@@ -11,6 +11,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
+/**
+ * User entity model
+ * 
+ * @author Adrián Cobo
+ *
+ */
 @Entity
 public class UserModel {
 
@@ -24,18 +30,38 @@ public class UserModel {
 	@JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private List<RoleModel> roles = new ArrayList<>();
 
+	/**
+	 * Get ID
+	 * 
+	 * @return ID
+	 */
 	public Long getId() {
 		return id;
 	}
 
+	/**
+	 * Get Username
+	 * 
+	 * @return username
+	 */
 	public String getUsername() {
 		return username;
 	}
 
+	/**
+	 * Set new user name
+	 * 
+	 * @param username new user name
+	 */
 	public void setUsername(String username) {
 		this.username = username;
 	}
 
+	/**
+	 * Get roles
+	 * 
+	 * @return get roles
+	 */
 	public List<RoleModel> getRoles() {
 		return roles;
 	}

@@ -17,10 +17,25 @@ import io.github.acoboh.query.filter.jpa.processor.QFParamType;
 @Target(PARAMETER)
 public @interface QFParam {
 
+	/**
+	 * Filter class
+	 * 
+	 * @return filter class
+	 */
 	Class<?> value();
 
-	String name() default "filter";
+	/**
+	 * Name of parameter
+	 * 
+	 * @return name of parameter
+	 */
+	String name() default "filter"; // TODO CHECK USAGE
 
+	/**
+	 * Standard of filtering
+	 * 
+	 * @return Standard of filtering
+	 */
 	QFParamType type() default QFParamType.RHS_COLON;
 
 }

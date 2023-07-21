@@ -20,6 +20,11 @@ import io.github.acoboh.query.filter.jpa.predicate.PredicateOperation;
 @Target({ FIELD, ANNOTATION_TYPE })
 public @interface QFElements {
 
+	/**
+	 * All {@linkplain QFElement} annotations
+	 * 
+	 * @return {@linkplain QFElement} annotations
+	 */
 	QFElement[] value();
 
 	/**

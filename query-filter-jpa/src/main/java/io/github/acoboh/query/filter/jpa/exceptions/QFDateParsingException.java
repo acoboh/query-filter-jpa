@@ -4,6 +4,12 @@ import java.time.format.DateTimeParseException;
 
 import org.springframework.http.HttpStatus;
 
+/**
+ * Exception throw when any date formating error occurs
+ * 
+ * @author Adrián Cobo
+ *
+ */
 public class QFDateParsingException extends QueryFilterException {
 
 	private static final long serialVersionUID = 1L;
@@ -15,6 +21,14 @@ public class QFDateParsingException extends QueryFilterException {
 	private final String format;
 	private final Object[] arguments;
 
+	/**
+	 * Default constructor
+	 * 
+	 * @param field  field to be parsed
+	 * @param value  value to be parsed
+	 * @param format original format
+	 * @param e      original date time parsing exception
+	 */
 	public QFDateParsingException(String field, String value, String format, DateTimeParseException e) {
 		super(MESSAGE, e, field, value, format, e);
 		this.field = field;
@@ -23,14 +37,29 @@ public class QFDateParsingException extends QueryFilterException {
 		this.arguments = new Object[] { value, field, format };
 	}
 
+	/**
+	 * Get affected field
+	 * 
+	 * @return get field
+	 */
 	public String getField() {
 		return field;
 	}
 
+	/**
+	 * Get original value
+	 * 
+	 * @return original value
+	 */
 	public String getValue() {
 		return value;
 	}
 
+	/**
+	 * Get the default format
+	 * 
+	 * @return default format
+	 */
 	public String getFormat() {
 		return format;
 	}

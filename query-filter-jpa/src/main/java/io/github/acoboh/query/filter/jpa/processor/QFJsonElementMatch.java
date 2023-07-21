@@ -21,6 +21,12 @@ import io.github.acoboh.query.filter.jpa.exceptions.QFFieldOperationException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFJsonParseException;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 
+/**
+ * Class with JSON element matching definition
+ * 
+ * @author Adrián Cobo
+ *
+ */
 public class QFJsonElementMatch {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(QFJsonElementMatch.class);
@@ -45,6 +51,14 @@ public class QFJsonElementMatch {
 
 	private final boolean caseSensitive;
 
+	/**
+	 * Default constructor
+	 * 
+	 * @param value      value
+	 * @param operation  operation
+	 * @param definition definition
+	 * @throws QFJsonParseException if any json parsing exception
+	 */
 	public QFJsonElementMatch(String value, QFOperationEnum operation, QFDefinition definition)
 			throws QFJsonParseException {
 
@@ -109,30 +123,65 @@ public class QFJsonElementMatch {
 		}
 	}
 
+	/**
+	 * Get original field definition
+	 * 
+	 * @return field definition
+	 */
 	public QFDefinition getDefinition() {
 		return definition;
 	}
 
+	/**
+	 * Get the original value
+	 * 
+	 * @return original value
+	 */
 	public String getJsonValue() {
 		return jsonValue;
 	}
 
+	/**
+	 * Get JSON parsed value
+	 * 
+	 * @return json parsed
+	 */
 	public JsonNode getValueNode() {
 		return valueNode;
 	}
 
+	/**
+	 * Get values as map
+	 * 
+	 * @return map of values
+	 */
 	public Map<String, String> getMapValues() {
 		return mapValues;
 	}
 
+	/**
+	 * List of nested path levels
+	 * 
+	 * @return nested path levels
+	 */
 	public List<QFPath> getPaths() {
 		return paths;
 	}
 
+	/**
+	 * Get operation to be applied
+	 * 
+	 * @return operation
+	 */
 	public QFOperationEnum getOperation() {
 		return operation;
 	}
 
+	/**
+	 * Get if the field is case sensitive
+	 * 
+	 * @return true if the field is case sensitive
+	 */
 	public boolean isCaseSensitive() {
 		return caseSensitive;
 	}

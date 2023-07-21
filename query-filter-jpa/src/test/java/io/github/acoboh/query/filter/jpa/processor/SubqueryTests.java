@@ -22,6 +22,11 @@ import io.github.acoboh.query.filter.jpa.repositories.RoleRepository;
 import io.github.acoboh.query.filter.jpa.repositories.UserRepository;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTest;
 
+/**
+ * Subquery tests
+ * @author Adrián Cobo
+ *
+ */
 @SpringJUnitWebConfig(SpringIntegrationTest.Config.class)
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration

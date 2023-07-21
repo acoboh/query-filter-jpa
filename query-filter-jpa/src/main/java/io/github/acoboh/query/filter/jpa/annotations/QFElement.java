@@ -101,11 +101,9 @@ public @interface QFElement {
 	 * <p>
 	 * It is highly recommended to use with {@link QFBlockParsing}
 	 * <p>
-	 * <p>
 	 * If there is more than one value, only the first one will be used. Example:
 	 * <p>
 	 * <code>
-	 * <p>
 	 * &#64;security.isAuthorized(),isAuthenticated()
 	 * </code>
 	 * <p>

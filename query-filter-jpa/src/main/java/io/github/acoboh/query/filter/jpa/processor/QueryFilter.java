@@ -2,7 +2,6 @@ package io.github.acoboh.query.filter.jpa.processor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -47,11 +46,18 @@ import io.github.acoboh.query.filter.jpa.exceptions.QFNotValuable;
 import io.github.acoboh.query.filter.jpa.exceptions.QFOperationNotFoundException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFParseException;
 import io.github.acoboh.query.filter.jpa.exceptions.QueryFilterException;
-import io.github.acoboh.query.filter.jpa.exceptions.definition.QFMissingFieldException;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 import io.github.acoboh.query.filter.jpa.predicate.PredicateProcessorResolutor;
 import io.github.acoboh.query.filter.jpa.spel.SpelResolverInterface;
 
+/**
+ * Class that implements {@linkplain Specification} from JPA library that allows the user to create automatic filters from
+ * {@linkplain QFParamType#RHS_COLON} or {@linkplain QFParamType#LHS_BRACKETS} standards
+ * 
+ * @author Adrián Cobo
+ *
+ * @param <E> Entity model class
+ */
 public class QueryFilter<E> implements Specification<E> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(QueryFilter.class);
@@ -80,6 +86,22 @@ public class QueryFilter<E> implements Specification<E> {
 	private @Nullable String predicateName;
 	private transient @Nullable PredicateProcessorResolutor predicate;
 
+	/**
+	 * Default constructor
+	 * 
+	 * @param input                      input string
+	 * @param type                       parameter type
+	 * @param entityClass                entity class
+	 * @param predicateClass             predicate definition class
+	 * @param definitionMap              definition map
+	 * @param queryFilterClassAnnotation definition annotation
+	 * @param defaultMatches             list of default matching values
+	 * @param spelResolver               spel resolver
+	 * @param predicateMap               predicate map
+	 * @param predicateName              predicate name
+	 * @param defaultPredicate           default predicate
+	 * @throws QueryFilterException if any parsing exception
+	 */
 	protected QueryFilter(String input, QFParamType type, Class<E> entityClass, Class<?> predicateClass,
 			Map<String, QFDefinition> definitionMap, QFDefinitionClass queryFilterClassAnnotation,
 			List<QFElementMatch> defaultMatches, SpelResolverInterface spelResolver,
@@ -123,10 +145,20 @@ public class QueryFilter<E> implements Specification<E> {
 
 	}
 
+	/**
+	 * Get the entity class
+	 * 
+	 * @return entity model class
+	 */
 	public Class<E> getEntityClass() {
 		return entityClass;
 	}
 
+	/**
+	 * Get the predicate definition class
+	 * 
+	 * @return predicate definition class
+	 */
 	public Class<?> getPredicateClass() {
 		return predicateClass;
 	}
@@ -220,8 +252,8 @@ public class QueryFilter<E> implements Specification<E> {
 	}
 
 	private void parseValuePart(String part, QFParamType type)
-			throws QFParseException, QFFieldNotFoundException, QFOperationNotFoundException, QFDiscriminatorNotFoundException,
-			QFBlockException, QFJsonParseException, QFNotValuable {
+			throws QFParseException, QFFieldNotFoundException, QFOperationNotFoundException,
+			QFDiscriminatorNotFoundException, QFBlockException, QFJsonParseException, QFNotValuable {
 
 		Matcher matcher = type.getPattern().matcher(part);
 		if (matcher.find() && matcher.groupCount() == 3) {
@@ -308,23 +340,22 @@ public class QueryFilter<E> implements Specification<E> {
 
 	}
 
-	public void addNewField(String field, QFOperationEnum operation, Collection<String> values)
+	/**
+	 * Manually adds a new operation on any field
+	 * 
+	 * @param field     field of filter
+	 * @param operation operation to be applied
+	 * @param values    list of values
+	 * @throws QFFieldNotFoundException         if the field is not found
+	 * @throws QFDiscriminatorNotFoundException if the discriminator is not allowed
+	 * @see #addNewField(String, QFOperationEnum, String)
+	 */
+	public void addNewField(String field, QFOperationEnum operation, List<String> values)
 			throws QFFieldNotFoundException, QFDiscriminatorNotFoundException {
 
 		Assert.notNull(field, "field cannot be null");
 		Assert.notNull(operation, "operation cannot be null");
 		Assert.notNull(values, "values cannot be null");
-
-		String value = String.join(",", values);
-		addNewField(field, operation, value);
-	}
-
-	public void addNewField(String field, QFOperationEnum operation, String value)
-			throws QFFieldNotFoundException, QFDiscriminatorNotFoundException {
-
-		Assert.notNull(field, "field cannot be null");
-		Assert.notNull(operation, "operation cannot be null");
-		Assert.notNull(value, "value cannot be null");
 
 		QFDefinition def = definitionMap.get(field);
 		if (def == null) {
@@ -332,12 +363,33 @@ public class QueryFilter<E> implements Specification<E> {
 		}
 
 		if (def.isElementFilter()) {
-			QFElementMatch match = new QFElementMatch(Arrays.asList(value.split(",")), operation, def);
+			QFElementMatch match = new QFElementMatch(values, operation, def);
 			valueMapping.add(match);
 		} else if (def.isDiscriminatorFilter()) {
-			QFDiscriminatorMatch match = new QFDiscriminatorMatch(Arrays.asList(value.split(",")), def);
+			QFDiscriminatorMatch match = new QFDiscriminatorMatch(values, def);
 			discriminatorMapping.add(match);
 		}
+
+	}
+
+	/**
+	 * Manually adds a new operation on any field
+	 * 
+	 * @param field     field of filter
+	 * @param operation operation to be applied
+	 * @param value     value to match. Can be multiple values joined by a ',' (comma)
+	 * @throws QFFieldNotFoundException         if the field is not found
+	 * @throws QFDiscriminatorNotFoundException if the discriminator is not allowed
+	 */
+	public void addNewField(String field, QFOperationEnum operation, String value)
+			throws QFFieldNotFoundException, QFDiscriminatorNotFoundException {
+
+		Assert.notNull(field, "field cannot be null");
+		Assert.notNull(operation, "operation cannot be null");
+		Assert.notNull(value, "value cannot be null");
+
+		List<String> values = Arrays.asList(value.split(","));
+		addNewField(field, operation, values);
 
 	}
 
@@ -346,8 +398,9 @@ public class QueryFilter<E> implements Specification<E> {
 	 *
 	 * @param field     Field name of sorting
 	 * @param direction Direction of sorting
-	 * @throws QFMissingFieldException Missing field exception
-	 * @throws QFNotSortableException  not sortable
+	 * @throws QFNotSortableException   not sortable
+	 * @throws QFFieldNotFoundException if field does not exist
+	 * @throws QFMultipleSortException  if multiple sort exists on the same field
 	 */
 	public void addSortBy(String field, Direction direction)
 			throws QFFieldNotFoundException, QFNotSortableException, QFMultipleSortException {
@@ -396,8 +449,14 @@ public class QueryFilter<E> implements Specification<E> {
 				.collect(Collectors.toList());
 	}
 
-	public boolean isSortedBy(String filterName) {
-		return sortDefinitionList.stream().anyMatch(e -> e.getFirst().getFilterName().equals(filterName));
+	/**
+	 * Get if the filter is sorted by the selected field
+	 * 
+	 * @param field field to check
+	 * @return true if is actually sorting, false otherwise
+	 */
+	public boolean isSortedBy(String field) {
+		return sortDefinitionList.stream().anyMatch(e -> e.getFirst().getFilterName().equals(field));
 	}
 
 	/**
@@ -427,9 +486,9 @@ public class QueryFilter<E> implements Specification<E> {
 	 * @param field     Field filter name
 	 * @param operation Operation to apply
 	 * @param value     value of filter
-	 * @throws QFFieldNotFoundException Missing field exception
+	 * @throws QFFieldNotFoundException         Missing field exception
 	 * @throws QFDiscriminatorNotFoundException if the discriminator value is not allowed
-	 * @throws QFJsonParseException     if any json parse exception
+	 * @throws QFJsonParseException             if any json parse exception
 	 */
 	public void overrideField(String field, QFOperationEnum operation, String value)
 			throws QFFieldNotFoundException, QFDiscriminatorNotFoundException, QFJsonParseException {
@@ -512,6 +571,11 @@ public class QueryFilter<E> implements Specification<E> {
 
 	}
 
+	/**
+	 * Set a new predicate to be applied
+	 * 
+	 * @param predicateName new predicate name
+	 */
 	public void setPredicate(String predicateName) {
 
 		final Map<String, PredicateProcessorResolutor> locaPredMap = predicateMap;
@@ -530,14 +594,30 @@ public class QueryFilter<E> implements Specification<E> {
 
 	}
 
+	/**
+	 * Clear selected predicate
+	 */
 	public void clearPredicate() {
 		predicate = null;
+		predicateName = null;
 	}
 
+	/**
+	 * Get actual predicate name. Can be null
+	 * 
+	 * @return predicate name.
+	 */
 	public @Nullable String getPredicateName() {
 		return predicateName;
 	}
 
+	/**
+	 * Get the orders as criteria builder
+	 * 
+	 * @param root            root of criteria builder
+	 * @param criteriaBuilder criteria build
+	 * @return orders parsed
+	 */
 	public List<Order> getOrderAsCriteriaBuilder(Root<E> root, CriteriaBuilder criteriaBuilder) {
 		return parseOrders(sortDefinitionList, criteriaBuilder, root, new HashMap<>());
 	}

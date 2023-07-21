@@ -3,7 +3,7 @@ package io.github.acoboh.query.filter.jpa.exceptions;
 import org.springframework.http.HttpStatus;
 
 /**
- * Exception when not valid operation of field
+ * Exception when the operation is not found
  *
  * @author Adrián Cobo
  */
@@ -16,12 +16,22 @@ public class QFOperationNotFoundException extends QueryFilterException {
 
 	private final Object[] arguments;
 
+	/**
+	 * Default constructor
+	 * 
+	 * @param operation operation
+	 */
 	public QFOperationNotFoundException(String operation) {
 		super(MESSAGE, operation);
 		this.operation = operation;
 		this.arguments = new Object[] { operation };
 	}
 
+	/**
+	 * Get operation
+	 * 
+	 * @return operation
+	 */
 	public String getOperation() {
 		return operation;
 	}

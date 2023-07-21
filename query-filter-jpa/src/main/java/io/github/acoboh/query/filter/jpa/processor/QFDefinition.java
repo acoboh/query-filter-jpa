@@ -34,9 +34,14 @@ import io.github.acoboh.query.filter.jpa.exceptions.definition.QFMissingFieldExc
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 import io.github.acoboh.query.filter.jpa.predicate.PredicateOperation;
 import io.github.acoboh.query.filter.jpa.processor.QFPath.QueryFilterElementDefType;
-import io.github.acoboh.query.filter.jpa.utils.ClassUtils;
 import io.github.acoboh.query.filter.jpa.utils.DateUtils;
 
+/**
+ * Class with all the information of any field to be filtered
+ * 
+ * @author Adrián Cobo
+ *
+ */
 public class QFDefinition {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(QFDefinition.class);
@@ -296,86 +301,191 @@ public class QFDefinition {
 
 	}
 
+	/**
+	 * Get if the element annotations are present
+	 * 
+	 * @return true if the element has element annotations, false otherwise
+	 */
 	public boolean isElementFilter() {
 		return elementAnnotations != null && elementAnnotations.length > 0;
 	}
 
+	/**
+	 * Get if the discriminator annotation is present
+	 * 
+	 * @return true if the discriminator annotation is present
+	 */
 	public boolean isDiscriminatorFilter() {
 		return discriminatorAnnotation != null;
 	}
 
+	/**
+	 * Get if the field is blocked
+	 * 
+	 * @return true if the field is blocked
+	 */
 	public boolean isConstructorBlocked() {
 		return blockParsingAnnotation != null;
 	}
 
+	/**
+	 * Get if the field is json type
+	 * 
+	 * @return true if the field is json type
+	 */
 	public boolean isJsonElementFilter() {
 		return jsonAnnotation != null;
 	}
 
+	/**
+	 * Get the filter class
+	 * 
+	 * @return filter class
+	 */
 	public Class<?> getFilterClass() {
 		return filterClass;
 	}
 
+	/**
+	 * Get the entity class
+	 * 
+	 * @return entity class
+	 */
 	public Class<?> getEntityClass() {
 		return entityClass;
 	}
 
+	/**
+	 * Get all the element annotations
+	 * 
+	 * @return element annotations
+	 */
 	public QFElement[] getElementAnnotations() {
 		return elementAnnotations;
 	}
 
+	/**
+	 * Get the date annotation
+	 * 
+	 * @return date annotation
+	 */
 	public QFDate getDateAnnotation() {
 		return dateAnnotation;
 	}
 
+	/**
+	 * Get the discriminator annotation
+	 * 
+	 * @return discriminator annotation
+	 */
 	public QFDiscriminator getDiscriminatorAnnotation() {
 		return discriminatorAnnotation;
 	}
 
+	/**
+	 * Get list of all paths for each element annotation
+	 * 
+	 * @return list of all paths for each element annotation
+	 */
 	public List<List<QFPath>> getPaths() {
 		return paths;
 	}
 
+	/**
+	 * Get final class of last instrospection analysis
+	 * 
+	 * @return final class
+	 */
 	public Class<?> getFinalClass() {
 		return finalClass;
 	}
 
+	/**
+	 * Get filter name
+	 * 
+	 * @return filter name
+	 */
 	public String getFilterName() {
 		return filterName;
 	}
 
+	/**
+	 * Get if the field must be subqueried
+	 * 
+	 * @return true if the field is subquery
+	 */
 	public boolean isSubQuery() {
 		return subQuery;
 	}
 
+	/**
+	 * Get if the field is sortable
+	 * 
+	 * @return true if sortable
+	 */
 	public boolean isSortable() {
 		return sortable;
 	}
 
+	/**
+	 * Get if the field is case sensitive
+	 * 
+	 * @return true if the field is case sensitive
+	 */
 	public boolean isCaseSensitive() {
 		return caseSensitive;
 	}
 
+	/**
+	 * Get if the field is array typed
+	 * 
+	 * @return true if the field is array typed
+	 */
 	public boolean isArrayTyped() {
 		return arrayTyped;
 	}
 
+	/**
+	 * Get if the field has spel expressions
+	 * 
+	 * @return true if the field has spel
+	 */
 	public boolean isSpelExpression() {
 		return spelExpression;
 	}
 
+	/**
+	 * Get if with blank values must be ignored
+	 * 
+	 * @return true if with blank values must be ignored
+	 */
 	public boolean isBlankIgnore() {
 		return blankIgnore;
 	}
 
+	/**
+	 * Get order of evaluation
+	 * 
+	 * @return order of evaluation
+	 */
 	public int getOrder() {
 		return order;
 	}
 
+	/**
+	 * Get predicate operation with multiple element annotations
+	 * 
+	 * @return predicate operation
+	 */
 	public PredicateOperation getPredicateOperation() {
 		return defaultOperation;
 	}
 
+	/**
+	 * Get date time formatted created for the field
+	 * 
+	 * @return date time formatted
+	 */
 	public DateTimeFormatter getDateTimeFormatter() {
 		return dateTimeFormatter;
 	}

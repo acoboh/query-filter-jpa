@@ -39,6 +39,13 @@ public class SecuritySpelContextResolver implements SpelResolverInterface {
 
 	private HttpServletResponse response;
 
+	/**
+	 * Default constructor
+	 * 
+	 * @param securityExpressionHandlers security expression handlers
+	 * @param request                    actual request
+	 * @param response                   actual response
+	 */
 	public SecuritySpelContextResolver(List<SecurityExpressionHandler<?>> securityExpressionHandlers,
 			HttpServletRequest request, HttpServletResponse response) {
 		securityExpressionHandler = getFilterSecurityHandler(securityExpressionHandlers);

@@ -13,10 +13,23 @@ public abstract class QueryFilterException extends RuntimeException implements E
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Default constructor
+	 * 
+	 * @param message message
+	 * @param args    arguments
+	 */
 	protected QueryFilterException(String message, Object... args) {
 		super(MessageFormatter.arrayFormat(message, args).getMessage());
 	}
 
+	/**
+	 * Default constructor with cause
+	 * 
+	 * @param message   message
+	 * @param throwable cause
+	 * @param args      arguments
+	 */
 	protected QueryFilterException(String message, Throwable throwable, Object... args) {
 		super(MessageFormatter.arrayFormat(message, args).getMessage(), throwable);
 	}

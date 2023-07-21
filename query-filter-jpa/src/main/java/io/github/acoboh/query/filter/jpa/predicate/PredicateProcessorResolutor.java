@@ -18,7 +18,6 @@ import io.github.acoboh.query.filter.jpa.processor.QFDefinition;
  *
  * @author Adrián Cobo
  */
-
 public class PredicateProcessorResolutor {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PredicateProcessorResolutor.class);
@@ -29,6 +28,14 @@ public class PredicateProcessorResolutor {
 
 	private Set<String> fieldsFiltered;
 
+	/**
+	 * Create a predicate processor resolutor
+	 * 
+	 * @param predicateExp     the predicate expression
+	 * @param definitionMap    Definition map of the filter
+	 * @param includeMissing   if the missing fields on the predicate expression must be included
+	 * @param defaultOperation default operation of missing fields
+	 */
 	public PredicateProcessorResolutor(String predicateExp, Map<String, QFDefinition> definitionMap,
 			boolean includeMissing, PredicateOperation defaultOperation) {
 
@@ -52,6 +59,13 @@ public class PredicateProcessorResolutor {
 
 	}
 
+	/**
+	 * Resolver the predicate expression
+	 * 
+	 * @param criteriaBuilder criteria builder
+	 * @param predicates      map of predicates
+	 * @return predicate resolved
+	 */
 	public Predicate resolvePredicate(CriteriaBuilder criteriaBuilder, Map<String, Predicate> predicates) {
 
 		Predicate res = predicateLevel.resolveLevel(criteriaBuilder, predicates);

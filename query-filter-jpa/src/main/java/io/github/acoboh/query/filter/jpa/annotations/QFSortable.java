@@ -15,5 +15,10 @@ import java.lang.annotation.Target;
 @Target(FIELD)
 public @interface QFSortable {
 
+	/**
+	 * New name of filter
+	 * 
+	 * @return new name of filter
+	 */
 	String value();
 }

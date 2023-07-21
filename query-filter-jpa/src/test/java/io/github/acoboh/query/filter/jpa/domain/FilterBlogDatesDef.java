@@ -11,6 +11,12 @@ import io.github.acoboh.query.filter.jpa.annotations.QFElement;
 import io.github.acoboh.query.filter.jpa.annotations.QFSortable;
 import io.github.acoboh.query.filter.jpa.model.PostBlog;
 
+/**
+ * Basic dates query filter definition
+ * 
+ * @author Adrián Cobo
+ *
+ */
 @QFDefinitionClass(PostBlog.class)
 public class FilterBlogDatesDef {
 

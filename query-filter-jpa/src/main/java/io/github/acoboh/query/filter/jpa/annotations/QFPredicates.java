@@ -17,5 +17,10 @@ import java.lang.annotation.Target;
 @Target(TYPE)
 public @interface QFPredicates {
 
+	/**
+	 * List of predicates
+	 * 
+	 * @return predicates
+	 */
 	QFPredicate[] value();
 }

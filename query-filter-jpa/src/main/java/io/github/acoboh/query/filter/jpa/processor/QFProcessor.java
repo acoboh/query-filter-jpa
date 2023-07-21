@@ -10,6 +10,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.data.jpa.domain.Specification;
 
 import io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass;
 import io.github.acoboh.query.filter.jpa.annotations.QFElement;
@@ -20,6 +21,16 @@ import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefini
 import io.github.acoboh.query.filter.jpa.predicate.PredicateProcessorResolutor;
 import io.github.acoboh.query.filter.jpa.spel.SpelResolverInterface;
 
+/**
+ * Class to process all query filters.
+ * <p>
+ * It allows the user to create a new instance of {@linkplain QueryFilter} for using as {@linkplain Specification}
+ *
+ * @author Adrián Cobo
+ * @param <F> Filter definition class
+ * @param <E> Entity model class
+ * @version $Id: $Id
+ */
 public class QFProcessor<F, E> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(QFProcessor.class);
@@ -40,6 +51,14 @@ public class QFProcessor<F, E> {
 	private String predicateName;
 	private PredicateProcessorResolutor defaultPredicate;
 
+	/**
+	 * Default constructor
+	 *
+	 * @param filterClass filter class
+	 * @param entityClass entity class
+	 * @param appContext  application context for spel expressions
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException if any exception on parsing
+	 */
 	public QFProcessor(Class<F> filterClass, Class<E> entityClass, ApplicationContext appContext)
 			throws QueryFilterDefinitionException {
 
@@ -119,19 +138,42 @@ public class QFProcessor<F, E> {
 		return ret;
 	}
 
+	/**
+	 * Create a new {@linkplain QueryFilter} instance
+	 *
+	 * @param input string filter
+	 * @param type  standard type
+	 * @return new {@linkplain QueryFilter} instance
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QueryFilterException if any parsing exception occurs
+	 */
 	public QueryFilter<E> newQueryFilter(String input, QFParamType type) throws QueryFilterException {
 		return new QueryFilter<>(input, type, entityClass, filterClass, definitionMap, queryFilterClass, defaultMatches,
 				appContext.getBean(SpelResolverInterface.class), predicateMap, predicateName, defaultPredicate);
 	}
 
+	/**
+	 * Get all definitions of any field
+	 *
+	 * @return map of definitions
+	 */
 	public Map<String, QFDefinition> getDefinitionMap() {
 		return definitionMap;
 	}
 
+	/**
+	 * Get filter class
+	 *
+	 * @return filter class
+	 */
 	public Class<F> getFilterClass() {
 		return filterClass;
 	}
 
+	/**
+	 * Get entity class
+	 *
+	 * @return entity model class
+	 */
 	public Class<E> getEntityClass() {
 		return entityClass;
 	}

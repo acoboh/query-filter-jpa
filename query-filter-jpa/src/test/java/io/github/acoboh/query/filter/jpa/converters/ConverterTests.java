@@ -24,6 +24,12 @@ import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.processor.QueryFilter;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTest;
 
+/**
+ * Test for spring converters
+ * 
+ * @author Adrián Cobo
+ *
+ */
 @SpringJUnitWebConfig(SpringIntegrationTest.Config.class)
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
@@ -44,7 +50,7 @@ public class ConverterTests {
 
 	@Test
 	@DisplayName("1. Test conversion filter to query filter FilterBlogDef")
-	public void testConversionFilterToQueryFilter() throws NoSuchMethodException, SecurityException {
+	void testConversionFilterToQueryFilter() throws NoSuchMethodException, SecurityException {
 
 		ResolvableType type = ResolvableType.forClassWithGenerics(QueryFilter.class, PostBlog.class);
 

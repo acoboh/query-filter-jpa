@@ -10,6 +10,12 @@ import io.github.acoboh.query.filter.jpa.annotations.QFElement;
 import io.github.acoboh.query.filter.jpa.annotations.QFSortable;
 import io.github.acoboh.query.filter.jpa.model.PostBlog;
 
+/**
+ * Basic example of filter
+ * 
+ * @author Adrián Cobo
+ *
+ */
 @QFDefinitionClass(PostBlog.class)
 public class FilterBlogDef {
 

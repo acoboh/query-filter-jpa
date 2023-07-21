@@ -6,6 +6,12 @@ import io.github.acoboh.query.filter.jpa.annotations.QFElements;
 import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.predicate.PredicateOperation;
 
+/**
+ * Basic example for multiple query filter elements on same field
+ * 
+ * @author Adrián Cobo
+ *
+ */
 @QFDefinitionClass(PostBlog.class)
 public class FilterBlogMultipleElementsDef {
 

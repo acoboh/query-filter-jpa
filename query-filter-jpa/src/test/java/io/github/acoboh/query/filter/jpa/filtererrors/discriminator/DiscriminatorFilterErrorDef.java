@@ -6,6 +6,12 @@ import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.model.discriminators.Announcement;
 import io.github.acoboh.query.filter.jpa.model.discriminators.Topic;
 
+/**
+ * Discriminator error definition
+ * 
+ * @author Adrián Cobo
+ *
+ */
 @QFDefinitionClass(Topic.class)
 public class DiscriminatorFilterErrorDef {
 

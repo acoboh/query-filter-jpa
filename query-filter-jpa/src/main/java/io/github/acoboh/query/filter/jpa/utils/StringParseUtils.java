@@ -12,11 +12,18 @@ import io.github.acoboh.query.filter.jpa.predicate.PredicatePart;
  * Utility class to parse predicates
  *
  * @author Adrián Cobo
+ * @version $Id: $Id
  */
 public class StringParseUtils {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(StringParseUtils.class);
 
+	/**
+	 * Get all parsed parts
+	 *
+	 * @param predicateExp predicate expression
+	 * @return parts
+	 */
 	public static List<PredicatePart> parseParts(String predicateExp) {
 
 		int level = 0;
@@ -81,6 +88,12 @@ public class StringParseUtils {
 
 	}
 
+	/**
+	 * Balance the level parenthesis of any expression
+	 *
+	 * @param exp expression
+	 * @return balance level parenthesis
+	 */
 	public static String balanceLevelParenthesis(String exp) {
 
 		// (X OR A) AND (X OR B) -> INVALID

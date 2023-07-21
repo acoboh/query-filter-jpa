@@ -8,16 +8,24 @@ class ProcessorInfo {
 
 	private final Class<?> filterClass;
 
+	/**
+	 * <p>Constructor for ProcessorInfo.</p>
+	 *
+	 * @param entityClass a {@link java.lang.Class} object
+	 * @param filterClass a {@link java.lang.Class} object
+	 */
 	public ProcessorInfo(Class<?> entityClass, Class<?> filterClass) {
 		this.entityClass = entityClass;
 		this.filterClass = filterClass;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		return Objects.hash(entityClass, filterClass);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

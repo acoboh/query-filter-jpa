@@ -26,6 +26,7 @@ import org.springframework.util.MultiValueMap;
  * SPEL Context resolver bean
  *
  * @author Adrián Cobo
+ * @version $Id: $Id
  */
 @Configuration
 @ConditionalOnClass(SecurityExpressionHandler.class)
@@ -39,6 +40,13 @@ public class SecuritySpelContextResolver implements SpelResolverInterface {
 
 	private HttpServletResponse response;
 
+	/**
+	 * Default constructor
+	 *
+	 * @param securityExpressionHandlers security expression handlers
+	 * @param request                    actual request
+	 * @param response                   actual response
+	 */
 	public SecuritySpelContextResolver(List<SecurityExpressionHandler<?>> securityExpressionHandlers,
 			HttpServletRequest request, HttpServletResponse response) {
 		securityExpressionHandler = getFilterSecurityHandler(securityExpressionHandlers);
@@ -62,6 +70,7 @@ public class SecuritySpelContextResolver implements SpelResolverInterface {
 								+ securityExpressionHandlers.size()));
 	}
 
+	/** {@inheritDoc} */
 	public Object evaluate(String securityExpression, MultiValueMap<String, Object> contextValues) {
 		LOGGER.trace("Resolving expression {}", securityExpression);
 

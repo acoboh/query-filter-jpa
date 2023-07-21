@@ -28,6 +28,12 @@ import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 import io.github.acoboh.query.filter.jpa.repositories.PostBlogRepository;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTest;
 
+/**
+ * Multiple found tests
+ * 
+ * @author Adrián Cobo
+ *
+ */
 @SpringJUnitWebConfig(SpringIntegrationTest.Config.class)
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration

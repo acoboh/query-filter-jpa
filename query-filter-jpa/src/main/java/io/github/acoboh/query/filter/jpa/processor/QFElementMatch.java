@@ -21,6 +21,12 @@ import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 import io.github.acoboh.query.filter.jpa.spel.SpelResolverInterface;
 import io.github.acoboh.query.filter.jpa.utils.DateUtils;
 
+/**
+ * Class with info about the filtered field. Contains all the entity fields of the same filter field
+ *
+ * @author Adrián Cobo
+ * @version $Id: $Id
+ */
 public class QFElementMatch {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(QFElementMatch.class);
@@ -45,6 +51,13 @@ public class QFElementMatch {
 
 	private boolean initialized = false;
 
+	/**
+	 * Default constructor
+	 *
+	 * @param values     list of matching values
+	 * @param operation  operation to be applied
+	 * @param definition field definition
+	 */
 	public QFElementMatch(List<String> values, QFOperationEnum operation, QFDefinition definition) {
 
 		this.definition = definition;
@@ -72,6 +85,15 @@ public class QFElementMatch {
 
 	}
 
+	/**
+	 * Initialize spel expressions
+	 *
+	 * @param spelResolver spel resolver interface
+	 * @param context      context of values
+	 * @return true if initialized successfully
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldOperationException if any operation exception
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFEnumException           if any enumeration exception
+	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected boolean initialize(SpelResolverInterface spelResolver, MultiValueMap<String, Object> context)
 			throws QFFieldOperationException, QFEnumException {
@@ -153,30 +175,66 @@ public class QFElementMatch {
 		return true;
 	}
 
+	/**
+	 * Get field definition
+	 *
+	 * @return field definition
+	 */
 	public QFDefinition getDefinition() {
 		return definition;
 	}
 
+	/**
+	 * Get if the field must be in a subquery
+	 *
+	 * @return true if the filter is subqueried
+	 */
 	public boolean isSubquery() {
 		return subquery;
 	}
 
+	/**
+	 * List of original matching values
+	 *
+	 * @return original matching values
+	 */
 	public List<String> getOriginalValues() {
 		return originalValues;
 	}
 
+	/**
+	 * Get list of nested paths for each model field
+	 *
+	 * @return list of nested paths
+	 */
 	public List<List<QFPath>> getPaths() {
 		return paths;
 	}
 
+	/**
+	 * Get the selected operation
+	 *
+	 * @return selected operation
+	 */
 	public QFOperationEnum getOperation() {
 		return operation;
 	}
 
+	/**
+	 * If the string is case sensitive
+	 *
+	 * @return true if the string is case sensitive
+	 */
 	public boolean isCaseSensitive() {
 		return caseSensitive;
 	}
 
+	/**
+	 * Get final class of each model field
+	 *
+	 * @param index index model field
+	 * @return final class of the field
+	 */
 	public Class<?> matchClass(int index) {
 		if (!initialized) {
 			throw new IllegalStateException();
@@ -185,6 +243,12 @@ public class QFElementMatch {
 		return matchClasses.get(index);
 	}
 
+	/**
+	 * List of parsed values on each field
+	 *
+	 * @param index index of field
+	 * @return list of values
+	 */
 	public List<Object> parsedValues(int index) {
 		if (!initialized) {
 			throw new IllegalStateException();
@@ -192,6 +256,11 @@ public class QFElementMatch {
 		return parsedValues.get(index);
 	}
 
+	/**
+	 * Get first single value
+	 *
+	 * @return first single value
+	 */
 	public String getSingleValue() {
 		if (!initialized) {
 			throw new IllegalStateException();
@@ -199,6 +268,12 @@ public class QFElementMatch {
 		return processedValues.get(0);
 	}
 
+	/**
+	 * Get the first parsed value of the field
+	 *
+	 * @param index index of model field
+	 * @return first parsed value
+	 */
 	public Object getPrimaryParsedValue(int index) {
 		if (!initialized) {
 			throw new IllegalStateException();
@@ -206,10 +281,16 @@ public class QFElementMatch {
 		return parsedValues.get(index).get(0);
 	}
 
+	/**
+	 * Get if the matching element must be evaluated
+	 *
+	 * @return true if must to be evaluated
+	 */
 	public boolean needToEvaluate() {
 		if (!initialized) {
 			throw new IllegalStateException();
 		}
+
 		if (definition.isBlankIgnore()) {
 			return !processedValues.isEmpty();
 		}
@@ -247,9 +328,9 @@ public class QFElementMatch {
 
 		switch (operation) {
 		case GREATER_THAN:
-		case GREATER_THAN_EQUAL:
+		case GREATER_EQUAL_THAN:
 		case LESS_THAN:
-		case LESS_THAN_EQUAL:
+		case LESS_EQUAL_THAN:
 			if (!Comparable.class.isAssignableFrom(clazz) && !clazz.isPrimitive()) {
 				throw new QFFieldOperationException(operation, definition.getFilterName());
 			}
@@ -276,7 +357,7 @@ public class QFElementMatch {
 	}
 
 	private void checkDiscriminatorFilter() {
-		if (!QFOperationEnum.getOperrationsOfDiscriminators().contains(operation)) {
+		if (!QFOperationEnum.getOperationsOfDiscriminators().contains(operation)) {
 			throw new QFFieldOperationException(operation, definition.getFilterName());
 		}
 	}

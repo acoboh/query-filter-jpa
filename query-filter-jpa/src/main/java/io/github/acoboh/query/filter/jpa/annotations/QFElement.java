@@ -16,11 +16,12 @@ import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
  * <p>
  * Name is the field selected on the query filter input string
  * <p>
- * Path is the access level to the object of the {@link QFDefinitionClass} selected class
+ * Path is the access level to the object of the {@link io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass} selected class
  * <p>
  * You can choose the element type directly instead of check the class type using <b>abstractElement</b> value in annotation
  *
  * @author Adrián Cobo
+ * @version $Id: $Id
  */
 
 @Documented
@@ -101,11 +102,9 @@ public @interface QFElement {
 	 * <p>
 	 * It is highly recommended to use with {@link QFBlockParsing}
 	 * <p>
-	 * <p>
 	 * If there is more than one value, only the first one will be used. Example:
 	 * <p>
 	 * <code>
-	 * <p>
 	 * &#64;security.isAuthorized(),isAuthenticated()
 	 * </code>
 	 * <p>

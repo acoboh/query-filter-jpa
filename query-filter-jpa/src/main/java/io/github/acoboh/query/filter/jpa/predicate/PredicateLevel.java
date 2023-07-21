@@ -30,6 +30,12 @@ class PredicateLevel {
 	private PredicateOperation levelOperator;
 	private Set<String> fieldsSet;
 
+	/**
+	 * <p>Constructor for PredicateLevel.</p>
+	 *
+	 * @param expression a {@link java.lang.String} object
+	 * @param fullMap a {@link java.util.Map} object
+	 */
 	public PredicateLevel(String expression, Map<String, QFDefinition> fullMap) {
 
 		parts = StringParseUtils.parseParts(expression);
@@ -103,6 +109,11 @@ class PredicateLevel {
 
 	}
 
+	/**
+	 * <p>getFilteredFields.</p>
+	 *
+	 * @return a {@link java.util.Set} object
+	 */
 	public Set<String> getFilteredFields() {
 		if (fieldsSet == null) {
 
@@ -119,6 +130,13 @@ class PredicateLevel {
 		return fieldsSet;
 	}
 
+	/**
+	 * <p>resolveLevel.</p>
+	 *
+	 * @param cb a {@link javax.persistence.criteria.CriteriaBuilder} object
+	 * @param predicates a {@link java.util.Map} object
+	 * @return a {@link javax.persistence.criteria.Predicate} object
+	 */
 	public Predicate resolveLevel(CriteriaBuilder cb, Map<String, Predicate> predicates) {
 
 		Predicate res = levelOperator.getPredicate(cb);

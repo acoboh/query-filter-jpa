@@ -12,11 +12,11 @@ import io.github.acoboh.query.filter.jpa.spel.SpelContextResolver;
  * Autoconfigure class of the query filter library
  *
  * @author Adrián Cobo
+ * @version $Id: $Id
  */
 @Configuration
 @Import({ QFExceptionAdvisor.class, SecuritySpelContextResolver.class, SpelContextResolver.class,
 		QFBeanFactoryPostProcessor.class, QFWebMvcConfigurer.class, QueryFilterProperties.class })
-
 public class QueryFilterAutoconfigure {
 
 }

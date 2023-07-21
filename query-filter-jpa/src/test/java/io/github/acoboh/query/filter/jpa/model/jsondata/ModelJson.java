@@ -14,6 +14,12 @@ import org.hibernate.annotations.TypeDef;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 
+/**
+ * Entity with JSON data types
+ * 
+ * @author Adrián Cobo
+ *
+ */
 @Entity
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 @TypeDef(name = "json", typeClass = JsonType.class)
@@ -29,22 +35,46 @@ public class ModelJson {
 	@Column(columnDefinition = "jsonb")
 	private Map<String, String> jsonbData;
 
+	/**
+	 * Empty for JPA
+	 */
 	protected ModelJson() {
 		// Empty for JPA
 	}
 
+	/**
+	 * Default constructor
+	 * 
+	 * @param descriptor descriptor
+	 * @param jsonbData  json data
+	 */
 	public ModelJson(String descriptor, Map<String, String> jsonbData) {
 		this.jsonbData = jsonbData;
 	}
 
+	/**
+	 * Get ID
+	 * 
+	 * @return ID
+	 */
 	public Long getId() {
 		return id;
 	}
 
+	/**
+	 * Get descriptor
+	 * 
+	 * @return descriptor
+	 */
 	public String getDescriptor() {
 		return descriptor;
 	}
 
+	/**
+	 * Get JSON data
+	 * 
+	 * @return JSON data
+	 */
 	public Map<String, String> getJsonbData() {
 		return jsonbData;
 	}

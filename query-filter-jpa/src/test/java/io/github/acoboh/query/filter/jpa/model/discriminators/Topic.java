@@ -15,6 +15,12 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
+/**
+ * Topic entity model
+ * 
+ * @author Adrián Cobo
+ *
+ */
 @Entity(name = "Topic")
 @Table(name = "topic")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -31,30 +37,63 @@ public class Topic {
 
 	private Timestamp created = Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));
 
+	/**
+	 * Default constructor
+	 */
 	public Topic() {
 
 	}
 
+	/**
+	 * Get title
+	 * 
+	 * @return title
+	 */
 	public String getTitle() {
 		return title;
 	}
 
+	/**
+	 * Set new title
+	 * 
+	 * @param title new title
+	 */
 	public void setTitle(String title) {
 		this.title = title;
 	}
 
+	/**
+	 * Get owner
+	 * 
+	 * @return owner
+	 */
 	public String getOwner() {
 		return owner;
 	}
 
+	/**
+	 * Set new owner
+	 * 
+	 * @param owner new owner
+	 */
 	public void setOwner(String owner) {
 		this.owner = owner;
 	}
 
+	/**
+	 * Get ID
+	 * 
+	 * @return ID
+	 */
 	public Long getId() {
 		return id;
 	}
 
+	/**
+	 * Get created date
+	 * 
+	 * @return created date
+	 */
 	public Date getCreated() {
 		return created;
 	}

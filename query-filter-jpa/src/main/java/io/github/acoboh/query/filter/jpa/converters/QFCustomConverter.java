@@ -15,6 +15,14 @@ import io.github.acoboh.query.filter.jpa.annotations.QFParam;
 import io.github.acoboh.query.filter.jpa.processor.QFProcessor;
 import io.github.acoboh.query.filter.jpa.processor.QueryFilter;
 
+/**
+ * Class with for custom converters of Spring Boot.
+ * <p>
+ * This class allows inject {@linkplain QueryFilter} objects on controllers
+ *
+ * @author Adrián Cobo
+ * @version $Id: $Id
+ */
 public class QFCustomConverter implements GenericConverter {
 
 	private final List<QFProcessor<?, ?>> queryFilterProcessors;
@@ -22,6 +30,11 @@ public class QFCustomConverter implements GenericConverter {
 	// Filter - Entity
 	private final Map<Pair<Class<?>, Class<?>>, QFProcessor<?, ?>> mapProcessors = new HashMap<>();
 
+	/**
+	 * Default constructor
+	 *
+	 * @param queryFilterProcessors all query filter processors
+	 */
 	public QFCustomConverter(List<QFProcessor<?, ?>> queryFilterProcessors) {
 		this.queryFilterProcessors = queryFilterProcessors;
 
@@ -31,6 +44,7 @@ public class QFCustomConverter implements GenericConverter {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Set<ConvertiblePair> getConvertibleTypes() {
 		Set<ConvertiblePair> set = new HashSet<>();
@@ -42,6 +56,7 @@ public class QFCustomConverter implements GenericConverter {
 		return set;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Object convert(Object source, TypeDescriptor sourceType, TypeDescriptor targetType) {
 

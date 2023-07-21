@@ -41,6 +41,7 @@ import io.github.acoboh.query.filter.jpa.processor.QFProcessor;
  * Query filter bean factory post processor for QueryFilter custom beans
  *
  * @author Adrián Cobo
+ * @version $Id: $Id
  */
 @Configuration
 public class QFBeanFactoryPostProcessor implements ApplicationContextAware, BeanFactoryPostProcessor, Ordered {
@@ -49,6 +50,7 @@ public class QFBeanFactoryPostProcessor implements ApplicationContextAware, Bean
 
 	private ApplicationContext applicationContext;
 
+	/** {@inheritDoc} */
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		Assert.notNull(applicationContext, "ApplicationContext cannot be null");
@@ -146,6 +148,7 @@ public class QFBeanFactoryPostProcessor implements ApplicationContextAware, Bean
 		return scanPackages;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
 		Assert.notNull(beanFactory, "beanFactory cannot be null");
@@ -199,6 +202,7 @@ public class QFBeanFactoryPostProcessor implements ApplicationContextAware, Bean
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int getOrder() {
 		return 0;

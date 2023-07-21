@@ -7,9 +7,11 @@ import org.hibernate.boot.spi.MetadataBuilderContributor;
  * Custom {@linkplain MetadataBuilderContributor} to allow PostgreSQL Array operations
  *
  * @author Adrián Cobo
+ * @version $Id: $Id
  */
 public class PostgresqlArrayBuilderContributor implements MetadataBuilderContributor {
 
+	/** {@inheritDoc} */
 	@Override
 	public void contribute(MetadataBuilder metadataBuilder) {
 		for (ArrayFunction func : ArrayFunction.values()) {

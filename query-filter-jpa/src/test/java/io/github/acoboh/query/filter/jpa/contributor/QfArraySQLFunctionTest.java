@@ -10,6 +10,12 @@ import org.hibernate.type.BooleanType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Tests for array SQL functions
+ * 
+ * @author Adrián Cobo
+ *
+ */
 public class QfArraySQLFunctionTest {
 
 	@DisplayName("Check functions test")

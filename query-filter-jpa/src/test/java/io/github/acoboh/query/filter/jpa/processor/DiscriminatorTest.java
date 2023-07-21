@@ -27,6 +27,12 @@ import io.github.acoboh.query.filter.jpa.model.discriminators.Topic;
 import io.github.acoboh.query.filter.jpa.repositories.PostDiscriminatorRepository;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTest;
 
+/**
+ * Discriminator tests
+ * 
+ * @author Adrián Cobo
+ *
+ */
 @SpringJUnitWebConfig(SpringIntegrationTest.Config.class)
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration

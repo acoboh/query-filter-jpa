@@ -6,6 +6,12 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+/**
+ * Post entity model
+ * 
+ * @author Adrián Cobo
+ *
+ */
 @Entity(name = "Post")
 @Table(name = "post")
 @DiscriminatorValue("1")
@@ -13,14 +19,27 @@ public class Post extends Topic {
 
 	private String content;
 
+	/**
+	 * Default constructor
+	 */
 	public Post() {
 
 	}
 
+	/**
+	 * Get content
+	 * 
+	 * @return content
+	 */
 	public String getContent() {
 		return content;
 	}
 
+	/**
+	 * Set new content
+	 * 
+	 * @param content content
+	 */
 	public void setContent(String content) {
 		this.content = content;
 	}

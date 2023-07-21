@@ -29,6 +29,7 @@ import io.swagger.v3.oas.models.parameters.Parameter;
  * Class used to customize the OpenAPI definition with filter elements
  *
  * @author Adrián Cobo
+ * @version $Id: $Id
  */
 public class OpenApiCustomiserImpl implements OpenApiCustomiser {
 
@@ -36,11 +37,17 @@ public class OpenApiCustomiserImpl implements OpenApiCustomiser {
 
 	private List<QFEndpoint> endpoints;
 
+	/**
+	 * Default constructor
+	 *
+	 * @param endpoints endpoints
+	 */
 	public OpenApiCustomiserImpl(List<QFEndpoint> endpoints) {
 		Assert.notNull(endpoints, "Query filter endpoints must not be null");
 		this.endpoints = endpoints;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void customise(OpenAPI openApi) {
 		for (QFEndpoint endpoint : endpoints) {
@@ -112,7 +119,7 @@ public class OpenApiCustomiserImpl implements OpenApiCustomiser {
 			}
 
 			if (def.isDiscriminatorFilter()) {
-				Set<QFOperationEnum> qfOperations = QFOperationEnum.getOperrationsOfDiscriminators();
+				Set<QFOperationEnum> qfOperations = QFOperationEnum.getOperationsOfDiscriminators();
 				builder.append(" Operations: [<i>");
 				String operationsAvailable = qfOperations.stream().map(QFOperationEnum::getValue)
 						.collect(Collectors.joining(","));

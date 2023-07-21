@@ -59,8 +59,10 @@ public enum PredicateOperation {
 
 	/**
 	 * Resolve the predicate with criteria builder
+	 * 
+	 * @param cb criteria builder
 	 *
-	 * @return a {@link java.lang.String} object
+	 * @return {@link java.lang.String} object
 	 */
 	public abstract Predicate getPredicate(CriteriaBuilder cb);
 

@@ -12,6 +12,7 @@ import io.github.acoboh.query.filter.jpa.predicate.PredicatePart;
  * Utility class to parse predicates
  *
  * @author Adrián Cobo
+ * @version $Id: $Id
  */
 public class StringParseUtils {
 
@@ -19,7 +20,7 @@ public class StringParseUtils {
 
 	/**
 	 * Get all parsed parts
-	 * 
+	 *
 	 * @param predicateExp predicate expression
 	 * @return parts
 	 */
@@ -89,7 +90,7 @@ public class StringParseUtils {
 
 	/**
 	 * Balance the level parenthesis of any expression
-	 * 
+	 *
 	 * @param exp expression
 	 * @return balance level parenthesis
 	 */

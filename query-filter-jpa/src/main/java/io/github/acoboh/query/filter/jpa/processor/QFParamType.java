@@ -4,9 +4,9 @@ import java.util.regex.Pattern;
 
 /**
  * Enumeration for all parsing standards
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
+ * @version $Id: $Id
  */
 public enum QFParamType {
 
@@ -53,7 +53,7 @@ public enum QFParamType {
 
 	/**
 	 * Get full regex
-	 * 
+	 *
 	 * @return full regex
 	 */
 	public String getFullRegex() {
@@ -62,7 +62,7 @@ public enum QFParamType {
 
 	/**
 	 * Get pattern for parsing
-	 * 
+	 *
 	 * @return pattern
 	 */
 	public Pattern getPattern() {
@@ -71,7 +71,7 @@ public enum QFParamType {
 
 	/**
 	 * Beautiful name for documentation
-	 * 
+	 *
 	 * @return beautiful name
 	 */
 	public String getBeatifulName() {

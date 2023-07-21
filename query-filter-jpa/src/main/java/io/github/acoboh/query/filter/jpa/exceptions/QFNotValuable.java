@@ -4,9 +4,9 @@ import org.springframework.http.HttpStatus;
 
 /**
  * Exception thrown when the field is not a valid filter parameter
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
+ * @version $Id: $Id
  */
 public class QFNotValuable extends QueryFilterException {
 
@@ -18,7 +18,7 @@ public class QFNotValuable extends QueryFilterException {
 
 	/**
 	 * Default constructor
-	 * 
+	 *
 	 * @param field field
 	 */
 	public QFNotValuable(String field) {
@@ -29,23 +29,26 @@ public class QFNotValuable extends QueryFilterException {
 
 	/**
 	 * Get field
-	 * 
+	 *
 	 * @return field
 	 */
 	public String getField() {
 		return field;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public HttpStatus getHttpStatus() {
 		return HttpStatus.BAD_REQUEST;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Object[] getArguments() {
 		return arguments;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getMessageCode() {
 		return "qf.exceptions.notValuable";

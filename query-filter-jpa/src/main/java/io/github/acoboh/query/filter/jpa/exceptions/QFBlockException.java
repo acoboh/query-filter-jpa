@@ -4,9 +4,9 @@ import org.springframework.http.HttpStatus;
 
 /**
  * Exception thrown when the field is marked as blocked and the user is trying to filter from string filters
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
+ * @version $Id: $Id
  */
 public class QFBlockException extends QueryFilterException {
 
@@ -18,7 +18,7 @@ public class QFBlockException extends QueryFilterException {
 
 	/**
 	 * Construct
-	 * 
+	 *
 	 * @param field name of the field
 	 */
 	public QFBlockException(String field) {
@@ -29,32 +29,26 @@ public class QFBlockException extends QueryFilterException {
 
 	/**
 	 * Get name of the field
-	 * 
+	 *
 	 * @return name of the field
 	 */
 	public String getField() {
 		return field;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public HttpStatus getHttpStatus() {
 		return HttpStatus.BAD_REQUEST;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public Object[] getArguments() {
 		return arguments;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public String getMessageCode() {
 		return "qf.exceptions.blocked";

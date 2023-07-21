@@ -38,9 +38,9 @@ import io.github.acoboh.query.filter.jpa.utils.DateUtils;
 
 /**
  * Class with all the information of any field to be filtered
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
+ * @version $Id: $Id
  */
 public class QFDefinition {
 
@@ -303,7 +303,7 @@ public class QFDefinition {
 
 	/**
 	 * Get if the element annotations are present
-	 * 
+	 *
 	 * @return true if the element has element annotations, false otherwise
 	 */
 	public boolean isElementFilter() {
@@ -312,7 +312,7 @@ public class QFDefinition {
 
 	/**
 	 * Get if the discriminator annotation is present
-	 * 
+	 *
 	 * @return true if the discriminator annotation is present
 	 */
 	public boolean isDiscriminatorFilter() {
@@ -321,7 +321,7 @@ public class QFDefinition {
 
 	/**
 	 * Get if the field is blocked
-	 * 
+	 *
 	 * @return true if the field is blocked
 	 */
 	public boolean isConstructorBlocked() {
@@ -330,7 +330,7 @@ public class QFDefinition {
 
 	/**
 	 * Get if the field is json type
-	 * 
+	 *
 	 * @return true if the field is json type
 	 */
 	public boolean isJsonElementFilter() {
@@ -339,7 +339,7 @@ public class QFDefinition {
 
 	/**
 	 * Get the filter class
-	 * 
+	 *
 	 * @return filter class
 	 */
 	public Class<?> getFilterClass() {
@@ -348,7 +348,7 @@ public class QFDefinition {
 
 	/**
 	 * Get the entity class
-	 * 
+	 *
 	 * @return entity class
 	 */
 	public Class<?> getEntityClass() {
@@ -357,7 +357,7 @@ public class QFDefinition {
 
 	/**
 	 * Get all the element annotations
-	 * 
+	 *
 	 * @return element annotations
 	 */
 	public QFElement[] getElementAnnotations() {
@@ -366,7 +366,7 @@ public class QFDefinition {
 
 	/**
 	 * Get the date annotation
-	 * 
+	 *
 	 * @return date annotation
 	 */
 	public QFDate getDateAnnotation() {
@@ -375,7 +375,7 @@ public class QFDefinition {
 
 	/**
 	 * Get the discriminator annotation
-	 * 
+	 *
 	 * @return discriminator annotation
 	 */
 	public QFDiscriminator getDiscriminatorAnnotation() {
@@ -384,7 +384,7 @@ public class QFDefinition {
 
 	/**
 	 * Get list of all paths for each element annotation
-	 * 
+	 *
 	 * @return list of all paths for each element annotation
 	 */
 	public List<List<QFPath>> getPaths() {
@@ -393,7 +393,7 @@ public class QFDefinition {
 
 	/**
 	 * Get final class of last instrospection analysis
-	 * 
+	 *
 	 * @return final class
 	 */
 	public Class<?> getFinalClass() {
@@ -402,7 +402,7 @@ public class QFDefinition {
 
 	/**
 	 * Get filter name
-	 * 
+	 *
 	 * @return filter name
 	 */
 	public String getFilterName() {
@@ -411,7 +411,7 @@ public class QFDefinition {
 
 	/**
 	 * Get if the field must be subqueried
-	 * 
+	 *
 	 * @return true if the field is subquery
 	 */
 	public boolean isSubQuery() {
@@ -420,7 +420,7 @@ public class QFDefinition {
 
 	/**
 	 * Get if the field is sortable
-	 * 
+	 *
 	 * @return true if sortable
 	 */
 	public boolean isSortable() {
@@ -429,7 +429,7 @@ public class QFDefinition {
 
 	/**
 	 * Get if the field is case sensitive
-	 * 
+	 *
 	 * @return true if the field is case sensitive
 	 */
 	public boolean isCaseSensitive() {
@@ -438,7 +438,7 @@ public class QFDefinition {
 
 	/**
 	 * Get if the field is array typed
-	 * 
+	 *
 	 * @return true if the field is array typed
 	 */
 	public boolean isArrayTyped() {
@@ -447,7 +447,7 @@ public class QFDefinition {
 
 	/**
 	 * Get if the field has spel expressions
-	 * 
+	 *
 	 * @return true if the field has spel
 	 */
 	public boolean isSpelExpression() {
@@ -456,7 +456,7 @@ public class QFDefinition {
 
 	/**
 	 * Get if with blank values must be ignored
-	 * 
+	 *
 	 * @return true if with blank values must be ignored
 	 */
 	public boolean isBlankIgnore() {
@@ -465,7 +465,7 @@ public class QFDefinition {
 
 	/**
 	 * Get order of evaluation
-	 * 
+	 *
 	 * @return order of evaluation
 	 */
 	public int getOrder() {
@@ -474,7 +474,7 @@ public class QFDefinition {
 
 	/**
 	 * Get predicate operation with multiple element annotations
-	 * 
+	 *
 	 * @return predicate operation
 	 */
 	public PredicateOperation getPredicateOperation() {
@@ -483,7 +483,7 @@ public class QFDefinition {
 
 	/**
 	 * Get date time formatted created for the field
-	 * 
+	 *
 	 * @return date time formatted
 	 */
 	public DateTimeFormatter getDateTimeFormatter() {

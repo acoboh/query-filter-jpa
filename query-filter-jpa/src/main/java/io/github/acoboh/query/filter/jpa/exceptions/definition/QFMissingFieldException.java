@@ -2,9 +2,9 @@ package io.github.acoboh.query.filter.jpa.exceptions.definition;
 
 /**
  * Exception throw when the field is missing on any class
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
+ * @version $Id: $Id
  */
 public class QFMissingFieldException extends QueryFilterDefinitionException {
 
@@ -16,7 +16,7 @@ public class QFMissingFieldException extends QueryFilterDefinitionException {
 
 	/**
 	 * Default constructor
-	 * 
+	 *
 	 * @param field       field to be found
 	 * @param filterClass filter class
 	 */
@@ -28,7 +28,7 @@ public class QFMissingFieldException extends QueryFilterDefinitionException {
 
 	/**
 	 * Field to be found
-	 * 
+	 *
 	 * @return field to be found
 	 */
 	public String getField() {
@@ -37,7 +37,7 @@ public class QFMissingFieldException extends QueryFilterDefinitionException {
 
 	/**
 	 * Filter class
-	 * 
+	 *
 	 * @return filter class
 	 */
 	public Class<?> getFilterClass() {

@@ -4,15 +4,15 @@ import org.springframework.util.MultiValueMap;
 
 /**
  * Interface for Spel resolving
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
+ * @version $Id: $Id
  */
 public interface SpelResolverInterface {
 
 	/**
 	 * Evaluate any expression
-	 * 
+	 *
 	 * @param securityExpression expression to evaluate
 	 * @param contextValues      actual context values
 	 * @return object evaluated

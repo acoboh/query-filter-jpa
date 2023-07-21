@@ -23,9 +23,9 @@ import io.github.acoboh.query.filter.jpa.utils.DateUtils;
 
 /**
  * Class with info about the filtered field. Contains all the entity fields of the same filter field
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
+ * @version $Id: $Id
  */
 public class QFElementMatch {
 
@@ -53,7 +53,7 @@ public class QFElementMatch {
 
 	/**
 	 * Default constructor
-	 * 
+	 *
 	 * @param values     list of matching values
 	 * @param operation  operation to be applied
 	 * @param definition field definition
@@ -87,12 +87,12 @@ public class QFElementMatch {
 
 	/**
 	 * Initialize spel expressions
-	 * 
+	 *
 	 * @param spelResolver spel resolver interface
 	 * @param context      context of values
 	 * @return true if initialized successfully
-	 * @throws QFFieldOperationException if any operation exception
-	 * @throws QFEnumException           if any enumeration exception
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldOperationException if any operation exception
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFEnumException           if any enumeration exception
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected boolean initialize(SpelResolverInterface spelResolver, MultiValueMap<String, Object> context)
@@ -177,7 +177,7 @@ public class QFElementMatch {
 
 	/**
 	 * Get field definition
-	 * 
+	 *
 	 * @return field definition
 	 */
 	public QFDefinition getDefinition() {
@@ -186,7 +186,7 @@ public class QFElementMatch {
 
 	/**
 	 * Get if the field must be in a subquery
-	 * 
+	 *
 	 * @return true if the filter is subqueried
 	 */
 	public boolean isSubquery() {
@@ -195,7 +195,7 @@ public class QFElementMatch {
 
 	/**
 	 * List of original matching values
-	 * 
+	 *
 	 * @return original matching values
 	 */
 	public List<String> getOriginalValues() {
@@ -204,7 +204,7 @@ public class QFElementMatch {
 
 	/**
 	 * Get list of nested paths for each model field
-	 * 
+	 *
 	 * @return list of nested paths
 	 */
 	public List<List<QFPath>> getPaths() {
@@ -213,7 +213,7 @@ public class QFElementMatch {
 
 	/**
 	 * Get the selected operation
-	 * 
+	 *
 	 * @return selected operation
 	 */
 	public QFOperationEnum getOperation() {
@@ -222,7 +222,7 @@ public class QFElementMatch {
 
 	/**
 	 * If the string is case sensitive
-	 * 
+	 *
 	 * @return true if the string is case sensitive
 	 */
 	public boolean isCaseSensitive() {
@@ -231,7 +231,7 @@ public class QFElementMatch {
 
 	/**
 	 * Get final class of each model field
-	 * 
+	 *
 	 * @param index index model field
 	 * @return final class of the field
 	 */
@@ -245,7 +245,7 @@ public class QFElementMatch {
 
 	/**
 	 * List of parsed values on each field
-	 * 
+	 *
 	 * @param index index of field
 	 * @return list of values
 	 */
@@ -258,7 +258,7 @@ public class QFElementMatch {
 
 	/**
 	 * Get first single value
-	 * 
+	 *
 	 * @return first single value
 	 */
 	public String getSingleValue() {
@@ -270,7 +270,7 @@ public class QFElementMatch {
 
 	/**
 	 * Get the first parsed value of the field
-	 * 
+	 *
 	 * @param index index of model field
 	 * @return first parsed value
 	 */
@@ -283,7 +283,7 @@ public class QFElementMatch {
 
 	/**
 	 * Get if the matching element must be evaluated
-	 * 
+	 *
 	 * @return true if must to be evaluated
 	 */
 	public boolean needToEvaluate() {

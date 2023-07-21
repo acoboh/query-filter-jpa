@@ -4,6 +4,7 @@ package io.github.acoboh.query.filter.jpa.contributor;
  * Custom contributor to list PostgreSQL Array operations
  *
  * @author Adrián Cobo
+ * @version $Id: $Id
  */
 public enum ArrayFunction {
 
@@ -63,7 +64,7 @@ public enum ArrayFunction {
 
 	/**
 	 * Name of the function
-	 * 
+	 *
 	 * @return Name of the function
 	 */
 	public String getName() {
@@ -72,7 +73,7 @@ public enum ArrayFunction {
 
 	/**
 	 * PostgreSQL array function
-	 * 
+	 *
 	 * @return PostgreSQL array function
 	 */
 	public QfArraySQLFunction getFunction() {

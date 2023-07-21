@@ -53,10 +53,10 @@ import io.github.acoboh.query.filter.jpa.spel.SpelResolverInterface;
 /**
  * Class that implements {@linkplain Specification} from JPA library that allows the user to create automatic filters from
  * {@linkplain QFParamType#RHS_COLON} or {@linkplain QFParamType#LHS_BRACKETS} standards
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  * @param <E> Entity model class
+ * @version $Id: $Id
  */
 public class QueryFilter<E> implements Specification<E> {
 
@@ -88,7 +88,7 @@ public class QueryFilter<E> implements Specification<E> {
 
 	/**
 	 * Default constructor
-	 * 
+	 *
 	 * @param input                      input string
 	 * @param type                       parameter type
 	 * @param entityClass                entity class
@@ -100,7 +100,7 @@ public class QueryFilter<E> implements Specification<E> {
 	 * @param predicateMap               predicate map
 	 * @param predicateName              predicate name
 	 * @param defaultPredicate           default predicate
-	 * @throws QueryFilterException if any parsing exception
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QueryFilterException if any parsing exception
 	 */
 	protected QueryFilter(String input, QFParamType type, Class<E> entityClass, Class<?> predicateClass,
 			Map<String, QFDefinition> definitionMap, QFDefinitionClass queryFilterClassAnnotation,
@@ -147,7 +147,7 @@ public class QueryFilter<E> implements Specification<E> {
 
 	/**
 	 * Get the entity class
-	 * 
+	 *
 	 * @return entity model class
 	 */
 	public Class<E> getEntityClass() {
@@ -156,7 +156,7 @@ public class QueryFilter<E> implements Specification<E> {
 
 	/**
 	 * Get the predicate definition class
-	 * 
+	 *
 	 * @return predicate definition class
 	 */
 	public Class<?> getPredicateClass() {
@@ -342,12 +342,12 @@ public class QueryFilter<E> implements Specification<E> {
 
 	/**
 	 * Manually adds a new operation on any field
-	 * 
+	 *
 	 * @param field     field of filter
 	 * @param operation operation to be applied
 	 * @param values    list of values
-	 * @throws QFFieldNotFoundException         if the field is not found
-	 * @throws QFDiscriminatorNotFoundException if the discriminator is not allowed
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException         if the field is not found
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFDiscriminatorNotFoundException if the discriminator is not allowed
 	 * @see #addNewField(String, QFOperationEnum, String)
 	 */
 	public void addNewField(String field, QFOperationEnum operation, List<String> values)
@@ -374,12 +374,12 @@ public class QueryFilter<E> implements Specification<E> {
 
 	/**
 	 * Manually adds a new operation on any field
-	 * 
+	 *
 	 * @param field     field of filter
 	 * @param operation operation to be applied
 	 * @param value     value to match. Can be multiple values joined by a ',' (comma)
-	 * @throws QFFieldNotFoundException         if the field is not found
-	 * @throws QFDiscriminatorNotFoundException if the discriminator is not allowed
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException         if the field is not found
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFDiscriminatorNotFoundException if the discriminator is not allowed
 	 */
 	public void addNewField(String field, QFOperationEnum operation, String value)
 			throws QFFieldNotFoundException, QFDiscriminatorNotFoundException {
@@ -398,9 +398,9 @@ public class QueryFilter<E> implements Specification<E> {
 	 *
 	 * @param field     Field name of sorting
 	 * @param direction Direction of sorting
-	 * @throws QFNotSortableException   not sortable
-	 * @throws QFFieldNotFoundException if field does not exist
-	 * @throws QFMultipleSortException  if multiple sort exists on the same field
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFNotSortableException   not sortable
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException if field does not exist
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFMultipleSortException  if multiple sort exists on the same field
 	 */
 	public void addSortBy(String field, Direction direction)
 			throws QFFieldNotFoundException, QFNotSortableException, QFMultipleSortException {
@@ -451,7 +451,7 @@ public class QueryFilter<E> implements Specification<E> {
 
 	/**
 	 * Get if the filter is sorted by the selected field
-	 * 
+	 *
 	 * @param field field to check
 	 * @return true if is actually sorting, false otherwise
 	 */
@@ -486,9 +486,9 @@ public class QueryFilter<E> implements Specification<E> {
 	 * @param field     Field filter name
 	 * @param operation Operation to apply
 	 * @param value     value of filter
-	 * @throws QFFieldNotFoundException         Missing field exception
-	 * @throws QFDiscriminatorNotFoundException if the discriminator value is not allowed
-	 * @throws QFJsonParseException             if any json parse exception
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException         Missing field exception
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFDiscriminatorNotFoundException if the discriminator value is not allowed
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFJsonParseException             if any json parse exception
 	 */
 	public void overrideField(String field, QFOperationEnum operation, String value)
 			throws QFFieldNotFoundException, QFDiscriminatorNotFoundException, QFJsonParseException {
@@ -524,8 +524,8 @@ public class QueryFilter<E> implements Specification<E> {
 	 *
 	 * @param field Field to check
 	 * @return Values of the field
-	 * @throws QFFieldNotFoundException      if the field is not present
-	 * @throws UnsupportedOperationException if the field is JSON type
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException      if the field is not present
+	 * @throws java.lang.UnsupportedOperationException if the field is JSON type
 	 */
 	public @Nullable List<String> getActualValue(String field) throws QFFieldNotFoundException {
 		QFDefinition def = definitionMap.get(field);
@@ -552,7 +552,7 @@ public class QueryFilter<E> implements Specification<E> {
 	 * Delete the field of the filter
 	 *
 	 * @param field field to delete
-	 * @throws QFFieldNotFoundException if the is not present
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException if the is not present
 	 */
 	public void deleteField(String field) throws QFFieldNotFoundException {
 
@@ -573,7 +573,7 @@ public class QueryFilter<E> implements Specification<E> {
 
 	/**
 	 * Set a new predicate to be applied
-	 * 
+	 *
 	 * @param predicateName new predicate name
 	 */
 	public void setPredicate(String predicateName) {
@@ -604,7 +604,7 @@ public class QueryFilter<E> implements Specification<E> {
 
 	/**
 	 * Get actual predicate name. Can be null
-	 * 
+	 *
 	 * @return predicate name.
 	 */
 	public @Nullable String getPredicateName() {
@@ -613,7 +613,7 @@ public class QueryFilter<E> implements Specification<E> {
 
 	/**
 	 * Get the orders as criteria builder
-	 * 
+	 *
 	 * @param root            root of criteria builder
 	 * @param criteriaBuilder criteria build
 	 * @return orders parsed
@@ -622,6 +622,7 @@ public class QueryFilter<E> implements Specification<E> {
 		return parseOrders(sortDefinitionList, criteriaBuilder, root, new HashMap<>());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Predicate toPredicate(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
 

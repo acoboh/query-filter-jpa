@@ -3,9 +3,10 @@ package io.github.acoboh.query.filter.jpa.exceptions;
 import org.springframework.http.HttpStatus;
 
 /**
- * 
- * @author Adrián Cobo
+ * <p>QFJsonParseException class.</p>
  *
+ * @author Adrián Cobo
+ * @version $Id: $Id
  */
 public class QFJsonParseException extends QueryFilterException {
 
@@ -16,7 +17,7 @@ public class QFJsonParseException extends QueryFilterException {
 
 	/**
 	 * Default constructor
-	 * 
+	 *
 	 * @param field     field
 	 * @param throwable throwable exception
 	 */
@@ -28,23 +29,26 @@ public class QFJsonParseException extends QueryFilterException {
 
 	/**
 	 * Get field
-	 * 
+	 *
 	 * @return field
 	 */
 	public String getField() {
 		return field;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public HttpStatus getHttpStatus() {
 		return HttpStatus.BAD_REQUEST;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Object[] getArguments() {
 		return arguments;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getMessageCode() {
 		return "qf.exceptions.json";

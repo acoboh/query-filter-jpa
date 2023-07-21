@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
  * Exception thrown when the enumeration class can not be parsed
  *
  * @author Adrián Cobo
+ * @version $Id: $Id
  */
 public class QFEnumException extends QueryFilterException {
 
@@ -18,7 +19,7 @@ public class QFEnumException extends QueryFilterException {
 
 	/**
 	 * Default constructor
-	 * 
+	 *
 	 * @param field         field of filter
 	 * @param value         selected value
 	 * @param enumClass     enumeration class
@@ -30,16 +31,19 @@ public class QFEnumException extends QueryFilterException {
 		this.arguments = new Object[] { field, value, enumClass.getSimpleName(), Arrays.toString(allowedValues) };
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public HttpStatus getHttpStatus() {
 		return HttpStatus.BAD_REQUEST;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Object[] getArguments() {
 		return arguments;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getMessageCode() {
 		return "qf.exceptions.enum";

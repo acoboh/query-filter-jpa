@@ -2,9 +2,9 @@ package io.github.acoboh.query.filter.jpa.exceptions.definition;
 
 /**
  * Exception throw for all the discriminator exceptions
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
+ * @version $Id: $Id
  */
 public class QFDiscriminatorException extends QueryFilterDefinitionException {
 
@@ -12,7 +12,7 @@ public class QFDiscriminatorException extends QueryFilterDefinitionException {
 
 	/**
 	 * Default constructor
-	 * 
+	 *
 	 * @param message message
 	 * @param args    arguments of message
 	 */

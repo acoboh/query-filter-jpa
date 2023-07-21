@@ -2,9 +2,9 @@ package io.github.acoboh.query.filter.jpa.exceptions.definition;
 
 /**
  * Exception thrown when the same element contains multiple type annotations
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
+ * @version $Id: $Id
  */
 public class QFAnnotationsException extends QueryFilterDefinitionException {
 

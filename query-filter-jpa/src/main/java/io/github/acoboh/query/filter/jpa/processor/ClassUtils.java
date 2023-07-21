@@ -33,7 +33,7 @@ class ClassUtils {
 
 	/**
 	 * Check base abstract object for query filter utilities
-	 * 
+	 *
 	 * @param fullPath      Full path of the property
 	 * @param actualField   Actual field level
 	 * @param nextFieldPath Next field level
@@ -42,10 +42,10 @@ class ClassUtils {
 	 * @param list          List of paths
 	 * @param isEndObject   if the field must be final type
 	 * @return Final class
-	 * @throws QFTypeException         it the field can not be parsed
-	 * @throws QFMissingFieldException if the field is missing
-	 * @throws QFFieldLevelException   if the field can access more levels or has no nested fields
-	 * @throws QFElementException      if the field is not present on any class
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.definition.QFTypeException         it the field can not be parsed
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.definition.QFMissingFieldException if the field is missing
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.definition.QFFieldLevelException   if the field can access more levels or has no nested fields
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.definition.QFElementException      if the field is not present on any class
 	 */
 	protected static Class<?> checkAbstractObject(String fullPath, String actualField, String nextFieldPath,
 			Field objectField, Class<?> fieldClass, List<QFPath> list, boolean isEndObject)
@@ -227,6 +227,13 @@ class ClassUtils {
 
 	}
 
+	/**
+	 * <p>getDeclaredFieldSuperclass.</p>
+	 *
+	 * @param fromClass a {@link java.lang.Class} object
+	 * @param fieldName a {@link java.lang.String} object
+	 * @return a {@link java.lang.reflect.Field} object
+	 */
 	public static Field getDeclaredFieldSuperclass(Class<?> fromClass, String fieldName) {
 		Field fieldClazz = null;
 		try {

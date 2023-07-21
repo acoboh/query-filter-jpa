@@ -15,9 +15,9 @@ import io.github.acoboh.query.filter.jpa.processor.QFProcessor;
 
 /**
  * Class to enable custom converters for Spring Boot Controllers via {@linkplain WebMvcConfigurer} converters
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
+ * @version $Id: $Id
  */
 @Configuration
 @EnableWebMvc
@@ -28,6 +28,7 @@ public class QFWebMvcConfigurer implements WebMvcConfigurer {
 	@Autowired
 	private List<QFProcessor<?, ?>> processors;
 
+	/** {@inheritDoc} */
 	@Override
 	public void addFormatters(FormatterRegistry registry) {
 		LOGGER.info("Using QueryFilterWebMvcConfigurer. Registering custom formatters");

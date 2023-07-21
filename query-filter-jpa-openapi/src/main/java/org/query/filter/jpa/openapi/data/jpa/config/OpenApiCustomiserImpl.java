@@ -29,6 +29,7 @@ import io.swagger.v3.oas.models.parameters.Parameter;
  * Class used to customize the OpenAPI definition with filter elements
  *
  * @author Adrián Cobo
+ * @version $Id: $Id
  */
 public class OpenApiCustomiserImpl implements OpenApiCustomiser {
 
@@ -38,7 +39,7 @@ public class OpenApiCustomiserImpl implements OpenApiCustomiser {
 
 	/**
 	 * Default constructor
-	 * 
+	 *
 	 * @param endpoints endpoints
 	 */
 	public OpenApiCustomiserImpl(List<QFEndpoint> endpoints) {
@@ -46,6 +47,7 @@ public class OpenApiCustomiserImpl implements OpenApiCustomiser {
 		this.endpoints = endpoints;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void customise(OpenAPI openApi) {
 		for (QFEndpoint endpoint : endpoints) {

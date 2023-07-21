@@ -12,9 +12,9 @@ import io.github.acoboh.query.filter.jpa.exceptions.QFDiscriminatorNotFoundExcep
 
 /**
  * Class with info about the discriminator matching for filtering
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
+ * @version $Id: $Id
  */
 public class QFDiscriminatorMatch {
 
@@ -32,10 +32,10 @@ public class QFDiscriminatorMatch {
 
 	/**
 	 * Default constructor
-	 * 
+	 *
 	 * @param values     list of values
 	 * @param definition definition of the field
-	 * @throws QFDiscriminatorNotFoundException if any discriminator exception occurs
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFDiscriminatorNotFoundException if any discriminator exception occurs
 	 */
 	public QFDiscriminatorMatch(List<String> values, QFDefinition definition) throws QFDiscriminatorNotFoundException {
 
@@ -77,7 +77,7 @@ public class QFDiscriminatorMatch {
 
 	/**
 	 * Get matching classes
-	 * 
+	 *
 	 * @return matching classes
 	 */
 	public List<Class<?>> getMatchingClasses() {
@@ -86,7 +86,7 @@ public class QFDiscriminatorMatch {
 
 	/**
 	 * Get entity class
-	 * 
+	 *
 	 * @return entity class
 	 */
 	public Class<?> getEntityClass() {
@@ -95,7 +95,7 @@ public class QFDiscriminatorMatch {
 
 	/**
 	 * Get if the field is root or nested levels
-	 * 
+	 *
 	 * @return true if root. False if the field is on nested levels
 	 */
 	public boolean isRoot() {
@@ -104,7 +104,7 @@ public class QFDiscriminatorMatch {
 
 	/**
 	 * Get original field definition
-	 * 
+	 *
 	 * @return original field definition
 	 */
 	public QFDefinition getDefinition() {
@@ -113,7 +113,7 @@ public class QFDiscriminatorMatch {
 
 	/**
 	 * Get all values
-	 * 
+	 *
 	 * @return values
 	 */
 	public List<String> getValues() {
@@ -122,7 +122,7 @@ public class QFDiscriminatorMatch {
 
 	/**
 	 * Get list of paths for nested levels
-	 * 
+	 *
 	 * @return paths for nested levels
 	 */
 	public List<QFPath> getPath() {

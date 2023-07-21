@@ -4,9 +4,9 @@ import org.springframework.http.HttpStatus;
 
 /**
  * Exception thrown when multiple sorting options are present on the same field
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
+ * @version $Id: $Id
  */
 public class QFMultipleSortException extends QueryFilterException {
 
@@ -18,7 +18,7 @@ public class QFMultipleSortException extends QueryFilterException {
 
 	/**
 	 * Default constructor
-	 * 
+	 *
 	 * @param field field
 	 */
 	public QFMultipleSortException(String field) {
@@ -29,23 +29,26 @@ public class QFMultipleSortException extends QueryFilterException {
 
 	/**
 	 * Get field
-	 * 
+	 *
 	 * @return field
 	 */
 	public String getField() {
 		return field;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public HttpStatus getHttpStatus() {
 		return HttpStatus.BAD_REQUEST;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Object[] getArguments() {
 		return arguments;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getMessageCode() {
 		return "qf.exceptions.multipleSort";

@@ -6,9 +6,9 @@ import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 
 /**
  * Exception when operation is not allowed on SQL database
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
+ * @version $Id: $Id
  */
 public class QFUnsopportedSQLException extends QueryFilterException {
 
@@ -21,7 +21,7 @@ public class QFUnsopportedSQLException extends QueryFilterException {
 
 	/**
 	 * Default constructor
-	 * 
+	 *
 	 * @param operation operation not allowed
 	 * @param field     field
 	 */
@@ -34,7 +34,7 @@ public class QFUnsopportedSQLException extends QueryFilterException {
 
 	/**
 	 * Get field
-	 * 
+	 *
 	 * @return field
 	 */
 	public String getField() {
@@ -43,23 +43,26 @@ public class QFUnsopportedSQLException extends QueryFilterException {
 
 	/**
 	 * Get operation
-	 * 
+	 *
 	 * @return operation
 	 */
 	public QFOperationEnum getOperation() {
 		return operation;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public HttpStatus getHttpStatus() {
 		return HttpStatus.INTERNAL_SERVER_ERROR;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Object[] getArguments() {
 		return args;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getMessageCode() {
 		return "qf.exceptions.operationFieldNotValid";

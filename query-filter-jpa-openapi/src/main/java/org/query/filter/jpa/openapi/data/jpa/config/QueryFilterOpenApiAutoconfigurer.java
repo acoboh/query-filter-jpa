@@ -36,9 +36,9 @@ import io.github.acoboh.query.filter.jpa.processor.QFProcessor;
 
 /**
  * Auto-Configuration class for OpenAPI standard
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
+ * @version $Id: $Id
  */
 @Configuration
 public class QueryFilterOpenApiAutoconfigurer {

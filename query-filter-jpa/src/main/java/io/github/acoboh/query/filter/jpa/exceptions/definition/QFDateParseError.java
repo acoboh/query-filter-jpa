@@ -4,9 +4,9 @@ import java.time.format.DateTimeParseException;
 
 /**
  * Exception throw when any date parsing error occurs
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
+ * @version $Id: $Id
  */
 public class QFDateParseError extends QueryFilterDefinitionException {
 
@@ -19,7 +19,7 @@ public class QFDateParseError extends QueryFilterDefinitionException {
 
 	/**
 	 * Default constructor
-	 * 
+	 *
 	 * @param format    format applied on the date
 	 * @param dateClass date class
 	 * @param e         original exception thrown
@@ -32,7 +32,7 @@ public class QFDateParseError extends QueryFilterDefinitionException {
 
 	/**
 	 * Get original format
-	 * 
+	 *
 	 * @return format
 	 */
 	public String getFormat() {
@@ -41,7 +41,7 @@ public class QFDateParseError extends QueryFilterDefinitionException {
 
 	/**
 	 * Get date class
-	 * 
+	 *
 	 * @return date class
 	 */
 	public Class<?> getDateClass() {

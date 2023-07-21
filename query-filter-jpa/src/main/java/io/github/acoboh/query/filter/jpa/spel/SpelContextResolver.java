@@ -15,6 +15,7 @@ import org.springframework.util.MultiValueMap;
  * SPEL Context resolver bean
  *
  * @author Adrián Cobo
+ * @version $Id: $Id
  */
 @Configuration
 @ConditionalOnMissingClass("org.springframework.security.access.expression.SecurityExpressionHandler")
@@ -22,6 +23,7 @@ public class SpelContextResolver implements SpelResolverInterface {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SpelContextResolver.class);
 
+	/** {@inheritDoc} */
 	@Override
 	public Object evaluate(String securityExpression, MultiValueMap<String, Object> contextValues) {
 		LOGGER.trace("Resolving expression {}", securityExpression);

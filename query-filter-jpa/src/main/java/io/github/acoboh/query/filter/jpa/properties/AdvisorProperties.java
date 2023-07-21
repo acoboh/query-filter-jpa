@@ -6,9 +6,9 @@ import org.springframework.validation.annotation.Validated;
 
 /**
  * Advisor configuration properties
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
+ * @version $Id: $Id
  */
 @Validated
 public class AdvisorProperties {
@@ -25,7 +25,7 @@ public class AdvisorProperties {
 
 	/**
 	 * Get if the advisor is enabled
-	 * 
+	 *
 	 * @return true if enabled, false otherwise
 	 */
 	public boolean isEnabled() {
@@ -34,7 +34,7 @@ public class AdvisorProperties {
 
 	/**
 	 * Modify status of advisor
-	 * 
+	 *
 	 * @param enabled new status
 	 */
 	public void setEnabled(boolean enabled) {
@@ -43,7 +43,7 @@ public class AdvisorProperties {
 
 	/**
 	 * Get message source base name path
-	 * 
+	 *
 	 * @return message source base name path
 	 */
 	public String getMessageSourceBaseName() {
@@ -52,7 +52,7 @@ public class AdvisorProperties {
 
 	/**
 	 * Set new message source base name
-	 * 
+	 *
 	 * @param messageSourceBaseName new message source base name
 	 */
 	public void setMessageSourceBaseName(String messageSourceBaseName) {
@@ -61,7 +61,7 @@ public class AdvisorProperties {
 
 	/**
 	 * Get the message source encoding
-	 * 
+	 *
 	 * @return message source encoding
 	 */
 	public String getMessageSourceDefaultEncoding() {
@@ -70,7 +70,7 @@ public class AdvisorProperties {
 
 	/**
 	 * Set new message source encoding
-	 * 
+	 *
 	 * @param messageSourceDefaultEncoding new message source encoding
 	 */
 	public void setMessageSourceDefaultEncoding(String messageSourceDefaultEncoding) {
@@ -79,7 +79,7 @@ public class AdvisorProperties {
 
 	/**
 	 * Get if the message source use code as default message
-	 * 
+	 *
 	 * @return if the message source use code as default message
 	 */
 	public boolean isMessageSourceUseCodeAsDefaultMessage() {
@@ -88,7 +88,7 @@ public class AdvisorProperties {
 
 	/**
 	 * Set if the message source use code as default message
-	 * 
+	 *
 	 * @param messageSourceUseCodeAsDefaultMessage if the message source use code as default message
 	 */
 	public void setMessageSourceUseCodeAsDefaultMessage(boolean messageSourceUseCodeAsDefaultMessage) {

@@ -11,6 +11,7 @@ import java.lang.annotation.Target;
  * Special query filter element to filter between Discriminator types
  *
  * @author Adrián Cobo
+ * @version $Id: $Id
  */
 @Retention(RUNTIME)
 @Target(FIELD)

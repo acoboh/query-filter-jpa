@@ -25,11 +25,11 @@ import io.github.acoboh.query.filter.jpa.spel.SpelResolverInterface;
  * Class to process all query filters.
  * <p>
  * It allows the user to create a new instance of {@linkplain QueryFilter} for using as {@linkplain Specification}
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  * @param <F> Filter definition class
  * @param <E> Entity model class
+ * @version $Id: $Id
  */
 public class QFProcessor<F, E> {
 
@@ -53,11 +53,11 @@ public class QFProcessor<F, E> {
 
 	/**
 	 * Default constructor
-	 * 
+	 *
 	 * @param filterClass filter class
 	 * @param entityClass entity class
 	 * @param appContext  application context for spel expressions
-	 * @throws QueryFilterDefinitionException if any exception on parsing
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException if any exception on parsing
 	 */
 	public QFProcessor(Class<F> filterClass, Class<E> entityClass, ApplicationContext appContext)
 			throws QueryFilterDefinitionException {
@@ -140,11 +140,11 @@ public class QFProcessor<F, E> {
 
 	/**
 	 * Create a new {@linkplain QueryFilter} instance
-	 * 
+	 *
 	 * @param input string filter
 	 * @param type  standard type
 	 * @return new {@linkplain QueryFilter} instance
-	 * @throws QueryFilterException if any parsing exception occurs
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QueryFilterException if any parsing exception occurs
 	 */
 	public QueryFilter<E> newQueryFilter(String input, QFParamType type) throws QueryFilterException {
 		return new QueryFilter<>(input, type, entityClass, filterClass, definitionMap, queryFilterClass, defaultMatches,
@@ -153,7 +153,7 @@ public class QFProcessor<F, E> {
 
 	/**
 	 * Get all definitions of any field
-	 * 
+	 *
 	 * @return map of definitions
 	 */
 	public Map<String, QFDefinition> getDefinitionMap() {
@@ -162,7 +162,7 @@ public class QFProcessor<F, E> {
 
 	/**
 	 * Get filter class
-	 * 
+	 *
 	 * @return filter class
 	 */
 	public Class<F> getFilterClass() {
@@ -171,7 +171,7 @@ public class QFProcessor<F, E> {
 
 	/**
 	 * Get entity class
-	 * 
+	 *
 	 * @return entity model class
 	 */
 	public Class<E> getEntityClass() {

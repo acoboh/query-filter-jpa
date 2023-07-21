@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
  * Default Exception for QueryFilter
  *
  * @author Adrián Cobo
+ * @version $Id: $Id
  */
 public class QFParseException extends QueryFilterException {
 
@@ -21,7 +22,7 @@ public class QFParseException extends QueryFilterException {
 
 	/**
 	 * Default constructor
-	 * 
+	 *
 	 * @param field field
 	 * @param input input
 	 */
@@ -34,7 +35,7 @@ public class QFParseException extends QueryFilterException {
 
 	/**
 	 * Get input
-	 * 
+	 *
 	 * @return input
 	 */
 	public String getInput() {
@@ -43,23 +44,26 @@ public class QFParseException extends QueryFilterException {
 
 	/**
 	 * Get field
-	 * 
+	 *
 	 * @return field
 	 */
 	public String getField() {
 		return field;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public HttpStatus getHttpStatus() {
 		return HttpStatus.BAD_REQUEST;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Object[] getArguments() {
 		return arguments;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getMessageCode() {
 		return "qf.exceptions.parse";

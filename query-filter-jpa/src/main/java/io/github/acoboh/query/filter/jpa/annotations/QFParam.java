@@ -12,6 +12,7 @@ import io.github.acoboh.query.filter.jpa.processor.QFParamType;
  * Query filter parameter
  *
  * @author Adrián Cobo
+ * @version $Id: $Id
  */
 @Retention(RUNTIME)
 @Target(PARAMETER)

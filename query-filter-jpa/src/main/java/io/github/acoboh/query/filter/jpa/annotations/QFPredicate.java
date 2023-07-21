@@ -14,6 +14,7 @@ import io.github.acoboh.query.filter.jpa.predicate.PredicateOperation;
  * Annotation used to create custom predicates
  *
  * @author Adrián Cobo
+ * @version $Id: $Id
  */
 @Documented
 @Retention(RUNTIME)

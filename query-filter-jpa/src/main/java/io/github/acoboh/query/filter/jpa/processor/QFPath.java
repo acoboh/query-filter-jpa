@@ -6,9 +6,9 @@ import java.lang.reflect.Field;
  * Class with info of the instrospect data for any entity model
  * <p>
  * Store info about the actual property like if it is a property or a one to many relation
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
+ * @version $Id: $Id
  */
 public class QFPath {
 
@@ -52,7 +52,7 @@ public class QFPath {
 
 	/**
 	 * Default constructor
-	 * 
+	 *
 	 * @param type  element type
 	 * @param field field
 	 * @param path  path
@@ -66,7 +66,7 @@ public class QFPath {
 
 	/**
 	 * Get type of the path
-	 * 
+	 *
 	 * @return type of path
 	 */
 	public QueryFilterElementDefType getType() {
@@ -75,7 +75,7 @@ public class QFPath {
 
 	/**
 	 * Set new type
-	 * 
+	 *
 	 * @param type type
 	 */
 	public void setType(QueryFilterElementDefType type) {
@@ -84,7 +84,7 @@ public class QFPath {
 
 	/**
 	 * Get field class
-	 * 
+	 *
 	 * @return field class
 	 */
 	public Class<?> getFieldClass() {
@@ -93,7 +93,7 @@ public class QFPath {
 
 	/**
 	 * Set class of field
-	 * 
+	 *
 	 * @param fieldClass new class of field
 	 */
 	public void setFieldClass(Class<?> fieldClass) {
@@ -102,7 +102,7 @@ public class QFPath {
 
 	/**
 	 * Get if the property is the final of the full path
-	 * 
+	 *
 	 * @return true if it is final path
 	 */
 	public boolean isFinal() {
@@ -111,7 +111,7 @@ public class QFPath {
 
 	/**
 	 * Set new value of final
-	 * 
+	 *
 	 * @param isFinal new value of final
 	 */
 	public void setFinal(boolean isFinal) {
@@ -120,7 +120,7 @@ public class QFPath {
 
 	/**
 	 * Get field
-	 * 
+	 *
 	 * @return field
 	 */
 	public Field getField() {
@@ -129,7 +129,7 @@ public class QFPath {
 
 	/**
 	 * Get string path
-	 * 
+	 *
 	 * @return string path
 	 */
 	public String getPath() {

@@ -3,9 +3,10 @@ package io.github.acoboh.query.filter.jpa.exceptions.definition;
 import io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass;
 
 /**
- * Exception when the field has not presented the annotation {@link QFDefinitionClass}
+ * Exception when the field has not presented the annotation {@link io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass}
  *
  * @author Adrián Cobo
+ * @version $Id: $Id
  */
 public class QFElementException extends QueryFilterDefinitionException {
 
@@ -14,7 +15,7 @@ public class QFElementException extends QueryFilterDefinitionException {
 
 	/**
 	 * Default constructor
-	 * 
+	 *
 	 * @param field field
 	 * @param clazz class
 	 */

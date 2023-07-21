@@ -6,6 +6,7 @@ import org.springframework.util.Assert;
  * Predicate part
  *
  * @author Adrián Cobo
+ * @version $Id: $Id
  */
 public class PredicatePart {
 
@@ -15,7 +16,7 @@ public class PredicatePart {
 
 	/**
 	 * Create a new predicate part
-	 * 
+	 *
 	 * @param part   parted
 	 * @param nested if it is nested
 	 */
@@ -27,7 +28,7 @@ public class PredicatePart {
 
 	/**
 	 * Get the predicate part
-	 * 
+	 *
 	 * @return predicate part
 	 */
 	public String getPart() {
@@ -36,7 +37,7 @@ public class PredicatePart {
 
 	/**
 	 * Get if it is nested
-	 * 
+	 *
 	 * @return if it is nested
 	 */
 	public boolean isNested() {

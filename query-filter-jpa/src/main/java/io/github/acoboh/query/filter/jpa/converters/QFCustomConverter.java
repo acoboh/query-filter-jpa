@@ -21,7 +21,7 @@ import io.github.acoboh.query.filter.jpa.processor.QueryFilter;
  * This class allows inject {@linkplain QueryFilter} objects on controllers
  *
  * @author Adrián Cobo
- *
+ * @version $Id: $Id
  */
 public class QFCustomConverter implements GenericConverter {
 
@@ -32,7 +32,7 @@ public class QFCustomConverter implements GenericConverter {
 
 	/**
 	 * Default constructor
-	 * 
+	 *
 	 * @param queryFilterProcessors all query filter processors
 	 */
 	public QFCustomConverter(List<QFProcessor<?, ?>> queryFilterProcessors) {
@@ -44,6 +44,7 @@ public class QFCustomConverter implements GenericConverter {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Set<ConvertiblePair> getConvertibleTypes() {
 		Set<ConvertiblePair> set = new HashSet<>();
@@ -55,6 +56,7 @@ public class QFCustomConverter implements GenericConverter {
 		return set;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Object convert(Object source, TypeDescriptor sourceType, TypeDescriptor targetType) {
 

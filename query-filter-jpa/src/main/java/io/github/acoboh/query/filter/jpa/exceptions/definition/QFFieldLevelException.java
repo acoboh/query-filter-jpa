@@ -4,6 +4,7 @@ package io.github.acoboh.query.filter.jpa.exceptions.definition;
  * Exception thrown when there is more levels access than object access
  *
  * @author Adrián Cobo
+ * @version $Id: $Id
  */
 public class QFFieldLevelException extends QueryFilterDefinitionException {
 
@@ -12,7 +13,7 @@ public class QFFieldLevelException extends QueryFilterDefinitionException {
 
 	/**
 	 * Default exception
-	 * 
+	 *
 	 * @param field     selected field
 	 * @param lastLevel last reachable level
 	 */

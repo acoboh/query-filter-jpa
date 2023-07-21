@@ -4,9 +4,9 @@ import org.slf4j.helpers.MessageFormatter;
 
 /**
  * Base exception class of all query filter definition exceptions
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
+ * @version $Id: $Id
  */
 public class QueryFilterDefinitionException extends Exception {
 
@@ -14,7 +14,7 @@ public class QueryFilterDefinitionException extends Exception {
 
 	/**
 	 * Default constructors
-	 * 
+	 *
 	 * @param message message
 	 * @param args    arguments
 	 */
@@ -24,7 +24,7 @@ public class QueryFilterDefinitionException extends Exception {
 
 	/**
 	 * Default constructor with cause
-	 * 
+	 *
 	 * @param message message
 	 * @param cause   cause
 	 * @param args    arguments

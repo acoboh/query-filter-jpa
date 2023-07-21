@@ -11,15 +11,15 @@ import io.github.acoboh.query.filter.jpa.processor.QFJsonElementMatch;
 
 /**
  * Interface to resolve all operations
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
+ * @version $Id: $Id
  */
 public interface QFPredicateResolutor {
 
 	/**
 	 * Generate predicate of any query filter element
-	 * 
+	 *
 	 * @param path      path of criteria builder
 	 * @param cb        criteria builder
 	 * @param match     element matched
@@ -32,7 +32,7 @@ public interface QFPredicateResolutor {
 
 	/**
 	 * Generate predicate of JSON elements
-	 * 
+	 *
 	 * @param path  path of criteria builder
 	 * @param cb    criteria builder
 	 * @param match element matched
@@ -42,7 +42,7 @@ public interface QFPredicateResolutor {
 
 	/**
 	 * Get the operation string value
-	 * 
+	 *
 	 * @return string operation
 	 */
 	String getOperation();

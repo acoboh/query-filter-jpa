@@ -2,9 +2,9 @@ package io.github.acoboh.query.filter.jpa.exceptions.definition;
 
 /**
  * Exception thrown when the date class is not supported
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
+ * @version $Id: $Id
  */
 public class QFDateClassNotSupported extends QueryFilterDefinitionException {
 
@@ -16,7 +16,7 @@ public class QFDateClassNotSupported extends QueryFilterDefinitionException {
 
 	/**
 	 * Default constructor
-	 * 
+	 *
 	 * @param clazz class not supported
 	 * @param field field which is not supported
 	 */
@@ -28,7 +28,7 @@ public class QFDateClassNotSupported extends QueryFilterDefinitionException {
 
 	/**
 	 * Class not supported
-	 * 
+	 *
 	 * @return class not supported
 	 */
 	public Class<?> getClazz() {
@@ -37,7 +37,7 @@ public class QFDateClassNotSupported extends QueryFilterDefinitionException {
 
 	/**
 	 * Get field with date annotation
-	 * 
+	 *
 	 * @return field with date annotation
 	 */
 	public String getField() {

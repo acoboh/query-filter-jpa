@@ -2,9 +2,9 @@ package io.github.acoboh.query.filter.jpa.exceptions.definition;
 
 /**
  * Class throw if multiple classes matches the same filter element
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
+ * @version $Id: $Id
  */
 public class QFElementMultipleClassesException extends QueryFilterDefinitionException {
 

@@ -27,9 +27,9 @@ import io.github.acoboh.query.filter.jpa.processor.QFJsonElementMatch;
 
 /**
  * Enumerated with all the operations
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
+ * @version $Id: $Id
  */
 public enum QFOperationEnum implements QFPredicateResolutor {
 
@@ -391,7 +391,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 
 	/**
 	 * Get parameter value on string filter
-	 * 
+	 *
 	 * @return value
 	 */
 	public String getValue() {
@@ -400,7 +400,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 
 	/**
 	 * Get if the operation can be array typed
-	 * 
+	 *
 	 * @return true if can be array typed
 	 */
 	public boolean isArrayTyped() {
@@ -409,7 +409,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 
 	/**
 	 * Get the array operation of PostgreSQL
-	 * 
+	 *
 	 * @return array function for PostgreSQL
 	 */
 	public ArrayFunction getArrayFunction() {
@@ -418,10 +418,10 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 
 	/**
 	 * Find operation from the parameter value
-	 * 
+	 *
 	 * @param value parameter value
 	 * @return operation found
-	 * @throws QFOperationNotFoundException if the operation is not found
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFOperationNotFoundException if the operation is not found
 	 */
 	public static QFOperationEnum fromValue(String value) throws QFOperationNotFoundException {
 		QFOperationEnum constant = CONSTANTS.get(value);
@@ -433,7 +433,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 
 	/**
 	 * Get allowed operations of any class
-	 * 
+	 *
 	 * @param clazz        class to check
 	 * @param isArrayTyped if the field is array typed
 	 * @return set of operations
@@ -482,7 +482,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 
 	/**
 	 * Get set of discriminator operations
-	 * 
+	 *
 	 * @return discriminator operations
 	 */
 	public static Set<QFOperationEnum> getOperationsOfDiscriminators() {
@@ -494,7 +494,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 
 	/**
 	 * Get set of JSON operations
-	 * 
+	 *
 	 * @return set of JSON operations
 	 */
 	public static Set<QFOperationEnum> getOperationsOfJson() {
@@ -552,6 +552,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 		return criteriaBuilder.like(criteriaBuilder.lower(exp), value.toLowerCase());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getOperation() {
 		return value;

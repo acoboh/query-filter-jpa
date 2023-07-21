@@ -15,9 +15,9 @@ import io.github.acoboh.query.filter.jpa.annotations.QFDate.QFDateDefault;
 
 /**
  * Class with common utilities for date formatting
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
+ * @version $Id: $Id
  */
 public class DateUtils {
 
@@ -27,7 +27,7 @@ public class DateUtils {
 
 	/**
 	 * Get the formatter for any {@linkplain QFDate} annotation
-	 * 
+	 *
 	 * @param dateAnnotation Annotation
 	 * @return new formatter
 	 */
@@ -55,7 +55,7 @@ public class DateUtils {
 
 	/**
 	 * Parse any date for a custom {@linkplain QFDate} annotation
-	 * 
+	 *
 	 * @param formatter      Date formatter
 	 * @param value          original string value
 	 * @param finalClass     final class to be parsed

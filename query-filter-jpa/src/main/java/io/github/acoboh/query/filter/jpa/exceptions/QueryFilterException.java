@@ -8,6 +8,7 @@ import io.github.acoboh.query.filter.jpa.exceptions.language.ExceptionLanguageRe
  * Just to catch a single exception on QueryFilter
  *
  * @author Adrián Cobo
+ * @version $Id: $Id
  */
 public abstract class QueryFilterException extends RuntimeException implements ExceptionLanguageResolver {
 
@@ -15,7 +16,7 @@ public abstract class QueryFilterException extends RuntimeException implements E
 
 	/**
 	 * Default constructor
-	 * 
+	 *
 	 * @param message message
 	 * @param args    arguments
 	 */
@@ -25,7 +26,7 @@ public abstract class QueryFilterException extends RuntimeException implements E
 
 	/**
 	 * Default constructor with cause
-	 * 
+	 *
 	 * @param message   message
 	 * @param throwable cause
 	 * @param args      arguments

@@ -5,16 +5,16 @@
 
 # Introduction
 
-The QueryFilterJPA Library adds the possibility of create custom filters with RHS Colon and LHS Brackets with Spring JPA easily. This library is useful for allowing the user to obtain data according to their requirements in an easy way for the programmer, since with a few small configuration classes, they will have the ability to create filters with infinite possibilities.
+The QueryFilterJPA Library adds the possibility of creating custom filters with RHS Colon and LHS Brackets with Spring JPA easily. This library is useful for allowing the user to obtain data according to their requirements in an easy way for the programmer. With just a few small configuration classes, users will have the ability to create filters with infinite possibilities.
 
 # Features
 
-* Create filter specification based on Entity Models
-* Convert RHS Colon or LHS Brackets filter into a JPA Query
-* Add manually fields and block operations on each new filter field
-* Create custom predicates on each query filter
-* Expose filter documentation on endpoints
-* Create extended OpenAPI documentation with QueryFilter specification
+* Create filter specifications based on Entity Models
+* Convert RHS Colon or LHS Brackets filter into a JPA Query.
+* Manually add fields and block operations on each new filter field.
+* Create custom predicates for each query filter.
+* Expose filter documentation on endpoints.
+* Create extended OpenAPI documentation with QueryFilter specification.
 
 # Installation
 
@@ -69,8 +69,7 @@ public class PostBlog {
 }
 ```
 
-Once you have import the library, you can easily create new filters. To create your first filter, you only need to specify it with a new class. 
-
+Once you import the library, creating new filters becomes remarkably easy. To create your first filter, you only need to specify it within a new class.
 
 ```java
 
@@ -103,18 +102,16 @@ public class PostFilterDef {
 }
 ```
 
-With the class annotation `@QFDefinitionClass` you specify the entity model on which you want to apply the filters. 
+With the class annotation @QFDefinitionClass, you specify the entity model on which you want to apply the filters. Additionally, you have other annotations to indicate each of the available fields for filtering:
 
-You also have other annotations to indicate each of the available fields for filtering:
-
-- `@QFElement`: Specify the field name on which filtering operations can be performed. The field name indicates the text to be used on the RHS or LHS of the filter. _(The name used on RHS or LHS can be override with the annotation properties)_
-- `@QFDate`: Specify that the selected field is a date. You can select the format of the text to be parsed _(The default format is **yyyy-MM-dd'T'HH:mm:ss'Z'** and the timezone is **UTC**)_
-- `@QFSortable`: Specify that the field is only sortable and can not be filtered. Useful when you only want to enable sorting by a field but do not want it to be filterable. _(If you already used the `QFElement` annotation, the field will be sortable by default. You do not need to use that annotation)_
-- `@QFBlockParsing`: Specify that this field is blocked on the stage of parsing from the *String* filter to the *QueryFilter* object. If the field is present on the *String*, an exception will be thrown. Useful when you need to ensure that some fields can not be filtered by an user but you need to filter manually on code. _(An example can be usernames, roles and other sensitive data)_
+- `@QFElement`: Specifies the field name on which filtering operations can be performed. The field name indicates the text to be used on the RHS or LHS of the filter. _(The name used on RHS or LHS can be overridden with the annotation properties.)_
+- `@QFDate`: Specifies that the selected field is a date. You can select the format of the text to be parsed. _(The default format is **yyyy-MM-dd'T'HH:mm:ss'Z'** and the timezone is **UTC**)_
+- `@QFSortable`: Specifies that the field is only sortable and cannot be filtered. This is useful when you only want to enable sorting by a field but do not want it to be filterable. _(If you already used the `QFElement` annotation, the field will be sortable by default, and you do not need to use this annotation)_
+- `@QFBlockParsing`: Specifies that this field is blocked during the stage of parsing from the *String* filter to the *QueryFilter* object. If the field is present in the *String*, an exception will be thrown. This is useful when you need to ensure that some fields cannot be filtered by a user but need to be filtered manually in the code. _(For example, usernames, roles, and other sensitive data.)_
 
 Once you have created that class, there are only two more steps.
 
-The first step is to enable the **Query Filter** bean processors. You can do that with the following annotation on the main class: 
+The first step is to enable the **Query Filter** bean processors. You can do that with the following annotation on the main class:
 
 ```java
 @EnableQueryFilter(basePackageClasses = PostFilterDef.class)
@@ -122,7 +119,7 @@ The first step is to enable the **Query Filter** bean processors. You can do tha
 
 > **_NOTE_**: The `basePackageClasses` and `basePackages` are not required by default
 
-The **Query Filter** object is an implementation of the `Specification` interface from JPA, so you need your repository to extend the `JpaSpecificationExecutor` interface.
+The **Query Filter** object is an implementation of the `Specification` interface from JPA. To utilize it, your repository needs to extend the `JpaSpecificationExecutor` interface. This integration enables the Query Filter to work seamlessly with Spring Data JPA and perform dynamic filtering based on the user's input. By combining the Query Filter's custom filtering capabilities with the power of JPA's `Specification` and `JpaSpecificationExecutor`, you can efficiently retrieve data that meets the specified criteria.
 
 ```java
 public interface PostBlogRepository extends JpaSpecificationExecutor<PostBlog>, JpaRepository<PostBlog, Long> {
@@ -149,7 +146,16 @@ public class PostRestController {
 }
 ```
 
-With the `@QFParam` you select the filter to be used. You can use the `QueryFilter<PostBlog>` object to automatically create the final query filter object. Now you can operate with the `filter` object or you can use it directly on the repository.
+With the `@QFParam` annotation, you can select the filter to be used. By utilizing the `QueryFilter<PostBlog>` object, you can automatically create the final query filter object. Once you have the `filter` object, you have the flexibility to perform operations directly with it or use it directly on the repository.
+
+The `@QFParam` annotation allows you to define a parameter in your controller method, which will be used to receive the filter provided by the client. The Query Filter library will handle the conversion of the client's filter into the `QueryFilter<PostBlog>` object, which can then be used for querying your data.
+
+Once you have the `QueryFilter<PostBlog>` object, you have multiple options for using it:
+
+- Perform Operations with `filter` object: You can manually operate on the `filter` object to further customize the filtering behavior or perform additional actions.
+- Use `filter` object with Repository: You can pass the `filter` object directly to the repository's query method that extends `JpaSpecificationExecutor`. The Query Filter will automatically apply the specified filtering criteria to the query.
+
+Both approaches provide a straightforward and efficient way to work with the Query Filter and retrieve data according to the user's requirements.
 
 # OpenAPI Documentation
 
@@ -171,9 +177,9 @@ You can find more examples of how to use the library in the [examples](/examples
 
 # How to write *String Filters*
 
-Once you have your service with the **Query Filter** enabled, you can start using **RHS Colon** and **LHS Brackets** standards to filter.
+Once you have your service with the **Query Filter** enabled, you can start using **RHS Colon** and **LHS Brackets** standards to filter data effectively.
 
-Following the **OpenAPI** documentation, you have several options to filter on each field.
+Following the OpenAPI documentation, you have several options to filter on each field. 
 
 ## Allowed operations
 

@@ -67,6 +67,8 @@ public class QueryFilter<E> implements Specification<E> {
 	private static final String REGEX_SORT = "[a-zA-Z0-9]+=[+-][a-zA-Z0-9]+";
 	private static final Pattern REGEX_PATTERN = Pattern.compile("([a-zA-Z0-9]+)=([+-])([a-zA-Z0-9]+)");
 
+	private final String initialInput;
+
 	private final List<QFElementMatch> valueMapping = new ArrayList<>();
 	private final List<QFJsonElementMatch> jsonMapping = new ArrayList<>();
 	private final List<QFDiscriminatorMatch> discriminatorMapping = new ArrayList<>();
@@ -124,6 +126,8 @@ public class QueryFilter<E> implements Specification<E> {
 		this.predicateName = predicateName;
 		this.predicate = defaultPredicate;
 		this.distinct = queryFilterClassAnnotation.distinct();
+
+		this.initialInput = input != null ? input : "";
 
 		if (input != null && !input.isEmpty()) {
 			String[] parts = input.split("&");
@@ -338,6 +342,14 @@ public class QueryFilter<E> implements Specification<E> {
 		Pair<QFDefinition, Direction> pair = Pair.of(def, dir);
 		this.sortDefinitionList.add(pair);
 
+	}
+
+	/**
+	 * Get the input used on the constructor
+	 * @return original input
+	 */
+	public String getInitialInput() {
+		return initialInput;
 	}
 
 	/**
@@ -788,6 +800,11 @@ public class QueryFilter<E> implements Specification<E> {
 
 		return toRet;
 
+	}
+
+	@Override
+	public String toString() {
+		return initialInput;
 	}
 
 }

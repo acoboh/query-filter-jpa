@@ -21,17 +21,14 @@
 		<guava.version>32.1.1-jre</guava.version>
 
 		<!-- Spring dependencies -->
-		<spring.version>5.3.20</spring.version>
-		<spring-boot.version>2.7.12</spring-boot.version>
+		<spring.version>5.3.29</spring.version>
+		<spring-boot.version>2.7.14</spring-boot.version>
 
 		<!-- Hibernate dependencies -->
 		<hibernate.version>5.6.15.Final</hibernate.version>
 
-		<!-- Lombok dependencies -->
-		<lombok.version>1.18.26</lombok.version>
-
 		<!-- Spring security dependencies -->
-		<spring-security.version>5.7.7</spring-security.version>
+		<spring-security.version>5.8.5</spring-security.version>
 
 		<!-- Javax dependencies -->
 		<javax-servlet-api.version>4.0.1</javax-servlet-api.version>
@@ -47,7 +44,7 @@
 		<jackson-databind.version>2.13.5</jackson-databind.version>
 
 		<!-- Hypersistance tests -->
-		<hypersistance.version>3.4.0</hypersistance.version>
+		<hypersistance.version>3.5.1</hypersistance.version>
 
 	</properties>
 

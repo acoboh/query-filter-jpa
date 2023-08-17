@@ -18,7 +18,7 @@
 	<properties>
 
 		<!-- Guava dependencies -->
-		<guava.version>32.1.1-jre</guava.version>
+		<guava.version>32.1.2-jre</guava.version>
 
 		<!-- Spring dependencies -->
 		<spring.version>5.3.29</spring.version>

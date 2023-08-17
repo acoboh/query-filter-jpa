@@ -15,7 +15,7 @@ import org.springframework.util.MultiValueMap;
  * SPEL Context resolver bean
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ * 
  */
 @Configuration
 @ConditionalOnMissingClass("org.springframework.security.access.expression.SecurityExpressionHandler")

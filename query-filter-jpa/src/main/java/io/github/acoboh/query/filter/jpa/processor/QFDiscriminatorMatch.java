@@ -14,7 +14,7 @@ import io.github.acoboh.query.filter.jpa.exceptions.QFDiscriminatorNotFoundExcep
  * Class with info about the discriminator matching for filtering
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ * 
  */
 public class QFDiscriminatorMatch {
 

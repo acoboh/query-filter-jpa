@@ -13,7 +13,7 @@ import io.github.acoboh.query.filter.jpa.processor.QFJsonElementMatch;
  * Interface to resolve all operations
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ * 
  */
 public interface QFPredicateResolutor {
 

@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  * Query filter annotation to mark field as sortable
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ * 
  */
 @Retention(RUNTIME)
 @Target(FIELD)

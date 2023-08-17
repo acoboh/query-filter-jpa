@@ -17,7 +17,7 @@ import io.github.acoboh.query.filter.jpa.processor.QFProcessor;
  * Class to enable custom converters for Spring Boot Controllers via {@linkplain WebMvcConfigurer} converters
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ * 
  */
 @Configuration
 @EnableWebMvc

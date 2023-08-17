@@ -25,7 +25,7 @@ import io.github.acoboh.query.filter.jpa.utils.DateUtils;
  * Class with info about the filtered field. Contains all the entity fields of the same filter field
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ * 
  */
 public class QFElementMatch {
 

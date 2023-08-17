@@ -32,7 +32,7 @@ public class QfArraySQLFunctionTest {
 		assertEquals("qfArrayLte", ArrayFunction.LESS_EQUAL_THAN.getName());
 		assertEquals("qfArrayGte", ArrayFunction.GREATER_EQUAL_THAN.getName());
 		assertEquals("qfArrayContains", ArrayFunction.CONTAINS.getName());
-		assertEquals("qfArrayIsContained", ArrayFunction.IS_CONTAINED_BY.getName());
+		assertEquals("qfArrayIsContainedBy", ArrayFunction.IS_CONTAINED_BY.getName());
 
 		assertEquals(" && ", ArrayFunction.OVERLAP.getFunction().getOperator());
 		assertEquals(" = ", ArrayFunction.EQUAL.getFunction().getOperator());

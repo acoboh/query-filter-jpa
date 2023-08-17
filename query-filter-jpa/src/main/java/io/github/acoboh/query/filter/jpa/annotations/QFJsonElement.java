@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * Special query filter element used on JSON elements
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ * 
  */
 @Documented
 @Retention(RUNTIME)

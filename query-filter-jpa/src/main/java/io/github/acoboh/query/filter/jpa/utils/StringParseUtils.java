@@ -12,7 +12,7 @@ import io.github.acoboh.query.filter.jpa.predicate.PredicatePart;
  * Utility class to parse predicates
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ * 
  */
 public class StringParseUtils {
 

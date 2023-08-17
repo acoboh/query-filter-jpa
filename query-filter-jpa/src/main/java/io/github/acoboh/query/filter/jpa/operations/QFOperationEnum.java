@@ -29,7 +29,7 @@ import io.github.acoboh.query.filter.jpa.processor.QFJsonElementMatch;
  * Enumerated with all the operations
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ * 
  */
 public enum QFOperationEnum implements QFPredicateResolutor {
 
@@ -285,7 +285,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 	/**
 	 * Not in operation
 	 */
-	NOT_IN("nin", true, false, null) {
+	NOT_IN("nin", true, false, ArrayFunction.CONTAINS) {
 		@Override
 		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
 				MultiValueMap<String, Object> mlContext) {

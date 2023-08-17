@@ -56,7 +56,7 @@ import io.github.acoboh.query.filter.jpa.spel.SpelResolverInterface;
  *
  * @author Adrián Cobo
  * @param <E> Entity model class
- * @version $Id: $Id
+ * 
  */
 public class QueryFilter<E> implements Specification<E> {
 
@@ -66,6 +66,8 @@ public class QueryFilter<E> implements Specification<E> {
 
 	private static final String REGEX_SORT = "[a-zA-Z0-9]+=[+-][a-zA-Z0-9]+";
 	private static final Pattern REGEX_PATTERN = Pattern.compile("([a-zA-Z0-9]+)=([+-])([a-zA-Z0-9]+)");
+
+	private final String initialInput;
 
 	private final List<QFElementMatch> valueMapping = new ArrayList<>();
 	private final List<QFJsonElementMatch> jsonMapping = new ArrayList<>();
@@ -124,6 +126,8 @@ public class QueryFilter<E> implements Specification<E> {
 		this.predicateName = predicateName;
 		this.predicate = defaultPredicate;
 		this.distinct = queryFilterClassAnnotation.distinct();
+
+		this.initialInput = input != null ? input : "";
 
 		if (input != null && !input.isEmpty()) {
 			String[] parts = input.split("&");
@@ -341,6 +345,14 @@ public class QueryFilter<E> implements Specification<E> {
 	}
 
 	/**
+	 * Get the input used on the constructor
+	 * @return original input
+	 */
+	public String getInitialInput() {
+		return initialInput;
+	}
+
+	/**
 	 * Manually adds a new operation on any field
 	 *
 	 * @param field     field of filter
@@ -524,8 +536,8 @@ public class QueryFilter<E> implements Specification<E> {
 	 *
 	 * @param field Field to check
 	 * @return Values of the field
-	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException      if the field is not present
-	 * @throws java.lang.UnsupportedOperationException if the field is JSON type
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException if the field is not present
+	 * @throws java.lang.UnsupportedOperationException                               if the field is JSON type
 	 */
 	public @Nullable List<String> getActualValue(String field) throws QFFieldNotFoundException {
 		QFDefinition def = definitionMap.get(field);
@@ -788,6 +800,11 @@ public class QueryFilter<E> implements Specification<E> {
 
 		return toRet;
 
+	}
+
+	@Override
+	public String toString() {
+		return initialInput;
 	}
 
 }

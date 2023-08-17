@@ -3,10 +3,12 @@ package io.github.acoboh.query.filter.jpa.exceptions;
 import org.springframework.http.HttpStatus;
 
 /**
- * <p>QFJsonParseException class.</p>
+ * <p>
+ * QFJsonParseException class.
+ * </p>
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ * 
  */
 public class QFJsonParseException extends QueryFilterException {
 

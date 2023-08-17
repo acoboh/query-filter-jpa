@@ -21,14 +21,16 @@ class QFEndpoint {
 	private final QFParamType paramType;
 
 	/**
-	 * <p>Constructor for QFEndpoint.</p>
+	 * <p>
+	 * Constructor for QFEndpoint.
+	 * </p>
 	 *
-	 * @param controller a {@link java.lang.Class} object
-	 * @param method a {@link java.lang.reflect.Method} object
-	 * @param param a {@link java.lang.reflect.Parameter} object
-	 * @param processor a {@link io.github.acoboh.query.filter.jpa.processor.QFProcessor} object
+	 * @param controller    a {@link java.lang.Class} object
+	 * @param method        a {@link java.lang.reflect.Method} object
+	 * @param param         a {@link java.lang.reflect.Parameter} object
+	 * @param processor     a {@link io.github.acoboh.query.filter.jpa.processor.QFProcessor} object
 	 * @param parameterName a {@link java.lang.String} object
-	 * @param paramType a {@link io.github.acoboh.query.filter.jpa.processor.QFParamType} object
+	 * @param paramType     a {@link io.github.acoboh.query.filter.jpa.processor.QFParamType} object
 	 */
 	public QFEndpoint(Class<?> controller, Method method, Parameter param, QFProcessor<?, ?> processor,
 			String parameterName, QFParamType paramType) {
@@ -77,7 +79,9 @@ class QFEndpoint {
 	}
 
 	/**
-	 * <p>Getter for the field <code>endpoint</code>.</p>
+	 * <p>
+	 * Getter for the field <code>endpoint</code>.
+	 * </p>
 	 *
 	 * @return a {@link java.lang.String} object
 	 */
@@ -86,7 +90,9 @@ class QFEndpoint {
 	}
 
 	/**
-	 * <p>Getter for the field <code>requestMethod</code>.</p>
+	 * <p>
+	 * Getter for the field <code>requestMethod</code>.
+	 * </p>
 	 *
 	 * @return a {@link org.springframework.web.bind.annotation.RequestMethod} object
 	 */
@@ -95,7 +101,9 @@ class QFEndpoint {
 	}
 
 	/**
-	 * <p>Getter for the field <code>parameter</code>.</p>
+	 * <p>
+	 * Getter for the field <code>parameter</code>.
+	 * </p>
 	 *
 	 * @return a {@link java.lang.reflect.Parameter} object
 	 */
@@ -104,7 +112,9 @@ class QFEndpoint {
 	}
 
 	/**
-	 * <p>Getter for the field <code>processor</code>.</p>
+	 * <p>
+	 * Getter for the field <code>processor</code>.
+	 * </p>
 	 *
 	 * @return a {@link io.github.acoboh.query.filter.jpa.processor.QFProcessor} object
 	 */
@@ -113,7 +123,9 @@ class QFEndpoint {
 	}
 
 	/**
-	 * <p>Getter for the field <code>parameterName</code>.</p>
+	 * <p>
+	 * Getter for the field <code>parameterName</code>.
+	 * </p>
 	 *
 	 * @return a {@link java.lang.String} object
 	 */
@@ -122,7 +134,9 @@ class QFEndpoint {
 	}
 
 	/**
-	 * <p>Getter for the field <code>paramType</code>.</p>
+	 * <p>
+	 * Getter for the field <code>paramType</code>.
+	 * </p>
 	 *
 	 * @return a {@link io.github.acoboh.query.filter.jpa.processor.QFParamType} object
 	 */

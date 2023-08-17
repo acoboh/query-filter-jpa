@@ -8,7 +8,7 @@ import java.lang.reflect.Field;
  * Store info about the actual property like if it is a property or a one to many relation
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ * 
  */
 public class QFPath {
 

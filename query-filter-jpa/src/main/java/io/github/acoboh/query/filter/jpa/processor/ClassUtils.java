@@ -44,8 +44,10 @@ class ClassUtils {
 	 * @return Final class
 	 * @throws io.github.acoboh.query.filter.jpa.exceptions.definition.QFTypeException         it the field can not be parsed
 	 * @throws io.github.acoboh.query.filter.jpa.exceptions.definition.QFMissingFieldException if the field is missing
-	 * @throws io.github.acoboh.query.filter.jpa.exceptions.definition.QFFieldLevelException   if the field can access more levels or has no nested fields
-	 * @throws io.github.acoboh.query.filter.jpa.exceptions.definition.QFElementException      if the field is not present on any class
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.definition.QFFieldLevelException   if the field can access more levels or
+	 *                                                                                         has no nested fields
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.definition.QFElementException      if the field is not present on any
+	 *                                                                                         class
 	 */
 	protected static Class<?> checkAbstractObject(String fullPath, String actualField, String nextFieldPath,
 			Field objectField, Class<?> fieldClass, List<QFPath> list, boolean isEndObject)
@@ -168,6 +170,8 @@ class ClassUtils {
 	}
 
 	/**
+	 * Check a generic object
+	 * 
 	 * @param fullpath       Full path of field
 	 * @param nextLevelField Next levels fields
 	 * @param declaringClass Class of the object
@@ -228,11 +232,11 @@ class ClassUtils {
 	}
 
 	/**
-	 * <p>getDeclaredFieldSuperclass.</p>
+	 * Get the field from class and super-classes
 	 *
-	 * @param fromClass a {@link java.lang.Class} object
-	 * @param fieldName a {@link java.lang.String} object
-	 * @return a {@link java.lang.reflect.Field} object
+	 * @param fromClass Initial class
+	 * @param fieldName name of the field
+	 * @return field found. Null if not found
 	 */
 	public static Field getDeclaredFieldSuperclass(Class<?> fromClass, String fieldName) {
 		Field fieldClazz = null;

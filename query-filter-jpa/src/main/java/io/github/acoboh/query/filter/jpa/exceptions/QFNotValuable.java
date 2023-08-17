@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
  * Exception thrown when the field is not a valid filter parameter
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ * 
  */
 public class QFNotValuable extends QueryFilterException {
 

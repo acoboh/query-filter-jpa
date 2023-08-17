@@ -23,7 +23,7 @@ import io.github.acoboh.query.filter.jpa.properties.QueryFilterProperties;
  * Class with {@linkplain ControllerAdvice} annotation for multi-language exception support
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ * 
  */
 @ControllerAdvice
 @ConditionalOnProperty(name = "query-filter.advisor.enabled", havingValue = "true", matchIfMissing = true)

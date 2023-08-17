@@ -12,7 +12,7 @@ import io.github.acoboh.query.filter.jpa.processor.QFParamType;
  * Query filter parameter
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ * 
  */
 @Retention(RUNTIME)
 @Target(PARAMETER)
@@ -24,13 +24,6 @@ public @interface QFParam {
 	 * @return filter class
 	 */
 	Class<?> value();
-
-	/**
-	 * Name of parameter
-	 * 
-	 * @return name of parameter
-	 */
-	String name() default "filter"; // TODO CHECK USAGE
 
 	/**
 	 * Standard of filtering

@@ -29,7 +29,7 @@ import io.github.acoboh.query.filter.jpa.spel.SpelResolverInterface;
  * @author Adrián Cobo
  * @param <F> Filter definition class
  * @param <E> Entity model class
- * @version $Id: $Id
+ * 
  */
 public class QFProcessor<F, E> {
 

@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
  * Annotation used to define the matching class of the query filter param
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ * 
  */
 @Documented
 @Retention(RUNTIME)

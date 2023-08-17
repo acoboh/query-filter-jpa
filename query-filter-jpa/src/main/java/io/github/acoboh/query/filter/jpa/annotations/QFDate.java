@@ -15,7 +15,7 @@ import java.time.temporal.ChronoField;
  * </p>
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ * 
  */
 @Documented
 @Retention(RUNTIME)

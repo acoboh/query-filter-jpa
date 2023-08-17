@@ -301,10 +301,6 @@ sort=+likes&sort=-avgNote
 order by likes asc, avgNote desc
 ```
 
-# MORE DOCUMENTATION COMING SOON
+# MORE DOCUMENTATION 
 
-- Subqueries
-- Array Types
-- SpEL expressions
-- Relations
-- And much more
+To see full documentation, check the [Wiki section](https://github.com/acoboh/query-filter-jpa/wiki)

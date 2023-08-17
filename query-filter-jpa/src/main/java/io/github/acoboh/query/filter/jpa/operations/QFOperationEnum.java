@@ -29,7 +29,7 @@ import io.github.acoboh.query.filter.jpa.processor.QFJsonElementMatch;
  * Enumerated with all the operations
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ 
  */
 public enum QFOperationEnum implements QFPredicateResolutor {
 

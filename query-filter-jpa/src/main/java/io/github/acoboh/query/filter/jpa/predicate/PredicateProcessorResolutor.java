@@ -17,7 +17,7 @@ import io.github.acoboh.query.filter.jpa.processor.QFDefinition;
  * Predicate recursive processor resolver
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ 
  */
 public class PredicateProcessorResolutor {
 

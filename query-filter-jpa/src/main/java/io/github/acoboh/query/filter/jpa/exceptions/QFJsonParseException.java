@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
  * </p>
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ 
  */
 public class QFJsonParseException extends QueryFilterException {
 

@@ -56,7 +56,7 @@ import io.github.acoboh.query.filter.jpa.spel.SpelResolverInterface;
  *
  * @author Adrián Cobo
  * @param <E> Entity model class
- * @version $Id: $Id
+ 
  */
 public class QueryFilter<E> implements Specification<E> {
 

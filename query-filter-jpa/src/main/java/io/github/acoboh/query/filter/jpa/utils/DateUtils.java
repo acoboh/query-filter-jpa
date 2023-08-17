@@ -17,7 +17,7 @@ import io.github.acoboh.query.filter.jpa.annotations.QFDate.QFDateDefault;
  * Class with common utilities for date formatting
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ 
  */
 public class DateUtils {
 

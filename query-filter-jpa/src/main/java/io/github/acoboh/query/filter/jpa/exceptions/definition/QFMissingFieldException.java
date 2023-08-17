@@ -4,7 +4,7 @@ package io.github.acoboh.query.filter.jpa.exceptions.definition;
  * Exception throw when the field is missing on any class
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ 
  */
 public class QFMissingFieldException extends QueryFilterDefinitionException {
 

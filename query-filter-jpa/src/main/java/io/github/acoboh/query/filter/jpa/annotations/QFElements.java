@@ -14,7 +14,7 @@ import io.github.acoboh.query.filter.jpa.predicate.PredicateOperation;
  * Annotation used for group multiple query filter elements in the same field
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ 
  */
 @Documented
 @Retention(RUNTIME)

@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
  * Default Exception for QueryFilter
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ 
  */
 public class QFParseException extends QueryFilterException {
 

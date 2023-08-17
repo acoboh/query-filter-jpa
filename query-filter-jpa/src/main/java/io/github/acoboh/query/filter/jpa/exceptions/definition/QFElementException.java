@@ -5,7 +5,7 @@ package io.github.acoboh.query.filter.jpa.exceptions.definition;
  * {@link io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass}
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ 
  */
 public class QFElementException extends QueryFilterDefinitionException {
 

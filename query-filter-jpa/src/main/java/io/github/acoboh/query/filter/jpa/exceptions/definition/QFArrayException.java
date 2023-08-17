@@ -4,7 +4,7 @@ package io.github.acoboh.query.filter.jpa.exceptions.definition;
  * Exception thrown when the array level is not sub-path of the main selected path
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ 
  */
 public class QFArrayException extends QueryFilterDefinitionException {
 

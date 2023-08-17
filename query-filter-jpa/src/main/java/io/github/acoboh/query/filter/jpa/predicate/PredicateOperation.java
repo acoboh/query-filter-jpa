@@ -11,7 +11,7 @@ import javax.persistence.criteria.Predicate;
  * Predicate operations for custom predicates enumeration
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ 
  */
 public enum PredicateOperation {
 
@@ -60,9 +60,9 @@ public enum PredicateOperation {
 	/**
 	 * Resolve the predicate with criteria builder
 	 * 
-	 * @param cb criteria builder
+	 * @param cb Criteria builder
 	 *
-	 * @return {@link java.lang.String} object
+	 * @return the predicate
 	 */
 	public abstract Predicate getPredicate(CriteriaBuilder cb);
 

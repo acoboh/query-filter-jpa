@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
  * Interface definition methods for language resolving exceptions
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ 
  */
 public interface ExceptionLanguageResolver {
 

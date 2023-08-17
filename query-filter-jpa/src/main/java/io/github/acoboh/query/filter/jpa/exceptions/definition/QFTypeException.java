@@ -4,7 +4,7 @@ package io.github.acoboh.query.filter.jpa.exceptions.definition;
  * Exception when type parsing failed
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ 
  */
 public class QFTypeException extends QueryFilterDefinitionException {
 

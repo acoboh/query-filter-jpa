@@ -8,7 +8,7 @@ import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
  * Exception when operation is not allowed on SQL database
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ 
  */
 public class QFUnsopportedSQLException extends QueryFilterException {
 

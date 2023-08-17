@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
  * Enumeration for all parsing standards
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ 
  */
 public enum QFParamType {
 

@@ -6,7 +6,7 @@ import java.time.format.DateTimeParseException;
  * Exception throw when any date parsing error occurs
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ 
  */
 public class QFDateParseError extends QueryFilterDefinitionException {
 

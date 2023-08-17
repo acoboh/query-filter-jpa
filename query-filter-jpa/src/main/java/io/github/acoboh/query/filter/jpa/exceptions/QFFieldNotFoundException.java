@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
  * Exception if the field is not found on the filter
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ 
  */
 public class QFFieldNotFoundException extends QueryFilterException {
 

@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
  * Exception when the operation is not found
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ 
  */
 public class QFOperationNotFoundException extends QueryFilterException {
 

@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
  * Exception thrown when the field is marked as blocked and the user is trying to filter from string filters
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ 
  */
 public class QFBlockException extends QueryFilterException {
 

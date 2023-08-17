@@ -8,7 +8,7 @@ import org.springframework.validation.annotation.Validated;
  * Advisor configuration properties
  *
  * @author Adrián Cobo
- * @version $Id: $Id
+ 
  */
 @Validated
 public class AdvisorProperties {

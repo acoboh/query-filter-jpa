@@ -42,7 +42,7 @@ public class ConverterTests {
 	private static class AnnotationClass {
 
 		@SuppressWarnings("unused")
-		public static void paramQueryFilterBlogDef(@QFParam(FilterBlogDef.class) String filter) {
+		public static void paramQueryFilterBlogDef(@QFParam(FilterBlogDef.class) QueryFilter<PostBlog> filter) {
 			// For custom annotations
 		}
 
@@ -52,12 +52,12 @@ public class ConverterTests {
 	@DisplayName("1. Test conversion filter to query filter FilterBlogDef")
 	void testConversionFilterToQueryFilter() throws NoSuchMethodException, SecurityException {
 
-		ResolvableType type = ResolvableType.forClassWithGenerics(QueryFilter.class, PostBlog.class);
-
-		Method method = AnnotationClass.class.getDeclaredMethod("paramQueryFilterBlogDef", String.class);
+		Method method = AnnotationClass.class.getDeclaredMethod("paramQueryFilterBlogDef", QueryFilter.class);
 		Annotation[] annotations = method.getParameters()[0].getAnnotations();
 
 		TypeDescriptor sourceDescriptor = new TypeDescriptor(ResolvableType.forClass(String.class), String.class, null);
+
+		ResolvableType type = ResolvableType.forClassWithGenerics(QueryFilter.class, PostBlog.class);
 
 		TypeDescriptor targetDescriptor = new TypeDescriptor(type, QueryFilter.class, annotations);
 

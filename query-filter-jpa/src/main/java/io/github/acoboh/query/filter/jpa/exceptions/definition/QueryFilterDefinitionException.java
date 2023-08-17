@@ -6,7 +6,7 @@ import org.slf4j.helpers.MessageFormatter;
  * Base exception class of all query filter definition exceptions
  *
  * @author Adrián Cobo
- 
+ * 
  */
 public class QueryFilterDefinitionException extends Exception {
 

@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
  * Exception thrown when multiple sorting options are present on the same field
  *
  * @author Adrián Cobo
- 
+ * 
  */
 public class QFMultipleSortException extends QueryFilterException {
 

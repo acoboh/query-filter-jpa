@@ -29,7 +29,7 @@ import io.swagger.v3.oas.models.parameters.Parameter;
  * Class used to customize the OpenAPI definition with filter elements
  *
  * @author Adrián Cobo
- 
+ * 
  */
 public class OpenApiCustomiserImpl implements OpenApiCustomiser {
 

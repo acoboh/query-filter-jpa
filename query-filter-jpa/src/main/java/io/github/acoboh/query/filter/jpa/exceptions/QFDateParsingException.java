@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
  * Exception throw when any date formating error occurs
  *
  * @author Adrián Cobo
- 
+ * 
  */
 public class QFDateParsingException extends QueryFilterException {
 

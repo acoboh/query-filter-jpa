@@ -25,7 +25,7 @@ import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
  * Class with JSON element matching definition
  *
  * @author Adrián Cobo
- 
+ * 
  */
 public class QFJsonElementMatch {
 

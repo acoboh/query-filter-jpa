@@ -31,12 +31,10 @@ class PredicateLevel {
 	private Set<String> fieldsSet;
 
 	/**
-	 * <p>
-	 * Constructor for PredicateLevel.
-	 * </p>
+	 * Predicate constructor
 	 *
-	 * @param expression a {@link java.lang.String} object
-	 * @param fullMap    a {@link java.util.Map} object
+	 * @param expression expression of predicate
+	 * @param fullMap    map definition of filter to be used
 	 */
 	public PredicateLevel(String expression, Map<String, QFDefinition> fullMap) {
 
@@ -112,14 +110,12 @@ class PredicateLevel {
 	}
 
 	/**
-	 * <p>
-	 * getFilteredFields.
-	 * </p>
+	 * Get the filtered fields
 	 *
-	 * @return a {@link java.util.Set} object
+	 * @return List of filtered field
 	 */
 	public Set<String> getFilteredFields() {
-		if (fieldsSet == null) {
+		if (fieldsSet == null) { // Cache fields
 
 			fieldsSet = new LinkedHashSet<>();
 
@@ -135,13 +131,11 @@ class PredicateLevel {
 	}
 
 	/**
-	 * <p>
-	 * resolveLevel.
-	 * </p>
+	 * Resolve the level of the predicate
 	 *
-	 * @param cb         a {@link javax.persistence.criteria.CriteriaBuilder} object
-	 * @param predicates a {@link java.util.Map} object
-	 * @return a {@link javax.persistence.criteria.Predicate} object
+	 * @param cb         Criteria builder
+	 * @param predicates Predicates to be used on nested levels for resolution
+	 * @return Predicate used
 	 */
 	public Predicate resolveLevel(CriteriaBuilder cb, Map<String, Predicate> predicates) {
 

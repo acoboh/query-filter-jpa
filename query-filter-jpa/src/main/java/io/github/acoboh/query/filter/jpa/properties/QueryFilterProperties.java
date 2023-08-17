@@ -8,7 +8,7 @@ import org.springframework.validation.annotation.Validated;
  * Query filter configuration properties
  *
  * @author Adrián Cobo
- 
+ * 
  */
 @ConfigurationProperties(value = "query-filter")
 @Configuration

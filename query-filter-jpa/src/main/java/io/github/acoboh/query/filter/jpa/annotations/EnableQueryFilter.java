@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  * Class to configure packages of Filter Class
  *
  * @author Adrián Cobo
- 
+ * 
  */
 @Retention(RUNTIME)
 @Target(TYPE)

@@ -22,7 +22,7 @@ import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
  * You can choose the element type directly instead of check the class type using <b>abstractElement</b> value in annotation
  *
  * @author Adrián Cobo
- 
+ * 
  */
 
 @Documented

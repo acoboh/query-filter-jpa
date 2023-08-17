@@ -8,7 +8,7 @@ import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
  * Exception thrown when the operation is not allowed on a field
  *
  * @author Adrián Cobo
- 
+ * 
  */
 public class QFFieldOperationException extends QueryFilterException {
 

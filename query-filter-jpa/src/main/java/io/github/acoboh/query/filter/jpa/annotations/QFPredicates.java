@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
  * Annotation used to create multiple custom predicates
  *
  * @author Adrián Cobo
- 
+ * 
  */
 @Documented
 @Retention(RUNTIME)

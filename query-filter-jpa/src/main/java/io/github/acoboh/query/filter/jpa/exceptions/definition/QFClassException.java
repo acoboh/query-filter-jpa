@@ -4,7 +4,7 @@ package io.github.acoboh.query.filter.jpa.exceptions.definition;
  * Exception thrown when no {@link io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass} annotation is present
  *
  * @author Architecture Team
- 
+ * 
  */
 public class QFClassException extends QueryFilterDefinitionException {
 

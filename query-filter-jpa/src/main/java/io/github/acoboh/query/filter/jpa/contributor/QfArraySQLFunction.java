@@ -22,7 +22,7 @@ class QfArraySQLFunction implements SQLFunction {
 	 * Constructor for QfArraySQLFunction.
 	 * </p>
 	 *
-	 * @param operator a {@link java.lang.String} object
+	 * @param operator used on SQL queries
 	 */
 	public QfArraySQLFunction(String operator) {
 		this.operator = operator;
@@ -31,11 +31,9 @@ class QfArraySQLFunction implements SQLFunction {
 	private String operator;
 
 	/**
-	 * <p>
-	 * Getter for the field <code>operator</code>.
-	 * </p>
-	 *
-	 * @return a {@link java.lang.String} object
+	 * Get the operator used on SQL queries
+	 * 
+	 * @return operator
 	 */
 	public String getOperator() {
 		return operator;

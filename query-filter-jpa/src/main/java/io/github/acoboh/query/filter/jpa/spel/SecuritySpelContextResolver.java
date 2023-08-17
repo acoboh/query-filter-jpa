@@ -26,7 +26,7 @@ import org.springframework.util.MultiValueMap;
  * SPEL Context resolver bean
  *
  * @author Adrián Cobo
- 
+ * 
  */
 @Configuration
 @ConditionalOnClass(SecurityExpressionHandler.class)

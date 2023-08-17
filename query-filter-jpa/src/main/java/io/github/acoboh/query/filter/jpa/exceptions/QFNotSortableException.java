@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
  * Exception thrown when the field is not sortable
  *
  * @author Adrián Cobo
- 
+ * 
  */
 public class QFNotSortableException extends QueryFilterException {
 

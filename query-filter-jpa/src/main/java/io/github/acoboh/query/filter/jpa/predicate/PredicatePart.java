@@ -6,7 +6,7 @@ import org.springframework.util.Assert;
  * Predicate part
  *
  * @author Adrián Cobo
- 
+ * 
  */
 public class PredicatePart {
 

@@ -41,7 +41,7 @@ import io.github.acoboh.query.filter.jpa.processor.QFProcessor;
  * Query filter bean factory post processor for QueryFilter custom beans
  *
  * @author Adrián Cobo
- 
+ * 
  */
 @Configuration
 public class QFBeanFactoryPostProcessor implements ApplicationContextAware, BeanFactoryPostProcessor, Ordered {

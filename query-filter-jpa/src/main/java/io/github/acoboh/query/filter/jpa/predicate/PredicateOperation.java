@@ -11,7 +11,7 @@ import javax.persistence.criteria.Predicate;
  * Predicate operations for custom predicates enumeration
  *
  * @author Adrián Cobo
- 
+ * 
  */
 public enum PredicateOperation {
 

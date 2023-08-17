@@ -40,7 +40,7 @@ import io.github.acoboh.query.filter.jpa.utils.DateUtils;
  * Class with all the information of any field to be filtered
  *
  * @author Adrián Cobo
- 
+ * 
  */
 public class QFDefinition {
 

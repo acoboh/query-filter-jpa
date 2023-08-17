@@ -6,7 +6,7 @@ import org.springframework.util.MultiValueMap;
  * Interface for Spel resolving
  *
  * @author Adrián Cobo
- 
+ * 
  */
 public interface SpelResolverInterface {
 

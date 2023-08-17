@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
  * Exception thrown when the enumeration class can not be parsed
  *
  * @author Adrián Cobo
- 
+ * 
  */
 public class QFEnumException extends QueryFilterException {
 

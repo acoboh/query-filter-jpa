@@ -9,7 +9,9 @@ class ProcessorInfo {
 	private final Class<?> filterClass;
 
 	/**
-	 * <p>Constructor for ProcessorInfo.</p>
+	 * <p>
+	 * Constructor for ProcessorInfo.
+	 * </p>
 	 *
 	 * @param entityClass a {@link java.lang.Class} object
 	 * @param filterClass a {@link java.lang.Class} object

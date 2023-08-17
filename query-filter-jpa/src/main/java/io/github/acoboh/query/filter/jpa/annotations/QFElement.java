@@ -16,7 +16,8 @@ import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
  * <p>
  * Name is the field selected on the query filter input string
  * <p>
- * Path is the access level to the object of the {@link io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass} selected class
+ * Path is the access level to the object of the {@link io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass} selected
+ * class
  * <p>
  * You can choose the element type directly instead of check the class type using <b>abstractElement</b> value in annotation
  *

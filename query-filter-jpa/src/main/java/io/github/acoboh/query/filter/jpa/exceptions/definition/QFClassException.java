@@ -1,7 +1,5 @@
 package io.github.acoboh.query.filter.jpa.exceptions.definition;
 
-import io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass;
-
 /**
  * Exception thrown when no {@link io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass} annotation is present
  *

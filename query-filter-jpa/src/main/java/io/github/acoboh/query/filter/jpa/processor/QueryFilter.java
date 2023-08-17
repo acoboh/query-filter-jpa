@@ -524,8 +524,8 @@ public class QueryFilter<E> implements Specification<E> {
 	 *
 	 * @param field Field to check
 	 * @return Values of the field
-	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException      if the field is not present
-	 * @throws java.lang.UnsupportedOperationException if the field is JSON type
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException if the field is not present
+	 * @throws java.lang.UnsupportedOperationException                               if the field is JSON type
 	 */
 	public @Nullable List<String> getActualValue(String field) throws QFFieldNotFoundException {
 		QFDefinition def = definitionMap.get(field);

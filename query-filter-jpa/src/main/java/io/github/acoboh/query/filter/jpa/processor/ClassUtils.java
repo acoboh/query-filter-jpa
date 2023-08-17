@@ -44,8 +44,10 @@ class ClassUtils {
 	 * @return Final class
 	 * @throws io.github.acoboh.query.filter.jpa.exceptions.definition.QFTypeException         it the field can not be parsed
 	 * @throws io.github.acoboh.query.filter.jpa.exceptions.definition.QFMissingFieldException if the field is missing
-	 * @throws io.github.acoboh.query.filter.jpa.exceptions.definition.QFFieldLevelException   if the field can access more levels or has no nested fields
-	 * @throws io.github.acoboh.query.filter.jpa.exceptions.definition.QFElementException      if the field is not present on any class
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.definition.QFFieldLevelException   if the field can access more levels or
+	 *                                                                                         has no nested fields
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.definition.QFElementException      if the field is not present on any
+	 *                                                                                         class
 	 */
 	protected static Class<?> checkAbstractObject(String fullPath, String actualField, String nextFieldPath,
 			Field objectField, Class<?> fieldClass, List<QFPath> list, boolean isEndObject)
@@ -228,7 +230,9 @@ class ClassUtils {
 	}
 
 	/**
-	 * <p>getDeclaredFieldSuperclass.</p>
+	 * <p>
+	 * getDeclaredFieldSuperclass.
+	 * </p>
 	 *
 	 * @param fromClass a {@link java.lang.Class} object
 	 * @param fieldName a {@link java.lang.String} object

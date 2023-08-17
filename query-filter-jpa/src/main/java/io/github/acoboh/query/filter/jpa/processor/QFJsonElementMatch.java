@@ -57,7 +57,7 @@ public class QFJsonElementMatch {
 	 * @param value      value
 	 * @param operation  operation
 	 * @param definition definition
-	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFJsonParseException if any json parsing exception
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFJsonParseException if any JSON parsing exception
 	 */
 	public QFJsonElementMatch(String value, QFOperationEnum operation, QFDefinition definition)
 			throws QFJsonParseException {

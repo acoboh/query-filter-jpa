@@ -29,7 +29,7 @@ public class QueryFilterProperties {
 	/**
 	 * Set advisor properties
 	 *
-	 * @param advisor a {@link io.github.acoboh.query.filter.jpa.properties.AdvisorProperties} object
+	 * @param advisor advisor properties
 	 */
 	public void setAdvisor(AdvisorProperties advisor) {
 		this.advisor = advisor;

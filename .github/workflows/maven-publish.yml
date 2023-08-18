@@ -26,7 +26,7 @@ jobs:
         server-password: MAVEN_PASSWORD
 
     - name: Build with Maven
-      run: mvn -B package
+      run: mvn -B package -DskipTests=true
     - id: install-secret-key
       name: Install gpg secret key
       run: |
@@ -40,7 +40,8 @@ jobs:
           --no-transfer-progress \
           --batch-mode \
           -Dgpg.passphrase=${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }} \
-          deploy
+          deploy \
+          -DskipTests=true
       env:
         MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
         MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}

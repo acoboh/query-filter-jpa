@@ -189,10 +189,10 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>${maven-javadoc-plugin.version}</version>
 				<configuration>
-                    <defaultAuthor>Adrián Cobo</defaultAuthor>
-                    <version>false</version>
-                    <author>true</author>
-                </configuration>
+					<defaultAuthor>Adrián Cobo</defaultAuthor>
+					<version>false</version>
+					<author>true</author>
+				</configuration>
 				<executions>
 					<execution>
 						<id>attach-javadocs</id>
@@ -216,6 +216,12 @@
 						</goals>
 					</execution>
 				</executions>
+				<configuration>
+					<gpgArguments>
+						<arg>--pinentry-mode</arg>
+						<arg>loopback</arg>
+					</gpgArguments>
+				</configuration>
 			</plugin>
 
 		</plugins>

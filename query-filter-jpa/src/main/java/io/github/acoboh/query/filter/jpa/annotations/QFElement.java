@@ -116,7 +116,7 @@ public @interface QFElement {
 	 * Example of use the value of a query element named 'otherElement' to check if filter value is greater than 10
 	 * <p>
 	 * <code>
-	 * #otherElement > 10
+	 * #otherElement &gt; 10
 	 * </code>
 	 * <p>
 	 * You need to use the option <b>order</b> to use this functionality.

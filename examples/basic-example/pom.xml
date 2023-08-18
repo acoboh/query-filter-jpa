@@ -2,20 +2,30 @@
 	xmlns="http://maven.apache.org/POM/4.0.0"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>io.github.acoboh</groupId>
-		<artifactId>query-filter-jpa-parent</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
-	</parent>
 
+	<groupId>io.github.acoboh</groupId>
 	<artifactId>query-filter-basic-example</artifactId>
+	<version>0.0.1</version>
+
 	<packaging>jar</packaging>
 
 	<name>query-filter-basic-example</name>
 	<description>Basic Example of query filter</description>
 
 	<properties>
-		<spring-boot.version>2.7.12</spring-boot.version>
+
+		<!-- Spring Boot-->
+		<spring-boot.version>2.7.14</spring-boot.version>
+
+		<!-- Springdoc for OpenAPI-->
+		<springdoc.version>1.7.0</springdoc.version>
+
+		<!-- Hypersistance utils -->
+		<hypersistance-utils.version>3.5.1</hypersistance-utils.version>
+
+		<!-- Query Filter Versions -->
+		<query-filter.version>0.0.1</query-filter.version>
+
 	</properties>
 
 	<dependencyManagement>
@@ -49,25 +59,25 @@
 		<dependency>
 			<groupId>io.github.acoboh</groupId>
 			<artifactId>query-filter-jpa</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${query-filter.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>io.github.acoboh</groupId>
 			<artifactId>query-filter-jpa-openapi</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${query-filter.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-ui</artifactId>
-			<version>1.7.0</version>
+			<version>${springdoc.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>io.hypersistence</groupId>
 			<artifactId>hypersistence-utils-hibernate-55</artifactId>
-			<version>3.4.4</version>
+			<version>${hypersistance-utils.version}</version>
 		</dependency>
 
 		<dependency>

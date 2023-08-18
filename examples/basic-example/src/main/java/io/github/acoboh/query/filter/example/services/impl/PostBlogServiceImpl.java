@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import io.github.acoboh.query.filter.example.exceptions.ResourceNotFoundException;
 import io.github.acoboh.query.filter.example.model.PostBlog;
 import io.github.acoboh.query.filter.example.repositories.PostBlogRepository;
 import io.github.acoboh.query.filter.example.services.PostBlogService;
@@ -29,13 +30,13 @@ class PostBlogServiceImpl implements PostBlogService {
 
 	@Override
 	public PostBlog getPost(Long uuid) {
-		return repository.findById(uuid).orElseThrow(() -> new IllegalArgumentException("Post not found"));
+		return repository.findById(uuid).orElseThrow(() -> new ResourceNotFoundException("Post not found"));
 	}
 
 	@Override
 	public void updatePost(Long uuid, PostBlog post) {
 		Optional<PostBlog> postOptional = repository.findById(uuid);
-		PostBlog existingPost = postOptional.orElseThrow(() -> new IllegalArgumentException("Post not found"));
+		PostBlog existingPost = postOptional.orElseThrow(() -> new ResourceNotFoundException("Post not found"));
 
 		existingPost.setAuthor(post.getAuthor());
 		existingPost.setText(post.getText());

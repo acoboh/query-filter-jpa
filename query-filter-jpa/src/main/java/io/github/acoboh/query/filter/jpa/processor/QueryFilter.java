@@ -346,6 +346,7 @@ public class QueryFilter<E> implements Specification<E> {
 
 	/**
 	 * Get the input used on the constructor
+	 * 
 	 * @return original input
 	 */
 	public String getInitialInput() {
@@ -802,6 +803,7 @@ public class QueryFilter<E> implements Specification<E> {
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return initialInput;

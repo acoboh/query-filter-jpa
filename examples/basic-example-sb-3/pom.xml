@@ -1,0 +1,114 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>io.github.acoboh</groupId>
+	<artifactId>query-filter-basic-example-sb-3</artifactId>
+	<version>0.0.1</version>
+
+	<packaging>jar</packaging>
+
+	<name>query-filter-basic-example-sb-3</name>
+	<description>Basic Example of query filter for Spring Boot 3.X</description>
+
+	<properties>
+		<jdk.version>17</jdk.version>
+		<jdk-test.version>17</jdk-test.version>
+		<maven.compiler.source>${jdk.version}</maven.compiler.source>
+		<maven.compiler.target>${jdk.version}</maven.compiler.target>
+
+		<maven.compiler.testSource>${jdk-test.version}</maven.compiler.testSource>
+		<maven.compiler.testTarget>${jdk-test.version}</maven.compiler.testTarget>
+
+		<!-- Spring Boot-->
+		<spring-boot.version>3.1.2</spring-boot.version>
+
+		<!-- Springdoc for OpenAPI-->
+		<springdoc.version>2.2.0</springdoc.version>
+
+		<!-- Hypersistance utils -->
+		<hypersistance-utils.version>3.5.1</hypersistance-utils.version>
+
+		<!-- Query Filter Versions -->
+		<query-filter.version>0.0.3-SNAPSHOT</query-filter.version>
+
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>${spring-boot.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>io.github.acoboh</groupId>
+			<artifactId>query-filter-jpa-3</artifactId>
+			<version>${query-filter.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.github.acoboh</groupId>
+			<artifactId>query-filter-jpa-openapi-3</artifactId>
+			<version>${query-filter.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>${springdoc.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.hypersistence</groupId>
+			<artifactId>hypersistence-utils-hibernate-60</artifactId>
+			<version>${hypersistance-utils.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>${spring-boot.version}</version>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

@@ -12,8 +12,8 @@
 	<artifactId>query-filter-jpa-openapi</artifactId>
 	<packaging>jar</packaging>
 
-	<name>Spring Boot Data JPA Sample</name>
-	<description>Spring Boot Data JPA Sample</description>
+	<name>query-filter-jpa-openapi</name>
+	<description>Query Filter JPA OpenAPI Documentation for Spring Boot 2.7.X</description>
 
 
 	<properties>

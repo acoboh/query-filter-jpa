@@ -38,7 +38,7 @@
 		<!-- Spring security dependencies -->
 		<spring-security.version>6.1.2</spring-security.version>
 
-		<!-- Javax dependencies -->
+		<!-- Jakarta dependencies -->
 		<jakarta-servlet-api.version>6.0.0</jakarta-servlet-api.version>
 		<jakarta-validation.version>3.0.2</jakarta-validation.version>
 

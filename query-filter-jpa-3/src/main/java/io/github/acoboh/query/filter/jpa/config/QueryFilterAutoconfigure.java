@@ -1,6 +1,6 @@
 package io.github.acoboh.query.filter.jpa.config;
 
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 import io.github.acoboh.query.filter.jpa.advisor.QFExceptionAdvisor;
@@ -14,7 +14,7 @@ import io.github.acoboh.query.filter.jpa.spel.SpelContextResolver;
  * @author Adrián Cobo
  * 
  */
-@Configuration
+@AutoConfiguration
 @Import({ QFExceptionAdvisor.class, SecuritySpelContextResolver.class, SpelContextResolver.class,
 		QFBeanFactoryPostProcessor.class, QFWebMvcConfigurer.class, QueryFilterProperties.class })
 public class QueryFilterAutoconfigure {

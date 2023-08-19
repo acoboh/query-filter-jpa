@@ -91,6 +91,7 @@
 
 		<!-- Spring Boot 3.X -->
 		<module>query-filter-jpa-3</module>
+		<module>query-filter-jpa-openapi-3</module>
 	</modules>
 
 	<dependencyManagement>
@@ -159,6 +160,15 @@
 	</distributionManagement>
 
 	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>3.6.0</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 
 		<plugins>
 

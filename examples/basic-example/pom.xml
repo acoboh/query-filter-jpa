@@ -13,6 +13,13 @@
 	<description>Basic Example of query filter</description>
 
 	<properties>
+		<jdk.version>8</jdk.version>
+		<jdk-test.version>8</jdk-test.version>
+		<maven.compiler.source>${jdk.version}</maven.compiler.source>
+		<maven.compiler.target>${jdk.version}</maven.compiler.target>
+
+		<maven.compiler.testSource>${jdk-test.version}</maven.compiler.testSource>
+		<maven.compiler.testTarget>${jdk-test.version}</maven.compiler.testTarget>
 
 		<!-- Spring Boot-->
 		<spring-boot.version>2.7.14</spring-boot.version>
@@ -24,7 +31,7 @@
 		<hypersistance-utils.version>3.5.1</hypersistance-utils.version>
 
 		<!-- Query Filter Versions -->
-		<query-filter.version>0.0.1</query-filter.version>
+		<query-filter.version>0.0.2</query-filter.version>
 
 	</properties>
 

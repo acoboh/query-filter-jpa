@@ -1,0 +1,69 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>io.github.acoboh</groupId>
+		<artifactId>query-filter-jpa-parent</artifactId>
+		<version>0.0.3-SNAPSHOT</version>
+		<relativePath>../</relativePath>
+	</parent>
+
+	<artifactId>query-filter-jpa-openapi-3</artifactId>
+	<packaging>jar</packaging>
+
+	<name>query-filter-jpa-openapi-3</name>
+	<description>Query Filter JPA OpenAPI Documentation for Spring Boot 3.X</description>
+
+
+	<properties>
+		<jdk.version>8</jdk.version>
+		<jdk-test.version>8</jdk-test.version>
+		<maven.compiler.source>${jdk.version}</maven.compiler.source>
+		<maven.compiler.target>${jdk.version}</maven.compiler.target>
+
+		<maven.compiler.testSource>${jdk-test.version}</maven.compiler.testSource>
+		<maven.compiler.testTarget>${jdk-test.version}</maven.compiler.testTarget>
+		
+		<!-- Spring dependencies -->
+		<spring.version>6.0.11</spring.version>
+
+		<!--OpenAPI dependencies -->
+		<openapi.version>2.2.0</openapi.version>
+
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>io.github.acoboh</groupId>
+			<artifactId>query-filter-jpa-3</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<version>${spring.version}</version>
+			<scope>provided</scope>
+			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
+			<scope>provided</scope>
+			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>${openapi.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+	</dependencies>
+
+
+</project>

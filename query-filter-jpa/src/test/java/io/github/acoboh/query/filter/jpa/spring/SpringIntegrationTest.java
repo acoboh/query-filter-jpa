@@ -28,7 +28,7 @@ import com.zaxxer.hikari.HikariDataSource;
 
 import io.github.acoboh.query.filter.jpa.annotations.EnableQueryFilter;
 import io.github.acoboh.query.filter.jpa.config.QueryFilterAutoconfigure;
-import io.github.acoboh.query.filter.jpa.contributor.PostgresqlArrayBuilderContributor;
+import io.github.acoboh.query.filter.jpa.contributor.QfMetadataBuilderContributor;
 import io.github.acoboh.query.filter.jpa.domain.FilterBlogDef;
 import io.github.acoboh.query.filter.jpa.logging.InlineQueryLogEntryCreator;
 import io.github.acoboh.query.filter.jpa.repositories.PostBlogRepository;
@@ -150,7 +150,7 @@ public class SpringIntegrationTest {
 		 */
 		protected void additionalProperties(Properties properties) {
 			properties.setProperty("hibernate.metadata_builder_contributor",
-					PostgresqlArrayBuilderContributor.class.getName());
+					QfMetadataBuilderContributor.class.getName());
 		}
 
 		/**

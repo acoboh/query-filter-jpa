@@ -9,7 +9,7 @@ import org.hibernate.boot.spi.MetadataBuilderContributor;
  * @author Adrián Cobo
  * 
  */
-public class PostgresqlArrayBuilderContributor implements MetadataBuilderContributor {
+public class QfMetadataBuilderContributor implements MetadataBuilderContributor {
 
 	/** {@inheritDoc} */
 	@Override

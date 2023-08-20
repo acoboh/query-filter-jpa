@@ -10,3 +10,5 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: update
+    properties:
+      hibernate.metadata_builder_contributor: io.github.acoboh.query.filter.jpa.contributor.QfMetadataBuilderContributor

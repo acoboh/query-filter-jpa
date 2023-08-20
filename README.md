@@ -2,14 +2,14 @@
 [![License](https://img.shields.io/github/license/acoboh/query-filter-jpa.svg)](https://raw.githubusercontent.com/acoboh/query-filter-jpa/main/LICENSE)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.acoboh/query-filter-jpa.svg)](https://central.sonatype.com/artifact/io.github.acoboh/query-filter-jpa)
 [![javadoc](https://javadoc.io/badge2/io.github.acoboh/query-filter-jpa/javadoc.svg)](https://javadoc.io/doc/io.github.acoboh/query-filter-jpa)
-[![CodeQL](https://github.com/acoboh/query-filter-jpa/actions/workflows/github-code-scanning/codeql/badge.svg?branch=main)](https://github.com/acoboh/query-filter-jpa/actions/workflows/github-code-scanning/codeql)
+[![CodeQL](https://github.com/acoboh/query-filter-jpa/actions/workflows/codeql.yml/badge.svg)](https://github.com/acoboh/query-filter-jpa/actions/workflows/codeql.yml)
 [![Maven Package](https://github.com/acoboh/query-filter-jpa/actions/workflows/maven-publish.yml/badge.svg)](https://github.com/acoboh/query-filter-jpa/actions/workflows/maven-publish.yml)
 
-# Introduction
+## Introduction
 
 The QueryFilterJPA Library adds the possibility of creating custom filters with RHS Colon and LHS Brackets with Spring JPA easily. This library is useful for allowing the user to obtain data according to their requirements in an easy way for the programmer. With just a few small configuration classes, users will have the ability to create filters with infinite possibilities.
 
-# Features
+## Features
 
 * Create filter specifications based on Entity Models
 * Convert RHS Colon or LHS Brackets filter into a JPA Query.
@@ -18,25 +18,45 @@ The QueryFilterJPA Library adds the possibility of creating custom filters with 
 * Expose filter documentation on endpoints.
 * Create extended OpenAPI documentation with QueryFilter specification.
 
-# Installation
+## Installation
 
 You can install the library by adding the following dependency to your project's `pom.xml` file:
+
+#### Spring Boot 2.7.X
 
 ```xml
 <dependency>
     <groupId>io.github.acoboh</groupId>
     <artifactId>query-filter-jpa</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.3</version>
 </dependency>
 ``` 
-<!-- <dependency>
+
+#### Spring Boot 3.1.X
+
+```xml
+<dependency>
     <groupId>io.github.acoboh</groupId>
     <artifactId>query-filter-jpa-3</artifactId>
-    <version>${project-version}</version>
-</dependency> -->
+    <version>0.0.3</version>
+</dependency>
+```
+
+## Configuration
+
+#### Spring Boot 2.7.X
 
 
-# Getting Started
+If you are running the Query Filter version for Spring Boot 2.7.X, you need to configure Hibernate to use the extended functions for PostgreSQL Arrays. To do that, you need to add the following property to hibernate:
+
+```properties
+hibernate.metadata_builder_contributor="io.github.acoboh.query.filter.jpa.contributor.QfMetadataBuilderContributor"
+```
+
+> **_NOTE_**: This is not necessary for Spring Boot 3.1.X version 
+
+## Getting Started
+
 
 First of all, you need an entity model. 
 
@@ -159,7 +179,7 @@ Once you have the `QueryFilter<PostBlog>` object, you have multiple options for 
 
 Both approaches provide a straightforward and efficient way to work with the Query Filter and retrieve data according to the user's requirements.
 
-# OpenAPI Documentation
+## OpenAPI Documentation
 
 If you use Swagger-UI with OpenAPI 3 documentation, you can easily expose an automatic generated documentation of the filter. 
 
@@ -173,17 +193,17 @@ You can easily enable with the following custom annotation on the main class:
 
 > **_NOTE_**: The `basePackageClasses` and `basePackages` are not required by default
 
-# Examples
+## Examples
 
 You can find more examples of how to use the library in the [examples](/examples/) directory.
 
-# How to write *String Filters*
+## How to write *String Filters*
 
 Once you have your service with the **Query Filter** enabled, you can start using **RHS Colon** and **LHS Brackets** standards to filter data effectively.
 
 Following the OpenAPI documentation, you have several options to filter on each field. 
 
-## Allowed operations
+### Allowed operations
 
 - **eq**: Equals
 - **ne**: Not equals
@@ -200,7 +220,7 @@ Following the OpenAPI documentation, you have several options to filter on each 
 - **ovlp**: Overlap _(for PostgreSQL arrays)_
 - **containedBy**: Contained by _(for PostgreSQL arrays)_
 
-## RHS Colon
+### RHS Colon
 
 The syntax of this standard is the following one:
 
@@ -225,7 +245,7 @@ You can use other operations. Examples:
 - `avgNote=gte:5`
 - `postType=ne:VIDEO`
 
-## LHS Brackets
+### LHS Brackets
 
 The syntax of this standard is the following one:
 
@@ -250,7 +270,7 @@ You can use other operations. Examples:
 - `avgNote[gte]=5`
 - `postType[ne]=VIDEO`
 
-## Sort results
+### Sort results
 
 If you want to sort, you can do it with the following syntax:
 
@@ -269,7 +289,7 @@ An example could be:
 sort=+author
 ```
 
-## Concatenate multiple filters
+### Concatenate multiple filters
 
 If you want to concatenate multiple filters, you can easily do it with the `&` operator.
 
@@ -303,6 +323,6 @@ sort=+likes&sort=-avgNote
 order by likes asc, avgNote desc
 ```
 
-# MORE DOCUMENTATION 
+## MORE DOCUMENTATION 
 
 To see full documentation, check the [Wiki section](https://github.com/acoboh/query-filter-jpa/wiki)

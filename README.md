@@ -185,6 +185,28 @@ If you use Swagger-UI with OpenAPI 3 documentation, you can easily expose an aut
 
 ![Image from OpenAPI example](/doc/resources/swagger-example-posts.png)
 
+You need to import the following library:
+
+#### Spring Boot 2.7.X
+
+```xml
+<dependency>
+    <groupId>io.github.acoboh</groupId>
+    <artifactId>query-filter-jpa</artifactId>
+    <version>0.0.3</version>
+</dependency>
+``` 
+
+#### Spring Boot 3.1.X
+
+```xml
+<dependency>
+    <groupId>io.github.acoboh</groupId>
+    <artifactId>query-filter-jpa-3</artifactId>
+    <version>0.0.3</version>
+</dependency>
+```
+
 You can easily enable with the following custom annotation on the main class:
 
 ```java

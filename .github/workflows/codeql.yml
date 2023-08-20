@@ -1,12 +1,16 @@
 
-name: "Discover vulnerabilities with CodeQL"
+name: "CodeQL"
 
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - '**/*.java'
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ "main" ]
+    paths:
+      - '**/*.java'
 
 jobs:
   analyze:
@@ -36,8 +40,11 @@ jobs:
       uses: github/codeql-action/init@v2
       with:
         languages: ${{ matrix.language }}
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v2
+    - name: Build project
+      run: |
+        mvn clean package -B -V -e -Dfindbugs.skip -Dcheckstyle.skip \
+          -Dpmd.skip=true -Dspotbugs.skip -Denforcer.skip -Dmaven.javadoc.skip \
+          -DskipTests -Dmaven.test.skip.exec -Dlicense.skip=true -Drat.skip=true -Dspotless.check.skip=true
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
       with:

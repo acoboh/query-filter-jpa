@@ -2,7 +2,7 @@
 [![License](https://img.shields.io/github/license/acoboh/query-filter-jpa.svg)](https://raw.githubusercontent.com/acoboh/query-filter-jpa/main/LICENSE)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.acoboh/query-filter-jpa.svg)](https://central.sonatype.com/artifact/io.github.acoboh/query-filter-jpa)
 [![javadoc](https://javadoc.io/badge2/io.github.acoboh/query-filter-jpa/javadoc.svg)](https://javadoc.io/doc/io.github.acoboh/query-filter-jpa)
-[![CodeQL](https://github.com/acoboh/query-filter-jpa/actions/workflows/github-code-scanning/codeql/badge.svg?branch=main)](https://github.com/acoboh/query-filter-jpa/actions/workflows/github-code-scanning/codeql)
+[![CodeQL](https://github.com/acoboh/query-filter-jpa/actions/workflows/codeql.yml/badge.svg)](https://github.com/acoboh/query-filter-jpa/actions/workflows/codeql.yml)
 [![Maven Package](https://github.com/acoboh/query-filter-jpa/actions/workflows/maven-publish.yml/badge.svg)](https://github.com/acoboh/query-filter-jpa/actions/workflows/maven-publish.yml)
 
 ## Introduction

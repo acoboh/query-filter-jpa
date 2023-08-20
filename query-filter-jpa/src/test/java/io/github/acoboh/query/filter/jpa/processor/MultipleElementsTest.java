@@ -3,7 +3,6 @@ package io.github.acoboh.query.filter.jpa.processor;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -58,8 +57,8 @@ public class MultipleElementsTest {
 		POST_EXAMPLE_2.setText("text");
 		POST_EXAMPLE_2.setAvgNote(0.5d);
 		POST_EXAMPLE_2.setLikes(0);
-		POST_EXAMPLE_2.setCreateDate(LocalDateTime.now());
-		POST_EXAMPLE_2.setLastTimestamp(Timestamp.from(Instant.now()));
+		POST_EXAMPLE_2.setCreateDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)); // Truncated to avoid rounding issues with Java > 8 and BBDD
+		POST_EXAMPLE_2.setLastTimestamp(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS))); // Truncated to avoid rounding issues with Java > 8 and BBDD
 		POST_EXAMPLE_2.setPublished(false);
 		POST_EXAMPLE_2.setPostType(PostBlog.PostType.VIDEO);
 	}

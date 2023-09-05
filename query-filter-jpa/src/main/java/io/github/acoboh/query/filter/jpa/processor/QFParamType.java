@@ -36,7 +36,7 @@ public enum QFParamType {
 	 * 
 	 */
 	LHS_BRACKETS("[a-zA-Z0-9\\.]+\\[[a-zA-Z]+]\\=[a-zA-Z0-9\\p{L}\\,\\s\\:\\-\\_\\.\\*\\%/\\(\\)\\@\\+\\{\\}\\=\\']*", // Full regex
-			"([a-zA-Z0-9\\.])+\\[([a-zA-Z]+)]\\=([a-zA-Z0-9\\p{L}\\,\\s\\:\\-\\_\\.\\*\\%/\\(\\)\\@\\+\\{\\}\\=\\']*)", // Pattern Regex
+			"([a-zA-Z0-9\\.]+)\\[([a-zA-Z]+)]\\=([a-zA-Z0-9\\p{L}\\,\\s\\:\\-\\_\\.\\*\\%/\\(\\)\\@\\+\\{\\}\\=\\']*)", // Pattern Regex
 			"LHS Brackets"); // Name
 
 	private final String fullRegex;

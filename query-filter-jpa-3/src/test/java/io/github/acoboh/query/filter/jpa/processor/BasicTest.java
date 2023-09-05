@@ -99,6 +99,15 @@ public class BasicTest {
 
 		PostBlog postBlog = list.get(0);
 		assertPostEqual(postBlog);
+
+		qf = queryFilterProcessor.newQueryFilter("", QFParamType.LHS_BRACKETS);
+		assertThat(qf).isNotNull();
+
+		list = repository.findAll(qf);
+		assertThat(list).hasSize(1);
+
+		list.get(0);
+		assertPostEqual(postBlog);
 	}
 
 	@Test
@@ -115,6 +124,15 @@ public class BasicTest {
 		PostBlog postBlog = list.get(0);
 		assertPostEqual(postBlog);
 
+		qf = queryFilterProcessor.newQueryFilter("author[like]=auth", QFParamType.LHS_BRACKETS);
+		assertThat(qf).isNotNull();
+
+		list = repository.findAll(qf);
+		assertThat(list).hasSize(1);
+
+		postBlog = list.get(0);
+		assertPostEqual(postBlog);
+
 	}
 
 	@Test
@@ -125,6 +143,12 @@ public class BasicTest {
 		assertThat(qf).isNotNull();
 
 		List<PostBlog> list = repository.findAll(qf);
+		assertThat(list).isEmpty();
+
+		qf = queryFilterProcessor.newQueryFilter("author[like]=example", QFParamType.LHS_BRACKETS);
+		assertThat(qf).isNotNull();
+
+		list = repository.findAll(qf);
 		assertThat(list).isEmpty();
 	}
 

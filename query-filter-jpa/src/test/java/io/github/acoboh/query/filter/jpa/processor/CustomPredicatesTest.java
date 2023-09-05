@@ -158,6 +158,24 @@ public class CustomPredicatesTest {
 
 		assertThat(list).isEmpty();
 
+		// For LHS
+
+		qf = queryFilterProcessor.newQueryFilter("likes[eq]=1&commentLikes[eq]=300", QFParamType.LHS_BRACKETS);
+		assertThat(qf).isNotNull();
+
+		list = repository.findAll(qf);
+		assertThat(list).isEmpty(); // Default predicate is AND
+
+		qf.setPredicate(FilterBlogPredicatesDef.OR_LIKES);
+		list = repository.findAll(qf);
+
+		assertThat(list).hasSize(2).containsExactlyInAnyOrder(POST_EXAMPLE, POST_EXAMPLE_2);
+
+		qf.setPredicate(FilterBlogPredicatesDef.AND_LIKES);
+		list = repository.findAll(qf);
+
+		assertThat(list).isEmpty();
+
 	}
 
 	@Test
@@ -186,6 +204,32 @@ public class CustomPredicatesTest {
 
 		// Add type filter on ONLY_AUTHORS predicate to check ignored
 		qf = queryFilterProcessor.newQueryFilter("author=in:Author 1,Author 2", QFParamType.RHS_COLON);
+		qf.setPredicate(FilterBlogPredicatesDef.OR_ONLY_AUTHORS);
+
+		// FOR LHS
+
+		qf = queryFilterProcessor.newQueryFilter(
+				"author[in]=Author 1,Author 2&commentAuthor[in]=Author 1,Author 2&likes[eq]=1",
+				QFParamType.LHS_BRACKETS);
+		assertThat(qf).isNotNull();
+
+		qf.setPredicate(FilterBlogPredicatesDef.OR_ONLY_AUTHORS);
+		assertThat(qf.getPredicateName()).isEqualTo(FilterBlogPredicatesDef.OR_ONLY_AUTHORS);
+
+		// Find data authors in 1,2 and likes eq 1 (likes must be ignored)
+		list = repository.findAll(qf);
+		assertThat(list).hasSize(2).containsExactlyInAnyOrder(POST_EXAMPLE, POST_EXAMPLE_2);
+
+		qf.setPredicate(FilterBlogPredicatesDef.OR_AUTHORS);
+		assertThat(qf.getPredicateName()).isEqualTo(FilterBlogPredicatesDef.OR_AUTHORS);
+
+		// Find data authors in 1,2 and likes eq 1 (likes must not be ignored)
+		list = repository.findAll(qf);
+
+		assertThat(list).hasSize(1).containsExactlyInAnyOrder(POST_EXAMPLE);
+
+		// Add type filter on ONLY_AUTHORS predicate to check ignored
+		qf = queryFilterProcessor.newQueryFilter("author[in]=Author 1,Author 2", QFParamType.LHS_BRACKETS);
 		qf.setPredicate(FilterBlogPredicatesDef.OR_ONLY_AUTHORS);
 
 	}

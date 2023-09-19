@@ -3,7 +3,7 @@
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.acoboh/query-filter-jpa.svg)](https://central.sonatype.com/artifact/io.github.acoboh/query-filter-jpa)
 [![javadoc](https://javadoc.io/badge2/io.github.acoboh/query-filter-jpa/javadoc.svg)](https://javadoc.io/doc/io.github.acoboh/query-filter-jpa)
 [![CodeQL](https://github.com/acoboh/query-filter-jpa/actions/workflows/codeql.yml/badge.svg)](https://github.com/acoboh/query-filter-jpa/actions/workflows/codeql.yml)
-[![Maven Package](https://github.com/acoboh/query-filter-jpa/actions/workflows/maven-publish.yml/badge.svg)](https://github.com/acoboh/query-filter-jpa/actions/workflows/maven-publish.yml)
+[![Maven Publish](https://github.com/acoboh/query-filter-jpa/actions/workflows/maven-publish.yml/badge.svg)](https://github.com/acoboh/query-filter-jpa/actions/workflows/maven-publish.yml)
 
 ## Introduction
 
@@ -28,7 +28,7 @@ You can install the library by adding the following dependency to your project's
 <dependency>
     <groupId>io.github.acoboh</groupId>
     <artifactId>query-filter-jpa</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
 </dependency>
 ``` 
 
@@ -38,7 +38,7 @@ You can install the library by adding the following dependency to your project's
 <dependency>
     <groupId>io.github.acoboh</groupId>
     <artifactId>query-filter-jpa-3</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
 </dependency>
 ```
 
@@ -192,8 +192,8 @@ You need to import the following library:
 ```xml
 <dependency>
     <groupId>io.github.acoboh</groupId>
-    <artifactId>query-filter-jpa</artifactId>
-    <version>0.0.3</version>
+    <artifactId>query-filter-jpa-openapi</artifactId>
+    <version>0.0.4</version>
 </dependency>
 ``` 
 
@@ -202,8 +202,8 @@ You need to import the following library:
 ```xml
 <dependency>
     <groupId>io.github.acoboh</groupId>
-    <artifactId>query-filter-jpa-3</artifactId>
-    <version>0.0.3</version>
+    <artifactId>query-filter-jpa-openapi-3</artifactId>
+    <version>0.0.4</version>
 </dependency>
 ```
 

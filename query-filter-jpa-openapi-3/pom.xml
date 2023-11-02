@@ -17,14 +17,14 @@
 
 
 	<properties>
-		<jdk.version>8</jdk.version>
-		<jdk-test.version>8</jdk-test.version>
+		<jdk.version>17</jdk.version>
+		<jdk-test.version>17</jdk-test.version>
 		<maven.compiler.source>${jdk.version}</maven.compiler.source>
 		<maven.compiler.target>${jdk.version}</maven.compiler.target>
 
 		<maven.compiler.testSource>${jdk-test.version}</maven.compiler.testSource>
 		<maven.compiler.testTarget>${jdk-test.version}</maven.compiler.testTarget>
-		
+
 		<!-- Spring dependencies -->
 		<spring.version>6.0.11</spring.version>
 
@@ -45,7 +45,6 @@
 			<artifactId>spring-beans</artifactId>
 			<version>${spring.version}</version>
 			<scope>provided</scope>
-			<optional>true</optional>
 		</dependency>
 
 		<dependency>
@@ -53,7 +52,6 @@
 			<artifactId>spring-context</artifactId>
 			<version>${spring.version}</version>
 			<scope>provided</scope>
-			<optional>true</optional>
 		</dependency>
 
 		<dependency>

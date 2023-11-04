@@ -22,6 +22,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.ComponentScan;
@@ -100,52 +101,32 @@ public class QFBeanFactoryPostProcessor implements ApplicationContextAware, Bean
 		return fqn.replace(".", "\\.").replace("$", "\\$") + ".*";
 	}
 
-	private List<String> getComponentScanPackages() {
+	private <T extends Annotation> List<String> getBeansWithAnnotation(Class<T> annotation, boolean repeatable,
+			SupplierPackages<T> supplier) {
 
-		List<String> scanPackages = new ArrayList<>();
+		List<String> packages = new ArrayList<>();
 
-		applicationContext.getBeansWithAnnotation(EnableQueryFilter.class).forEach((name, instance) -> {
+		applicationContext.getBeansWithAnnotation(annotation).forEach((name, instance) -> {
 
-			EnableQueryFilter scan = AnnotatedElementUtils.findMergedAnnotation(instance.getClass(),
-					EnableQueryFilter.class);
+			if (!repeatable) {
+				T scan = AnnotatedElementUtils.findMergedAnnotation(instance.getClass(), annotation);
+				if (scan != null) {
+					packages.addAll(supplier.getPackages(scan, instance));
+				}
+			} else {
+				Set<T> scans = AnnotatedElementUtils.findMergedRepeatableAnnotations(instance.getClass(), annotation);
 
-			if (scan == null) {
-				LOGGER.warn("No EnableQueryFilter annotation found on class {}", instance.getClass());
-				return;
-			}
-
-			scanPackages.addAll(Arrays.asList(scan.basePackages()));
-			scanPackages.addAll(Stream.of(scan.basePackageClasses()).map(e -> e.getPackage().getName())
-					.collect(Collectors.toList()));
-
-		});
-
-		if (scanPackages.isEmpty()) {
-			return getDefaultComponentScanPackages();
-		}
-
-		LOGGER.debug("Scanning annotations in packages for QueryFilter {}", Arrays.toString(scanPackages.toArray()));
-		return scanPackages;
-
-	}
-
-	private List<String> getDefaultComponentScanPackages() {
-
-		List<String> scanPackages = new ArrayList<>();
-
-		applicationContext.getBeansWithAnnotation(ComponentScan.class).forEach((name, instance) -> {
-
-			Set<ComponentScan> scans = AnnotatedElementUtils.findMergedRepeatableAnnotations(instance.getClass(),
-					ComponentScan.class);
-
-			for (ComponentScan scan : scans) {
-				scanPackages.addAll(Arrays.asList(scan.basePackages()));
+				for (T scan : scans) {
+					packages.addAll(supplier.getPackages(scan, instance));
+				}
 			}
 
 		});
 
-		LOGGER.debug("Getting default annotation in packages for {}", Arrays.toString(scanPackages.toArray()));
-		return scanPackages;
+		LOGGER.debug("Getting beans with annotation {}: {}", annotation, packages);
+
+		return packages;
+
 	}
 
 	/** {@inheritDoc} */
@@ -155,7 +136,35 @@ public class QFBeanFactoryPostProcessor implements ApplicationContextAware, Bean
 
 		LOGGER.info("Configure all query filter definition classes...");
 
-		Set<Class<?>> classSet = getClassAnnotated(this.getComponentScanPackages(), QFDefinitionClass.class);
+		List<String> packagesToAnalyze = getBeansWithAnnotation(EnableQueryFilter.class, false, (scan, instance) -> {
+			List<String> scanPackages = new ArrayList<>();
+			scanPackages.addAll(Arrays.asList(scan.basePackages()));
+			scanPackages.addAll(Stream.of(scan.basePackageClasses()).map(e -> e.getPackage().getName())
+					.collect(Collectors.toList()));
+			return scanPackages;
+		});
+
+		if (packagesToAnalyze.isEmpty()) {
+			LOGGER.debug("Trying get component scan beans to search for QueryFilter classes...");
+			packagesToAnalyze = getBeansWithAnnotation(ComponentScan.class, true, (scan, instance) -> {
+				List<String> scanPackages = new ArrayList<>();
+				scanPackages.addAll(Arrays.asList(scan.basePackages()));
+				scanPackages.addAll(Stream.of(scan.basePackageClasses()).map(e -> e.getPackage().getName())
+						.collect(Collectors.toList()));
+				return scanPackages;
+
+			});
+		}
+
+		if (packagesToAnalyze.isEmpty()) {
+			LOGGER.debug("Trying get SpringBootApplication beans to search for QueryFilter classes...");
+			packagesToAnalyze = getBeansWithAnnotation(SpringBootApplication.class, false, (scan, instance) -> {
+				return Arrays.asList(instance.getClass().toString());
+			});
+
+		}
+
+		Set<Class<?>> classSet = getClassAnnotated(packagesToAnalyze, QFDefinitionClass.class);
 
 		Map<Class<?>, QFProcessor<?, ?>> mapProcessors = new HashMap<>();
 
@@ -206,6 +215,11 @@ public class QFBeanFactoryPostProcessor implements ApplicationContextAware, Bean
 	@Override
 	public int getOrder() {
 		return 0;
+	}
+
+	@FunctionalInterface
+	interface SupplierPackages<T extends Annotation> {
+		List<String> getPackages(T annotation, Object instance);
 	}
 
 }

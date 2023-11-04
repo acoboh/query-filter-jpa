@@ -18,7 +18,7 @@ import io.github.acoboh.query.filter.jpa.exceptions.QFDateParsingException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFEnumException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFFieldOperationException;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
-import io.github.acoboh.query.filter.jpa.spel.SpelResolverInterface;
+import io.github.acoboh.query.filter.jpa.spel.SpelResolverContext;
 import io.github.acoboh.query.filter.jpa.utils.DateUtils;
 
 /**
@@ -95,7 +95,7 @@ public class QFElementMatch {
 	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFEnumException           if any enumeration exception
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected boolean initialize(SpelResolverInterface spelResolver, MultiValueMap<String, Object> context)
+	protected boolean initialize(SpelResolverContext spelResolver, MultiValueMap<String, Object> context)
 			throws QFFieldOperationException, QFEnumException {
 
 		if (definition.isSpelExpression() && !originalValues.isEmpty()) {

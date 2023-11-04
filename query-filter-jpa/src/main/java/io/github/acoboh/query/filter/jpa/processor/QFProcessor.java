@@ -19,7 +19,7 @@ import io.github.acoboh.query.filter.jpa.exceptions.QueryFilterException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFClassException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 import io.github.acoboh.query.filter.jpa.predicate.PredicateProcessorResolutor;
-import io.github.acoboh.query.filter.jpa.spel.SpelResolverInterface;
+import io.github.acoboh.query.filter.jpa.spel.SpelResolverContext;
 
 /**
  * Class to process all query filters.
@@ -148,7 +148,7 @@ public class QFProcessor<F, E> {
 	 */
 	public QueryFilter<E> newQueryFilter(String input, QFParamType type) throws QueryFilterException {
 		return new QueryFilter<>(input, type, entityClass, filterClass, definitionMap, queryFilterClass, defaultMatches,
-				appContext.getBean(SpelResolverInterface.class), predicateMap, predicateName, defaultPredicate);
+				appContext.getBean(SpelResolverContext.class), predicateMap, predicateName, defaultPredicate);
 	}
 
 	/**

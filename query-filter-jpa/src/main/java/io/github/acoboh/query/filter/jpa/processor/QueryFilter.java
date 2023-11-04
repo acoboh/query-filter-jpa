@@ -48,7 +48,7 @@ import io.github.acoboh.query.filter.jpa.exceptions.QFParseException;
 import io.github.acoboh.query.filter.jpa.exceptions.QueryFilterException;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 import io.github.acoboh.query.filter.jpa.predicate.PredicateProcessorResolutor;
-import io.github.acoboh.query.filter.jpa.spel.SpelResolverInterface;
+import io.github.acoboh.query.filter.jpa.spel.SpelResolverContext;
 
 /**
  * Class that implements {@linkplain Specification} from JPA library that allows the user to create automatic filters from
@@ -81,7 +81,7 @@ public class QueryFilter<E> implements Specification<E> {
 	private final Class<E> entityClass;
 	private final Class<?> predicateClass;
 	private final boolean distinct;
-	private final transient SpelResolverInterface spelResolver;
+	private final transient SpelResolverContext spelResolver;
 	private final transient List<Pair<QFDefinition, Direction>> sortDefinitionList = new ArrayList<>();
 	private boolean isConstructor = true;
 
@@ -106,7 +106,7 @@ public class QueryFilter<E> implements Specification<E> {
 	 */
 	protected QueryFilter(String input, QFParamType type, Class<E> entityClass, Class<?> predicateClass,
 			Map<String, QFDefinition> definitionMap, QFDefinitionClass queryFilterClassAnnotation,
-			List<QFElementMatch> defaultMatches, SpelResolverInterface spelResolver,
+			List<QFElementMatch> defaultMatches, SpelResolverContext spelResolver,
 			@Nullable Map<String, PredicateProcessorResolutor> predicateMap, @Nullable String predicateName,
 			@Nullable PredicateProcessorResolutor defaultPredicate) throws QueryFilterException {
 

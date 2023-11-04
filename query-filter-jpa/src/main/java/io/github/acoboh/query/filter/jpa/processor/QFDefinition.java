@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
 
@@ -30,6 +31,7 @@ import io.github.acoboh.query.filter.jpa.exceptions.definition.QFDiscriminatorEx
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFElementException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFElementMultipleClassesException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFFieldLevelException;
+import io.github.acoboh.query.filter.jpa.exceptions.definition.QFJsonException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFMissingFieldException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 import io.github.acoboh.query.filter.jpa.predicate.PredicateOperation;
@@ -242,7 +244,22 @@ public class QFDefinition {
 		// Json annotation path
 		if (jsonAnnotation != null) {
 			LOGGER.debug("Creating paths for JSON element");
-			paths.add(getPathsFrom(jsonAnnotation.value(), entityClass, true));
+			List<QFPath> pathsJson = getPathsFrom(jsonAnnotation.value(), entityClass, false);
+
+			QFPath last = pathsJson.get(pathsJson.size() - 1);
+			if (!last.getField().isAnnotationPresent(Column.class)) {
+				throw new QFJsonException("@Column annotation not found on the json element field {}", last.getField());
+			}
+
+			Column column = last.getField().getAnnotation(Column.class);
+			if (!column.columnDefinition().toLowerCase().startsWith("jsonb")) {
+				throw new QFJsonException(
+						"QFJsonElement annotations are only supported on colums of type 'jsonb'. Actual type is {}",
+						column.columnDefinition());
+			}
+
+			last.setFinal(true);
+			paths.add(pathsJson);
 			caseSensitive = jsonAnnotation.caseSensitive();
 		}
 

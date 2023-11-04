@@ -59,7 +59,7 @@ class QfArraySQLFunction extends AbstractSqmSelfRenderingFunctionDescriptor {
 			SqlAstTranslator<?> walker) {
 
 		if (sqlAstArguments.size() < 2) {
-			throw new QueryException("Array function not enough arguments");
+			throw new QueryException("Array function not enough arguments", sqlAppender.toString());
 		}
 
 		sqlAppender.append("(");

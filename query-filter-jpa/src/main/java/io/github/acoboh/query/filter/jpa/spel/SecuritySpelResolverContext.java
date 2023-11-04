@@ -2,13 +2,13 @@ package io.github.acoboh.query.filter.jpa.spel;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.expression.EvaluationContext;
-import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
@@ -17,10 +17,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.MultiValueMap;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * SPEL Context resolver bean
@@ -28,17 +24,11 @@ import jakarta.servlet.http.HttpServletResponse;
  * @author Adrián Cobo
  * 
  */
-@Configuration
-@ConditionalOnClass(SecurityExpressionHandler.class)
-public class SecuritySpelContextResolver implements SpelResolverInterface {
+class SecuritySpelResolverContext extends SpelResolverContext {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(SecuritySpelContextResolver.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(SecuritySpelResolverContext.class);
 
 	private final SecurityExpressionHandler<FilterInvocation> securityExpressionHandler;
-
-	private HttpServletRequest request;
-
-	private HttpServletResponse response;
 
 	/**
 	 * Default constructor
@@ -47,8 +37,9 @@ public class SecuritySpelContextResolver implements SpelResolverInterface {
 	 * @param request                    actual request
 	 * @param response                   actual response
 	 */
-	public SecuritySpelContextResolver(List<SecurityExpressionHandler<?>> securityExpressionHandlers,
+	protected SecuritySpelResolverContext(List<SecurityExpressionHandler<?>> securityExpressionHandlers,
 			HttpServletRequest request, HttpServletResponse response) {
+		super(request, response);
 		securityExpressionHandler = getFilterSecurityHandler(securityExpressionHandlers);
 	}
 
@@ -70,36 +61,9 @@ public class SecuritySpelContextResolver implements SpelResolverInterface {
 								+ securityExpressionHandlers.size()));
 	}
 
-	/** {@inheritDoc} */
-	public Object evaluate(String securityExpression, MultiValueMap<String, Object> contextValues) {
-		LOGGER.trace("Resolving expression {}", securityExpression);
-
-		ExpressionParser expressionParser;
+	@Override
+	public EvaluationContext getEvaluationContext() {
 		if (securityExpressionHandler == null) {
-			LOGGER.debug("No security expression handler found. Using default expression parser");
-			expressionParser = new SpelExpressionParser();
-		} else {
-			expressionParser = securityExpressionHandler.getExpressionParser();
-		}
-
-		Expression expression = expressionParser.parseExpression(securityExpression);
-
-		EvaluationContext evaluationContext = createEvaluationContext(securityExpressionHandler, request, response);
-
-		contextValues.forEach((k, v) -> {
-			if (v.size() > 1) {
-				evaluationContext.setVariable(k, v);
-			} else if (v.size() == 1) {
-				evaluationContext.setVariable(k, v.get(0));
-			}
-		});
-
-		return expression.getValue(evaluationContext);
-	}
-
-	private EvaluationContext createEvaluationContext(SecurityExpressionHandler<FilterInvocation> handler,
-			HttpServletRequest request, HttpServletResponse response) {
-		if (handler == null) {
 			return new StandardEvaluationContext();
 		}
 
@@ -108,7 +72,17 @@ public class SecuritySpelContextResolver implements SpelResolverInterface {
 			throw new UnsupportedOperationException();
 		});
 
-		return handler.createEvaluationContext(authentication, filterInvocation);
+		return securityExpressionHandler.createEvaluationContext(authentication, filterInvocation);
+	}
+
+	@Override
+	public ExpressionParser getExpressionParser() {
+		if (securityExpressionHandler == null) {
+			LOGGER.debug("No security expression handler found. Using default expression parser");
+			return new SpelExpressionParser();
+		} else {
+			return securityExpressionHandler.getExpressionParser();
+		}
 	}
 
 }

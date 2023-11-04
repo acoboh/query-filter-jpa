@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>io.github.acoboh</groupId>
 		<artifactId>query-filter-jpa-parent</artifactId>
-		<version>0.0.4</version>
+		<version>0.0.5-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
 
@@ -35,9 +35,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>${javax-servlet-api.version}</version>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -46,7 +46,6 @@
 			<artifactId>spring-beans</artifactId>
 			<version>${spring.version}</version>
 			<scope>provided</scope>
-			<optional>true</optional>
 		</dependency>
 
 		<dependency>
@@ -54,7 +53,6 @@
 			<artifactId>spring-context</artifactId>
 			<version>${spring.version}</version>
 			<scope>provided</scope>
-			<optional>true</optional>
 		</dependency>
 
 		<dependency>
@@ -62,7 +60,6 @@
 			<artifactId>springdoc-openapi-common</artifactId>
 			<version>${openapi.version}</version>
 			<scope>provided</scope>
-			<optional>true</optional>
 		</dependency>
 
 	</dependencies>

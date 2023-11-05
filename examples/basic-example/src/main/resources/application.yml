@@ -12,3 +12,7 @@ spring:
       ddl-auto: update
     properties:
       hibernate.metadata_builder_contributor: io.github.acoboh.query.filter.jpa.contributor.QfMetadataBuilderContributor
+
+logging:
+  level:
+    io.github.acoboh: trace

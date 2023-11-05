@@ -24,16 +24,16 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!-- Spring Boot-->
-		<spring-boot.version>2.7.14</spring-boot.version>
+		<spring-boot.version>2.7.17</spring-boot.version>
 
 		<!-- Springdoc for OpenAPI-->
-		<springdoc.version>1.7.0</springdoc.version>
+		<springdoc.version>1.6.15</springdoc.version>
 
 		<!-- Hypersistance utils -->
-		<hypersistance-utils.version>3.5.1</hypersistance-utils.version>
+		<hypersistance-utils.version>3.6.0</hypersistance-utils.version>
 
 		<!-- Query Filter Versions -->
-		<query-filter.version>0.0.5-SNAPSHOT</query-filter.version>
+		<query-filter.version>0.1.0</query-filter.version>
 
 	</properties>
 

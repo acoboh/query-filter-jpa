@@ -1,11 +1,13 @@
 package io.github.acoboh.query.filter.jpa.spel;
 
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.ServletRequestParameterPropertyValues;
 import org.springframework.web.servlet.View;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,8 +34,8 @@ public abstract class SpelResolverContext {
 	/**
 	 * Default constructor
 	 *
-	 * @param request                    the servlet request
-	 * @param response                   the servlet response
+	 * @param request  the servlet request
+	 * @param response the servlet response
 	 */
 	protected SpelResolverContext(HttpServletRequest request, HttpServletResponse response) {
 		this.request = request;
@@ -86,8 +88,11 @@ public abstract class SpelResolverContext {
 			context.setVariable("_pathVariables", map);
 		}
 
-		Map<String, String[]> mapParameters = request.getParameterMap();
-		context.setVariable("_parameters", mapParameters);
+		var properties = new ServletRequestParameterPropertyValues(request);
+		Map<String, Object> requestParams = properties.getPropertyValueList().stream()
+				.collect(Collectors.toMap(e -> e.getName(), e -> e.getValue()));
+
+		context.setVariable("_parameters", requestParams);
 	}
 
 	private void fillContextWithMap(EvaluationContext context, MultiValueMap<String, Object> contextValues) {

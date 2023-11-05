@@ -33,7 +33,7 @@
 		<hypersistance-utils.version>3.5.1</hypersistance-utils.version>
 
 		<!-- Query Filter Versions -->
-		<query-filter.version>0.0.5-SNAPSHOT</query-filter.version>
+		<query-filter.version>0.1.0</query-filter.version>
 
 	</properties>
 

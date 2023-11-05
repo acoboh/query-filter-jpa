@@ -27,7 +27,7 @@ public class PostRestController {
 
 	@GetMapping
 	public List<PostBlog> getPosts(
-			@QFParam(PostFilterDef.class) @RequestParam(required = false) QueryFilter<PostBlog> filter) {
+			@QFParam(PostFilterDef.class) @RequestParam(required = false, defaultValue = "") QueryFilter<PostBlog> filter) {
 		return service.getPosts(filter);
 	}
 

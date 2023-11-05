@@ -22,7 +22,7 @@ public class FilterBlogSortDef {
 
 	@QFElement("likes")
 	private int likes;
-	
+
 	@QFSortable("lastTimestamp")
 	private Timestamp lastTimestamp;
 

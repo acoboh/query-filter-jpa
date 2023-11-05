@@ -3,6 +3,7 @@ package io.github.acoboh.query.filter.jpa.processor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,16 +11,20 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.util.Pair;
 
 import io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass;
+import io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass.QFDefaultSort;
 import io.github.acoboh.query.filter.jpa.annotations.QFElement;
 import io.github.acoboh.query.filter.jpa.annotations.QFPredicate;
 import io.github.acoboh.query.filter.jpa.exceptions.QueryFilterException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFClassException;
+import io.github.acoboh.query.filter.jpa.exceptions.definition.QFElementException;
+import io.github.acoboh.query.filter.jpa.exceptions.definition.QFNotSortableDefinitionException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 import io.github.acoboh.query.filter.jpa.predicate.PredicateProcessorResolutor;
-import io.github.acoboh.query.filter.jpa.spel.SpelResolverContext;
 
 /**
  * Class to process all query filters.
@@ -44,6 +49,8 @@ public class QFProcessor<F, E> {
 	private final Map<String, QFDefinition> definitionMap;
 
 	private final List<QFElementMatch> defaultMatches;
+
+	private final List<Pair<QFDefinition, Direction>> defaultSorting;
 
 	private final ApplicationContext appContext;
 
@@ -77,6 +84,7 @@ public class QFProcessor<F, E> {
 
 		this.definitionMap = getDefinition(filterClass, queryFilterClass);
 		this.defaultMatches = defaultMatches(definitionMap);
+		this.defaultSorting = getDefaultSorting(queryFilterClass, definitionMap, filterClass);
 
 		LOGGER.debug("Initializing query filter predicates...");
 
@@ -126,6 +134,34 @@ public class QFProcessor<F, E> {
 		return ret;
 	}
 
+	private static List<Pair<QFDefinition, Direction>> getDefaultSorting(QFDefinitionClass queryFilterClass,
+			Map<String, QFDefinition> definitionMap, Class<?> filterClass) throws QueryFilterDefinitionException {
+
+		if (queryFilterClass.defaultSort() == null || queryFilterClass.defaultSort().length == 0) {
+			return Collections.emptyList();
+		}
+
+		List<Pair<QFDefinition, Direction>> ret = new ArrayList<>();
+
+		for (QFDefaultSort sort : queryFilterClass.defaultSort()) {
+
+			QFDefinition definition = definitionMap.get(sort.value());
+			if (definition == null) {
+				throw new QFElementException(sort.value(), filterClass);
+			}
+
+			if (!definition.isSortable()) {
+				throw new QFNotSortableDefinitionException(sort.value(), filterClass);
+			}
+
+			ret.add(Pair.of(definition, sort.direction()));
+
+		}
+
+		return ret;
+
+	}
+
 	private static Map<String, PredicateProcessorResolutor> resolvePredicates(QFPredicate[] predicates,
 			Map<String, QFDefinition> definitionMap) {
 		Map<String, PredicateProcessorResolutor> ret = new HashMap<>();
@@ -147,8 +183,7 @@ public class QFProcessor<F, E> {
 	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QueryFilterException if any parsing exception occurs
 	 */
 	public QueryFilter<E> newQueryFilter(String input, QFParamType type) throws QueryFilterException {
-		return new QueryFilter<>(input, type, entityClass, filterClass, definitionMap, queryFilterClass, defaultMatches,
-				appContext.getBean(SpelResolverContext.class), predicateMap, predicateName, defaultPredicate);
+		return new QueryFilter<>(input, type, this);
 	}
 
 	/**
@@ -176,6 +211,60 @@ public class QFProcessor<F, E> {
 	 */
 	public Class<E> getEntityClass() {
 		return entityClass;
+	}
+
+	/**
+	 * Get definition class annotation
+	 * 
+	 * @return definition class annotation
+	 */
+	protected QFDefinitionClass getDefinitionClassAnnotation() {
+		return queryFilterClass;
+	}
+
+	/**
+	 * Get default matches of the processor
+	 * 
+	 * @return default matches
+	 */
+	protected List<QFElementMatch> getDefaultMatches() {
+		return defaultMatches;
+	}
+
+	/**
+	 * Get default sorting operations
+	 * 
+	 * @return default sorting operations
+	 */
+	protected List<Pair<QFDefinition, Direction>> getDefaultSorting() {
+		return defaultSorting;
+	}
+
+	/**
+	 * Get application context
+	 * 
+	 * @return application context
+	 */
+	protected ApplicationContext getApplicationContext() {
+		return appContext;
+	}
+
+	/**
+	 * Get predicate map
+	 * 
+	 * @return predicate map
+	 */
+	protected Map<String, PredicateProcessorResolutor> getPredicateMap() {
+		return predicateMap;
+	}
+
+	/**
+	 * Get default predicate
+	 * 
+	 * @return default predicate
+	 */
+	protected String getDefaultPredicate() {
+		return predicateName;
 	}
 
 }

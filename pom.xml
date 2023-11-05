@@ -212,6 +212,9 @@
 					<defaultAuthor>Adrián Cobo</defaultAuthor>
 					<version>false</version>
 					<author>true</author>
+					<additionalOptions>
+						<additionalOption>-Xdoclint:none</additionalOption>
+					</additionalOptions>
 				</configuration>
 				<executions>
 					<execution>

@@ -32,8 +32,6 @@
 		<!--OpenAPI dependencies -->
 		<openapi.version>1.6.15</openapi.version>
 
-		<!-- Javax dependencies -->
-		<javax-servlet-api.version>4.0.1</javax-servlet-api.version>
 	</properties>
 
 	<dependencies>

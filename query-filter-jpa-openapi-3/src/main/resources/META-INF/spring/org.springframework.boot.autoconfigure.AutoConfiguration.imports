@@ -1,1 +1,1 @@
-org.query.filter.jpa.openapi.data.jpa.config.QueryFilterOpenApiAutoconfigurer
+io.github.acoboh.query.filter.jpa.openapi.config.QueryFilterOpenApiAutoconfigurer

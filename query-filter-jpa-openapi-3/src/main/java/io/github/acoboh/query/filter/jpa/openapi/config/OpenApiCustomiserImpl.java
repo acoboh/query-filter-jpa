@@ -1,4 +1,4 @@
-package org.query.filter.jpa.openapi.data.jpa.config;
+package io.github.acoboh.query.filter.jpa.openapi.config;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
@@ -28,6 +28,7 @@ import io.github.acoboh.query.filter.jpa.processor.QFProcessor;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.media.Schema;
 
 /**
  * Class used to customize the OpenAPI definition with filter elements
@@ -113,6 +114,11 @@ class OpenApiCustomiserImpl implements OpenApiCustomizer {
 						LOGGER.debug("Override description {}", actualDesc);
 
 						optParam.get().setDescription(createDescription(qfParamAnnotation, processor));
+
+						// Force string schema on swagger
+						Schema<String> schema = new Schema<>();
+						schema.type("string");
+						optParam.get().setSchema(schema);
 					}
 
 				}

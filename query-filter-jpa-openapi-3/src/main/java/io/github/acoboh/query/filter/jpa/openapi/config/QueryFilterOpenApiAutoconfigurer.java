@@ -1,4 +1,4 @@
-package org.query.filter.jpa.openapi.data.jpa.config;
+package io.github.acoboh.query.filter.jpa.openapi.config;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;

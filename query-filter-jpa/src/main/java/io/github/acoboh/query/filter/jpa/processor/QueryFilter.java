@@ -64,8 +64,8 @@ public class QueryFilter<E> implements Specification<E> {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final String REGEX_SORT = "[a-zA-Z0-9]+=[+-][a-zA-Z0-9]+";
-	private static final Pattern REGEX_PATTERN = Pattern.compile("([a-zA-Z0-9]+)=([+-])([a-zA-Z0-9]+)");
+	private static final String REGEX_SORT = "^[a-zA-Z0-9]+=([+-]?[a-zA-Z0-9]+)(,[+-]?[a-zA-Z0-9]+)*$";
+	private static final Pattern REGEX_PATTERN = Pattern.compile("([+-])([a-zA-Z0-9]+)");
 
 	private final String initialInput;
 
@@ -75,8 +75,11 @@ public class QueryFilter<E> implements Specification<E> {
 	private final transient @Nullable Map<String, PredicateProcessorResolutor> predicateMap;
 
 	private final transient List<QFElementMatch> defaultMatches;
+	private final transient List<Pair<QFDefinition, Direction>> defaultSorting;
 	private final transient Map<String, QFDefinition> definitionMap;
 	private final transient QFDefinitionClass queryFilterClassAnnotation;
+
+	private boolean defaultSortEnabled = true;
 
 	private final Class<E> entityClass;
 	private final Class<?> predicateClass;
@@ -97,18 +100,24 @@ public class QueryFilter<E> implements Specification<E> {
 	 * @param predicateClass             predicate definition class
 	 * @param definitionMap              definition map
 	 * @param queryFilterClassAnnotation definition annotation
+	 * @param defaultSorting             list of default sorting values
 	 * @param defaultMatches             list of default matching values
 	 * @param spelResolver               spel resolver
 	 * @param predicateMap               predicate map
 	 * @param predicateName              predicate name
 	 * @param defaultPredicate           default predicate
 	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QueryFilterException if any parsing exception
+	 * 
+	 * @deprecated Will be removed on next release 0.0.5. Check constructor
+	 *             {@linkplain #QueryFilter(String, QFParamType, QFProcessor)}
 	 */
+	@Deprecated
 	protected QueryFilter(String input, QFParamType type, Class<E> entityClass, Class<?> predicateClass,
 			Map<String, QFDefinition> definitionMap, QFDefinitionClass queryFilterClassAnnotation,
-			List<QFElementMatch> defaultMatches, SpelResolverContext spelResolver,
-			@Nullable Map<String, PredicateProcessorResolutor> predicateMap, @Nullable String predicateName,
-			@Nullable PredicateProcessorResolutor defaultPredicate) throws QueryFilterException {
+			List<QFElementMatch> defaultMatches, List<Pair<QFDefinition, Direction>> defaultSorting,
+			SpelResolverContext spelResolver, @Nullable Map<String, PredicateProcessorResolutor> predicateMap,
+			@Nullable String predicateName, @Nullable PredicateProcessorResolutor defaultPredicate)
+			throws QueryFilterException {
 
 		Assert.notNull(type, "type cannot be null");
 		Assert.notNull(entityClass, "entityClass cannot be null");
@@ -119,6 +128,7 @@ public class QueryFilter<E> implements Specification<E> {
 		this.definitionMap = definitionMap;
 		this.queryFilterClassAnnotation = queryFilterClassAnnotation;
 		this.defaultMatches = defaultMatches;
+		this.defaultSorting = defaultSorting;
 		this.entityClass = entityClass;
 		this.predicateClass = predicateClass;
 		this.spelResolver = spelResolver;
@@ -147,6 +157,54 @@ public class QueryFilter<E> implements Specification<E> {
 
 		isConstructor = false;
 
+	}
+
+	/**
+	 * Construtor from query filter processor
+	 * 
+	 * @param input     Input of filter
+	 * @param type      Type of filter
+	 * @param processor query filter processor
+	 */
+	protected QueryFilter(String input, QFParamType type, QFProcessor<?, E> processor) {
+		Assert.notNull(type, "type cannot be null");
+
+		this.definitionMap = processor.getDefinitionMap();
+		this.queryFilterClassAnnotation = processor.getDefinitionClassAnnotation();
+		this.defaultMatches = processor.getDefaultMatches();
+
+		this.defaultSorting = processor.getDefaultSorting();
+		this.entityClass = processor.getEntityClass();
+		this.predicateClass = processor.getFilterClass();
+		this.spelResolver = processor.getApplicationContext().getBean(SpelResolverContext.class);
+		this.predicateMap = processor.getPredicateMap();
+		this.predicateName = processor.getDefaultPredicate();
+
+		if (this.predicateName != null) {
+			this.predicate = predicateMap.get(this.predicateName);
+		}
+
+		this.distinct = queryFilterClassAnnotation.distinct();
+
+		this.initialInput = input != null ? input : "";
+
+		if (input != null && !input.isEmpty()) {
+			String[] parts = input.split("&");
+
+			for (String part : parts) {
+
+				if (part.matches(type.getFullRegex())) {
+					parseValuePart(part, type);
+				} else if (part.matches(REGEX_SORT)) {
+					parseSortPart(part);
+				} else {
+					throw new QFParseException(part, input);
+				}
+
+			}
+		}
+
+		isConstructor = false;
 	}
 
 	/**
@@ -302,45 +360,50 @@ public class QueryFilter<E> implements Specification<E> {
 	private void parseSortPart(String part)
 			throws QFParseException, QFNotSortableException, QFMultipleSortException, QFFieldNotFoundException {
 
-		Matcher matcher = REGEX_PATTERN.matcher(part);
-
-		if (!matcher.find() || matcher.groupCount() != 3) {
-			LOGGER.error("Error parsing sort part {}, Matcher not found matches", part);
+		if (!part.startsWith(queryFilterClassAnnotation.sortProperty() + "=")) {
 			throw new QFParseException(part, "sort part");
 		}
 
-		String shortname = matcher.group(1);
-		String order = matcher.group(2);
-		String fieldName = matcher.group(3);
+		String partPostEqual = part.substring(part.indexOf('='));
 
-		if (!shortname.equals(queryFilterClassAnnotation.sortProperty())) {
-			LOGGER.warn("Ignoring sorting property with name {}. Expected {}", shortname,
-					queryFilterClassAnnotation.sortProperty());
-			return;
+		String[] parts = partPostEqual.split(",");
+
+		for (String orderPart : parts) {
+
+			Matcher matcher = REGEX_PATTERN.matcher(orderPart);
+			if (!matcher.find() || matcher.groupCount() != 2) {
+				LOGGER.error("Error parsing sort part {}, Matcher not found matches", orderPart);
+				throw new QFParseException(orderPart, "sort part");
+			}
+
+			String order = matcher.group(1);
+			String fieldName = matcher.group(2);
+
+			QFDefinition def = definitionMap.get(fieldName);
+			if (def == null) {
+				throw new QFFieldNotFoundException(fieldName);
+			}
+
+			if (!def.isSortable()) {
+				throw new QFNotSortableException(fieldName);
+			}
+
+			if (this.sortDefinitionList.stream().anyMatch(e -> e.getFirst().getFilterName().equals(fieldName))) {
+				throw new QFMultipleSortException(fieldName);
+			}
+
+			Direction dir;
+			if (order.equals("+")) {
+				dir = Direction.ASC;
+			} else {
+				dir = Direction.DESC;
+			}
+
+			Pair<QFDefinition, Direction> pair = Pair.of(def, dir);
+			this.sortDefinitionList.add(pair);
+			this.defaultSortEnabled = false;
+
 		}
-
-		QFDefinition def = definitionMap.get(fieldName);
-		if (def == null) {
-			throw new QFFieldNotFoundException(fieldName);
-		}
-
-		if (!def.isSortable()) {
-			throw new QFNotSortableException(fieldName);
-		}
-
-		if (this.sortDefinitionList.stream().anyMatch(e -> e.getFirst().getFilterName().equals(fieldName))) {
-			throw new QFMultipleSortException(fieldName);
-		}
-
-		Direction dir;
-		if (order.equals("+")) {
-			dir = Direction.ASC;
-		} else {
-			dir = Direction.DESC;
-		}
-
-		Pair<QFDefinition, Direction> pair = Pair.of(def, dir);
-		this.sortDefinitionList.add(pair);
 
 	}
 
@@ -433,6 +496,7 @@ public class QueryFilter<E> implements Specification<E> {
 
 		Pair<QFDefinition, Direction> pair = Pair.of(def, direction);
 		this.sortDefinitionList.add(pair);
+		this.defaultSortEnabled = false;
 
 	}
 
@@ -440,6 +504,7 @@ public class QueryFilter<E> implements Specification<E> {
 	 * Remove the actual sort configuration
 	 */
 	public void clearSort() {
+		this.defaultSortEnabled = false;
 		this.sortDefinitionList.clear();
 	}
 
@@ -449,7 +514,8 @@ public class QueryFilter<E> implements Specification<E> {
 	 * @return true if any sort is applied, false otherwise
 	 */
 	public boolean isSorted() {
-		return !this.sortDefinitionList.isEmpty();
+		List<Pair<QFDefinition, Direction>> list = defaultSortEnabled ? defaultSorting : sortDefinitionList;
+		return !list.isEmpty();
 	}
 
 	/**
@@ -458,7 +524,8 @@ public class QueryFilter<E> implements Specification<E> {
 	 * @return list of a pair of sorting fields
 	 */
 	public List<Pair<String, Direction>> getSortFields() {
-		return sortDefinitionList.stream().map(e -> Pair.of(e.getFirst().getFilterName(), e.getSecond()))
+		List<Pair<QFDefinition, Direction>> list = defaultSortEnabled ? defaultSorting : sortDefinitionList;
+		return list.stream().map(e -> Pair.of(e.getFirst().getFilterName(), e.getSecond()))
 				.collect(Collectors.toList());
 	}
 
@@ -469,7 +536,8 @@ public class QueryFilter<E> implements Specification<E> {
 	 * @return true if is actually sorting, false otherwise
 	 */
 	public boolean isSortedBy(String field) {
-		return sortDefinitionList.stream().anyMatch(e -> e.getFirst().getFilterName().equals(field));
+		List<Pair<QFDefinition, Direction>> list = defaultSortEnabled ? defaultSorting : sortDefinitionList;
+		return list.stream().anyMatch(e -> e.getFirst().getFilterName().equals(field));
 	}
 
 	/**
@@ -760,9 +828,10 @@ public class QueryFilter<E> implements Specification<E> {
 
 		query.distinct(distinct);
 
-		if (!this.sortDefinitionList.isEmpty()) {
+		List<Pair<QFDefinition, Direction>> list = defaultSortEnabled ? defaultSorting : sortDefinitionList;
+		if (!list.isEmpty()) {
 			LOGGER.trace("Adding all sort operations");
-			query.orderBy(parseOrders(sortDefinitionList, criteriaBuilder, root, pathsMap));
+			query.orderBy(parseOrders(list, criteriaBuilder, root, pathsMap));
 		}
 
 		Predicate finalPredicate = parseFinalPredicate(criteriaBuilder, predicatesMap);

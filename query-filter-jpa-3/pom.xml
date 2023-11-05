@@ -25,18 +25,15 @@
 		<maven.compiler.testSource>${jdk-test.version}</maven.compiler.testSource>
 		<maven.compiler.testTarget>${jdk-test.version}</maven.compiler.testTarget>
 
-		<!-- Guava dependencies -->
-		<guava.version>32.1.2-jre</guava.version>
-
 		<!-- Spring dependencies -->
-		<spring.version>6.0.11</spring.version>
-		<spring-boot.version>3.1.2</spring-boot.version>
+		<spring.version>6.0.13</spring.version>
+		<spring-boot.version>3.1.5</spring-boot.version>
 
 		<!-- Hibernate dependencies -->
-		<hibernate.version>6.2.6.Final</hibernate.version>
+		<hibernate.version>6.2.13.Final</hibernate.version>
 
 		<!-- Spring security dependencies -->
-		<spring-security.version>6.1.2</spring-security.version>
+		<spring-security.version>6.1.5</spring-security.version>
 
 		<!-- Jakarta dependencies -->
 		<jakarta-servlet-api.version>6.0.0</jakarta-servlet-api.version>
@@ -49,10 +46,10 @@
 		<hikari-cp.version>5.0.1</hikari-cp.version>
 
 		<!-- Jackson -->
-		<jackson-databind.version>2.15.2</jackson-databind.version>
+		<jackson-databind.version>2.15.3</jackson-databind.version>
 
 		<!-- Hypersistance tests -->
-		<hypersistance.version>3.5.1</hypersistance.version>
+		<hypersistance.version>3.6.0</hypersistance.version>
 
 	</properties>
 
@@ -151,7 +148,6 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>${guava.version}</version>
 		</dependency>
 
 		<!-- Reflections -->

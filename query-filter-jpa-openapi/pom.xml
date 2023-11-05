@@ -17,8 +17,17 @@
 
 
 	<properties>
+		<!-- JDK 17 -->
+		<jdk.version>1.8</jdk.version>
+		<jdk-test.version>1.8</jdk-test.version>
+		<maven.compiler.source>${jdk.version}</maven.compiler.source>
+		<maven.compiler.target>${jdk.version}</maven.compiler.target>
+
+		<maven.compiler.testSource>${jdk-test.version}</maven.compiler.testSource>
+		<maven.compiler.testTarget>${jdk-test.version}</maven.compiler.testTarget>
+
 		<!-- Spring dependencies -->
-		<spring.version>5.3.29</spring.version>
+		<spring.version>5.3.30</spring.version>
 
 		<!--OpenAPI dependencies -->
 		<openapi.version>1.6.15</openapi.version>

@@ -32,7 +32,6 @@ public abstract class SpelResolverContext {
 	/**
 	 * Default constructor
 	 *
-	 * @param securityExpressionHandlers security expression handlers
 	 * @param request                    the servlet request
 	 * @param response                   the servlet response
 	 */

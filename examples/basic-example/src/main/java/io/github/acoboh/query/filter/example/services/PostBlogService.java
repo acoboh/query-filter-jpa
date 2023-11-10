@@ -1,19 +1,20 @@
 package io.github.acoboh.query.filter.example.services;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
 
-import io.github.acoboh.query.filter.example.model.PostBlog;
+import io.github.acoboh.query.filter.example.domain.PostDTO;
+import io.github.acoboh.query.filter.example.entities.PostBlog;
 import io.github.acoboh.query.filter.jpa.processor.QueryFilter;
 
 public interface PostBlogService {
 
-	public List<PostBlog> getPosts(QueryFilter<PostBlog> filter);
+	public Page<PostDTO> getPosts(QueryFilter<PostBlog> filter, int page, int size);
 
-	public Long createPost(PostBlog post);
+	public String createPost(PostDTO post);
 
-	public PostBlog getPost(Long uuid);
+	public PostDTO getPost(String uuid);
 
-	public void updatePost(Long uuid, PostBlog post);
+	public void updatePost(String uuid, PostDTO post);
 
-	public void deletePost(Long uuid);
+	public void deletePost(String uuid);
 }

@@ -1,13 +1,17 @@
 package io.github.acoboh.query.filter.example.services.impl;
 
-import java.util.List;
-import java.util.Optional;
-
+import org.mapstruct.factory.Mappers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import io.github.acoboh.query.filter.example.domain.PostDTO;
+import io.github.acoboh.query.filter.example.entities.PostBlog;
 import io.github.acoboh.query.filter.example.exceptions.ResourceNotFoundException;
-import io.github.acoboh.query.filter.example.model.PostBlog;
+import io.github.acoboh.query.filter.example.mapper.PostMapper;
 import io.github.acoboh.query.filter.example.repositories.PostBlogRepository;
 import io.github.acoboh.query.filter.example.services.PostBlogService;
 import io.github.acoboh.query.filter.jpa.processor.QueryFilter;
@@ -15,44 +19,51 @@ import io.github.acoboh.query.filter.jpa.processor.QueryFilter;
 @Service
 class PostBlogServiceImpl implements PostBlogService {
 
+	private static final Logger log = LoggerFactory.getLogger(PostBlogServiceImpl.class);
+	private static final PostMapper mapper = Mappers.getMapper(PostMapper.class);
+
 	@Autowired
 	private PostBlogRepository repository;
 
 	@Override
-	public List<PostBlog> getPosts(QueryFilter<PostBlog> filter) {
-		return repository.findAll(filter);
+	public Page<PostDTO> getPosts(QueryFilter<PostBlog> filter, int page, int size) {
+		log.debug("Getting posts page {} size {} filter {}", page, size, filter);
+		Page<PostBlog> pageSlice = repository.findAll(filter, PageRequest.of(page, size));
+		return pageSlice.map(mapper::postToPostDTO);
 	}
 
 	@Override
-	public Long createPost(PostBlog post) {
-		return repository.save(post).getTsid();
+	public PostDTO getPost(String uuid) {
+
+		PostBlog post = repository.findById(uuid)
+				.orElseThrow(() -> new ResourceNotFoundException("Post not found with id " + uuid));
+
+		return mapper.postToPostDTO(post);
 	}
 
 	@Override
-	public PostBlog getPost(Long uuid) {
-		return repository.findById(uuid).orElseThrow(() -> new ResourceNotFoundException("Post not found"));
+	public String createPost(PostDTO post) {
+		PostBlog createdPost = mapper.postDTOToPost(post);
+		return repository.save(createdPost).getTsid();
 	}
 
 	@Override
-	public void updatePost(Long uuid, PostBlog post) {
-		Optional<PostBlog> postOptional = repository.findById(uuid);
-		PostBlog existingPost = postOptional.orElseThrow(() -> new ResourceNotFoundException("Post not found"));
+	public void updatePost(String uuid, PostDTO dto) {
+		PostBlog postBlog = repository.findById(uuid)
+				.orElseThrow(() -> new ResourceNotFoundException("Post not found with id " + uuid));
 
-		existingPost.setAuthor(post.getAuthor());
-		existingPost.setText(post.getText());
-		existingPost.setAvgNote(post.getAvgNote());
-		existingPost.setLikes(post.getLikes());
-		existingPost.setLastTimestamp(post.getLastTimestamp());
-		existingPost.setPublished(post.isPublished());
-		existingPost.setPostType(post.getPostType());
-
-		repository.save(existingPost);
+		postBlog = mapper.updatePostBlog(postBlog, dto);
+		repository.save(postBlog);
 
 	}
 
 	@Override
-	public void deletePost(Long uuid) {
-		repository.deleteById(uuid);
+	public void deletePost(String uuid) {
+		PostBlog postBlog = repository.findById(uuid)
+				.orElseThrow(() -> new ResourceNotFoundException("Post not found with id " + uuid));
+
+		repository.delete(postBlog);
+
 	}
 
 }

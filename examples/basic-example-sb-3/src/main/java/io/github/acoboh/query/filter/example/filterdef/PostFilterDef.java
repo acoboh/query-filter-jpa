@@ -13,7 +13,7 @@ import io.github.acoboh.query.filter.jpa.annotations.QFSortable;
 @QFDefinitionClass(PostBlog.class)
 public class PostFilterDef {
 
-	@QFElement(value = "author", isSpPELExpression = true, defaultValues = "#_pathVariables['id']")
+	@QFElement("authos")
 	private String author;
 
 	@QFElement("likes")

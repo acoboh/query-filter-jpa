@@ -11,7 +11,7 @@ import javax.persistence.criteria.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.github.acoboh.query.filter.jpa.processor.QFDefinition;
+import io.github.acoboh.query.filter.jpa.processor.definitions.QFAbstractDefinition;
 
 /**
  * Predicate recursive processor resolver
@@ -37,7 +37,7 @@ public class PredicateProcessorResolutor {
 	 * @param includeMissing   if the missing fields on the predicate expression must be included
 	 * @param defaultOperation default operation of missing fields
 	 */
-	public PredicateProcessorResolutor(String predicateExp, Map<String, QFDefinition> definitionMap,
+	public PredicateProcessorResolutor(String predicateExp, Map<String, QFAbstractDefinition> definitionMap,
 			boolean includeMissing, PredicateOperation defaultOperation) {
 
 		LOGGER.debug("Initializing predicate {}", predicateExp);

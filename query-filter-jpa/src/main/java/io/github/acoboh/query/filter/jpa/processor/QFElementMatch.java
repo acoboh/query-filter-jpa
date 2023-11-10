@@ -18,6 +18,7 @@ import io.github.acoboh.query.filter.jpa.exceptions.QFDateParsingException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFEnumException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFFieldOperationException;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
+import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionElement;
 import io.github.acoboh.query.filter.jpa.spel.SpelResolverContext;
 import io.github.acoboh.query.filter.jpa.utils.DateUtils;
 
@@ -31,7 +32,7 @@ public class QFElementMatch {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(QFElementMatch.class);
 
-	private final QFDefinition definition;
+	private final QFDefinitionElement definition;
 
 	private final boolean subquery;
 
@@ -58,7 +59,7 @@ public class QFElementMatch {
 	 * @param operation  operation to be applied
 	 * @param definition field definition
 	 */
-	public QFElementMatch(List<String> values, QFOperationEnum operation, QFDefinition definition) {
+	public QFElementMatch(List<String> values, QFOperationEnum operation, QFDefinitionElement definition) {
 
 		this.definition = definition;
 		this.originalValues = values;
@@ -66,14 +67,7 @@ public class QFElementMatch {
 		this.subquery = definition.isSubQuery();
 		this.caseSensitive = definition.isCaseSensitive();
 
-		if (definition.getDateAnnotation() != null) {
-			formatter = definition.getDateTimeFormatter();
-		}
-
-		if (!definition.isElementFilter()) {
-			throw new IllegalArgumentException(
-					"Can not construct any element filter with definition without element annotations");
-		}
+		formatter = definition.getDateTimeFormatter();
 
 		paths = definition.getPaths();
 		matchClasses = new ArrayList<>(paths.size());
@@ -180,7 +174,7 @@ public class QFElementMatch {
 	 *
 	 * @return field definition
 	 */
-	public QFDefinition getDefinition() {
+	public QFDefinitionElement getDefinition() {
 		return definition;
 	}
 
@@ -321,9 +315,6 @@ public class QFElementMatch {
 		if (definition.isArrayTyped()) {
 			checkOperationIsArrayTyped();
 			return;
-		} else if (definition.isDiscriminatorFilter()) {
-			checkDiscriminatorFilter();
-			return;
 		}
 
 		switch (operation) {
@@ -354,12 +345,6 @@ public class QFElementMatch {
 			throw new QFFieldOperationException(operation, definition.getFilterName());
 		}
 
-	}
-
-	private void checkDiscriminatorFilter() {
-		if (!QFOperationEnum.getOperationsOfDiscriminators().contains(operation)) {
-			throw new QFFieldOperationException(operation, definition.getFilterName());
-		}
 	}
 
 	private List<String> parseResults(Object spelResolved) {

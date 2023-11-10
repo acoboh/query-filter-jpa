@@ -27,8 +27,8 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import io.github.acoboh.query.filter.jpa.annotations.QFDiscriminator;
 import io.github.acoboh.query.filter.jpa.annotations.QFParam;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
-import io.github.acoboh.query.filter.jpa.processor.QFDefinition;
 import io.github.acoboh.query.filter.jpa.processor.QFProcessor;
+import io.github.acoboh.query.filter.jpa.processor.definitions.QFAbstractDefinition;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
@@ -139,11 +139,11 @@ class OpenApiCustomiserImpl implements OpenApiCustomiser {
 
 		builder.append("</i></b>. Available fields: \n");
 
-		Collection<QFDefinition> defValues = processor.getDefinitionMap().values();
-		List<QFDefinition> defValuesOrdered = new ArrayList<>(defValues);
-		defValuesOrdered.sort(Comparator.comparing(QFDefinition::getFilterName));
+		Collection<QFAbstractDefinition> defValues = processor.getDefinitionMap().values();
+		List<QFAbstractDefinition> defValuesOrdered = new ArrayList<>(defValues);
+		defValuesOrdered.sort(Comparator.comparing(QFAbstractDefinition::getFilterName));
 
-		for (QFDefinition def : defValuesOrdered) {
+		for (QFAbstractDefinition def : defValuesOrdered) {
 			if (def.isConstructorBlocked()) {
 				continue;
 			}

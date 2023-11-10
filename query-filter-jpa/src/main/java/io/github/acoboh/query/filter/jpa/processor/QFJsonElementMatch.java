@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.node.ValueNode;
 import io.github.acoboh.query.filter.jpa.exceptions.QFFieldOperationException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFJsonParseException;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
+import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionJson;
 
 /**
  * Class with JSON element matching definition
@@ -37,7 +38,7 @@ public class QFJsonElementMatch {
 		mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
 	}
 
-	private final QFDefinition definition;
+	private final QFDefinitionJson definition;
 
 	private final String jsonValue;
 
@@ -59,7 +60,7 @@ public class QFJsonElementMatch {
 	 * @param definition definition
 	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFJsonParseException if any JSON parsing exception
 	 */
-	public QFJsonElementMatch(String value, QFOperationEnum operation, QFDefinition definition)
+	public QFJsonElementMatch(String value, QFOperationEnum operation, QFDefinitionJson definition)
 			throws QFJsonParseException {
 
 		this.definition = definition;
@@ -71,7 +72,7 @@ public class QFJsonElementMatch {
 			throw new QFFieldOperationException(operation, definition.getFilterName());
 		}
 
-		paths = definition.getPaths().get(0);
+		paths = definition.getPaths();
 
 		try {
 			this.valueNode = mapper.readTree(value);
@@ -128,7 +129,7 @@ public class QFJsonElementMatch {
 	 *
 	 * @return field definition
 	 */
-	public QFDefinition getDefinition() {
+	public QFDefinitionJson getDefinition() {
 		return definition;
 	}
 

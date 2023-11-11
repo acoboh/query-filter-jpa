@@ -1,4 +1,4 @@
-package io.github.acoboh.query.filter.jpa.processor;
+package io.github.acoboh.query.filter.jpa.processor.match;
 
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -18,6 +18,7 @@ import io.github.acoboh.query.filter.jpa.exceptions.QFDateParsingException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFEnumException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFFieldOperationException;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
+import io.github.acoboh.query.filter.jpa.processor.QFPath;
 import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionElement;
 import io.github.acoboh.query.filter.jpa.spel.SpelResolverContext;
 import io.github.acoboh.query.filter.jpa.utils.DateUtils;
@@ -34,8 +35,6 @@ public class QFElementMatch {
 
 	private final QFDefinitionElement definition;
 
-	private final boolean subquery;
-
 	private final List<String> originalValues;
 
 	private final List<List<QFPath>> paths;
@@ -44,7 +43,6 @@ public class QFElementMatch {
 	private final List<Class<?>> matchClasses;
 	private final List<Boolean> isEnumList;
 
-	private boolean caseSensitive;
 	private List<String> processedValues;
 	private List<List<Object>> parsedValues;
 
@@ -64,8 +62,6 @@ public class QFElementMatch {
 		this.definition = definition;
 		this.originalValues = values;
 		this.operation = operation;
-		this.subquery = definition.isSubQuery();
-		this.caseSensitive = definition.isCaseSensitive();
 
 		formatter = definition.getDateTimeFormatter();
 
@@ -89,7 +85,7 @@ public class QFElementMatch {
 	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFEnumException           if any enumeration exception
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected boolean initialize(SpelResolverContext spelResolver, MultiValueMap<String, Object> context)
+	public boolean initialize(SpelResolverContext spelResolver, MultiValueMap<String, Object> context)
 			throws QFFieldOperationException, QFEnumException {
 
 		if (definition.isSpelExpression() && !originalValues.isEmpty()) {
@@ -179,15 +175,6 @@ public class QFElementMatch {
 	}
 
 	/**
-	 * Get if the field must be in a subquery
-	 *
-	 * @return true if the filter is subqueried
-	 */
-	public boolean isSubquery() {
-		return subquery;
-	}
-
-	/**
 	 * List of original matching values
 	 *
 	 * @return original matching values
@@ -212,15 +199,6 @@ public class QFElementMatch {
 	 */
 	public QFOperationEnum getOperation() {
 		return operation;
-	}
-
-	/**
-	 * If the string is case sensitive
-	 *
-	 * @return true if the string is case sensitive
-	 */
-	public boolean isCaseSensitive() {
-		return caseSensitive;
 	}
 
 	/**

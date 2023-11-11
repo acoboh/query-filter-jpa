@@ -10,9 +10,8 @@ import io.github.acoboh.query.filter.jpa.annotations.QFBlockParsing;
 import io.github.acoboh.query.filter.jpa.annotations.QFDiscriminator;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 import io.github.acoboh.query.filter.jpa.processor.QFPath;
-import io.github.acoboh.query.filter.jpa.processor.definitions.traits.IDefinitionValuable;
 
-public class QFDefinitionDiscriminator extends QFAbstractDefinition implements IDefinitionValuable {
+public class QFDefinitionDiscriminator extends QFAbstractDefinition {
 
 	private final QFDiscriminator discriminatorAnnotation;
 	private final List<QFPath> paths;

@@ -25,7 +25,7 @@ public @interface QFCollectionElement {
 	 * @return value
 	 */
 	String value();
-	
+
 	/**
 	 * Name to use in the input filter. If it is not specified, it will be used the name of the variable associated
 	 *

@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,8 +28,13 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import io.github.acoboh.query.filter.jpa.annotations.QFDiscriminator;
 import io.github.acoboh.query.filter.jpa.annotations.QFParam;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
+import io.github.acoboh.query.filter.jpa.operations.QFOperationJsonEnum;
 import io.github.acoboh.query.filter.jpa.processor.QFProcessor;
 import io.github.acoboh.query.filter.jpa.processor.definitions.QFAbstractDefinition;
+import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionDiscriminator;
+import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionElement;
+import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionJson;
+import io.github.acoboh.query.filter.jpa.processor.definitions.traits.IDefinitionSortable;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
@@ -150,10 +156,10 @@ class OpenApiCustomiserImpl implements OpenApiCustomiser {
 
 			builder.append("<p><b>").append(def.getFilterName()).append("</b>:");
 
-			if (def.isElementFilter()) {
-
-				Set<QFOperationEnum> qfOperations = QFOperationEnum.getOperationsOfClass(def.getFinalClass(),
-						def.isArrayTyped());
+			if (def instanceof QFDefinitionElement) {
+				QFDefinitionElement defElement = (QFDefinitionElement) def;
+				Set<QFOperationEnum> qfOperations = QFOperationEnum
+						.getOperationsOfClass(defElement.getFirstFinalClass(), defElement.isArrayTyped());
 
 				if (!qfOperations.isEmpty()) {
 					builder.append(" Operations: [<i>");
@@ -164,11 +170,16 @@ class OpenApiCustomiserImpl implements OpenApiCustomiser {
 
 			}
 
-			if (def.isSortable()) {
-				builder.append(" <i>(Sortable)</i>");
+			if (def instanceof IDefinitionSortable) {
+				IDefinitionSortable idef = (IDefinitionSortable) def;
+				if (idef.isSortable()) {
+					builder.append(" <i>(Sortable)</i>");
+				}
 			}
 
-			if (def.isDiscriminatorFilter()) {
+			if (def instanceof QFDefinitionDiscriminator) {
+				QFDefinitionDiscriminator qdefDiscriminator = (QFDefinitionDiscriminator) def;
+
 				Set<QFOperationEnum> qfOperations = QFOperationEnum.getOperationsOfDiscriminators();
 				builder.append(" Operations: [<i>");
 				String operationsAvailable = qfOperations.stream().map(QFOperationEnum::getValue)
@@ -176,20 +187,15 @@ class OpenApiCustomiserImpl implements OpenApiCustomiser {
 				builder.append(operationsAvailable).append("</i>]");
 
 				builder.append(" Possible Values: [");
-				String values = Arrays.stream(def.getDiscriminatorAnnotation().value()).map(QFDiscriminator.Value::name)
-						.collect(Collectors.joining(","));
+				String values = Arrays.stream(qdefDiscriminator.getDiscriminatorAnnotation().value())
+						.map(QFDiscriminator.Value::name).collect(Collectors.joining(","));
 				builder.append(values).append("]");
-
-			}
-
-			if (def.isJsonElementFilter()) {
-				Set<QFOperationEnum> qfOperations = QFOperationEnum.getOperationsOfJson();
+			} else if (def instanceof QFDefinitionJson) {
 				builder.append(" <i>(JSON element)</i> Operations: [<i>");
 
-				String operationsAvailable = qfOperations.stream().map(QFOperationEnum::getValue)
-						.collect(Collectors.joining(","));
+				String operationsAvailable = Stream.of(QFOperationJsonEnum.values())
+						.map(QFOperationJsonEnum::getOperation).collect(Collectors.joining(","));
 				builder.append(operationsAvailable).append("</i>]");
-
 			}
 
 		}

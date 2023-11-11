@@ -1,7 +1,4 @@
-package io.github.acoboh.query.filter.jpa.processor;
-
-import java.util.ArrayList;
-import java.util.List;
+package io.github.acoboh.query.filter.jpa.processor.match;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,8 +21,6 @@ public class QFCollectionMatch {
 
 	private final int value;
 
-	private final List<QFPath> paths;
-
 	/**
 	 * Default constructor
 	 * 
@@ -38,17 +33,16 @@ public class QFCollectionMatch {
 		this.definition = definition;
 		this.operation = operation;
 		this.value = value;
-//		this.paths = new ArrayList<>(definition.getPaths().get(0)); // TODO fix
-		this.paths = new ArrayList<>();
+
 	}
 
 	/**
-	 * Get paths
+	 * Get collection operation
 	 * 
-	 * @return paths
+	 * @return collection operation
 	 */
-	public List<QFPath> getPaths() {
-		return paths;
+	public QFCollectionOperationEnum getOperation() {
+		return operation;
 	}
 
 	/**
@@ -58,6 +52,15 @@ public class QFCollectionMatch {
 	 */
 	public int getValue() {
 		return value;
+	}
+
+	/**
+	 * Get element definition
+	 * 
+	 * @return element definition
+	 */
+	public QFDefinitionCollection getDefinition() {
+		return definition;
 	}
 
 }

@@ -10,4 +10,6 @@ public interface IDefinitionSortable {
 
 	public String getFilterName();
 
+	public boolean isSortable();
+
 }

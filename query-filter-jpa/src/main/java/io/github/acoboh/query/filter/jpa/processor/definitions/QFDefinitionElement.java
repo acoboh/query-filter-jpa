@@ -24,11 +24,9 @@ import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefini
 import io.github.acoboh.query.filter.jpa.predicate.PredicateOperation;
 import io.github.acoboh.query.filter.jpa.processor.QFPath;
 import io.github.acoboh.query.filter.jpa.processor.definitions.traits.IDefinitionSortable;
-import io.github.acoboh.query.filter.jpa.processor.definitions.traits.IDefinitionValuable;
 import io.github.acoboh.query.filter.jpa.utils.DateUtils;
 
-public final class QFDefinitionElement extends QFAbstractDefinition
-		implements IDefinitionSortable, IDefinitionValuable {
+public final class QFDefinitionElement extends QFAbstractDefinition implements IDefinitionSortable {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(QFDefinitionElement.class);
 
@@ -270,6 +268,15 @@ public final class QFDefinitionElement extends QFAbstractDefinition
 	@Override
 	public List<QFPath> getSortPaths() {
 		return paths.get(0);
+	}
+
+	/**
+	 * Get the first final class of the definition element
+	 * 
+	 * @return first final class located
+	 */
+	public Class<?> getFirstFinalClass() {
+		return finalClasses.get(0);
 	}
 
 }

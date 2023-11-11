@@ -118,6 +118,7 @@ public abstract class QFAbstractDefinition {
 			// Create json definition
 			QFJsonElement jsonAnnotation = filterField.getAnnotation(QFJsonElement.class);
 			return new QFDefinitionJson(filterField, filterClass, entityClass, blockParsing, jsonAnnotation);
+
 		} else if (isQFDiscriminator) {
 			// Create discriminator definition
 			QFDiscriminator discriminatorAnnotation = filterField.getAnnotation(QFDiscriminator.class);
@@ -126,7 +127,10 @@ public abstract class QFAbstractDefinition {
 
 		} else if (isQFCollection) {
 			// Create collection definition
-			LOGGER.error("Not supported at this time");
+			QFCollectionElement collectionAnnotation = filterField.getAnnotation(QFCollectionElement.class);
+			return new QFDefinitionCollection(filterField, filterClass, entityClass, blockParsing,
+					collectionAnnotation);
+
 		} else if (isQFSortable) {
 			QFSortable sortableAnnotation = filterField.getAnnotation(QFSortable.class);
 			return new QFDefinitionSortable(filterField, filterClass, entityClass, blockParsing, sortableAnnotation);

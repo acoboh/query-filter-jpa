@@ -60,7 +60,7 @@ final class ClassUtils {
 		Class<?> finalClass = ClassUtils.checkAbstractObject(pathField, splitLevel[0], nextLevel, fieldObject,
 				fieldObject.getType(), paths, isEndObject);
 
-		if (!paths.get(paths.size() - 1).isFinal()) {
+		if (!paths.get(paths.size() - 1).isFinal() && isEndObject) {
 			throw new QFFieldLevelException(pathField, nextLevel);
 		}
 

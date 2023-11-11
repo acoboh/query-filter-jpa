@@ -35,4 +35,9 @@ public class QFDefinitionSortable extends QFAbstractDefinition implements IDefin
 		return paths;
 	}
 
+	@Override
+	public boolean isSortable() {
+		return true;
+	}
+
 }

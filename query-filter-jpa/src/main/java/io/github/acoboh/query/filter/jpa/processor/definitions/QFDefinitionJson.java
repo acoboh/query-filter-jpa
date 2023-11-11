@@ -12,9 +12,8 @@ import io.github.acoboh.query.filter.jpa.annotations.QFJsonElement;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFJsonException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 import io.github.acoboh.query.filter.jpa.processor.QFPath;
-import io.github.acoboh.query.filter.jpa.processor.definitions.traits.IDefinitionValuable;
 
-public class QFDefinitionJson extends QFAbstractDefinition implements IDefinitionValuable {
+public class QFDefinitionJson extends QFAbstractDefinition {
 
 	private final QFJsonElement jsonAnnotation;
 	private final List<QFPath> paths;

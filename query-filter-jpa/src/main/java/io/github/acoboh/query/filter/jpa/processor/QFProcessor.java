@@ -27,6 +27,7 @@ import io.github.acoboh.query.filter.jpa.predicate.PredicateProcessorResolutor;
 import io.github.acoboh.query.filter.jpa.processor.definitions.QFAbstractDefinition;
 import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionElement;
 import io.github.acoboh.query.filter.jpa.processor.definitions.traits.IDefinitionSortable;
+import io.github.acoboh.query.filter.jpa.processor.match.QFElementMatch;
 
 /**
  * Class to process all query filters.

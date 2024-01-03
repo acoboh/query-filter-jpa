@@ -28,7 +28,7 @@ You can install the library by adding the following dependency to your project's
 <dependency>
     <groupId>io.github.acoboh</groupId>
     <artifactId>query-filter-jpa</artifactId>
-    <version>0.0.4</version>
+    <version>0.2.0</version>
 </dependency>
 ``` 
 
@@ -38,7 +38,7 @@ You can install the library by adding the following dependency to your project's
 <dependency>
     <groupId>io.github.acoboh</groupId>
     <artifactId>query-filter-jpa-3</artifactId>
-    <version>0.0.4</version>
+    <version>0.2.0</version>
 </dependency>
 ```
 
@@ -193,7 +193,7 @@ You need to import the following library:
 <dependency>
     <groupId>io.github.acoboh</groupId>
     <artifactId>query-filter-jpa-openapi</artifactId>
-    <version>0.0.4</version>
+    <version>0.2.0</version>
 </dependency>
 ``` 
 
@@ -203,17 +203,11 @@ You need to import the following library:
 <dependency>
     <groupId>io.github.acoboh</groupId>
     <artifactId>query-filter-jpa-openapi-3</artifactId>
-    <version>0.0.4</version>
+    <version>0.2.0</version>
 </dependency>
 ```
 
-You can easily enable with the following custom annotation on the main class:
-
-```java
-@EnableQueryFilterOpenApi(basePackageClasses = PostRestController.class)
-```
-
-> **_NOTE_**: The `basePackageClasses` and `basePackages` are not required by default
+Now automatically, all the controllers will be analyzed by the library and will override the OpenAPI documentation.
 
 ## Examples
 

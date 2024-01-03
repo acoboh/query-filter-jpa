@@ -11,11 +11,13 @@ import io.github.acoboh.query.filter.jpa.annotations.QFDiscriminator;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 import io.github.acoboh.query.filter.jpa.processor.QFPath;
 
+/**
+ * Definition for discriminator classes
+ */
 public class QFDefinitionDiscriminator extends QFAbstractDefinition {
 
 	private final QFDiscriminator discriminatorAnnotation;
 	private final List<QFPath> paths;
-	private final Class<?> finalClass;
 
 	QFDefinitionDiscriminator(Field filterField, Class<?> filterClass, Class<?> entityClass,
 			QFBlockParsing blockParsing, QFDiscriminator discriminatorAnnotation)
@@ -28,10 +30,8 @@ public class QFDefinitionDiscriminator extends QFAbstractDefinition {
 			Pair<Class<?>, List<QFPath>> pairDef = ClassUtils.getPathsFrom(discriminatorAnnotation.path(), filterClass,
 					entityClass, false);
 			this.paths = pairDef.getSecond();
-			this.finalClass = pairDef.getFirst();
 		} else {
 			this.paths = Collections.emptyList();
-			this.finalClass = entityClass;
 		}
 
 		if (!discriminatorAnnotation.name().isEmpty()) {

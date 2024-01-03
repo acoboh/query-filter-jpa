@@ -1,8 +1,5 @@
 package io.github.acoboh.query.filter.jpa.processor.match;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import io.github.acoboh.query.filter.jpa.operations.QFCollectionOperationEnum;
 import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionCollection;
 
@@ -12,8 +9,6 @@ import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionColle
  *
  */
 public class QFCollectionMatch {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(QFCollectionMatch.class);
 
 	private final QFDefinitionCollection definition;
 

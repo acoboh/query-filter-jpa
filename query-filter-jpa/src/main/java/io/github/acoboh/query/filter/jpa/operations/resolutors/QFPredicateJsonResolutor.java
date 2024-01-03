@@ -6,6 +6,9 @@ import javax.persistence.criteria.Predicate;
 
 import io.github.acoboh.query.filter.jpa.processor.match.QFJsonElementMatch;
 
+/**
+ * Interface for predicate json resolutors
+ */
 public interface QFPredicateJsonResolutor {
 
 	/**

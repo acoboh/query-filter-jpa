@@ -345,6 +345,13 @@ public class QueryFilter<E> implements Specification<E> {
 
 	}
 
+	/**
+	 * Add a new field for collection operations
+	 * 
+	 * @param field     filter field name
+	 * @param operation operation
+	 * @param value     value
+	 */
 	public void addNewField(String field, QFCollectionOperationEnum operation, int value) {
 
 		Assert.notNull(field, "field cannot be null");
@@ -548,6 +555,15 @@ public class QueryFilter<E> implements Specification<E> {
 
 	}
 
+	/**
+	 * Override any collection operation on a filter field
+	 * 
+	 * @param field               filter field name
+	 * @param operationCollection operation
+	 * @param value               value
+	 * @throws QFFieldNotFoundException if the field is not present
+	 * @throws QFNotValuable            if the field is not a valid collection filter field
+	 */
 	public void overrideField(String field, QFCollectionOperationEnum operationCollection, int value)
 			throws QFFieldNotFoundException, QFNotValuable {
 
@@ -596,6 +612,13 @@ public class QueryFilter<E> implements Specification<E> {
 
 	}
 
+	/**
+	 * Get the value of the json field
+	 * 
+	 * @param field filter field
+	 * @return value of null if the field is not JSON type
+	 * @throws QFFieldNotFoundException if the field is not found
+	 */
 	public @Nullable Map<String, String> getActualJsonValue(String field) throws QFFieldNotFoundException {
 		QFAbstractDefinition def = definitionMap.get(field);
 		if (def == null) {
@@ -610,6 +633,13 @@ public class QueryFilter<E> implements Specification<E> {
 				.map(QFJsonElementMatch::getMapValues).findFirst().orElse(null);
 	}
 
+	/**
+	 * Return the value used on a collection filter field
+	 * 
+	 * @param field filter field name
+	 * @return the value of null if the field is not Collection type
+	 * @throws QFFieldNotFoundException if the field is not found
+	 */
 	public Integer getActualCollectionValue(String field) throws QFFieldNotFoundException {
 		QFAbstractDefinition def = definitionMap.get(field);
 		if (def == null) {
@@ -873,6 +903,7 @@ public class QueryFilter<E> implements Specification<E> {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void processCollections(Root<E> root, CriteriaBuilder criteriaBuilder,
 			Map<String, List<Predicate>> predicatesMap, Map<String, Path<?>> pathsMap) {
 		LOGGER.trace("Creating all collection matching elements on filter");

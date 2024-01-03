@@ -11,6 +11,9 @@ import io.github.acoboh.query.filter.jpa.exceptions.QFOperationNotFoundException
 import io.github.acoboh.query.filter.jpa.operations.resolutors.QFPredicateJsonResolutor;
 import io.github.acoboh.query.filter.jpa.processor.match.QFJsonElementMatch;
 
+/**
+ * Enum with all JSON operations availables
+ */
 public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
 
 	/**

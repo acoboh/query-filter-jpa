@@ -18,14 +18,31 @@ import io.github.acoboh.query.filter.jpa.annotations.QFSortable;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFAnnotationsException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 
+/**
+ * Abstract class for base definition
+ */
 public abstract class QFAbstractDefinition {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(QFAbstractDefinition.class);
 
+	/**
+	 * Field to be filtered
+	 */
 	protected final Field field;
+
+	/**
+	 * Filter class
+	 */
 	protected final Class<?> filterClass;
+
+	/**
+	 * Entity class
+	 */
 	protected final Class<?> entityClass;
 
+	/**
+	 * Filter name
+	 */
 	protected String filterName;
 
 	private final boolean isBlocked;
@@ -81,6 +98,15 @@ public abstract class QFAbstractDefinition {
 		return isBlocked;
 	}
 
+	/**
+	 * Create a new base definition based on annotations of the field
+	 * 
+	 * @param filterField filter field
+	 * @param filterClass filter class
+	 * @param entityClass entity class
+	 * @return abstract definition
+	 * @throws QueryFilterDefinitionException if any error happens creating the definition
+	 */
 	public static QFAbstractDefinition buildDefinition(Field filterField, Class<?> filterClass, Class<?> entityClass)
 			throws QueryFilterDefinitionException {
 

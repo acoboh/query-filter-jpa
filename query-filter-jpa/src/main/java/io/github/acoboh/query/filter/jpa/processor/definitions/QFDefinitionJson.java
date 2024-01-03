@@ -13,11 +13,13 @@ import io.github.acoboh.query.filter.jpa.exceptions.definition.QFJsonException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 import io.github.acoboh.query.filter.jpa.processor.QFPath;
 
+/**
+ * Definition for JSON filter fields
+ */
 public class QFDefinitionJson extends QFAbstractDefinition {
 
 	private final QFJsonElement jsonAnnotation;
 	private final List<QFPath> paths;
-	private final Class<?> finalClass;
 
 	QFDefinitionJson(Field filterField, Class<?> filterClass, Class<?> entityClass, QFBlockParsing blockParsing,
 			QFJsonElement jsonAnnotation) throws QueryFilterDefinitionException {
@@ -33,7 +35,6 @@ public class QFDefinitionJson extends QFAbstractDefinition {
 				false);
 
 		this.paths = pairDef.getSecond();
-		this.finalClass = pairDef.getFirst();
 
 		QFPath last = paths.get(paths.size() - 1);
 		if (!last.getField().isAnnotationPresent(Column.class)) {

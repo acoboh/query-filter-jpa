@@ -32,7 +32,7 @@ import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTest;
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class CollectionTests {
+class CollectionTests {
 
 	private static final PostBlog POST_EXAMPLE = new PostBlog();
 	private static final PostBlog POST_EXAMPLE_2 = new PostBlog();

@@ -13,26 +13,23 @@ import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefini
 import io.github.acoboh.query.filter.jpa.processor.QFPath;
 import io.github.acoboh.query.filter.jpa.processor.QFPath.QueryFilterElementDefType;
 
+/**
+ * Definition for collection filter field
+ */
 public class QFDefinitionCollection extends QFAbstractDefinition {
 
 	private static final List<QueryFilterElementDefType> allowedTypes = Arrays.asList(QueryFilterElementDefType.LIST,
 			QueryFilterElementDefType.SET);
 
-	private final QFCollectionElement collectionAnnotation;
-
 	private final List<QFPath> paths;
-	private final Class<?> finalClass;
 
 	QFDefinitionCollection(Field filterField, Class<?> filterClass, Class<?> entityClass, QFBlockParsing blockParsing,
 			QFCollectionElement collectionElement) throws QueryFilterDefinitionException {
 		super(filterField, filterClass, entityClass, blockParsing);
 
-		this.collectionAnnotation = collectionElement;
-
 		Pair<Class<?>, List<QFPath>> pairDef = ClassUtils.getPathsFrom(collectionElement.value(), filterClass,
 				entityClass, false);
 		this.paths = pairDef.getSecond();
-		this.finalClass = pairDef.getFirst();
 
 		if (!collectionElement.name().isEmpty()) {
 			super.filterName = collectionElement.name();

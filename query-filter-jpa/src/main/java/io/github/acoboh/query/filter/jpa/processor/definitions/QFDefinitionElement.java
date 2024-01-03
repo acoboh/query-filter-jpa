@@ -26,12 +26,14 @@ import io.github.acoboh.query.filter.jpa.processor.QFPath;
 import io.github.acoboh.query.filter.jpa.processor.definitions.traits.IDefinitionSortable;
 import io.github.acoboh.query.filter.jpa.utils.DateUtils;
 
+/**
+ * Basic definition for filter fields
+ */
 public final class QFDefinitionElement extends QFAbstractDefinition implements IDefinitionSortable {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(QFDefinitionElement.class);
 
 	private final QFElement[] elementAnnotations;
-	private final QFElements elementsAnnotation;
 	private final PredicateOperation defaultOperation;
 
 	private final QFDate dateAnnotation;
@@ -58,7 +60,6 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 
 		// Element annotations
 		this.elementAnnotations = elementAnnotations;
-		this.elementsAnnotation = elementsAnnotation;
 
 		// Date annotation
 		this.dateAnnotation = dateAnnotation;

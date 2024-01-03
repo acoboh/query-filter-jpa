@@ -6,6 +6,9 @@ import javax.persistence.criteria.Predicate;
 
 import io.github.acoboh.query.filter.jpa.processor.match.QFCollectionMatch;
 
+/**
+ * Interface for predicate collection predicate resolutors
+ */
 public interface QFPredicateCollectionResolutor {
 
 	/**

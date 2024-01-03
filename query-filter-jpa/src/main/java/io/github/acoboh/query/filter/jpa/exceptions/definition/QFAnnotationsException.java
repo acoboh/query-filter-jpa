@@ -14,6 +14,15 @@ public class QFAnnotationsException extends QueryFilterDefinitionException {
 
 	/**
 	 * Default constructor
+	 * 
+	 * @param field             Field with multiple annotations
+	 * @param filterClass       Filter class
+	 * @param isQFElement       true if is QFElement
+	 * @param isQFJson          true if is QFJson
+	 * @param isQFDiscriminator true if is QFDiscriminator
+	 * @param isQFCollection    true if is QFCollection
+	 * @param isQFSortable      true if is QFSortable
+	 * 
 	 */
 	public QFAnnotationsException(Field field, Class<?> filterClass, boolean isQFElement, boolean isQFJson,
 			boolean isQFDiscriminator, boolean isQFCollection, boolean isQFSortable) {

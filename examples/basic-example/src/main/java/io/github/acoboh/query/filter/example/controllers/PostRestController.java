@@ -27,7 +27,7 @@ public class PostRestController {
 
 	@GetMapping
 	public Page<PostDTO> getPosts(
-			@QFParam(PostFilterDef.class) @RequestParam(required = false, defaultValue = "") QueryFilter<PostBlog> filter,
+			@QFParam(PostFilterDef.class) @RequestParam(required = false, defaultValue = "", name = "filter") QueryFilter<PostBlog> filter,
 			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
 		return service.getPosts(filter, page, size);
 	}

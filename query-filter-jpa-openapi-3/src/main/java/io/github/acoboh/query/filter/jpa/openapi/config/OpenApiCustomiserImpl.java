@@ -19,6 +19,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.ResolvableType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import io.github.acoboh.query.filter.jpa.annotations.QFDiscriminator;
@@ -107,8 +108,18 @@ class OpenApiCustomiserImpl implements OpenApiCustomizer {
 						Operation op = getOperation(optPath.get(),
 								requestMapping.getKey().getMethodsCondition().getMethods().iterator().next());
 
+						String paramName = param.getName();
+						if (param.isAnnotationPresent(RequestParam.class)) {
+							RequestParam requestParam = param.getAnnotation(RequestParam.class);
+							if (!requestParam.name().isEmpty()) {
+								paramName = requestParam.name();
+							}
+						}
+
+						final String finalParamName = paramName;
+
 						Optional<io.swagger.v3.oas.models.parameters.Parameter> optParam = op.getParameters().stream()
-								.filter(e -> e.getName().equals("filter")).findFirst();
+								.filter(e -> e.getName().equals(finalParamName)).findFirst();
 
 						if (optParam.isEmpty()) {
 							LOGGER.error("Error getting parameter filter on path {}", path);

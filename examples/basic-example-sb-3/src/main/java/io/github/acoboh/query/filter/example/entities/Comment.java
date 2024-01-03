@@ -2,9 +2,9 @@ package io.github.acoboh.query.filter.example.entities;
 
 import java.util.Objects;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Comment extends BaseEntity {

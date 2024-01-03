@@ -13,14 +13,11 @@ import io.github.acoboh.query.filter.jpa.annotations.QFSortable;
 @QFDefinitionClass(PostBlog.class)
 public class PostFilterDef {
 
-	@QFElement("author")
-	private String author;
+	@QFElement("title")
+	private String title;
 
 	@QFElement("likes")
 	private int likes;
-
-	@QFElement("avgNote")
-	private double avgNote;
 
 	@QFDate
 	@QFElement("createDate")

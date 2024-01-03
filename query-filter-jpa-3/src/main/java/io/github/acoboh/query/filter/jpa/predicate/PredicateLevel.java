@@ -9,7 +9,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.github.acoboh.query.filter.jpa.processor.QFDefinition;
+import io.github.acoboh.query.filter.jpa.processor.definitions.QFAbstractDefinition;
 import io.github.acoboh.query.filter.jpa.utils.StringParseUtils;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;
@@ -35,7 +35,7 @@ class PredicateLevel {
 	 * @param expression expression of predicate
 	 * @param fullMap    map definition of filter to be used
 	 */
-	public PredicateLevel(String expression, Map<String, QFDefinition> fullMap) {
+	public PredicateLevel(String expression, Map<String, QFAbstractDefinition> fullMap) {
 
 		parts = StringParseUtils.parseParts(expression);
 

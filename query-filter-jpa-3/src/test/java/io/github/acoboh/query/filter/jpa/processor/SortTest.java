@@ -192,7 +192,7 @@ public class SortTest {
 	}
 
 	@Test
-	@DisplayName("9. Test by clear BBDD")
+	@DisplayName("5. Test by clear BBDD")
 	@Order(10)
 	void clearBBDD() {
 		repository.deleteAll();

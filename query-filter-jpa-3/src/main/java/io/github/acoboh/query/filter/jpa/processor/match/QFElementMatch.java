@@ -1,4 +1,4 @@
-package io.github.acoboh.query.filter.jpa.processor;
+package io.github.acoboh.query.filter.jpa.processor.match;
 
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -18,6 +18,8 @@ import io.github.acoboh.query.filter.jpa.exceptions.QFDateParsingException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFEnumException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFFieldOperationException;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
+import io.github.acoboh.query.filter.jpa.processor.QFPath;
+import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionElement;
 import io.github.acoboh.query.filter.jpa.spel.SpelResolverContext;
 import io.github.acoboh.query.filter.jpa.utils.DateUtils;
 
@@ -31,9 +33,7 @@ public class QFElementMatch {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(QFElementMatch.class);
 
-	private final QFDefinition definition;
-
-	private final boolean subquery;
+	private final QFDefinitionElement definition;
 
 	private final List<String> originalValues;
 
@@ -43,7 +43,6 @@ public class QFElementMatch {
 	private final List<Class<?>> matchClasses;
 	private final List<Boolean> isEnumList;
 
-	private boolean caseSensitive;
 	private List<String> processedValues;
 	private List<List<Object>> parsedValues;
 
@@ -58,22 +57,13 @@ public class QFElementMatch {
 	 * @param operation  operation to be applied
 	 * @param definition field definition
 	 */
-	public QFElementMatch(List<String> values, QFOperationEnum operation, QFDefinition definition) {
+	public QFElementMatch(List<String> values, QFOperationEnum operation, QFDefinitionElement definition) {
 
 		this.definition = definition;
 		this.originalValues = values;
 		this.operation = operation;
-		this.subquery = definition.isSubQuery();
-		this.caseSensitive = definition.isCaseSensitive();
 
-		if (definition.getDateAnnotation() != null) {
-			formatter = definition.getDateTimeFormatter();
-		}
-
-		if (!definition.isElementFilter()) {
-			throw new IllegalArgumentException(
-					"Can not construct any element filter with definition without element annotations");
-		}
+		formatter = definition.getDateTimeFormatter();
 
 		paths = definition.getPaths();
 		matchClasses = new ArrayList<>(paths.size());
@@ -95,7 +85,7 @@ public class QFElementMatch {
 	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFEnumException           if any enumeration exception
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected boolean initialize(SpelResolverContext spelResolver, MultiValueMap<String, Object> context)
+	public boolean initialize(SpelResolverContext spelResolver, MultiValueMap<String, Object> context)
 			throws QFFieldOperationException, QFEnumException {
 
 		if (definition.isSpelExpression() && !originalValues.isEmpty()) {
@@ -180,17 +170,8 @@ public class QFElementMatch {
 	 *
 	 * @return field definition
 	 */
-	public QFDefinition getDefinition() {
+	public QFDefinitionElement getDefinition() {
 		return definition;
-	}
-
-	/**
-	 * Get if the field must be in a subquery
-	 *
-	 * @return true if the filter is subqueried
-	 */
-	public boolean isSubquery() {
-		return subquery;
 	}
 
 	/**
@@ -218,15 +199,6 @@ public class QFElementMatch {
 	 */
 	public QFOperationEnum getOperation() {
 		return operation;
-	}
-
-	/**
-	 * If the string is case sensitive
-	 *
-	 * @return true if the string is case sensitive
-	 */
-	public boolean isCaseSensitive() {
-		return caseSensitive;
 	}
 
 	/**
@@ -321,9 +293,6 @@ public class QFElementMatch {
 		if (definition.isArrayTyped()) {
 			checkOperationIsArrayTyped();
 			return;
-		} else if (definition.isDiscriminatorFilter()) {
-			checkDiscriminatorFilter();
-			return;
 		}
 
 		switch (operation) {
@@ -354,12 +323,6 @@ public class QFElementMatch {
 			throw new QFFieldOperationException(operation, definition.getFilterName());
 		}
 
-	}
-
-	private void checkDiscriminatorFilter() {
-		if (!QFOperationEnum.getOperationsOfDiscriminators().contains(operation)) {
-			throw new QFFieldOperationException(operation, definition.getFilterName());
-		}
 	}
 
 	private List<String> parseResults(Object spelResolved) {

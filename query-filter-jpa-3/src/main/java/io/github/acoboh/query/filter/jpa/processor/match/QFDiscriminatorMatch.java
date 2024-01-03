@@ -1,4 +1,4 @@
-package io.github.acoboh.query.filter.jpa.processor;
+package io.github.acoboh.query.filter.jpa.processor.match;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import io.github.acoboh.query.filter.jpa.annotations.QFDiscriminator;
 import io.github.acoboh.query.filter.jpa.exceptions.QFDiscriminatorNotFoundException;
+import io.github.acoboh.query.filter.jpa.processor.QFPath;
+import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionDiscriminator;
 
 /**
  * Class with info about the discriminator matching for filtering
@@ -23,7 +25,7 @@ public class QFDiscriminatorMatch {
 	private final List<String> values;
 
 	private final List<Class<?>> matchingClasses;
-	private final QFDefinition definition;
+	private final QFDefinitionDiscriminator definition;
 
 	private final Class<?> entityClass;
 
@@ -37,12 +39,8 @@ public class QFDiscriminatorMatch {
 	 * @param definition definition of the field
 	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFDiscriminatorNotFoundException if any discriminator exception occurs
 	 */
-	public QFDiscriminatorMatch(List<String> values, QFDefinition definition) throws QFDiscriminatorNotFoundException {
-
-		if (!definition.isDiscriminatorFilter()) {
-			throw new IllegalArgumentException(
-					"Can not construct any discriminator filter with definition without discriminator annotations");
-		}
+	public QFDiscriminatorMatch(List<String> values, QFDefinitionDiscriminator definition)
+			throws QFDiscriminatorNotFoundException {
 
 		this.values = values;
 		this.definition = definition;
@@ -61,7 +59,7 @@ public class QFDiscriminatorMatch {
 		}
 
 		if (!definition.getPaths().isEmpty()) {
-			path = definition.getPaths().get(0);
+			path = definition.getPaths();
 			if (path.isEmpty()) {
 				LOGGER.error("Error. Unexpected empty path for discriminator match {}", definition.getFilterName());
 			}
@@ -107,7 +105,7 @@ public class QFDiscriminatorMatch {
 	 *
 	 * @return original field definition
 	 */
-	public QFDefinition getDefinition() {
+	public QFDefinitionDiscriminator getDefinition() {
 		return definition;
 	}
 

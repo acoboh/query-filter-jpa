@@ -1,9 +1,8 @@
-package io.github.acoboh.query.filter.jpa.operations;
+package io.github.acoboh.query.filter.jpa.operations.resolutors;
 
 import org.springframework.util.MultiValueMap;
 
-import io.github.acoboh.query.filter.jpa.processor.QFElementMatch;
-import io.github.acoboh.query.filter.jpa.processor.QFJsonElementMatch;
+import io.github.acoboh.query.filter.jpa.processor.match.QFElementMatch;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
@@ -28,16 +27,6 @@ public interface QFPredicateResolutor {
 	 */
 	Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
 			MultiValueMap<String, Object> mlContext);
-
-	/**
-	 * Generate predicate of JSON elements
-	 *
-	 * @param path  path of criteria builder
-	 * @param cb    criteria builder
-	 * @param match element matched
-	 * @return predicate resolver
-	 */
-	Predicate generateJsonPredicate(Path<?> path, CriteriaBuilder cb, QFJsonElementMatch match);
 
 	/**
 	 * Get the operation string value

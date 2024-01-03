@@ -16,8 +16,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.util.Pair;
 
 import io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass;
-import io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass.QFDefaultSort;
-import io.github.acoboh.query.filter.jpa.annotations.QFElement;
 import io.github.acoboh.query.filter.jpa.annotations.QFPredicate;
 import io.github.acoboh.query.filter.jpa.exceptions.QueryFilterException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFClassException;
@@ -25,6 +23,10 @@ import io.github.acoboh.query.filter.jpa.exceptions.definition.QFElementExceptio
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFNotSortableDefinitionException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 import io.github.acoboh.query.filter.jpa.predicate.PredicateProcessorResolutor;
+import io.github.acoboh.query.filter.jpa.processor.definitions.QFAbstractDefinition;
+import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionElement;
+import io.github.acoboh.query.filter.jpa.processor.definitions.traits.IDefinitionSortable;
+import io.github.acoboh.query.filter.jpa.processor.match.QFElementMatch;
 
 /**
  * Class to process all query filters.
@@ -46,11 +48,11 @@ public class QFProcessor<F, E> {
 
 	private final QFDefinitionClass queryFilterClass;
 
-	private final Map<String, QFDefinition> definitionMap;
+	private final Map<String, QFAbstractDefinition> definitionMap;
 
 	private final List<QFElementMatch> defaultMatches;
 
-	private final List<Pair<QFDefinition, Direction>> defaultSorting;
+	private final List<Pair<IDefinitionSortable, Direction>> defaultSorting;
 
 	private final ApplicationContext appContext;
 
@@ -102,14 +104,18 @@ public class QFProcessor<F, E> {
 		}
 	}
 
-	private static Map<String, QFDefinition> getDefinition(Class<?> filterClass, QFDefinitionClass queryFilterClass)
-			throws QueryFilterDefinitionException {
+	private static Map<String, QFAbstractDefinition> getDefinition(Class<?> filterClass,
+			QFDefinitionClass queryFilterClass) throws QueryFilterDefinitionException {
 
-		Map<String, QFDefinition> map = new HashMap<>();
+		Map<String, QFAbstractDefinition> map = new HashMap<>();
 
 		for (Field field : filterClass.getDeclaredFields()) {
 
-			QFDefinition qfd = new QFDefinition(field, filterClass, queryFilterClass.value());
+			var qfd = QFAbstractDefinition.buildDefinition(field, filterClass, queryFilterClass.value());
+			if (qfd == null) {
+				continue;
+			}
+
 			map.put(qfd.getFilterName(), qfd);
 
 		}
@@ -117,13 +123,12 @@ public class QFProcessor<F, E> {
 		return map;
 	}
 
-	private static List<QFElementMatch> defaultMatches(Map<String, QFDefinition> definitionMap) {
+	private static List<QFElementMatch> defaultMatches(Map<String, QFAbstractDefinition> definitionMap) {
 		List<QFElementMatch> ret = new ArrayList<>();
 
-		for (QFDefinition def : definitionMap.values()) {
-			if (def.isElementFilter()) {
-
-				for (QFElement elem : def.getElementAnnotations()) {
+		for (var abstractDef : definitionMap.values()) {
+			if (abstractDef instanceof QFDefinitionElement def) {
+				for (var elem : def.getElementAnnotations()) {
 					if (elem.defaultValues().length > 0) {
 						ret.add(new QFElementMatch(Arrays.asList(elem.defaultValues()), elem.defaultOperation(), def));
 					}
@@ -131,47 +136,48 @@ public class QFProcessor<F, E> {
 			}
 		}
 
-		return ret;
+		return Collections.unmodifiableList(ret);
 	}
 
-	private static List<Pair<QFDefinition, Direction>> getDefaultSorting(QFDefinitionClass queryFilterClass,
-			Map<String, QFDefinition> definitionMap, Class<?> filterClass) throws QueryFilterDefinitionException {
+	private static List<Pair<IDefinitionSortable, Direction>> getDefaultSorting(QFDefinitionClass queryFilterClass,
+			Map<String, QFAbstractDefinition> definitionMap, Class<?> filterClass)
+			throws QueryFilterDefinitionException {
 
 		if (queryFilterClass.defaultSort() == null || queryFilterClass.defaultSort().length == 0) {
 			return Collections.emptyList();
 		}
 
-		List<Pair<QFDefinition, Direction>> ret = new ArrayList<>();
+		List<Pair<IDefinitionSortable, Direction>> ret = new ArrayList<>();
 
-		for (QFDefaultSort sort : queryFilterClass.defaultSort()) {
+		for (var sort : queryFilterClass.defaultSort()) {
 
-			QFDefinition definition = definitionMap.get(sort.value());
+			var definition = definitionMap.get(sort.value());
 			if (definition == null) {
 				throw new QFElementException(sort.value(), filterClass);
 			}
 
-			if (!definition.isSortable()) {
-				throw new QFNotSortableDefinitionException(sort.value(), filterClass);
+			if (!(definition instanceof IDefinitionSortable)) {
+				throw new QFNotSortableDefinitionException(definition.getFilterName(), filterClass);
 			}
 
-			ret.add(Pair.of(definition, sort.direction()));
+			ret.add(Pair.of((IDefinitionSortable) definition, sort.direction()));
 
 		}
 
-		return ret;
+		return Collections.unmodifiableList(ret);
 
 	}
 
 	private static Map<String, PredicateProcessorResolutor> resolvePredicates(QFPredicate[] predicates,
-			Map<String, QFDefinition> definitionMap) {
+			Map<String, QFAbstractDefinition> definitionMap) {
 		Map<String, PredicateProcessorResolutor> ret = new HashMap<>();
 
-		for (QFPredicate predicate : predicates) {
+		for (var predicate : predicates) {
 			ret.put(predicate.name(), new PredicateProcessorResolutor(predicate.expression(), definitionMap,
 					predicate.includeMissing(), predicate.missingOperator()));
 		}
 
-		return ret;
+		return Collections.unmodifiableMap(ret);
 	}
 
 	/**
@@ -191,7 +197,7 @@ public class QFProcessor<F, E> {
 	 *
 	 * @return map of definitions
 	 */
-	public Map<String, QFDefinition> getDefinitionMap() {
+	public Map<String, QFAbstractDefinition> getDefinitionMap() {
 		return definitionMap;
 	}
 
@@ -236,7 +242,7 @@ public class QFProcessor<F, E> {
 	 * 
 	 * @return default sorting operations
 	 */
-	protected List<Pair<QFDefinition, Direction>> getDefaultSorting() {
+	protected List<Pair<IDefinitionSortable, Direction>> getDefaultSorting() {
 		return defaultSorting;
 	}
 

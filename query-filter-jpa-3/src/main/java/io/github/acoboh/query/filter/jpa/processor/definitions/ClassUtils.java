@@ -1,10 +1,12 @@
-package io.github.acoboh.query.filter.jpa.processor;
+package io.github.acoboh.query.filter.jpa.processor.definitions;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,22 +14,57 @@ import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.util.Pair;
+import org.springframework.util.Assert;
 
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFElementException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFFieldLevelException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFMissingFieldException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFTypeException;
+import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
+import io.github.acoboh.query.filter.jpa.processor.QFPath;
 
 /**
  * Class utils to parse filter classes
  *
  * @author Adrián Cobo
  */
-class ClassUtils {
+final class ClassUtils {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ClassUtils.class);
 
 	private ClassUtils() {
+
+	}
+
+	protected static Pair<Class<?>, List<QFPath>> getPathsFrom(String pathField, Class<?> filterClass,
+			Class<?> entityClass, boolean isEndObject) throws QueryFilterDefinitionException {
+
+		Assert.notNull(pathField, "Path field cannot be null");
+
+		List<QFPath> paths = new ArrayList<>();
+
+		String[] splitLevel = pathField.split("\\.");
+		if (splitLevel.length == 0) {
+			throw new QFElementException(pathField, entityClass);
+		}
+
+		Field fieldObject = ClassUtils.getDeclaredFieldSuperclass(entityClass, splitLevel[0]);
+		if (fieldObject == null) {
+			throw new QFMissingFieldException(pathField, filterClass);
+		}
+
+		int firstDot = pathField.indexOf('.');
+		String nextLevel = firstDot == -1 ? "" : pathField.substring(firstDot + 1);
+
+		Class<?> finalClass = ClassUtils.checkAbstractObject(pathField, splitLevel[0], nextLevel, fieldObject,
+				fieldObject.getType(), paths, isEndObject);
+
+		if (!paths.get(paths.size() - 1).isFinal() && isEndObject) {
+			throw new QFFieldLevelException(pathField, nextLevel);
+		}
+
+		return Pair.of(finalClass, Collections.unmodifiableList(paths));
 
 	}
 

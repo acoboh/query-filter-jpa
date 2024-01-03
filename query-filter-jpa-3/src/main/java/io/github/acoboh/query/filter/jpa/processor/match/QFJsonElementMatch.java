@@ -1,4 +1,4 @@
-package io.github.acoboh.query.filter.jpa.processor;
+package io.github.acoboh.query.filter.jpa.processor.match;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,9 +17,9 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 
-import io.github.acoboh.query.filter.jpa.exceptions.QFFieldOperationException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFJsonParseException;
-import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
+import io.github.acoboh.query.filter.jpa.operations.QFOperationJsonEnum;
+import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionJson;
 
 /**
  * Class with JSON element matching definition
@@ -37,19 +37,11 @@ public class QFJsonElementMatch {
 		mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
 	}
 
-	private final QFDefinition definition;
-
-	private final String jsonValue;
-
-	private final JsonNode valueNode;
+	private final QFDefinitionJson definition;
 
 	private final Map<String, String> mapValues;
 
-	private final List<QFPath> paths;
-
-	private final QFOperationEnum operation;
-
-	private final boolean caseSensitive;
+	private final QFOperationJsonEnum operation;
 
 	/**
 	 * Default constructor
@@ -59,22 +51,16 @@ public class QFJsonElementMatch {
 	 * @param definition definition
 	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFJsonParseException if any JSON parsing exception
 	 */
-	public QFJsonElementMatch(String value, QFOperationEnum operation, QFDefinition definition)
+	public QFJsonElementMatch(String value, QFOperationJsonEnum operation, QFDefinitionJson definition)
 			throws QFJsonParseException {
 
 		this.definition = definition;
-		this.jsonValue = value;
 		this.operation = operation;
-		this.caseSensitive = definition.isCaseSensitive();
 
-		if (!QFOperationEnum.getOperationsOfJson().contains(operation)) {
-			throw new QFFieldOperationException(operation, definition.getFilterName());
-		}
-
-		paths = definition.getPaths().get(0);
+		JsonNode valueNode;
 
 		try {
-			this.valueNode = mapper.readTree(value);
+			valueNode = mapper.readTree(value);
 		} catch (JsonProcessingException e) {
 			LOGGER.error("Error parsing json", e);
 			throw new QFJsonParseException(definition.getFilterName(), e);
@@ -83,6 +69,20 @@ public class QFJsonElementMatch {
 		mapValues = new HashMap<>();
 		addKeys("", valueNode, mapValues, new ArrayList<>());
 
+	}
+
+	/**
+	 * Secondary constructor to bypass the JSON parsing options
+	 * 
+	 * @param value      map of values
+	 * @param operation  operation
+	 * @param definition definition on json field
+	 */
+	public QFJsonElementMatch(Map<String, String> value, QFOperationJsonEnum operation, QFDefinitionJson definition) {
+		this.definition = definition;
+		this.operation = operation;
+
+		this.mapValues = value;
 	}
 
 	private static void addKeys(String currentPath, JsonNode jsonNode, Map<String, String> map, List<Integer> suffix) {
@@ -128,26 +128,8 @@ public class QFJsonElementMatch {
 	 *
 	 * @return field definition
 	 */
-	public QFDefinition getDefinition() {
+	public QFDefinitionJson getDefinition() {
 		return definition;
-	}
-
-	/**
-	 * Get the original value
-	 *
-	 * @return original value
-	 */
-	public String getJsonValue() {
-		return jsonValue;
-	}
-
-	/**
-	 * Get JSON parsed value
-	 *
-	 * @return json parsed
-	 */
-	public JsonNode getValueNode() {
-		return valueNode;
 	}
 
 	/**
@@ -160,30 +142,12 @@ public class QFJsonElementMatch {
 	}
 
 	/**
-	 * List of nested path levels
-	 *
-	 * @return nested path levels
-	 */
-	public List<QFPath> getPaths() {
-		return paths;
-	}
-
-	/**
 	 * Get operation to be applied
 	 *
 	 * @return operation
 	 */
-	public QFOperationEnum getOperation() {
+	public QFOperationJsonEnum getOperation() {
 		return operation;
-	}
-
-	/**
-	 * Get if the field is case sensitive
-	 *
-	 * @return true if the field is case sensitive
-	 */
-	public boolean isCaseSensitive() {
-		return caseSensitive;
 	}
 
 }

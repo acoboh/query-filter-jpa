@@ -26,7 +26,7 @@
 		<maven.compiler.testTarget>${jdk-test.version}</maven.compiler.testTarget>
 
 		<!-- Spring dependencies -->
-		<spring.version>6.0.13</spring.version>
+		<spring.version>6.0.14</spring.version>
 		<spring-boot.version>3.1.7</spring-boot.version>
 
 		<!-- Hibernate dependencies -->

@@ -10,3 +10,7 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: update
+      
+ogging:
+  level:
+    io.github.acoboh: trace

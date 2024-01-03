@@ -24,16 +24,19 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!-- Spring Boot-->
-		<spring-boot.version>2.7.17</spring-boot.version>
+		<spring-boot.version>2.7.18</spring-boot.version>
 
 		<!-- Springdoc for OpenAPI-->
 		<springdoc.version>1.6.15</springdoc.version>
 
 		<!-- Hypersistance utils -->
-		<hypersistance-utils.version>3.6.0</hypersistance-utils.version>
+		<hypersistance-utils.version>3.7.0</hypersistance-utils.version>
 
 		<!-- Query Filter Versions -->
-		<query-filter.version>0.1.0</query-filter.version>
+		<query-filter.version>0.2.0-SNAPSHOT</query-filter.version>
+
+		<!-- Mapstruct -->
+		<mapstruct.version>1.5.5.Final</mapstruct.version>
 
 	</properties>
 
@@ -96,6 +99,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct</artifactId>
+			<version>${mapstruct.version}</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
@@ -105,6 +114,20 @@
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.11.0</version>
+				<configuration>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.mapstruct</groupId>
+							<artifactId>mapstruct-processor</artifactId>
+							<version>${mapstruct.version}</version>
+						</path>
+					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>

@@ -6,6 +6,8 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 import org.hibernate.dialect.PostgreSQL10Dialect;
+import org.hibernate.engine.jdbc.internal.FormatStyle;
+import org.hibernate.engine.jdbc.internal.Formatter;
 import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.context.annotation.Bean;
@@ -30,8 +32,8 @@ import io.github.acoboh.query.filter.jpa.annotations.EnableQueryFilter;
 import io.github.acoboh.query.filter.jpa.config.QueryFilterAutoconfigure;
 import io.github.acoboh.query.filter.jpa.contributor.QfMetadataBuilderContributor;
 import io.github.acoboh.query.filter.jpa.domain.FilterBlogDef;
-import io.github.acoboh.query.filter.jpa.logging.InlineQueryLogEntryCreator;
 import io.github.acoboh.query.filter.jpa.repositories.PostBlogRepository;
+import net.ttddyy.dsproxy.listener.logging.DefaultQueryLogEntryCreator;
 import net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 
@@ -93,9 +95,12 @@ public class SpringIntegrationTest {
 		@Bean
 		DataSource dataSource() {
 			SLF4JQueryLoggingListener loggingListener = new SLF4JQueryLoggingListener();
-			loggingListener.setQueryLogEntryCreator(new InlineQueryLogEntryCreator());
-			return ProxyDataSourceBuilder.create(actualDataSource()).name("DATA_SOURCE_PROXY").listener(loggingListener)
-					.build();
+
+			PrettyQueryEntryCreator creator = new PrettyQueryEntryCreator();
+			creator.setMultiline(true);
+			loggingListener.setQueryLogEntryCreator(creator);
+			return ProxyDataSourceBuilder.create(actualDataSource()).name("DATA_SOURCE_PROXY").countQuery().multiline()
+					.listener(loggingListener).build();
 
 		}
 
@@ -163,6 +168,15 @@ public class SpringIntegrationTest {
 					"io.github.acoboh.query.filter.jpa.model.discriminators" };
 		}
 
+	}
+
+	private static class PrettyQueryEntryCreator extends DefaultQueryLogEntryCreator {
+		private Formatter formatter = FormatStyle.BASIC.getFormatter();
+
+		@Override
+		protected String formatQuery(String query) {
+			return this.formatter.format(query);
+		}
 	}
 
 }

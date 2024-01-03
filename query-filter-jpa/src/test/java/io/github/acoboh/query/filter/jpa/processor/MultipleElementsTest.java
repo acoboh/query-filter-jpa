@@ -114,7 +114,7 @@ public class MultipleElementsTest {
 
 	@Test
 	@DisplayName("3. Query multiple OR")
-	@Order(2)
+	@Order(3)
 	void queryMultipleOr() throws QueryFilterException {
 
 		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("multipleOr=eq:text", QFParamType.RHS_COLON);
@@ -126,7 +126,7 @@ public class MultipleElementsTest {
 	}
 
 	@Test
-	@DisplayName("5. Test by clear BBDD")
+	@DisplayName("4. Test by clear BBDD")
 	@Order(Ordered.LOWEST_PRECEDENCE)
 	void clearBBDD() {
 		repository.deleteAll();

@@ -27,6 +27,7 @@ import com.google.common.collect.Sets;
 
 import io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass;
 import io.github.acoboh.query.filter.jpa.exceptions.QFBlockException;
+import io.github.acoboh.query.filter.jpa.exceptions.QFCollectionException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFDiscriminatorNotFoundException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFJsonParseException;
@@ -35,14 +36,25 @@ import io.github.acoboh.query.filter.jpa.exceptions.QFNotSortableException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFNotValuable;
 import io.github.acoboh.query.filter.jpa.exceptions.QFOperationNotFoundException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFParseException;
-import io.github.acoboh.query.filter.jpa.exceptions.QueryFilterException;
+import io.github.acoboh.query.filter.jpa.operations.QFCollectionOperationEnum;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
+import io.github.acoboh.query.filter.jpa.operations.QFOperationJsonEnum;
 import io.github.acoboh.query.filter.jpa.predicate.PredicateProcessorResolutor;
+import io.github.acoboh.query.filter.jpa.processor.definitions.QFAbstractDefinition;
+import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionCollection;
+import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionDiscriminator;
+import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionElement;
+import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionJson;
+import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionSortable;
+import io.github.acoboh.query.filter.jpa.processor.definitions.traits.IDefinitionSortable;
+import io.github.acoboh.query.filter.jpa.processor.match.QFCollectionMatch;
+import io.github.acoboh.query.filter.jpa.processor.match.QFDiscriminatorMatch;
+import io.github.acoboh.query.filter.jpa.processor.match.QFElementMatch;
+import io.github.acoboh.query.filter.jpa.processor.match.QFJsonElementMatch;
 import io.github.acoboh.query.filter.jpa.spel.SpelResolverContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.From;
-import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
@@ -69,13 +81,14 @@ public class QueryFilter<E> implements Specification<E> {
 	private final String initialInput;
 
 	private final List<QFElementMatch> valueMapping = new ArrayList<>();
+	private final List<QFCollectionMatch> collectionMapping = new ArrayList<>();
 	private final List<QFJsonElementMatch> jsonMapping = new ArrayList<>();
 	private final List<QFDiscriminatorMatch> discriminatorMapping = new ArrayList<>();
 	private final transient @Nullable Map<String, PredicateProcessorResolutor> predicateMap;
 
 	private final transient List<QFElementMatch> defaultMatches;
-	private final transient List<Pair<QFDefinition, Direction>> defaultSorting;
-	private final transient Map<String, QFDefinition> definitionMap;
+	private final transient List<Pair<IDefinitionSortable, Direction>> defaultSorting;
+	private final transient Map<String, QFAbstractDefinition> definitionMap;
 	private final transient QFDefinitionClass queryFilterClassAnnotation;
 
 	private boolean defaultSortEnabled = true;
@@ -84,79 +97,11 @@ public class QueryFilter<E> implements Specification<E> {
 	private final Class<?> predicateClass;
 	private final boolean distinct;
 	private final transient SpelResolverContext spelResolver;
-	private transient List<Pair<QFDefinition, Direction>> sortDefinitionList = new ArrayList<>();
+	private final transient List<Pair<IDefinitionSortable, Direction>> sortDefinitionList = new ArrayList<>();
 	private boolean isConstructor = true;
 
 	private @Nullable String predicateName;
 	private transient @Nullable PredicateProcessorResolutor predicate;
-
-	/**
-	 * Default constructor
-	 *
-	 * @param input                      input string
-	 * @param type                       parameter type
-	 * @param entityClass                entity class
-	 * @param predicateClass             predicate definition class
-	 * @param definitionMap              definition map
-	 * @param queryFilterClassAnnotation definition annotation
-	 * @param defaultSorting             list of default sorting values
-	 * @param defaultMatches             list of default matching values
-	 * @param spelResolver               spel resolver
-	 * @param predicateMap               predicate map
-	 * @param predicateName              predicate name
-	 * @param defaultPredicate           default predicate
-	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QueryFilterException if any parsing exception
-	 * 
-	 * @deprecated Will be removed on next release 0.0.5. Check constructor
-	 *             {@linkplain #QueryFilter(String, QFParamType, QFProcessor)}
-	 */
-	@Deprecated(forRemoval = true)
-	protected QueryFilter(String input, QFParamType type, Class<E> entityClass, Class<?> predicateClass,
-			Map<String, QFDefinition> definitionMap, QFDefinitionClass queryFilterClassAnnotation,
-			List<QFElementMatch> defaultMatches, List<Pair<QFDefinition, Direction>> defaultSorting,
-			SpelResolverContext spelResolver, @Nullable Map<String, PredicateProcessorResolutor> predicateMap,
-			@Nullable String predicateName, @Nullable PredicateProcessorResolutor defaultPredicate)
-			throws QueryFilterException {
-
-		Assert.notNull(type, "type cannot be null");
-		Assert.notNull(entityClass, "entityClass cannot be null");
-		Assert.notNull(definitionMap, "definitionMap cannot be null");
-		Assert.notNull(queryFilterClassAnnotation, "queryFilterClassAnnotation cannot be null");
-		Assert.notNull(defaultMatches, "defaultMatches cannot be null");
-
-		this.definitionMap = definitionMap;
-		this.queryFilterClassAnnotation = queryFilterClassAnnotation;
-		this.defaultMatches = defaultMatches;
-		this.defaultSorting = defaultSorting;
-		this.entityClass = entityClass;
-		this.predicateClass = predicateClass;
-		this.spelResolver = spelResolver;
-		this.predicateMap = predicateMap;
-		this.predicateName = predicateName;
-		this.predicate = defaultPredicate;
-		this.distinct = queryFilterClassAnnotation.distinct();
-
-		this.initialInput = input != null ? input : "";
-
-		if (input != null && !input.isEmpty()) {
-			String[] parts = input.split("&");
-
-			for (String part : parts) {
-
-				if (part.matches(type.getFullRegex())) {
-					parseValuePart(part, type);
-				} else if (part.matches(REGEX_SORT)) {
-					parseSortPart(part);
-				} else {
-					throw new QFParseException(part, input);
-				}
-
-			}
-		}
-
-		isConstructor = false;
-
-	}
 
 	/**
 	 * Construtor from query filter processor
@@ -191,7 +136,6 @@ public class QueryFilter<E> implements Specification<E> {
 			String[] parts = input.split("&");
 
 			for (String part : parts) {
-
 				if (part.matches(type.getFullRegex())) {
 					parseValuePart(part, type);
 				} else if (part.matches(REGEX_SORT)) {
@@ -224,134 +168,45 @@ public class QueryFilter<E> implements Specification<E> {
 		return predicateClass;
 	}
 
-	private static Path<?> getObject(Root<?> root, List<QFPath> paths, Map<String, Path<?>> pathsMap) {
-		String fullPath = getFullPath(paths);
-
-		Path<?> ret = pathsMap.get(fullPath);
-		if (ret != null) {
-			return ret;
-		}
-
-		if (paths.size() == 1 && paths.get(0).isFinal()) {
-			ret = root.get(paths.get(0).getPath());
-		} else {
-			ret = getJoinObject(root, paths, pathsMap);
-		}
-
-		pathsMap.put(fullPath, ret);
-		return ret;
-
-	}
-
-	private static Path<?> getJoinObject(Root<?> root, List<QFPath> paths, Map<String, Path<?>> pathsMap) {
-
-		From<?, ?> join = root;
-
-		StringBuilder base = new StringBuilder();
-		String prefix = "";
-
-		for (int i = 0; i < paths.size(); i++) {
-
-			base.append(prefix).append(paths.get(i).getPath());
-			prefix = ".";
-
-			Path<?> pathRet = pathsMap.get(base.toString());
-			if (pathRet != null) {
-				join = (From<?, ?>) pathRet;
-				continue;
-			}
-
-			if (i + 1 == paths.size() && paths.get(i).isFinal()) { // if last element and final
-				return join.get(paths.get(i).getPath());
-			}
-
-			QFPath elem = paths.get(i);
-			switch (elem.getType()) {
-			case LIST:
-				join = join.joinList(elem.getPath(), JoinType.LEFT);
-				break;
-
-			case SET:
-				join = join.joinSet(elem.getPath(), JoinType.LEFT);
-				break;
-			case PROPERTY:
-			case ENUM:
-			default:
-				join = join.join(elem.getPath(), JoinType.LEFT);
-				break;
-			}
-
-			// Add to pathsMap
-
-			pathsMap.put(base.toString(), join);
-
-		}
-
-		return join;
-
-	}
-
-	private static List<Order> parseOrders(List<Pair<QFDefinition, Direction>> sortDefinitionList, CriteriaBuilder cb,
-			Root<?> root, Map<String, Path<?>> pathsMap) {
-		ArrayList<Order> orderList = new ArrayList<>();
-
-		for (Pair<QFDefinition, Direction> pair : sortDefinitionList) {
-			LOGGER.trace("Adding sort operation for {}", pair);
-			if (pair.getSecond() == Direction.ASC) {
-				orderList.add(cb.asc(getObject(root, pair.getFirst().getPaths().get(0), pathsMap)));
-			} else {
-				orderList.add(cb.desc(getObject(root, pair.getFirst().getPaths().get(0), pathsMap)));
-			}
-
-		}
-
-		return orderList;
-	}
-
-	private static String getFullPath(List<QFPath> paths) {
-		return paths.stream().map(QFPath::getPath).collect(Collectors.joining("."));
-	}
-
 	private void parseValuePart(String part, QFParamType type)
 			throws QFParseException, QFFieldNotFoundException, QFOperationNotFoundException,
 			QFDiscriminatorNotFoundException, QFBlockException, QFJsonParseException, QFNotValuable {
 
 		Matcher matcher = type.getPattern().matcher(part);
-		if (matcher.find() && matcher.groupCount() == 3) {
-
-			String field = matcher.group(1);
-			String op = matcher.group(2);
-			String value = matcher.group(3);
-
-			QFDefinition def = definitionMap.get(field);
-			if (def == null) {
-				throw new QFFieldNotFoundException(field);
-			}
-
-			if (def.isConstructorBlocked() && isConstructor) {
-				throw new QFBlockException(field);
-			}
-
-			if (!def.isElementFilter() && !def.isDiscriminatorFilter() && !def.isJsonElementFilter()) {
-				throw new QFNotValuable(field);
-			}
-
-			if (def.isElementFilter()) {
-				QFElementMatch match = new QFElementMatch(Arrays.asList(value.split(",")),
-						QFOperationEnum.fromValue(op), def);
-				valueMapping.add(match);
-			} else if (def.isDiscriminatorFilter()) {
-				QFDiscriminatorMatch match = new QFDiscriminatorMatch(Arrays.asList(value.split(",")), def);
-				discriminatorMapping.add(match);
-
-			} else if (def.isJsonElementFilter()) {
-				QFJsonElementMatch match = new QFJsonElementMatch(value, QFOperationEnum.fromValue(op), def);
-				jsonMapping.add(match);
-			}
-
-		} else {
+		if (!(matcher.find() && matcher.groupCount() == 3)) {
 			LOGGER.error("Error parsing part {}. Matcher not found matches", part);
 			throw new QFParseException(part, type.name());
+		}
+
+		String field = matcher.group(1);
+		String op = matcher.group(2);
+		String value = matcher.group(3);
+
+		QFAbstractDefinition def = definitionMap.get(field);
+		if (def == null) {
+			throw new QFFieldNotFoundException(field);
+		}
+
+		if (def.isConstructorBlocked() && isConstructor) {
+			throw new QFBlockException(field);
+		}
+
+		if (def instanceof QFDefinitionElement qdef) {
+			QFElementMatch match = new QFElementMatch(Arrays.asList(value.split(",")), QFOperationEnum.fromValue(op),
+					qdef);
+			valueMapping.add(match);
+		} else if (def instanceof QFDefinitionDiscriminator qdef) {
+			QFDiscriminatorMatch match = new QFDiscriminatorMatch(Arrays.asList(value.split(",")), qdef);
+			discriminatorMapping.add(match);
+		} else if (def instanceof QFDefinitionJson qdef) {
+			QFJsonElementMatch match = new QFJsonElementMatch(value, QFOperationJsonEnum.fromValue(op), qdef);
+			jsonMapping.add(match);
+		} else if (def instanceof QFDefinitionCollection qdef) {
+			QFCollectionMatch match = new QFCollectionMatch(qdef, QFCollectionOperationEnum.fromValue(op),
+					Integer.valueOf(value));
+			collectionMapping.add(match);
+		} else {
+			throw new QFNotValuable(field);
 		}
 
 	}
@@ -378,12 +233,12 @@ public class QueryFilter<E> implements Specification<E> {
 			String order = matcher.group(1);
 			String fieldName = matcher.group(2);
 
-			QFDefinition def = definitionMap.get(fieldName);
+			QFAbstractDefinition def = definitionMap.get(fieldName);
 			if (def == null) {
 				throw new QFFieldNotFoundException(fieldName);
 			}
 
-			if (!def.isSortable()) {
+			if (!(def instanceof IDefinitionSortable)) {
 				throw new QFNotSortableException(fieldName);
 			}
 
@@ -398,7 +253,7 @@ public class QueryFilter<E> implements Specification<E> {
 				dir = Direction.DESC;
 			}
 
-			Pair<QFDefinition, Direction> pair = Pair.of(def, dir);
+			Pair<IDefinitionSortable, Direction> pair = Pair.of((IDefinitionSortable) def, dir);
 			this.sortDefinitionList.add(pair);
 			this.defaultSortEnabled = false;
 
@@ -432,18 +287,72 @@ public class QueryFilter<E> implements Specification<E> {
 		Assert.notNull(operation, "operation cannot be null");
 		Assert.notNull(values, "values cannot be null");
 
-		QFDefinition def = definitionMap.get(field);
+		QFAbstractDefinition def = definitionMap.get(field);
 		if (def == null) {
 			throw new QFFieldNotFoundException(field);
 		}
 
-		if (def.isElementFilter()) {
-			QFElementMatch match = new QFElementMatch(values, operation, def);
+		if (def instanceof QFDefinitionElement qdef) {
+			QFElementMatch match = new QFElementMatch(values, operation, qdef);
 			valueMapping.add(match);
-		} else if (def.isDiscriminatorFilter()) {
-			QFDiscriminatorMatch match = new QFDiscriminatorMatch(values, def);
+		} else if (def instanceof QFDefinitionDiscriminator qdef) {
+			QFDiscriminatorMatch match = new QFDiscriminatorMatch(values, qdef);
 			discriminatorMapping.add(match);
+		} else {
+			throw new QFNotValuable(field);
 		}
+
+	}
+
+	/**
+	 * Manually adds a new operation on any JSON field
+	 * 
+	 * @param field     field to filter
+	 * @param operation operation to be applied
+	 * @param value     json value as string
+	 */
+	public void addNewField(String field, QFOperationJsonEnum operation, String value) {
+		Assert.notNull(field, "field cannot be null");
+		Assert.notNull(operation, "operation cannot be null");
+		Assert.notNull(value, "value cannot be null");
+
+		QFAbstractDefinition def = definitionMap.get(field);
+		if (def == null) {
+			throw new QFFieldNotFoundException(field);
+		}
+
+		if (!(def instanceof QFDefinitionJson)) {
+			throw new QFNotValuable(field);
+		}
+
+		QFJsonElementMatch match = new QFJsonElementMatch(value, operation, (QFDefinitionJson) def);
+		jsonMapping.add(match);
+
+	}
+
+	/**
+	 * Add a new field for collection operations
+	 * 
+	 * @param field     filter field name
+	 * @param operation operation
+	 * @param value     value
+	 */
+	public void addNewField(String field, QFCollectionOperationEnum operation, int value) {
+
+		Assert.notNull(field, "field cannot be null");
+		Assert.notNull(operation, "operation cannot be null");
+
+		QFAbstractDefinition def = definitionMap.get(field);
+		if (def == null) {
+			throw new QFFieldNotFoundException(field);
+		}
+
+		if (!(def instanceof QFDefinitionCollection)) {
+			throw new QFNotValuable(field);
+		}
+
+		QFCollectionMatch match = new QFCollectionMatch((QFDefinitionCollection) def, operation, value);
+		collectionMapping.add(match);
 
 	}
 
@@ -480,12 +389,12 @@ public class QueryFilter<E> implements Specification<E> {
 	public void addSortBy(String field, Direction direction)
 			throws QFFieldNotFoundException, QFNotSortableException, QFMultipleSortException {
 
-		QFDefinition def = definitionMap.get(field);
+		QFAbstractDefinition def = definitionMap.get(field);
 		if (def == null) {
 			throw new QFFieldNotFoundException(field);
 		}
 
-		if (!def.isSortable()) {
+		if (!(def instanceof IDefinitionSortable)) {
 			throw new QFNotSortableException(field);
 		}
 
@@ -493,7 +402,7 @@ public class QueryFilter<E> implements Specification<E> {
 			throw new QFMultipleSortException(field);
 		}
 
-		Pair<QFDefinition, Direction> pair = Pair.of(def, direction);
+		Pair<IDefinitionSortable, Direction> pair = Pair.of((IDefinitionSortable) def, direction);
 		this.sortDefinitionList.add(pair);
 		this.defaultSortEnabled = false;
 
@@ -577,26 +486,84 @@ public class QueryFilter<E> implements Specification<E> {
 		Assert.notNull(operation, "operation cannot be null");
 		Assert.notNull(value, "value cannot be null");
 
-		QFDefinition def = definitionMap.get(field);
+		QFAbstractDefinition def = definitionMap.get(field);
 		if (def == null) {
 			throw new QFFieldNotFoundException(field);
 		}
 
-		if (def.isElementFilter()) {
+		if (def instanceof QFDefinitionElement qdef) {
 			valueMapping.removeIf(e -> e.getDefinition().getFilterName().equals(field));
-			QFElementMatch match = new QFElementMatch(Arrays.asList(value.split(",")), operation, def);
+			QFElementMatch match = new QFElementMatch(Arrays.asList(value.split(",")), operation, qdef);
 			valueMapping.add(match);
-
-		} else if (def.isDiscriminatorFilter()) {
+		} else if (def instanceof QFDefinitionDiscriminator qdef) {
 			discriminatorMapping.removeIf(e -> e.getDefinition().getFilterName().equals(field));
-			QFDiscriminatorMatch match = new QFDiscriminatorMatch(Arrays.asList(value.split(",")), def);
+			QFDiscriminatorMatch match = new QFDiscriminatorMatch(Arrays.asList(value.split(",")), qdef);
 			discriminatorMapping.add(match);
-		} else if (def.isJsonElementFilter()) {
-			jsonMapping.removeIf(e -> e.getDefinition().getFilterName().equals(field));
-			QFJsonElementMatch match = new QFJsonElementMatch(value, operation, def);
-			jsonMapping.add(match);
+		} else {
+			throw new QFNotValuable(field);
 		}
 
+	}
+
+	/**
+	 * Override any JSON field. If not present, a new field will be created
+	 *
+	 * @param field         Field filter name
+	 * @param operationJson Operation to apply
+	 * @param value         value of filter
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException Missing field exception
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFJsonParseException     if any json parse exception
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFNotValuable            if the field is not valuable or type compatible
+	 */
+	public void overrideField(String field, QFOperationJsonEnum operationJson, String value)
+			throws QFFieldNotFoundException, QFNotValuable {
+
+		Assert.notNull(field, "field cannot be null");
+		Assert.notNull(operationJson, "operation cannot be null");
+		Assert.notNull(value, "value cannot be null");
+
+		QFAbstractDefinition def = definitionMap.get(field);
+		if (def == null) {
+			throw new QFFieldNotFoundException(field);
+		}
+
+		if (!(def instanceof QFDefinitionJson)) {
+			throw new QFNotValuable(field);
+		}
+
+		jsonMapping.removeIf(e -> e.getDefinition().getFilterName().equals(field));
+		QFJsonElementMatch match = new QFJsonElementMatch(value, operationJson, (QFDefinitionJson) def);
+		jsonMapping.add(match);
+
+	}
+
+	/**
+	 * Override any collection operation on a filter field
+	 * 
+	 * @param field               filter field name
+	 * @param operationCollection operation
+	 * @param value               value
+	 * @throws QFFieldNotFoundException if the field is not present
+	 * @throws QFNotValuable            if the field is not a valid collection filter field
+	 */
+	public void overrideField(String field, QFCollectionOperationEnum operationCollection, int value)
+			throws QFFieldNotFoundException, QFNotValuable {
+
+		Assert.notNull(field, "field cannot be null");
+		Assert.notNull(operationCollection, "operation cannot be null");
+
+		QFAbstractDefinition def = definitionMap.get(field);
+		if (def == null) {
+			throw new QFFieldNotFoundException(field);
+		}
+
+		if (!(def instanceof QFDefinitionCollection)) {
+			throw new QFNotValuable(field);
+		}
+
+		collectionMapping.removeIf(e -> e.getDefinition().getFilterName().equals(field));
+		QFCollectionMatch match = new QFCollectionMatch((QFDefinitionCollection) def, operationCollection, value);
+		collectionMapping.add(match);
 	}
 
 	/**
@@ -608,24 +575,65 @@ public class QueryFilter<E> implements Specification<E> {
 	 * @throws java.lang.UnsupportedOperationException                               if the field is JSON type
 	 */
 	public @Nullable List<String> getActualValue(String field) throws QFFieldNotFoundException {
-		QFDefinition def = definitionMap.get(field);
+		QFAbstractDefinition def = definitionMap.get(field);
 		if (def == null) {
 			throw new QFFieldNotFoundException(field);
 		}
 
-		if (def.isElementFilter()) {
+		if (def instanceof QFDefinitionElement) {
 			return valueMapping.stream().filter(e -> e.getDefinition().getFilterName().equals(field))
 					.map(QFElementMatch::getOriginalValues).findAny().orElse(null);
-
-		} else if (def.isDiscriminatorFilter()) {
+		} else if (def instanceof QFDefinitionDiscriminator) {
 			return discriminatorMapping.stream().filter(e -> e.getDefinition().getFilterName().equals(field))
 					.map(QFDiscriminatorMatch::getValues).findFirst().orElse(null);
-		} else if (def.isJsonElementFilter()) {
+		} else if (def instanceof QFDefinitionJson) {
 			throw new UnsupportedOperationException("Unsupported get list values of Json fields");
 		}
 
 		return null;
 
+	}
+
+	/**
+	 * Get the value of the json field
+	 * 
+	 * @param field filter field
+	 * @return value of null if the field is not JSON type
+	 * @throws QFFieldNotFoundException if the field is not found
+	 */
+	public @Nullable Map<String, String> getActualJsonValue(String field) throws QFFieldNotFoundException {
+		QFAbstractDefinition def = definitionMap.get(field);
+		if (def == null) {
+			throw new QFFieldNotFoundException(field);
+		}
+
+		if (!(def instanceof QFDefinitionJson)) {
+			return null;
+		}
+
+		return jsonMapping.stream().filter(e -> e.getDefinition().getFilterName().equals(field))
+				.map(QFJsonElementMatch::getMapValues).findFirst().orElse(null);
+	}
+
+	/**
+	 * Return the value used on a collection filter field
+	 * 
+	 * @param field filter field name
+	 * @return the value of null if the field is not Collection type
+	 * @throws QFFieldNotFoundException if the field is not found
+	 */
+	public Integer getActualCollectionValue(String field) throws QFFieldNotFoundException {
+		QFAbstractDefinition def = definitionMap.get(field);
+		if (def == null) {
+			throw new QFFieldNotFoundException(field);
+		}
+
+		if (!(def instanceof QFDefinitionCollection)) {
+			return null;
+		}
+
+		return collectionMapping.stream().filter(e -> e.getDefinition().getFilterName().equals(field))
+				.map(QFCollectionMatch::getValue).findFirst().orElse(null);
 	}
 
 	/**
@@ -636,17 +644,23 @@ public class QueryFilter<E> implements Specification<E> {
 	 */
 	public void deleteField(String field) throws QFFieldNotFoundException {
 
-		QFDefinition def = definitionMap.get(field);
+		QFAbstractDefinition def = definitionMap.get(field);
 		if (def == null) {
 			throw new QFFieldNotFoundException(field);
 		}
 
-		if (def.isElementFilter()) {
+		if (def instanceof QFDefinitionElement) {
 			valueMapping.removeIf(e -> e.getDefinition().getFilterName().equals(field));
-		} else if (def.isDiscriminatorFilter()) {
+		} else if (def instanceof QFDefinitionDiscriminator) {
 			discriminatorMapping.removeIf(e -> e.getDefinition().getFilterName().equals(field));
-		} else if (def.isJsonElementFilter()) {
+		} else if (def instanceof QFDefinitionJson) {
 			jsonMapping.removeIf(e -> e.getDefinition().getFilterName().equals(field));
+		} else if (def instanceof QFDefinitionSortable) {
+			LOGGER.trace("Disabled default sorting");
+			this.defaultSortEnabled = false;
+			this.sortDefinitionList.removeIf(e -> e.getFirst().getFilterName().equals(field));
+		} else if (def instanceof QFDefinitionCollection) {
+			collectionMapping.removeIf(e -> e.getDefinition().getFilterName().equals(field));
 		}
 
 	}
@@ -699,8 +713,8 @@ public class QueryFilter<E> implements Specification<E> {
 	 * @return orders parsed
 	 */
 	public List<Order> getOrderAsCriteriaBuilder(Root<E> root, CriteriaBuilder criteriaBuilder) {
-		var sortList = defaultSortEnabled ? defaultSorting : sortDefinitionList;
-		return parseOrders(sortList, criteriaBuilder, root, new HashMap<>());
+		List<Pair<IDefinitionSortable, Direction>> sortList = defaultSortEnabled ? defaultSorting : sortDefinitionList;
+		return QueryUtils.parseOrders(sortList, criteriaBuilder, root, new HashMap<>());
 	}
 
 	/** {@inheritDoc} */
@@ -725,11 +739,44 @@ public class QueryFilter<E> implements Specification<E> {
 
 		MultiValueMap<String, Object> mlmap = new LinkedMultiValueMap<>(toMatch.size() + discriminatorMapping.size());
 
-		List<QFElementMatch> isArrayLevel = toMatch.stream().filter(QFElementMatch::isSubquery)
+		List<QFElementMatch> isArrayLevel = toMatch.stream().filter(e -> e.getDefinition().isSubQuery())
 				.collect(Collectors.toList());
 
 		toMatch.removeAll(isArrayLevel);
 
+		// Discriminators
+		processDiscriminators(root, criteriaBuilder, predicatesMap, pathsMap, mlmap);
+
+		// ArrayLevel
+		processArrayLevel(root, query, criteriaBuilder, predicatesMap, mlmap, isArrayLevel);
+
+		// Elements
+		processElements(root, criteriaBuilder, predicatesMap, pathsMap, toMatch, mlmap);
+
+		// JSON elements
+		processJsonElements(root, criteriaBuilder, predicatesMap, pathsMap);
+
+		// Collections
+		processCollections(root, criteriaBuilder, predicatesMap, pathsMap);
+
+		query.distinct(distinct);
+
+		var sortList = defaultSortEnabled ? defaultSorting : sortDefinitionList;
+		if (!sortList.isEmpty()) {
+			LOGGER.trace("Adding all sort operations");
+			query.orderBy(QueryUtils.parseOrders(sortList, criteriaBuilder, root, pathsMap));
+		}
+
+		Predicate finalPredicate = parseFinalPredicate(criteriaBuilder, predicatesMap);
+
+		LOGGER.debug("Predicate {}", finalPredicate);
+
+		return finalPredicate;
+	}
+
+	private void processDiscriminators(Root<E> root, CriteriaBuilder criteriaBuilder,
+			Map<String, List<Predicate>> predicatesMap, Map<String, Path<?>> pathsMap,
+			MultiValueMap<String, Object> mlmap) {
 		for (QFDiscriminatorMatch match : discriminatorMapping) {
 
 			List<Predicate> orDiscriminators = new ArrayList<>();
@@ -743,8 +790,8 @@ public class QueryFilter<E> implements Specification<E> {
 			} else {
 
 				for (Class<?> clazz : match.getMatchingClasses()) {
-					orDiscriminators
-							.add(criteriaBuilder.equal(getObject(root, match.getPath(), pathsMap).type(), clazz));
+					orDiscriminators.add(criteriaBuilder
+							.equal(QueryUtils.getObject(root, match.getPath(), pathsMap, false).type(), clazz));
 					mlmap.add(match.getDefinition().getFilterName(), clazz);
 				}
 
@@ -755,6 +802,11 @@ public class QueryFilter<E> implements Specification<E> {
 
 		}
 
+	}
+
+	private void processArrayLevel(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder,
+			Map<String, List<Predicate>> predicatesMap, MultiValueMap<String, Object> mlmap,
+			List<QFElementMatch> isArrayLevel) {
 		for (QFElementMatch arrayLevelMatch : isArrayLevel) {
 
 			Map<String, Path<?>> subSelecthMap = new HashMap<>();
@@ -773,7 +825,7 @@ public class QueryFilter<E> implements Specification<E> {
 
 				subquery.select(newRoot);
 
-				Path<?> pathFinal = getObject(newRoot, paths, subSelecthMap);
+				Path<?> pathFinal = QueryUtils.getObject(newRoot, paths, subSelecthMap, false);
 
 				QFOperationEnum op = arrayLevelMatch.getOperation();
 				if (op == QFOperationEnum.NOT_EQUAL) {
@@ -795,7 +847,11 @@ public class QueryFilter<E> implements Specification<E> {
 			}
 
 		}
+	}
 
+	private void processElements(Root<E> root, CriteriaBuilder criteriaBuilder,
+			Map<String, List<Predicate>> predicatesMap, Map<String, Path<?>> pathsMap, List<QFElementMatch> toMatch,
+			MultiValueMap<String, Object> mlmap) {
 		for (QFElementMatch match : toMatch) {
 
 			match.initialize(spelResolver, mlmap);
@@ -809,8 +865,8 @@ public class QueryFilter<E> implements Specification<E> {
 			List<Predicate> predicates = new ArrayList<>();
 
 			for (List<QFPath> paths : match.getPaths()) {
-				predicates.add(match.getOperation().generatePredicate(getObject(root, paths, pathsMap), criteriaBuilder,
-						match, index, mlmap));
+				predicates.add(match.getOperation().generatePredicate(
+						QueryUtils.getObject(root, paths, pathsMap, false), criteriaBuilder, match, index, mlmap));
 				index++;
 			}
 
@@ -821,26 +877,38 @@ public class QueryFilter<E> implements Specification<E> {
 					.add(surrondingPredicate);
 
 		}
+	}
 
+	private void processJsonElements(Root<E> root, CriteriaBuilder criteriaBuilder,
+			Map<String, List<Predicate>> predicatesMap, Map<String, Path<?>> pathsMap) {
 		for (QFJsonElementMatch match : jsonMapping) {
 			predicatesMap.computeIfAbsent(match.getDefinition().getFilterName(), t -> new ArrayList<>())
-					.add(match.getOperation().generateJsonPredicate(getObject(root, match.getPaths(), pathsMap),
+					.add(match.getOperation().generateJsonPredicate(
+							QueryUtils.getObject(root, match.getDefinition().getPaths(), pathsMap, true),
 							criteriaBuilder, match));
 		}
+	}
 
-		query.distinct(distinct);
+	@SuppressWarnings("unchecked")
+	private void processCollections(Root<E> root, CriteriaBuilder criteriaBuilder,
+			Map<String, List<Predicate>> predicatesMap, Map<String, Path<?>> pathsMap) {
+		LOGGER.trace("Creating all collection matching elements on filter");
+		for (QFCollectionMatch match : collectionMapping) {
 
-		var sortList = defaultSortEnabled ? defaultSorting : sortDefinitionList;
-		if (!sortList.isEmpty()) {
-			LOGGER.trace("Adding all sort operations");
-			query.orderBy(parseOrders(sortList, criteriaBuilder, root, pathsMap));
+			Path<?> expressionPath = QueryUtils.getObject(root, match.getDefinition().getPaths(), pathsMap, true);
+
+			Expression<? extends java.util.Collection<?>> expression;
+
+			try {
+				expression = (Expression<? extends java.util.Collection<?>>) expressionPath;
+			} catch (ClassCastException e) {
+				throw new QFCollectionException(match.getDefinition().getFilterName(), e.getMessage());
+			}
+
+			predicatesMap.computeIfAbsent(match.getDefinition().getFilterName(), t -> new ArrayList<>())
+					.add(match.getOperation().generateCollectionPredicate(expression, criteriaBuilder, match));
+
 		}
-
-		Predicate finalPredicate = parseFinalPredicate(criteriaBuilder, predicatesMap);
-
-		LOGGER.debug("Predicate {}", finalPredicate);
-
-		return finalPredicate;
 	}
 
 	private Predicate parseFinalPredicate(CriteriaBuilder cb, Map<String, List<Predicate>> predicatesMap) {

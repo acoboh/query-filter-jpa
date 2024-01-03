@@ -106,8 +106,8 @@ public class JsonTypeTest {
 	}
 
 	@Test
-	@DisplayName("12. Test by clear BBDD")
-	@Order(12)
+	@DisplayName("2. Test by clear BBDD")
+	@Order(2)
 	void clearBBDD() {
 		repository.deleteAll();
 		assertThat(repository.findAll()).isEmpty();

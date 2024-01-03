@@ -180,46 +180,42 @@ public class QueryFilter<E> implements Specification<E> {
 			QFDiscriminatorNotFoundException, QFBlockException, QFJsonParseException, QFNotValuable {
 
 		Matcher matcher = type.getPattern().matcher(part);
-		if (matcher.find() && matcher.groupCount() == 3) {
-
-			String field = matcher.group(1);
-			String op = matcher.group(2);
-			String value = matcher.group(3);
-
-			QFAbstractDefinition def = definitionMap.get(field);
-			if (def == null) {
-				throw new QFFieldNotFoundException(field);
-			}
-
-			if (def.isConstructorBlocked() && isConstructor) {
-				throw new QFBlockException(field);
-			}
-
-			if (def instanceof QFDefinitionElement) {
-				QFElementMatch match = new QFElementMatch(Arrays.asList(value.split(",")),
-						QFOperationEnum.fromValue(op), (QFDefinitionElement) def);
-				valueMapping.add(match);
-			} else if (def instanceof QFDefinitionDiscriminator) {
-				QFDiscriminatorMatch match = new QFDiscriminatorMatch(Arrays.asList(value.split(",")),
-						(QFDefinitionDiscriminator) def);
-				discriminatorMapping.add(match);
-			} else if (def instanceof QFDefinitionJson) {
-				QFJsonElementMatch match = new QFJsonElementMatch(value, QFOperationJsonEnum.fromValue(op),
-						(QFDefinitionJson) def);
-				jsonMapping.add(match);
-			} else if (def instanceof QFDefinitionCollection) {
-				QFCollectionMatch match = new QFCollectionMatch((QFDefinitionCollection) def,
-						QFCollectionOperationEnum.fromValue(op), Integer.valueOf(value));
-				collectionMapping.add(match);
-			}
-
-			else {
-				throw new QFNotValuable(field);
-			}
-
-		} else {
+		if (!(matcher.find() && matcher.groupCount() == 3)) {
 			LOGGER.error("Error parsing part {}. Matcher not found matches", part);
 			throw new QFParseException(part, type.name());
+		}
+
+		String field = matcher.group(1);
+		String op = matcher.group(2);
+		String value = matcher.group(3);
+
+		QFAbstractDefinition def = definitionMap.get(field);
+		if (def == null) {
+			throw new QFFieldNotFoundException(field);
+		}
+
+		if (def.isConstructorBlocked() && isConstructor) {
+			throw new QFBlockException(field);
+		}
+
+		if (def instanceof QFDefinitionElement) {
+			QFElementMatch match = new QFElementMatch(Arrays.asList(value.split(",")), QFOperationEnum.fromValue(op),
+					(QFDefinitionElement) def);
+			valueMapping.add(match);
+		} else if (def instanceof QFDefinitionDiscriminator) {
+			QFDiscriminatorMatch match = new QFDiscriminatorMatch(Arrays.asList(value.split(",")),
+					(QFDefinitionDiscriminator) def);
+			discriminatorMapping.add(match);
+		} else if (def instanceof QFDefinitionJson) {
+			QFJsonElementMatch match = new QFJsonElementMatch(value, QFOperationJsonEnum.fromValue(op),
+					(QFDefinitionJson) def);
+			jsonMapping.add(match);
+		} else if (def instanceof QFDefinitionCollection) {
+			QFCollectionMatch match = new QFCollectionMatch((QFDefinitionCollection) def,
+					QFCollectionOperationEnum.fromValue(op), Integer.valueOf(value));
+			collectionMapping.add(match);
+		} else {
+			throw new QFNotValuable(field);
 		}
 
 	}
@@ -731,7 +727,8 @@ public class QueryFilter<E> implements Specification<E> {
 	 * @return orders parsed
 	 */
 	public List<Order> getOrderAsCriteriaBuilder(Root<E> root, CriteriaBuilder criteriaBuilder) {
-		return QueryUtils.parseOrders(sortDefinitionList, criteriaBuilder, root, new HashMap<>());
+		List<Pair<IDefinitionSortable, Direction>> sortList = defaultSortEnabled ? defaultSorting : sortDefinitionList;
+		return QueryUtils.parseOrders(sortList, criteriaBuilder, root, new HashMap<>());
 	}
 
 	/** {@inheritDoc} */

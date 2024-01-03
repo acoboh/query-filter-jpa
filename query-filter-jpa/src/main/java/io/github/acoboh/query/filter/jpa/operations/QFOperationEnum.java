@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaBuilder.In;
@@ -258,10 +257,14 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 	};
 
 	private static final Map<String, QFOperationEnum> CONSTANTS = new HashMap<>();
+	private static final Set<QFOperationEnum> ARRAY_TYPED_CONSTANTS = new HashSet<>();
 
 	static {
 		for (QFOperationEnum c : values()) {
 			CONSTANTS.put(c.value, c);
+			if (c.arrayTyped) {
+				ARRAY_TYPED_CONSTANTS.add(c);
+			}
 		}
 	}
 
@@ -332,7 +335,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 	public static Set<QFOperationEnum> getOperationsOfClass(Class<?> clazz, boolean isArrayTyped) {
 
 		if (isArrayTyped) {
-			return CONSTANTS.values().stream().filter(QFOperationEnum::isArrayTyped).collect(Collectors.toSet());
+			return ARRAY_TYPED_CONSTANTS;
 		}
 
 		Set<QFOperationEnum> ret = new HashSet<>();

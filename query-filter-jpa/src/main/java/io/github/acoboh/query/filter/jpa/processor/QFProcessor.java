@@ -22,6 +22,7 @@ import io.github.acoboh.query.filter.jpa.annotations.QFPredicate;
 import io.github.acoboh.query.filter.jpa.exceptions.QueryFilterException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFClassException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFElementException;
+import io.github.acoboh.query.filter.jpa.exceptions.definition.QFNotSortableDefinitionException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 import io.github.acoboh.query.filter.jpa.predicate.PredicateProcessorResolutor;
 import io.github.acoboh.query.filter.jpa.processor.definitions.QFAbstractDefinition;
@@ -163,7 +164,7 @@ public class QFProcessor<F, E> {
 			}
 
 			if (!(definition instanceof IDefinitionSortable)) {
-
+				throw new QFNotSortableDefinitionException(definition.getFilterName(), filterClass);
 			}
 
 			ret.add(Pair.of((IDefinitionSortable) definition, sort.direction()));

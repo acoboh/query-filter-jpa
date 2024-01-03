@@ -26,11 +26,11 @@
 		<maven.compiler.testTarget>${jdk-test.version}</maven.compiler.testTarget>
 
 		<!-- Spring dependencies -->
-		<spring.version>6.1.2</spring.version>
-		<spring-boot.version>3.2.1</spring-boot.version>
+		<spring.version>6.0.13</spring.version>
+		<spring-boot.version>3.1.7</spring-boot.version>
 
 		<!-- Hibernate dependencies -->
-		<hibernate.version>6.2.13.Final</hibernate.version>
+		<hibernate.version>6.2.17.Final</hibernate.version>
 
 		<!-- Spring security dependencies -->
 		<spring-security.version>6.2.1</spring-security.version>

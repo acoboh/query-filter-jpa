@@ -24,13 +24,13 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!-- Spring Boot-->
-		<spring-boot.version>3.1.2</spring-boot.version>
+		<spring-boot.version>3.1.7</spring-boot.version>
 
 		<!-- Springdoc for OpenAPI-->
 		<springdoc.version>2.2.0</springdoc.version>
 
 		<!-- Hypersistance utils -->
-		<hypersistance-utils.version>3.5.1</hypersistance-utils.version>
+		<hypersistance-utils.version>3.6.0</hypersistance-utils.version>
 
 		<!-- Query Filter Versions -->
 		<query-filter.version>0.2.0-SNAPSHOT</query-filter.version>
@@ -126,6 +126,7 @@
 							<version>${mapstruct.version}</version>
 						</path>
 					</annotationProcessorPaths>
+					<parameters>true</parameters>
 				</configuration>
 			</plugin>
 			<plugin>

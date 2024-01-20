@@ -22,6 +22,7 @@ import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import io.github.acoboh.query.filter.jpa.domain.FilterBlogDefaulltSortADef;
+import io.github.acoboh.query.filter.jpa.domain.FilterBlogSortWithPredicateDef;
 import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.repositories.PostBlogRepository;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTest;
@@ -65,6 +66,9 @@ public class SortTest {
 
 	@Autowired
 	private QFProcessor<FilterBlogDefaulltSortADef, PostBlog> queryFilterProcessor;
+
+	@Autowired
+	private QFProcessor<FilterBlogSortWithPredicateDef, PostBlog> qfProcessorWithPredicates;
 
 	@Autowired
 	private PostBlogRepository repository;
@@ -193,7 +197,39 @@ public class SortTest {
 	}
 
 	@Test
-	@DisplayName("5. Test by clear BBDD")
+	@DisplayName("5. Test sort with predicates Issue #31")
+	@Order(5)
+	void testSortWithPredicates() {
+		QueryFilter<PostBlog> qf = qfProcessorWithPredicates.newQueryFilter("sort=-likes", QFParamType.RHS_COLON);
+
+		assertThat(qf).isNotNull();
+
+		assertThat(qf.isSorted()).isTrue();
+
+		assertThat(qf.isSortedBy("likes")).isTrue();
+
+		assertThat(qf.isSortedBy("author")).isFalse();
+
+		assertThat(qf.isSortedBy("lastTimestamp")).isFalse();
+
+		assertThat(qf.getSortFields()).containsExactly(Pair.of("likes", Direction.DESC));
+
+		List<PostBlog> found = repository.findAll(qf);
+
+		assertThat(found).hasSize(2);
+		assertThat(found).containsExactly(POST_EXAMPLE_2, POST_EXAMPLE);
+
+		qf.clearSort();
+
+		assertThat(qf.isSorted()).isFalse();
+
+		assertThat(found).hasSize(2);
+		assertThat(found).containsExactlyInAnyOrder(POST_EXAMPLE, POST_EXAMPLE_2);
+
+	}
+
+	@Test
+	@DisplayName("END. Test by clear BBDD")
 	@Order(10)
 	void clearBBDD() {
 		repository.deleteAll();

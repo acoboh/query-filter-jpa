@@ -168,6 +168,10 @@ class PredicateLevel {
 			}
 		}
 
+		if (expresions.isEmpty()) {
+			return null;
+		}
+
 		return levelOperator.getPredicate(cb, expresions);
 
 	}

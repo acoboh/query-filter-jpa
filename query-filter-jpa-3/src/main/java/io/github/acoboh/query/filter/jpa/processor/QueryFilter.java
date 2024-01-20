@@ -928,7 +928,7 @@ public class QueryFilter<E> implements Specification<E> {
 			toRet = localPredicate.resolvePredicate(cb, simplifiedPredicate);
 		}
 
-		if (toRet.isCompoundSelection() && toRet.getExpressions().isEmpty()) {
+		if (toRet == null || (toRet.isCompoundSelection() && toRet.getExpressions().isEmpty())) {
 			return null;
 		} else if (toRet.getExpressions().size() == 1) {
 			return (Predicate) toRet.getExpressions().get(0);

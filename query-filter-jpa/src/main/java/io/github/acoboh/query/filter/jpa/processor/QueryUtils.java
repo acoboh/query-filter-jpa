@@ -27,7 +27,7 @@ class QueryUtils {
 	}
 
 	public static Path<?> getObject(Root<?> root, List<QFPath> paths, Map<String, Path<?>> pathsMap,
-			boolean isCollection) {
+			boolean isCollection, boolean tryFetch) {
 		String fullPath = getFullPath(paths, isCollection);
 
 		Path<?> ret = pathsMap.get(fullPath);
@@ -38,7 +38,7 @@ class QueryUtils {
 		if (paths.size() == 1 && paths.get(0).isFinal()) {
 			ret = root.get(paths.get(0).getPath());
 		} else {
-			ret = getJoinObject(root, paths, pathsMap);
+			ret = getJoinObject(root, paths, pathsMap, tryFetch);
 		}
 
 		pathsMap.put(fullPath, ret);
@@ -46,7 +46,8 @@ class QueryUtils {
 
 	}
 
-	public static Path<?> getJoinObject(Root<?> root, List<QFPath> paths, Map<String, Path<?>> pathsMap) {
+	public static Path<?> getJoinObject(Root<?> root, List<QFPath> paths, Map<String, Path<?>> pathsMap,
+			boolean tryFetch) {
 
 		From<?, ?> join = root;
 
@@ -69,19 +70,24 @@ class QueryUtils {
 			}
 
 			QFPath elem = paths.get(i);
-			switch (elem.getType()) {
-			case LIST:
-				join = join.joinList(elem.getPath());
-				break;
 
-			case SET:
-				join = join.joinSet(elem.getPath());
-				break;
-			case PROPERTY:
-			case ENUM:
-			default:
-				join = join.join(elem.getPath());
-				break;
+			if (tryFetch) {
+				join = (From<?, ?>) root.fetch(elem.getPath());
+			} else {
+				switch (elem.getType()) {
+				case LIST:
+					join = join.joinList(elem.getPath());
+					break;
+
+				case SET:
+					join = join.joinSet(elem.getPath());
+					break;
+				case PROPERTY:
+				case ENUM:
+				default:
+					join = join.join(elem.getPath());
+					break;
+				}
 			}
 
 			// Add to pathsMap
@@ -100,10 +106,14 @@ class QueryUtils {
 
 		for (Pair<IDefinitionSortable, Direction> pair : sortDefinitionList) {
 			LOGGER.trace("Adding sort operation for {}", pair);
-			if (pair.getSecond() == Direction.ASC) {
-				orderList.add(cb.asc(getObject(root, pair.getFirst().getSortPaths(), pathsMap, false)));
-			} else {
-				orderList.add(cb.desc(getObject(root, pair.getFirst().getSortPaths(), pathsMap, false)));
+
+			int index = 0;
+			for (List<QFPath> paths : pair.getFirst().getSortPaths()) {
+				boolean autoFetch = pair.getFirst().isAutoFetch(index++);
+				LOGGER.trace("Autofetch is enabled on sort");
+				Path<?> path = getObject(root, paths, pathsMap, false, autoFetch);
+				Order order = pair.getSecond() == Direction.ASC ? cb.asc(path) : cb.desc(path);
+				orderList.add(order);
 			}
 
 		}

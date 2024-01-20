@@ -758,6 +758,12 @@ public class QueryFilter<E> implements Specification<E> {
 
 		toMatch.removeAll(isArrayLevel);
 
+		// Query Distinct
+		query.distinct(distinct);
+
+		// Sorts
+		processSort(root, criteriaBuilder, query, pathsMap);
+
 		// Discriminators
 		processDiscriminators(root, criteriaBuilder, predicatesMap, pathsMap, mlmap);
 
@@ -773,19 +779,20 @@ public class QueryFilter<E> implements Specification<E> {
 		// Collections
 		processCollections(root, criteriaBuilder, predicatesMap, pathsMap);
 
-		query.distinct(distinct);
-
-		List<Pair<IDefinitionSortable, Direction>> list = defaultSortEnabled ? defaultSorting : sortDefinitionList;
-		if (!list.isEmpty()) {
-			LOGGER.trace("Adding all sort operations");
-			query.orderBy(QueryUtils.parseOrders(list, criteriaBuilder, root, pathsMap));
-		}
-
 		Predicate finalPredicate = parseFinalPredicate(criteriaBuilder, predicatesMap);
 
 		LOGGER.debug("Predicate {}", finalPredicate);
 
 		return finalPredicate;
+	}
+
+	private void processSort(Root<E> root, CriteriaBuilder criteriaBuilder, CriteriaQuery<?> query,
+			Map<String, Path<?>> pathsMap) {
+		List<Pair<IDefinitionSortable, Direction>> list = defaultSortEnabled ? defaultSorting : sortDefinitionList;
+		if (!list.isEmpty()) {
+			LOGGER.trace("Adding all sort operations");
+			query.orderBy(QueryUtils.parseOrders(list, criteriaBuilder, root, pathsMap));
+		}
 	}
 
 	private void processDiscriminators(Root<E> root, CriteriaBuilder criteriaBuilder,
@@ -805,7 +812,7 @@ public class QueryFilter<E> implements Specification<E> {
 
 				for (Class<?> clazz : match.getMatchingClasses()) {
 					orDiscriminators.add(criteriaBuilder
-							.equal(QueryUtils.getObject(root, match.getPath(), pathsMap, false).type(), clazz));
+							.equal(QueryUtils.getObject(root, match.getPath(), pathsMap, false, false).type(), clazz));
 					mlmap.add(match.getDefinition().getFilterName(), clazz);
 				}
 
@@ -838,7 +845,7 @@ public class QueryFilter<E> implements Specification<E> {
 
 				subquery.select(newRoot.as(entityClass));
 
-				Path<?> pathFinal = QueryUtils.getObject(newRoot, paths, subSelecthMap, false);
+				Path<?> pathFinal = QueryUtils.getObject(newRoot, paths, subSelecthMap, false, false);
 
 				QFOperationEnum op = arrayLevelMatch.getOperation();
 				if (op == QFOperationEnum.NOT_EQUAL) {
@@ -880,7 +887,8 @@ public class QueryFilter<E> implements Specification<E> {
 
 			for (List<QFPath> paths : match.getPaths()) {
 				expressions.add(match.getOperation().generatePredicate(
-						QueryUtils.getObject(root, paths, pathsMap, false), criteriaBuilder, match, index, mlmap));
+						QueryUtils.getObject(root, paths, pathsMap, false, false), criteriaBuilder, match, index,
+						mlmap));
 				index++;
 			}
 
@@ -895,7 +903,7 @@ public class QueryFilter<E> implements Specification<E> {
 		for (QFJsonElementMatch match : jsonMapping) {
 			predicatesMap.computeIfAbsent(match.getDefinition().getFilterName(), t -> new ArrayList<>())
 					.add(match.getOperation().generateJsonPredicate(
-							QueryUtils.getObject(root, match.getDefinition().getPaths(), pathsMap, true),
+							QueryUtils.getObject(root, match.getDefinition().getPaths(), pathsMap, true, false),
 							criteriaBuilder, match));
 		}
 	}
@@ -906,7 +914,8 @@ public class QueryFilter<E> implements Specification<E> {
 		LOGGER.trace("Creating all collection matching elements on filter");
 		for (QFCollectionMatch match : collectionMapping) {
 
-			Path<?> expressionPath = QueryUtils.getObject(root, match.getDefinition().getPaths(), pathsMap, true);
+			Path<?> expressionPath = QueryUtils.getObject(root, match.getDefinition().getPaths(), pathsMap, true,
+					false);
 
 			Expression<? extends java.util.Collection<?>> expression;
 

@@ -1,6 +1,7 @@
 package io.github.acoboh.query.filter.jpa.processor;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertThrows;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -17,28 +18,25 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.Ordered;
+import org.springframework.dao.InvalidDataAccessResourceUsageException;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.util.Pair;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import io.github.acoboh.query.filter.jpa.domain.FilterBlogDef;
-import io.github.acoboh.query.filter.jpa.exceptions.QueryFilterException;
+import io.github.acoboh.query.filter.jpa.domain.FilterBlogSortRelationalDef;
 import io.github.acoboh.query.filter.jpa.model.Comments;
 import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.repositories.PostBlogRepository;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTest;
 
-/**
- * Relational tests
- * 
- * @author Adrián Cobo
- *
- */
 @SpringJUnitWebConfig(SpringIntegrationTest.Config.class)
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class RelationalTest {
+class AutoFetchSortTest {
 
 	private static final PostBlog POST_EXAMPLE = new PostBlog();
 	private static final PostBlog POST_EXAMPLE_2 = new PostBlog();
@@ -58,14 +56,14 @@ class RelationalTest {
 
 		Comments comment = new Comments();
 		comment.setId(1);
-		comment.setAuthor("Author 1");
+		comment.setAuthor("Author 2");
 		comment.setComment("Comment 1");
 		comment.setLikes(1);
 		comment.setPostBlog(POST_EXAMPLE);
 
 		Comments comment2 = new Comments();
 		comment2.setId(2);
-		comment2.setAuthor("Author 2");
+		comment2.setAuthor("Author 4");
 		comment2.setComment("Comment 2");
 		comment2.setLikes(2);
 		comment2.setPostBlog(POST_EXAMPLE);
@@ -89,14 +87,14 @@ class RelationalTest {
 
 		Comments comment3 = new Comments();
 		comment3.setId(3);
-		comment3.setAuthor("Author 3");
+		comment3.setAuthor("Author 1");
 		comment3.setComment("Comment 3");
 		comment3.setLikes(3);
 		comment3.setPostBlog(POST_EXAMPLE_2);
 
 		Comments comment4 = new Comments();
 		comment4.setId(4);
-		comment4.setAuthor("Author 4");
+		comment4.setAuthor("Author 3");
 		comment4.setComment("Comment 4");
 		comment4.setLikes(4);
 		comment4.setPostBlog(POST_EXAMPLE_2);
@@ -108,14 +106,14 @@ class RelationalTest {
 	}
 
 	@Autowired
-	private QFProcessor<FilterBlogDef, PostBlog> queryFilterProcessor;
+	private QFProcessor<FilterBlogSortRelationalDef, PostBlog> queryFilterProcessor;
 
 	@Autowired
 	private PostBlogRepository repository;
 
 	@Test
 	@DisplayName("0. Setup")
-	@Order(1)
+	@Order(Ordered.HIGHEST_PRECEDENCE)
 	void setup() {
 
 		assertThat(queryFilterProcessor).isNotNull();
@@ -131,109 +129,98 @@ class RelationalTest {
 	}
 
 	@Test
-	@DisplayName("1. Test empty query")
-	@Order(2)
-	void query() throws QueryFilterException {
-		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("", QFParamType.RHS_COLON);
-		assertThat(qf).isNotNull();
+	@DisplayName("1. Test sort by only sort")
+	@Order(1)
+	void testSortBase() {
 
-		List<PostBlog> list = repository.findAll(qf);
-		assertThat(list).hasSize(2);
-
-		assertThat(list).containsExactlyInAnyOrder(POST_EXAMPLE, POST_EXAMPLE_2);
-
-	}
-
-	@Test
-	@DisplayName("2. Test by comment likes")
-	@Order(3)
-	void queryByCommentLikes() throws QueryFilterException {
-		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("commentLikes=gt:2", QFParamType.RHS_COLON);
-		assertThat(qf).isNotNull();
-
-		List<PostBlog> list = repository.findAll(qf);
-		assertThat(list).hasSize(1);
-
-		assertThat(list).containsExactlyInAnyOrder(POST_EXAMPLE_2);
-
-		// Test greater or equal than 2
-
-		qf = queryFilterProcessor.newQueryFilter("commentLikes=gte:2", QFParamType.RHS_COLON);
-		assertThat(qf).isNotNull();
-
-		list = repository.findAll(qf);
-		assertThat(list).hasSize(2).containsExactlyInAnyOrder(POST_EXAMPLE, POST_EXAMPLE_2);
-
-		// Test less than 3
-		qf = queryFilterProcessor.newQueryFilter("commentLikes=lt:3", QFParamType.RHS_COLON);
-		assertThat(qf).isNotNull();
-
-		list = repository.findAll(qf);
-		assertThat(list).hasSize(1).containsExactlyInAnyOrder(POST_EXAMPLE);
-
-		// Test less or equal than 3
-		qf = queryFilterProcessor.newQueryFilter("commentLikes=lte:3", QFParamType.RHS_COLON);
-		assertThat(qf).isNotNull();
-
-		list = repository.findAll(qf);
-		assertThat(list).hasSize(2).containsExactlyInAnyOrder(POST_EXAMPLE, POST_EXAMPLE_2);
-	}
-
-	@Test
-	@DisplayName("3. Test by author")
-	@Order(4)
-	void queryByAuthor() throws QueryFilterException {
-
-		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("commentAuthor=eq:Author 1",
+		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("sort=+commentAuthorSort",
 				QFParamType.RHS_COLON);
 		assertThat(qf).isNotNull();
 
-		List<PostBlog> list = repository.findAll(qf);
-		assertThat(list).hasSize(1);
+		assertThat(qf.isSorted()).isTrue();
 
-		assertThat(list).containsExactlyInAnyOrder(POST_EXAMPLE);
+		assertThat(qf.isSortedBy("commentAuthorSort")).isTrue();
 
-		// Test IN operator
+		assertThat(qf.getSortFields()).containsExactly(Pair.of("commentAuthorSort", Direction.ASC));
 
-		qf = queryFilterProcessor.newQueryFilter("commentAuthor=in:Author 1,Author 2", QFParamType.RHS_COLON);
-		assertThat(qf).isNotNull();
+		List<PostBlog> found = repository.findAll(qf);
 
-		list = repository.findAll(qf);
-		assertThat(list).hasSize(1).containsExactlyInAnyOrder(POST_EXAMPLE);
-
-		// Test NOT IN operator
-		qf = queryFilterProcessor.newQueryFilter("commentAuthor=nin:Author 1,Author 2", QFParamType.RHS_COLON);
-		assertThat(qf).isNotNull();
-
-		list = repository.findAll(qf);
-		assertThat(list).hasSize(1).containsExactlyInAnyOrder(POST_EXAMPLE_2);
-
-		// Test LIKE operator
-		qf = queryFilterProcessor.newQueryFilter("commentAuthor=like:Author", QFParamType.RHS_COLON);
-		assertThat(qf).isNotNull();
-
-		list = repository.findAll(qf);
-		assertThat(list).hasSize(2).containsExactlyInAnyOrder(POST_EXAMPLE, POST_EXAMPLE_2);
-
-		// Test StartsWith operator
-		qf = queryFilterProcessor.newQueryFilter("commentAuthor=starts:Author", QFParamType.RHS_COLON);
-		assertThat(qf).isNotNull();
-
-		list = repository.findAll(qf);
-		assertThat(list).hasSize(2).containsExactlyInAnyOrder(POST_EXAMPLE, POST_EXAMPLE_2);
-
-		// Test EndsWith operator
-		qf = queryFilterProcessor.newQueryFilter("commentAuthor=ends:3", QFParamType.RHS_COLON);
-		assertThat(qf).isNotNull();
-
-		list = repository.findAll(qf);
-		assertThat(list).hasSize(1).containsExactlyInAnyOrder(POST_EXAMPLE_2);
+		assertThat(found).hasSize(2);
+		assertThat(found).containsExactly(POST_EXAMPLE_2, POST_EXAMPLE);
 
 	}
 
 	@Test
-	@DisplayName("4. Test by clear BBDD")
-	@Order(5)
+	@DisplayName("2. Test sort by element sort")
+	@Order(2)
+	void testSortElement() {
+
+		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("sort=-commentAuthorElement",
+				QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
+
+		assertThat(qf.isSorted()).isTrue();
+
+		assertThat(qf.isSortedBy("commentAuthorElement")).isTrue();
+
+		assertThat(qf.getSortFields()).containsExactly(Pair.of("commentAuthorElement", Direction.DESC));
+
+		List<PostBlog> found = repository.findAll(qf);
+
+		assertThat(found).hasSize(2);
+		assertThat(found).containsExactly(POST_EXAMPLE, POST_EXAMPLE_2);
+
+	}
+
+	@Test
+	@DisplayName("3. Test sort error without autofetch on sort")
+	@Order(3)
+	void testSortErrorSort() {
+
+		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("sort=-commentAuthorSortError",
+				QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
+
+		assertThat(qf.isSorted()).isTrue();
+
+		assertThat(qf.isSortedBy("commentAuthorSortError")).isTrue();
+
+		assertThat(qf.getSortFields()).containsExactly(Pair.of("commentAuthorSortError", Direction.DESC));
+
+		InvalidDataAccessResourceUsageException ex = assertThrows(InvalidDataAccessResourceUsageException.class,
+				() -> repository.findAll(qf));
+
+		assertThat(ex.getCause().getCause().getMessage())
+				.startsWith("ERROR: for SELECT DISTINCT, ORDER BY expressions must appear in select list");
+
+	}
+
+	@Test
+	@DisplayName("4. Test sort error without autofetch on element")
+	@Order(4)
+	void testSortErrorElement() {
+
+		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("sort=-commentAuthorElementError",
+				QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
+
+		assertThat(qf.isSorted()).isTrue();
+
+		assertThat(qf.isSortedBy("commentAuthorElementError")).isTrue();
+
+		assertThat(qf.getSortFields()).containsExactly(Pair.of("commentAuthorElementError", Direction.DESC));
+
+		InvalidDataAccessResourceUsageException ex = assertThrows(InvalidDataAccessResourceUsageException.class,
+				() -> repository.findAll(qf));
+
+		assertThat(ex.getCause().getCause().getMessage())
+				.startsWith("ERROR: for SELECT DISTINCT, ORDER BY expressions must appear in select list");
+
+	}
+
+	@Test
+	@DisplayName("END. Test by clear BBDD")
+	@Order(Ordered.LOWEST_PRECEDENCE)
 	void clearBBDD() {
 		repository.deleteAll();
 		assertThat(repository.findAll()).isEmpty();

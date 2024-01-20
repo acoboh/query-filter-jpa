@@ -94,7 +94,9 @@ public class QueryFilter<E> implements Specification<E> {
 
 	private final transient List<QFElementMatch> defaultMatches;
 	private final transient List<Pair<IDefinitionSortable, Direction>> defaultSorting;
+
 	private final transient Map<String, QFAbstractDefinition> definitionMap;
+
 	private final transient QFDefinitionClass queryFilterClassAnnotation;
 
 	private boolean defaultSortEnabled = true;
@@ -466,7 +468,11 @@ public class QueryFilter<E> implements Specification<E> {
 	 * @return true if the field is present, false otherwise
 	 */
 	public boolean isFiltering(String field) {
-		return valueMapping.stream().anyMatch(e -> e.getDefinition().getFilterName().equals(field));
+		boolean isFiltering = valueMapping.stream().anyMatch(e -> e.getDefinition().getFilterName().equals(field));
+		if (!isFiltering) {
+			isFiltering = defaultMatches.stream().anyMatch(e -> e.getDefinition().getFilterName().equals(field));
+		}
+		return isFiltering;
 	}
 
 	/**
@@ -477,7 +483,13 @@ public class QueryFilter<E> implements Specification<E> {
 	 */
 	public boolean isFilteringAny(String... fields) {
 		Set<String> set = Sets.newHashSet(fields);
-		return valueMapping.stream().anyMatch(e -> set.contains(e.getDefinition().getFilterName()));
+
+		boolean isFiltering = valueMapping.stream().anyMatch(e -> set.contains(e.getDefinition().getFilterName()));
+		if (!isFiltering) {
+			isFiltering = defaultMatches.stream().anyMatch(e -> set.contains(e.getDefinition().getFilterName()));
+		}
+
+		return isFiltering;
 	}
 
 	/**
@@ -505,6 +517,7 @@ public class QueryFilter<E> implements Specification<E> {
 
 		if (def instanceof QFDefinitionElement) {
 			valueMapping.removeIf(e -> e.getDefinition().getFilterName().equals(field));
+			defaultMatches.removeIf(e -> e.getDefinition().getFilterName().equals(field));
 			QFElementMatch match = new QFElementMatch(Arrays.asList(value.split(",")), operation,
 					(QFDefinitionElement) def);
 			valueMapping.add(match);
@@ -595,8 +608,16 @@ public class QueryFilter<E> implements Specification<E> {
 		}
 
 		if (def instanceof QFDefinitionElement) {
-			return valueMapping.stream().filter(e -> e.getDefinition().getFilterName().equals(field))
+
+			List<String> toRet = valueMapping.stream().filter(e -> e.getDefinition().getFilterName().equals(field))
 					.map(QFElementMatch::getOriginalValues).findAny().orElse(null);
+
+			if (toRet == null) {
+				toRet = defaultMatches.stream().filter(e -> e.getDefinition().getFilterName().equals(field))
+						.map(QFElementMatch::getOriginalValues).findAny().orElse(null);
+			}
+
+			return toRet;
 		} else if (def instanceof QFDefinitionDiscriminator) {
 			return discriminatorMapping.stream().filter(e -> e.getDefinition().getFilterName().equals(field))
 					.map(QFDiscriminatorMatch::getValues).findFirst().orElse(null);
@@ -665,6 +686,7 @@ public class QueryFilter<E> implements Specification<E> {
 
 		if (def instanceof QFDefinitionElement) {
 			valueMapping.removeIf(e -> e.getDefinition().getFilterName().equals(field));
+			defaultMatches.removeIf(e -> e.getDefinition().getFilterName().equals(field));
 		} else if (def instanceof QFDefinitionDiscriminator) {
 			discriminatorMapping.removeIf(e -> e.getDefinition().getFilterName().equals(field));
 		} else if (def instanceof QFDefinitionJson) {

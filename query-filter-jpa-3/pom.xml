@@ -51,6 +51,9 @@
 		<!-- Hypersistance tests -->
 		<hypersistance.version>3.6.0</hypersistance.version>
 
+		<!--Logging dependencies -->
+		<logback.version>1.4.14</logback.version>
+
 	</properties>
 
 	<dependencyManagement>
@@ -244,6 +247,14 @@
 			<artifactId>hypersistence-utils-hibernate-62</artifactId>
 			<version>${hypersistance.version}</version>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${logback.version}</version>
+			<scope>provided</scope>
+			<optional>true</optional>
 		</dependency>
 
 	</dependencies>

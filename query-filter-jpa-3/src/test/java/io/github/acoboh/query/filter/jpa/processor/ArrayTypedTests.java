@@ -23,7 +23,7 @@ import io.github.acoboh.query.filter.jpa.domain.ArrayTypeFilterDef;
 import io.github.acoboh.query.filter.jpa.exceptions.QueryFilterException;
 import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.repositories.PostBlogRepository;
-import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTest;
+import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
 
 /**
  * Array type tests
@@ -31,11 +31,11 @@ import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTest;
  * @author Adrián Cobo
  *
  */
-@SpringJUnitWebConfig(SpringIntegrationTest.Config.class)
+@SpringJUnitWebConfig(SpringIntegrationTestBase.Config.class)
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class ArrayTypedTests {
+class ArrayTypedTests {
 
 	private static final PostBlog POST_EXAMPLE = new PostBlog();
 	private static final PostBlog POST_EXAMPLE_2 = new PostBlog();

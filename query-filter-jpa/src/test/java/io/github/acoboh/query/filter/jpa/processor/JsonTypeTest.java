@@ -20,7 +20,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import io.github.acoboh.query.filter.jpa.domain.JsonFilterDef;
 import io.github.acoboh.query.filter.jpa.model.jsondata.ModelJson;
 import io.github.acoboh.query.filter.jpa.repositories.ModelJsonRepository;
-import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTest;
+import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
 
 /**
  * JSON tests
@@ -28,11 +28,11 @@ import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTest;
  * @author Adrián Cobo
  *
  */
-@SpringJUnitWebConfig(SpringIntegrationTest.Config.class)
+@SpringJUnitWebConfig(SpringIntegrationTestBase.Config.class)
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class JsonTypeTest {
+class JsonTypeTest {
 
 	private static final ModelJson MODEL1;
 	private static final ModelJson MODEL2;

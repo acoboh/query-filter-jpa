@@ -280,11 +280,6 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 		return defaultOperation;
 	}
 
-	@Override
-	public List<List<QFPath>> getSortPaths() {
-		return paths;
-	}
-
 	/**
 	 * Get the first final class of the definition element
 	 * 

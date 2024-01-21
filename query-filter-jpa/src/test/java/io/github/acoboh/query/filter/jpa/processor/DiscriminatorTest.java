@@ -25,7 +25,7 @@ import io.github.acoboh.query.filter.jpa.model.discriminators.Announcement;
 import io.github.acoboh.query.filter.jpa.model.discriminators.Post;
 import io.github.acoboh.query.filter.jpa.model.discriminators.Topic;
 import io.github.acoboh.query.filter.jpa.repositories.PostDiscriminatorRepository;
-import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTest;
+import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
 
 /**
  * Discriminator tests
@@ -33,11 +33,11 @@ import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTest;
  * @author Adrián Cobo
  *
  */
-@SpringJUnitWebConfig(SpringIntegrationTest.Config.class)
+@SpringJUnitWebConfig(SpringIntegrationTestBase.Config.class)
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class DiscriminatorTest {
+class DiscriminatorTest {
 
 	@Autowired
 	private QFProcessor<DiscriminatorFilterDef, Topic> queryFilterProcessor;

@@ -70,12 +70,12 @@ public class QueryFilter<E> implements Specification<E> {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final String REGEX_SORT = "^[a-zA-Z0-9]+=([+-]?[a-zA-Z0-9]+)(,[+-]?[a-zA-Z0-9]+)*$";
+	private static final String REGEX_SORT = "^[a-zA-Z0-9]+=([+-]?[a-zA-Z0-9]+)(,[+-]?[a-zA-Z0-9]+)*+$";
 	private static final Pattern REGEX_PATTERN = Pattern.compile("([+-])([a-zA-Z0-9]+)");
 
 	private final String initialInput;
 
-	private final QFSpecificationsWarp specificationsWarp;
+	private final transient QFSpecificationsWarp specificationsWarp;
 
 	private final transient @Nullable Map<String, PredicateProcessorResolutor> predicateMap;
 
@@ -430,8 +430,7 @@ public class QueryFilter<E> implements Specification<E> {
 	 */
 	public List<Pair<String, Direction>> getSortFields() {
 		var sortList = defaultSortEnabled ? defaultSorting : sortDefinitionList;
-		return sortList.stream().map(e -> Pair.of(e.getFirst().getFilterName(), e.getSecond()))
-				.collect(Collectors.toList());
+		return sortList.stream().map(e -> Pair.of(e.getFirst().getFilterName(), e.getSecond())).toList();
 	}
 
 	/**

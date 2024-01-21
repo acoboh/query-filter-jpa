@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
  * @author Adrián Cobo
  *
  */
-public class QfArraySQLFunctionTest {
+class QfArraySQLFunctionTest {
 
 	@DisplayName("Check functions test")
 	@Test

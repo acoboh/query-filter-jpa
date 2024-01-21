@@ -33,7 +33,7 @@ public class QFDefinitionSortable extends QFAbstractDefinition implements IDefin
 	}
 
 	@Override
-	public List<List<QFPath>> getSortPaths() {
+	public List<List<QFPath>> getPaths() {
 		return paths;
 	}
 

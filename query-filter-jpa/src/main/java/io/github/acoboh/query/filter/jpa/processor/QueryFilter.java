@@ -74,14 +74,18 @@ public class QueryFilter<E> implements Specification<E> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(QueryFilter.class);
 
+	private static final String FIELD_NOT_NULL_MESSAGE = "field cannot be null";
+	private static final String OPERATION_NOT_NULL_MESSAGE = "operation cannot be null";
+	private static final String VALUES_NOT_NULL_MESSAGE = "values cannot be null";
+
 	private static final long serialVersionUID = 1L;
 
-	private static final String REGEX_SORT = "^[a-zA-Z0-9]+=([+-]?[a-zA-Z0-9]+)(,[+-]?[a-zA-Z0-9]+)*$";
+	private static final String REGEX_SORT = "^[a-zA-Z0-9]+=([+-]?[a-zA-Z0-9]+)(,[+-]?[a-zA-Z0-9]+)*+$";
 	private static final Pattern REGEX_PATTERN = Pattern.compile("([+-])([a-zA-Z0-9]+)");
 
 	private final String initialInput;
 
-	private final QFSpecificationsWarp specificationsWarp;
+	private final transient QFSpecificationsWarp specificationsWarp;
 
 	private final transient @Nullable Map<String, PredicateProcessorResolutor> predicateMap;
 
@@ -289,9 +293,9 @@ public class QueryFilter<E> implements Specification<E> {
 	public void addNewField(String field, QFOperationEnum operation, List<String> values)
 			throws QFFieldNotFoundException, QFDiscriminatorNotFoundException {
 
-		Assert.notNull(field, "field cannot be null");
-		Assert.notNull(operation, "operation cannot be null");
-		Assert.notNull(values, "values cannot be null");
+		Assert.notNull(field, FIELD_NOT_NULL_MESSAGE);
+		Assert.notNull(operation, OPERATION_NOT_NULL_MESSAGE);
+		Assert.notNull(values, VALUES_NOT_NULL_MESSAGE);
 
 		QFAbstractDefinition def = definitionMap.get(field);
 		if (def == null) {
@@ -319,9 +323,9 @@ public class QueryFilter<E> implements Specification<E> {
 	 * @param value     json value as string
 	 */
 	public void addNewField(String field, QFOperationJsonEnum operation, String value) {
-		Assert.notNull(field, "field cannot be null");
-		Assert.notNull(operation, "operation cannot be null");
-		Assert.notNull(value, "value cannot be null");
+		Assert.notNull(field, FIELD_NOT_NULL_MESSAGE);
+		Assert.notNull(operation, OPERATION_NOT_NULL_MESSAGE);
+		Assert.notNull(value, VALUES_NOT_NULL_MESSAGE);
 
 		QFAbstractDefinition def = definitionMap.get(field);
 		if (def == null) {
@@ -346,8 +350,8 @@ public class QueryFilter<E> implements Specification<E> {
 	 */
 	public void addNewField(String field, QFCollectionOperationEnum operation, int value) {
 
-		Assert.notNull(field, "field cannot be null");
-		Assert.notNull(operation, "operation cannot be null");
+		Assert.notNull(field, FIELD_NOT_NULL_MESSAGE);
+		Assert.notNull(operation, OPERATION_NOT_NULL_MESSAGE);
 
 		QFAbstractDefinition def = definitionMap.get(field);
 		if (def == null) {
@@ -375,9 +379,9 @@ public class QueryFilter<E> implements Specification<E> {
 	public void addNewField(String field, QFOperationEnum operation, String value)
 			throws QFFieldNotFoundException, QFDiscriminatorNotFoundException {
 
-		Assert.notNull(field, "field cannot be null");
-		Assert.notNull(operation, "operation cannot be null");
-		Assert.notNull(value, "value cannot be null");
+		Assert.notNull(field, FIELD_NOT_NULL_MESSAGE);
+		Assert.notNull(operation, OPERATION_NOT_NULL_MESSAGE);
+		Assert.notNull(value, VALUES_NOT_NULL_MESSAGE);
 
 		List<String> values = Arrays.asList(value.split(","));
 		addNewField(field, operation, values);
@@ -490,8 +494,8 @@ public class QueryFilter<E> implements Specification<E> {
 	public void overrideField(String field, QFOperationEnum operation, String value)
 			throws QFFieldNotFoundException, QFDiscriminatorNotFoundException, QFNotValuable {
 
-		Assert.notNull(field, "field cannot be null");
-		Assert.notNull(operation, "operation cannot be null");
+		Assert.notNull(field, FIELD_NOT_NULL_MESSAGE);
+		Assert.notNull(operation, OPERATION_NOT_NULL_MESSAGE);
 		Assert.notNull(value, "value cannot be null");
 
 		QFAbstractDefinition def = definitionMap.get(field);
@@ -528,9 +532,9 @@ public class QueryFilter<E> implements Specification<E> {
 	public void overrideField(String field, QFOperationJsonEnum operationJson, String value)
 			throws QFFieldNotFoundException, QFNotValuable {
 
-		Assert.notNull(field, "field cannot be null");
-		Assert.notNull(operationJson, "operation cannot be null");
-		Assert.notNull(value, "value cannot be null");
+		Assert.notNull(field, FIELD_NOT_NULL_MESSAGE);
+		Assert.notNull(operationJson, OPERATION_NOT_NULL_MESSAGE);
+		Assert.notNull(value, VALUES_NOT_NULL_MESSAGE);
 
 		QFAbstractDefinition def = definitionMap.get(field);
 		if (def == null) {
@@ -559,8 +563,8 @@ public class QueryFilter<E> implements Specification<E> {
 	public void overrideField(String field, QFCollectionOperationEnum operationCollection, int value)
 			throws QFFieldNotFoundException, QFNotValuable {
 
-		Assert.notNull(field, "field cannot be null");
-		Assert.notNull(operationCollection, "operation cannot be null");
+		Assert.notNull(field, FIELD_NOT_NULL_MESSAGE);
+		Assert.notNull(operationCollection, OPERATION_NOT_NULL_MESSAGE);
 
 		QFAbstractDefinition def = definitionMap.get(field);
 		if (def == null) {

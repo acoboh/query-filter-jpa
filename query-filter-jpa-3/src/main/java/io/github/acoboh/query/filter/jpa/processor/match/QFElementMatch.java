@@ -306,18 +306,13 @@ public class QFElementMatch implements QFSpecificationPart {
 		}
 
 		switch (operation) {
-		case GREATER_THAN:
-		case GREATER_EQUAL_THAN:
-		case LESS_THAN:
-		case LESS_EQUAL_THAN:
+		case GREATER_THAN, GREATER_EQUAL_THAN, LESS_THAN, LESS_EQUAL_THAN:
 			if (!Comparable.class.isAssignableFrom(clazz) && !clazz.isPrimitive()) {
 				throw new QFFieldOperationException(operation, definition.getFilterName());
 			}
 			break;
 
-		case ENDS_WITH:
-		case STARTS_WITH:
-		case LIKE:
+		case ENDS_WITH, STARTS_WITH, LIKE:
 			if (!String.class.isAssignableFrom(clazz)) {
 				throw new QFFieldOperationException(operation, definition.getFilterName());
 			}
@@ -343,10 +338,10 @@ public class QFElementMatch implements QFSpecificationPart {
 
 		Class<?> originalClass = spelResolved.getClass();
 
-		if (spelResolved instanceof String[]) {
-			return Arrays.asList((String[]) spelResolved);
+		if (spelResolved instanceof String[] casted) {
+			return Arrays.asList(casted);
 		} else if (spelResolved instanceof Collection<?>) {
-			return ((Collection<?>) spelResolved).stream().map(Object::toString).collect(Collectors.toList());
+			return ((Collection<?>) spelResolved).stream().map(Object::toString).toList();
 		} else if (String.class.equals(originalClass)) {
 			return Collections.singletonList((String) spelResolved);
 		} else if (boolean.class.equals(originalClass)) {
@@ -440,8 +435,7 @@ public class QFElementMatch implements QFSpecificationPart {
 
 		if (definition.isSubQuery()) {
 			LOGGER.trace("Element match is subquery");
-			processPartAsSubQuery(root, query, criteriaBuilder, predicatesMap, pathsMap, mlmap, spelResolver,
-					entityClass);
+			processPartAsSubQuery(root, query, criteriaBuilder, predicatesMap, mlmap, spelResolver, entityClass);
 		} else {
 			LOGGER.trace("Element match is basic");
 			processAsElement(root, criteriaBuilder, predicatesMap, pathsMap, mlmap, spelResolver);
@@ -462,8 +456,8 @@ public class QFElementMatch implements QFSpecificationPart {
 
 		List<Predicate> predicates = new ArrayList<>();
 
-		for (List<QFPath> paths : paths) {
-			predicates.add(operation.generatePredicate(QueryUtils.getObject(root, paths, pathsMap, false, false),
+		for (List<QFPath> path : paths) {
+			predicates.add(operation.generatePredicate(QueryUtils.getObject(root, path, pathsMap, false, false),
 					criteriaBuilder, this, index, mlmap));
 			index++;
 		}
@@ -474,8 +468,8 @@ public class QFElementMatch implements QFSpecificationPart {
 	}
 
 	private <E> void processPartAsSubQuery(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder,
-			Map<String, List<Predicate>> predicatesMap, Map<String, Path<?>> pathsMap,
-			MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver, Class<E> entityClass) {
+			Map<String, List<Predicate>> predicatesMap, MultiValueMap<String, Object> mlmap,
+			SpelResolverContext spelResolver, Class<E> entityClass) {
 		Map<String, Path<?>> subSelecthMap = new HashMap<>();
 
 		initialize(spelResolver, mlmap);
@@ -485,14 +479,14 @@ public class QFElementMatch implements QFSpecificationPart {
 		}
 
 		int index = 0;
-		for (List<QFPath> paths : paths) {
+		for (List<QFPath> path : paths) {
 
 			Subquery<E> subquery = query.subquery(entityClass);
 			Root<E> newRoot = subquery.from(entityClass);
 
 			subquery.select(newRoot);
 
-			Path<?> pathFinal = QueryUtils.getObject(newRoot, paths, subSelecthMap, false, false);
+			Path<?> pathFinal = QueryUtils.getObject(newRoot, path, subSelecthMap, false, false);
 
 			QFOperationEnum op = operation;
 			if (op == QFOperationEnum.NOT_EQUAL) {

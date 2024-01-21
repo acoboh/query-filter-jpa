@@ -25,7 +25,7 @@ import io.github.acoboh.query.filter.jpa.domain.FilterBlogDefaulltSortADef;
 import io.github.acoboh.query.filter.jpa.domain.FilterBlogSortWithPredicateDef;
 import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.repositories.PostBlogRepository;
-import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTest;
+import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
 
 /**
  * Default sorting options
@@ -33,11 +33,11 @@ import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTest;
  * @author Adrián Cobo
  *
  */
-@SpringJUnitWebConfig(SpringIntegrationTest.Config.class)
+@SpringJUnitWebConfig(SpringIntegrationTestBase.Config.class)
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class SortTest {
+class SortTest {
 
 	private static final PostBlog POST_EXAMPLE = new PostBlog();
 	private static final PostBlog POST_EXAMPLE_2 = new PostBlog();
@@ -105,8 +105,7 @@ public class SortTest {
 
 		List<PostBlog> found = repository.findAll(qf);
 
-		assertThat(found).hasSize(2);
-		assertThat(found).containsExactly(POST_EXAMPLE, POST_EXAMPLE_2);
+		assertThat(found).hasSize(2).containsExactly(POST_EXAMPLE, POST_EXAMPLE_2);
 
 	}
 
@@ -125,8 +124,7 @@ public class SortTest {
 
 		List<PostBlog> found = repository.findAll(qf);
 
-		assertThat(found).hasSize(2);
-		assertThat(found).containsExactlyInAnyOrder(POST_EXAMPLE, POST_EXAMPLE_2);
+		assertThat(found).hasSize(2).containsExactlyInAnyOrder(POST_EXAMPLE, POST_EXAMPLE_2);
 
 	}
 
@@ -147,8 +145,7 @@ public class SortTest {
 
 		List<PostBlog> found = repository.findAll(qf);
 
-		assertThat(found).hasSize(2);
-		assertThat(found).containsExactly(POST_EXAMPLE_2, POST_EXAMPLE);
+		assertThat(found).hasSize(2).containsExactly(POST_EXAMPLE_2, POST_EXAMPLE);
 
 		qf.clearSort();
 
@@ -156,8 +153,7 @@ public class SortTest {
 
 		found = repository.findAll(qf);
 
-		assertThat(found).hasSize(2);
-		assertThat(found).containsExactlyInAnyOrder(POST_EXAMPLE, POST_EXAMPLE_2);
+		assertThat(found).hasSize(2).containsExactlyInAnyOrder(POST_EXAMPLE, POST_EXAMPLE_2);
 
 	}
 
@@ -182,8 +178,7 @@ public class SortTest {
 
 		List<PostBlog> found = repository.findAll(qf);
 
-		assertThat(found).hasSize(2);
-		assertThat(found).containsExactly(POST_EXAMPLE_2, POST_EXAMPLE);
+		assertThat(found).hasSize(2).containsExactly(POST_EXAMPLE_2, POST_EXAMPLE);
 
 		qf.clearSort();
 
@@ -191,8 +186,24 @@ public class SortTest {
 
 		found = repository.findAll(qf);
 
-		assertThat(found).hasSize(2);
-		assertThat(found).containsExactlyInAnyOrder(POST_EXAMPLE, POST_EXAMPLE_2);
+		assertThat(found).hasSize(2).containsExactlyInAnyOrder(POST_EXAMPLE, POST_EXAMPLE_2);
+
+		qf = queryFilterProcessor.newQueryFilter("sort=-likes,+lastTimestamp,+author", QFParamType.RHS_COLON);
+
+		assertThat(qf.isSorted()).isTrue();
+
+		assertThat(qf.isSortedBy("likes")).isTrue();
+
+		assertThat(qf.isSortedBy("author")).isTrue();
+
+		assertThat(qf.isSortedBy("lastTimestamp")).isTrue();
+
+		assertThat(qf.getSortFields()).containsExactly(Pair.of("likes", Direction.DESC),
+				Pair.of("lastTimestamp", Direction.ASC), Pair.of("author", Direction.ASC));
+
+		found = repository.findAll(qf);
+
+		assertThat(found).hasSize(2).containsExactlyInAnyOrder(POST_EXAMPLE, POST_EXAMPLE_2);
 
 	}
 
@@ -216,15 +227,13 @@ public class SortTest {
 
 		List<PostBlog> found = repository.findAll(qf);
 
-		assertThat(found).hasSize(2);
-		assertThat(found).containsExactly(POST_EXAMPLE_2, POST_EXAMPLE);
+		assertThat(found).hasSize(2).containsExactly(POST_EXAMPLE_2, POST_EXAMPLE);
 
 		qf.clearSort();
 
 		assertThat(qf.isSorted()).isFalse();
 
-		assertThat(found).hasSize(2);
-		assertThat(found).containsExactlyInAnyOrder(POST_EXAMPLE, POST_EXAMPLE_2);
+		assertThat(found).hasSize(2).containsExactlyInAnyOrder(POST_EXAMPLE, POST_EXAMPLE_2);
 
 	}
 

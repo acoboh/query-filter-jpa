@@ -81,45 +81,4 @@ class QfArraySQLFunction extends AbstractSqmSelfRenderingFunctionDescriptor {
 
 	}
 
-//	/** {@inheritDoc} */
-//	@Override
-//	public boolean hasArguments() {
-//		return true;
-//	}
-//
-//	/** {@inheritDoc} */
-//	@Override
-//	public boolean hasParenthesesIfNoArguments() {
-//		return true;
-//	}
-//
-//	/** {@inheritDoc} */
-//	@Override
-//	public Type getReturnType(Type firstArgumentType, Mapping mapping) throws QueryException {
-//		return BooleanType.INSTANCE;
-//	}
-//
-//	/** {@inheritDoc} */
-//	@Override
-//	public String render(Type firstArgumentType, @SuppressWarnings("rawtypes") List arguments,
-//			SessionFactoryImplementor factory) throws QueryException {
-//
-//		if (arguments.size() < 2) {
-//			throw new QueryException("Array function not enough arguments");
-//		}
-//
-//		StringBuilder builder = new StringBuilder("(").append(arguments.get(0).toString());
-//		builder.append(operator).append("ARRAY[");
-//
-//		String prefix = "";
-//		for (int i = 1; i < arguments.size(); i++) {
-//			builder.append(prefix).append(arguments.get(i).toString());
-//			prefix = ", ";
-//		}
-//
-//		builder.append("]) and true "); // Added and true just needed by hibernate functions
-//
-//		return builder.toString();
-//	}
-
 }

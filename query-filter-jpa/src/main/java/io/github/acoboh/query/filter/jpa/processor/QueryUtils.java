@@ -130,7 +130,7 @@ public class QueryUtils {
 			LOGGER.trace("Adding sort operation for {}", pair);
 
 			int index = 0;
-			for (List<QFPath> paths : pair.getFirst().getSortPaths()) {
+			for (List<QFPath> paths : pair.getFirst().getPaths()) {
 				boolean autoFetch = pair.getFirst().isAutoFetch(index++);
 				LOGGER.trace("Autofetch is enabled on sort");
 				Path<?> path = getObject(root, paths, pathsMap, false, autoFetch);

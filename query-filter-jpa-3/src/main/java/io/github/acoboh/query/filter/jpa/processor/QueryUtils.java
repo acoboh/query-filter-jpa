@@ -94,8 +94,7 @@ public class QueryUtils {
 				case SET:
 					join = join.joinSet(elem.getPath());
 					break;
-				case PROPERTY:
-				case ENUM:
+				case PROPERTY, ENUM:
 				default:
 					join = join.join(elem.getPath());
 					break;
@@ -128,7 +127,7 @@ public class QueryUtils {
 		for (Pair<IDefinitionSortable, Direction> pair : sortDefinitionList) {
 			LOGGER.trace("Adding sort operation for {}", pair);
 			int index = 0;
-			for (List<QFPath> paths : pair.getFirst().getSortPaths()) {
+			for (List<QFPath> paths : pair.getFirst().getPaths()) {
 				boolean autoFetch = pair.getFirst().isAutoFetch(index++);
 				LOGGER.trace("Autofetch is enabled on sort");
 				Path<?> path = getObject(root, paths, pathsMap, false, autoFetch);

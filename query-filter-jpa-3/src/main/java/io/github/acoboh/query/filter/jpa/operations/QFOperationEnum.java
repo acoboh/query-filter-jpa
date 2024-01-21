@@ -346,17 +346,12 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 			}
 
 			switch (op) {
-			case GREATER_THAN:
-			case GREATER_EQUAL_THAN:
-			case LESS_THAN:
-			case LESS_EQUAL_THAN:
+			case GREATER_THAN, GREATER_EQUAL_THAN, LESS_THAN, LESS_EQUAL_THAN:
 				if (Comparable.class.isAssignableFrom(clazz) || clazz.isPrimitive()) {
 					ret.add(op);
 				}
 				break;
-			case ENDS_WITH:
-			case STARTS_WITH:
-			case LIKE:
+			case ENDS_WITH, STARTS_WITH, LIKE:
 				if (String.class.isAssignableFrom(clazz)) {
 					ret.add(op);
 				}

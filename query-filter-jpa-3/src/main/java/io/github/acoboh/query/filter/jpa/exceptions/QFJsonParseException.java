@@ -15,7 +15,7 @@ public class QFJsonParseException extends QueryFilterException {
 	private static final long serialVersionUID = 1L;
 
 	private final String field;
-	private final Object[] arguments;
+	private final transient Object[] arguments;
 
 	/**
 	 * Default constructor

@@ -15,7 +15,7 @@ public class QFFieldNotFoundException extends QueryFilterException {
 	private static final String MESSAGE = "Field {} not found";
 
 	private final String field;
-	private final Object[] arguments;
+	private final transient Object[] arguments;
 
 	/**
 	 * Default constructor

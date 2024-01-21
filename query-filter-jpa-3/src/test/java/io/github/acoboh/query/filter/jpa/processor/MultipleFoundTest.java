@@ -26,7 +26,7 @@ import io.github.acoboh.query.filter.jpa.exceptions.QueryFilterException;
 import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 import io.github.acoboh.query.filter.jpa.repositories.PostBlogRepository;
-import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTest;
+import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
 
 /**
  * Multiple found tests
@@ -34,11 +34,11 @@ import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTest;
  * @author Adrián Cobo
  *
  */
-@SpringJUnitWebConfig(SpringIntegrationTest.Config.class)
+@SpringJUnitWebConfig(SpringIntegrationTestBase.Config.class)
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class MultipleFoundTest {
+class MultipleFoundTest {
 
 	private static final PostBlog POST_EXAMPLE = new PostBlog();
 	private static final PostBlog POST_EXAMPLE_2 = new PostBlog();
@@ -96,9 +96,7 @@ public class MultipleFoundTest {
 		assertThat(qf).isNotNull();
 
 		List<PostBlog> list = repository.findAll(qf);
-		assertThat(list).hasSize(2);
-
-		assertThat(list).containsExactlyInAnyOrder(POST_EXAMPLE, POST_EXAMPLE_2);
+		assertThat(list).hasSize(2).containsExactlyInAnyOrder(POST_EXAMPLE, POST_EXAMPLE_2);
 	}
 
 	@Test

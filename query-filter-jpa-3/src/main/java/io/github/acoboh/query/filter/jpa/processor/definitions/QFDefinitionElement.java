@@ -162,7 +162,7 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 	}
 
 	@Override
-	public List<List<QFPath>> getSortPaths() {
+	public List<List<QFPath>> getPaths() {
 		return paths;
 	}
 
@@ -214,15 +214,6 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 	 */
 	public DateTimeFormatter getDateTimeFormatter() {
 		return dateTimeFormatter;
-	}
-
-	/**
-	 * Get list of all paths for each element annotation
-	 *
-	 * @return list of all paths for each element annotation
-	 */
-	public List<List<QFPath>> getPaths() {
-		return paths;
 	}
 
 	/**

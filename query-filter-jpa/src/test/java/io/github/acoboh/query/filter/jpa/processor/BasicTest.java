@@ -27,7 +27,7 @@ import io.github.acoboh.query.filter.jpa.exceptions.QueryFilterException;
 import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 import io.github.acoboh.query.filter.jpa.repositories.PostBlogRepository;
-import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTest;
+import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
 
 /**
  * Basic tests
@@ -35,11 +35,11 @@ import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTest;
  * @author Adrián Cobo
  *
  */
-@SpringJUnitWebConfig(SpringIntegrationTest.Config.class)
+@SpringJUnitWebConfig(SpringIntegrationTestBase.Config.class)
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class BasicTest {
+class BasicTest {
 
 	private static final PostBlog POST_EXAMPLE = new PostBlog();
 
@@ -60,18 +60,6 @@ public class BasicTest {
 
 	@Autowired
 	private PostBlogRepository repository;
-
-	private static void assertPostEqual(PostBlog actual) {
-		assertThat(POST_EXAMPLE.getAuthor()).isEqualTo(actual.getAuthor());
-		assertThat(POST_EXAMPLE.getText()).isEqualTo(actual.getText());
-		assertThat(POST_EXAMPLE.getAvgNote()).isEqualTo(actual.getAvgNote());
-		assertThat(POST_EXAMPLE.getLikes()).isEqualTo(actual.getLikes());
-		assertThat(POST_EXAMPLE.getCreateDate()).isEqualTo(actual.getCreateDate());
-		assertThat(POST_EXAMPLE.getLastTimestamp()).isEqualTo(actual.getLastTimestamp());
-		assertThat(POST_EXAMPLE.isPublished()).isEqualTo(actual.isPublished());
-		assertThat(POST_EXAMPLE.getPostType()).isEqualTo(actual.getPostType());
-		assertThat(POST_EXAMPLE.getUuid()).isEqualTo(actual.getUuid());
-	}
 
 	@Test
 	@DisplayName("0. Setup")
@@ -95,19 +83,14 @@ public class BasicTest {
 		assertThat(qf).isNotNull();
 
 		List<PostBlog> list = repository.findAll(qf);
-		assertThat(list).hasSize(1);
-
-		PostBlog postBlog = list.get(0);
-		assertPostEqual(postBlog);
+		assertThat(list).hasSize(1).containsExactly(POST_EXAMPLE);
 
 		qf = queryFilterProcessor.newQueryFilter("", QFParamType.LHS_BRACKETS);
 		assertThat(qf).isNotNull();
 
 		list = repository.findAll(qf);
-		assertThat(list).hasSize(1);
+		assertThat(list).hasSize(1).containsExactly(POST_EXAMPLE);
 
-		list.get(0);
-		assertPostEqual(postBlog);
 	}
 
 	@Test
@@ -119,19 +102,13 @@ public class BasicTest {
 		assertThat(qf).isNotNull();
 
 		List<PostBlog> list = repository.findAll(qf);
-		assertThat(list).hasSize(1);
-
-		PostBlog postBlog = list.get(0);
-		assertPostEqual(postBlog);
+		assertThat(list).hasSize(1).containsExactly(POST_EXAMPLE);
 
 		qf = queryFilterProcessor.newQueryFilter("author[like]=auth", QFParamType.LHS_BRACKETS);
 		assertThat(qf).isNotNull();
 
 		list = repository.findAll(qf);
-		assertThat(list).hasSize(1);
-
-		postBlog = list.get(0);
-		assertPostEqual(postBlog);
+		assertThat(list).hasSize(1).containsExactly(POST_EXAMPLE);
 
 	}
 
@@ -160,10 +137,7 @@ public class BasicTest {
 		assertThat(qf).isNotNull();
 
 		List<PostBlog> list = repository.findAll(qf);
-		assertThat(list).hasSize(1);
-
-		PostBlog postBlog = list.get(0);
-		assertPostEqual(postBlog);
+		assertThat(list).hasSize(1).containsExactly(POST_EXAMPLE);
 	}
 
 	@Test
@@ -186,10 +160,8 @@ public class BasicTest {
 		assertThat(qf).isNotNull();
 
 		List<PostBlog> list = repository.findAll(qf);
-		assertThat(list).hasSize(1);
+		assertThat(list).hasSize(1).containsExactly(POST_EXAMPLE);
 
-		PostBlog postBlog = list.get(0);
-		assertPostEqual(postBlog);
 	}
 
 	@Test
@@ -229,10 +201,8 @@ public class BasicTest {
 		assertThat(qf).isNotNull();
 
 		List<PostBlog> list = repository.findAll(qf);
-		assertThat(list).hasSize(1);
+		assertThat(list).hasSize(1).containsExactly(POST_EXAMPLE);
 
-		PostBlog postBlog = list.get(0);
-		assertPostEqual(postBlog);
 	}
 
 	@Test
@@ -245,10 +215,7 @@ public class BasicTest {
 		qf.addNewField("published", QFOperationEnum.EQUAL, "true");
 
 		List<PostBlog> list = repository.findAll(qf);
-		assertThat(list).hasSize(1);
-
-		PostBlog postBlog = list.get(0);
-		assertPostEqual(postBlog);
+		assertThat(list).hasSize(1).containsExactly(POST_EXAMPLE);
 
 	}
 

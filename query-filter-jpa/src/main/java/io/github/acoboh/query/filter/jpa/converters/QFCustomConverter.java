@@ -71,8 +71,12 @@ public class QFCustomConverter implements GenericConverter {
 			throw new IllegalArgumentException("No QueryFilterParam found for " + targetType.getClass());
 		}
 
-		Pair<Class<?>, Class<?>> pairKey = Pair.of(queryParam.value(),
-				targetType.getResolvableType().getGeneric(0).resolve());
+		Class<?> resolved = targetType.getResolvableType().getGeneric(0).resolve();
+		if (resolved == null) {
+			throw new IllegalArgumentException("Non resolvable generic class " + targetType);
+		}
+
+		Pair<Class<?>, Class<?>> pairKey = Pair.of(queryParam.value(), resolved);
 
 		QFProcessor<?, ?> found = mapProcessors.get(pairKey);
 

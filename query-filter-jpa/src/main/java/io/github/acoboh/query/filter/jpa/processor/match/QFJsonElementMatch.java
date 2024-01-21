@@ -39,9 +39,9 @@ import io.github.acoboh.query.filter.jpa.spel.SpelResolverContext;
  */
 public class QFJsonElementMatch implements QFSpecificationPart {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(QFJsonElementMatch.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(QFJsonElementMatch.class);
 
-	private final static ObjectMapper mapper = new ObjectMapper();
+	private static final ObjectMapper mapper = new ObjectMapper();
 
 	static {
 		mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
@@ -125,7 +125,6 @@ public class QFJsonElementMatch implements QFSpecificationPart {
 				}
 				currentPath = currentPathBuilder.toString();
 
-				suffix = new ArrayList<>();
 			}
 
 			ValueNode valueNode = (ValueNode) jsonNode;

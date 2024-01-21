@@ -97,7 +97,6 @@ public class PredicateProcessorResolutor {
 					toAdd.add(res);
 					Predicate surrounding = defaultOperation.getPredicate(criteriaBuilder, toAdd);
 					res = surrounding;
-//					res.getExpressions().addAll(toAdd);
 
 				}
 

@@ -26,9 +26,9 @@ public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
 
 			for (Map.Entry<String, String> nodeEntry : match.getMapValues().entrySet()) {
 
-				finalPredicate.getExpressions().add(cb.equal(
-						cb.function("jsonb_extract_path_text", String.class, path, cb.literal(nodeEntry.getKey())),
-						nodeEntry.getValue()));
+				finalPredicate.getExpressions()
+						.add(cb.equal(cb.function(EXTRACT_FUNCTION, String.class, path, cb.literal(nodeEntry.getKey())),
+								nodeEntry.getValue()));
 			}
 
 			return finalPredicate;
@@ -44,9 +44,10 @@ public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
 
 			for (Map.Entry<String, String> nodeEntry : match.getMapValues().entrySet()) {
 
-				finalPredicate.getExpressions().add(cb.notEqual(
-						cb.function("jsonb_extract_path_text", String.class, path, cb.literal(nodeEntry.getKey())),
-						nodeEntry.getValue()));
+				finalPredicate.getExpressions()
+						.add(cb.notEqual(
+								cb.function(EXTRACT_FUNCTION, String.class, path, cb.literal(nodeEntry.getKey())),
+								nodeEntry.getValue()));
 			}
 
 			return finalPredicate;
@@ -64,8 +65,7 @@ public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
 
 				finalPredicate.getExpressions()
 						.add(PredicateUtils.parseLikePredicate(cb,
-								cb.function("jsonb_extract_path_text", String.class, path,
-										cb.literal(nodeEntry.getKey())),
+								cb.function(EXTRACT_FUNCTION, String.class, path, cb.literal(nodeEntry.getKey())),
 								nodeEntry.getValue(), match.getDefinition().isCaseSensitive()));
 			}
 
@@ -84,8 +84,7 @@ public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
 
 				finalPredicate.getExpressions()
 						.add(PredicateUtils.parseStartsPredicate(cb,
-								cb.function("jsonb_extract_path_text", String.class, path,
-										cb.literal(nodeEntry.getKey())),
+								cb.function(EXTRACT_FUNCTION, String.class, path, cb.literal(nodeEntry.getKey())),
 								nodeEntry.getValue(), match.getDefinition().isCaseSensitive()));
 			}
 
@@ -104,8 +103,7 @@ public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
 
 				finalPredicate.getExpressions()
 						.add(PredicateUtils.parseEndsPredicate(cb,
-								cb.function("jsonb_extract_path_text", String.class, path,
-										cb.literal(nodeEntry.getKey())),
+								cb.function(EXTRACT_FUNCTION, String.class, path, cb.literal(nodeEntry.getKey())),
 								nodeEntry.getValue(), match.getDefinition().isCaseSensitive()));
 			}
 
@@ -114,6 +112,7 @@ public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
 	};
 
 	private static final Map<String, QFOperationJsonEnum> CONSTANTS = new HashMap<>();
+	private static final String EXTRACT_FUNCTION = "jsonb_extract_path_text";
 
 	static {
 		for (QFOperationJsonEnum c : values()) {

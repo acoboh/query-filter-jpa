@@ -442,8 +442,7 @@ public class QFElementMatch implements QFSpecificationPart {
 
 		if (definition.isSubQuery()) {
 			LOGGER.trace("Element match is subquery");
-			processPartAsSubQuery(root, query, criteriaBuilder, predicatesMap, pathsMap, mlmap, spelResolver,
-					entityClass);
+			processPartAsSubQuery(root, query, criteriaBuilder, predicatesMap, mlmap, spelResolver, entityClass);
 		} else {
 			LOGGER.trace("Element match is basic");
 			processAsElement(root, criteriaBuilder, predicatesMap, pathsMap, mlmap, spelResolver);
@@ -475,8 +474,8 @@ public class QFElementMatch implements QFSpecificationPart {
 	}
 
 	private <E> void processPartAsSubQuery(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder,
-			Map<String, List<Predicate>> predicatesMap, Map<String, Path<?>> pathsMap,
-			MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver, Class<E> entityClass) {
+			Map<String, List<Predicate>> predicatesMap, MultiValueMap<String, Object> mlmap,
+			SpelResolverContext spelResolver, Class<E> entityClass) {
 
 		Map<String, Path<?>> subSelecthMap = new HashMap<>();
 

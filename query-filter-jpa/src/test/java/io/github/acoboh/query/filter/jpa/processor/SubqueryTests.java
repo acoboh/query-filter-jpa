@@ -20,7 +20,7 @@ import io.github.acoboh.query.filter.jpa.model.subquery.RoleModel;
 import io.github.acoboh.query.filter.jpa.model.subquery.UserModel;
 import io.github.acoboh.query.filter.jpa.repositories.RoleRepository;
 import io.github.acoboh.query.filter.jpa.repositories.UserRepository;
-import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTest;
+import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
 
 /**
  * Subquery tests
@@ -28,11 +28,11 @@ import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTest;
  * @author Adrián Cobo
  *
  */
-@SpringJUnitWebConfig(SpringIntegrationTest.Config.class)
+@SpringJUnitWebConfig(SpringIntegrationTestBase.Config.class)
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class SubqueryTests {
+class SubqueryTests {
 
 	private static final UserModel USER1 = new UserModel();
 	private static final UserModel USER2 = new UserModel();

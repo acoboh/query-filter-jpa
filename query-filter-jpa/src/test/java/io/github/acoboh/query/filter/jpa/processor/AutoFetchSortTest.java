@@ -30,9 +30,9 @@ import io.github.acoboh.query.filter.jpa.domain.FilterBlogSortRelationalDef;
 import io.github.acoboh.query.filter.jpa.model.Comments;
 import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.repositories.PostBlogRepository;
-import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTest;
+import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
 
-@SpringJUnitWebConfig(SpringIntegrationTest.Config.class)
+@SpringJUnitWebConfig(SpringIntegrationTestBase.Config.class)
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -145,8 +145,7 @@ class AutoFetchSortTest {
 
 		List<PostBlog> found = repository.findAll(qf);
 
-		assertThat(found).hasSize(2);
-		assertThat(found).containsExactly(POST_EXAMPLE_2, POST_EXAMPLE);
+		assertThat(found).hasSize(2).containsExactly(POST_EXAMPLE_2, POST_EXAMPLE);
 
 	}
 
@@ -167,8 +166,7 @@ class AutoFetchSortTest {
 
 		List<PostBlog> found = repository.findAll(qf);
 
-		assertThat(found).hasSize(2);
-		assertThat(found).containsExactly(POST_EXAMPLE, POST_EXAMPLE_2);
+		assertThat(found).hasSize(2).containsExactly(POST_EXAMPLE, POST_EXAMPLE_2);
 
 	}
 

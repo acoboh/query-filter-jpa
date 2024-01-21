@@ -163,7 +163,7 @@ public class PostRestController {
 
 	@GetMapping
 	public List<PostBlog> getPosts(
-			@RequestParam(required = false) @QFParam(PostFilterDef.class) QueryFilter<PostBlog> filter) {
+			@RequestParam(required = false,  defaultValue = "") @QFParam(PostFilterDef.class) QueryFilter<PostBlog> filter) {
 		return repository.findAll(filter);
 	}
 }
@@ -325,7 +325,7 @@ author[eq]=acobo&avgNote[gte]=5&sort=-avgNote
 You can concatenate multiple sort operations. If you do that, the order is important
 
 ```log
-sort=-avgNote&sort=+likes
+sort=-avgNote,+likes
 ```
 ```sql
 order by avgNote desc, likes asc
@@ -334,7 +334,7 @@ order by avgNote desc, likes asc
 If you change the order:
 
 ```log
-sort=+likes&sort=-avgNote
+sort=+likes,-avgNote
 ```
 ```sql
 order by likes asc, avgNote desc

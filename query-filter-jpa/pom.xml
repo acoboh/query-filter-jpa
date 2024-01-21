@@ -52,7 +52,7 @@
 		<hypersistance.version>3.6.0</hypersistance.version>
 
 		<!--Logging dependencies -->
-		<logback.version>1.2.12</logback.version>
+		<logback.version>1.2.13</logback.version>
 
 	</properties>
 

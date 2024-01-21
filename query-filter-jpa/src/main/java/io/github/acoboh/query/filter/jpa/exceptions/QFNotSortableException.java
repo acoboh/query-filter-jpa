@@ -14,7 +14,7 @@ public class QFNotSortableException extends QueryFilterException {
 	private static final String MESSAGE = "The field '{}' is not sortable";
 
 	private final String field;
-	private final transient Object[] arguments;
+	private final Object[] arguments;
 
 	/**
 	 * Default constructor

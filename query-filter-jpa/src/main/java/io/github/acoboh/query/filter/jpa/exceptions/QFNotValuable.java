@@ -14,7 +14,7 @@ public class QFNotValuable extends QueryFilterException {
 	private static final String MESSAGE = "The field '{}' is not valuable";
 
 	private final String field;
-	private final transient Object[] arguments;
+	private final Object[] arguments;
 
 	/**
 	 * Default constructor

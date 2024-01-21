@@ -18,7 +18,7 @@ public class QFParseException extends QueryFilterException {
 
 	private final String field;
 
-	private final transient Object[] arguments;
+	private final Object[] arguments;
 
 	/**
 	 * Default constructor

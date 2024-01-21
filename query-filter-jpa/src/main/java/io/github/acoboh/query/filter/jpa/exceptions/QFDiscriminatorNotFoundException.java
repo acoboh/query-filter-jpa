@@ -16,7 +16,7 @@ public class QFDiscriminatorNotFoundException extends QueryFilterException {
 
 	private final String value;
 	private final String field;
-	private final transient Object[] arguments;
+	private final Object[] arguments;
 
 	/**
 	 * Default constructor

@@ -15,7 +15,7 @@ public class QFEnumException extends QueryFilterException {
 	private static final long serialVersionUID = 1L;
 	private static final String MESSAGE = "Failed to parse field '{}' with value '{}' to enum class '{}'. Allowed values {}";
 
-	private final transient Object[] arguments;
+	private final Object[] arguments;
 
 	/**
 	 * Default constructor

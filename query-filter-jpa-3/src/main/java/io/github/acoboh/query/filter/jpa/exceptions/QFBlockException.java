@@ -14,7 +14,7 @@ public class QFBlockException extends QueryFilterException {
 	private static final String MESSAGE = "Field '{}' is blocked from parsing. Operation not allowed";
 
 	private final String field;
-	private final transient Object[] arguments;
+	private final Object[] arguments;
 
 	/**
 	 * Construct

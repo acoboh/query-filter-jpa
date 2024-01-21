@@ -13,7 +13,7 @@ public class QFCollectionException extends QueryFilterException {
 
 	private final String field;
 	private final String reason;
-	private final transient Object[] arguments;
+	private final Object[] arguments;
 
 	/**
 	 * @param field  field

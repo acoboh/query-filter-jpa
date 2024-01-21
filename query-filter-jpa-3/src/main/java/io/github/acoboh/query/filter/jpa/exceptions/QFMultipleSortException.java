@@ -14,7 +14,7 @@ public class QFMultipleSortException extends QueryFilterException {
 	private static final String MESSAGE = "Multiple query filter sorting properties for the same field '{}'";
 
 	private final String field;
-	private final transient Object[] arguments;
+	private final Object[] arguments;
 
 	/**
 	 * Default constructor

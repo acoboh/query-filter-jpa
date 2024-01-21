@@ -15,7 +15,7 @@ public class QFOperationNotFoundException extends QueryFilterException {
 
 	private final String operation;
 
-	private final transient Object[] arguments;
+	private final Object[] arguments;
 
 	/**
 	 * Default constructor

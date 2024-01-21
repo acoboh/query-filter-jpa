@@ -79,7 +79,7 @@ public class QueryFilter<E> implements Specification<E> {
 
 	private final String initialInput;
 
-	private final transient QFSpecificationsWarp specificationsWarp;
+	private final QFSpecificationsWarp specificationsWarp;
 
 	private final transient @Nullable Map<String, PredicateProcessorResolutor> predicateMap;
 

@@ -14,7 +14,16 @@ public interface IDefinitionSortable {
 	 * 
 	 * @return sort paths
 	 */
-	public List<QFPath> getSortPaths();
+	public List<List<QFPath>> getSortPaths();
+
+	/**
+	 * Return true if auto fetch is enabled
+	 * 
+	 * @param index of path
+	 * 
+	 * @return true if enabled, false otherwise
+	 */
+	public boolean isAutoFetch(int index);
 
 	/**
 	 * Get filter name

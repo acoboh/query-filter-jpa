@@ -42,6 +42,7 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 
 	private final List<List<QFPath>> paths;
 	private final List<Class<?>> finalClasses;
+	private final List<Boolean> autoFetchPaths;
 
 	// Extra properties
 	private final boolean subQuery;
@@ -83,6 +84,8 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 		Pair<List<Class<?>>, List<List<QFPath>>> pairDef = setupPaths(elementAnnotations, filterClass, entityClass);
 		this.paths = pairDef.getSecond();
 		this.finalClasses = pairDef.getFirst();
+
+		this.autoFetchPaths = Stream.of(elementAnnotations).map(QFElement::autoFetch).toList();
 
 		LOGGER.debug("Checking sortable on element annotations");
 		if (elementAnnotations.length != 1) {
@@ -156,6 +159,16 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 
 		return formatter;
 
+	}
+
+	@Override
+	public List<List<QFPath>> getSortPaths() {
+		return paths;
+	}
+
+	@Override
+	public boolean isAutoFetch(int index) {
+		return autoFetchPaths.get(index);
 	}
 
 	/**
@@ -264,11 +277,6 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 	 */
 	public PredicateOperation getPredicateOperation() {
 		return defaultOperation;
-	}
-
-	@Override
-	public List<QFPath> getSortPaths() {
-		return paths.get(0);
 	}
 
 	/**

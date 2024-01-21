@@ -22,4 +22,11 @@ public @interface QFSortable {
 	 * @return new name of filter
 	 */
 	String value();
+
+	/**
+	 * Enable Fetch Load if sort is present on the filter
+	 * 
+	 * @return true if enabled
+	 */
+	boolean autoFetch() default true;
 }

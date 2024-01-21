@@ -7,6 +7,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
@@ -42,6 +43,7 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 
 	private final List<List<QFPath>> paths;
 	private final List<Class<?>> finalClasses;
+	private final List<Boolean> autoFetchPaths;
 
 	// Extra properties
 	private final boolean subQuery;
@@ -83,6 +85,8 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 		Pair<List<Class<?>>, List<List<QFPath>>> pairDef = setupPaths(elementAnnotations, filterClass, entityClass);
 		this.paths = pairDef.getSecond();
 		this.finalClasses = pairDef.getFirst();
+
+		this.autoFetchPaths = Stream.of(elementAnnotations).map(QFElement::autoFetch).collect(Collectors.toList());
 
 		LOGGER.debug("Checking sortable on element annotations");
 		if (elementAnnotations.length != 1) {
@@ -213,6 +217,16 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 	}
 
 	/**
+	 * Get if path must be auto-fetched
+	 * 
+	 * @param pathIndex index of the path
+	 * @return true if path must be auto-fetched
+	 */
+	public boolean isAutoFetch(int pathIndex) {
+		return autoFetchPaths.get(pathIndex);
+	}
+
+	/**
 	 * Get if the field has spel expressions
 	 *
 	 * @return true if the field has spel
@@ -264,11 +278,6 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 	 */
 	public PredicateOperation getPredicateOperation() {
 		return defaultOperation;
-	}
-
-	@Override
-	public List<QFPath> getSortPaths() {
-		return paths.get(0);
 	}
 
 	/**

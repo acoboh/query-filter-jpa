@@ -6,9 +6,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,9 +20,17 @@ import io.github.acoboh.query.filter.jpa.exceptions.QFEnumException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFFieldOperationException;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 import io.github.acoboh.query.filter.jpa.processor.QFPath;
+import io.github.acoboh.query.filter.jpa.processor.QFSpecificationPart;
+import io.github.acoboh.query.filter.jpa.processor.QueryUtils;
 import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionElement;
 import io.github.acoboh.query.filter.jpa.spel.SpelResolverContext;
 import io.github.acoboh.query.filter.jpa.utils.DateUtils;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 
 /**
  * Class with info about the filtered field. Contains all the entity fields of the same filter field
@@ -29,7 +38,7 @@ import io.github.acoboh.query.filter.jpa.utils.DateUtils;
  * @author Adrián Cobo
  * 
  */
-public class QFElementMatch {
+public class QFElementMatch implements QFSpecificationPart {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(QFElementMatch.class);
 
@@ -296,18 +305,13 @@ public class QFElementMatch {
 		}
 
 		switch (operation) {
-		case GREATER_THAN:
-		case GREATER_EQUAL_THAN:
-		case LESS_THAN:
-		case LESS_EQUAL_THAN:
+		case GREATER_THAN, GREATER_EQUAL_THAN, LESS_THAN, LESS_EQUAL_THAN:
 			if (!Comparable.class.isAssignableFrom(clazz) && !clazz.isPrimitive()) {
 				throw new QFFieldOperationException(operation, definition.getFilterName());
 			}
 			break;
 
-		case ENDS_WITH:
-		case STARTS_WITH:
-		case LIKE:
+		case ENDS_WITH, STARTS_WITH, LIKE:
 			if (!String.class.isAssignableFrom(clazz)) {
 				throw new QFFieldOperationException(operation, definition.getFilterName());
 			}
@@ -333,10 +337,10 @@ public class QFElementMatch {
 
 		Class<?> originalClass = spelResolved.getClass();
 
-		if (spelResolved instanceof String[]) {
-			return Arrays.asList((String[]) spelResolved);
+		if (spelResolved instanceof String[] casted) {
+			return Arrays.asList(casted);
 		} else if (spelResolved instanceof Collection<?>) {
-			return ((Collection<?>) spelResolved).stream().map(Object::toString).collect(Collectors.toList());
+			return ((Collection<?>) spelResolved).stream().map(Object::toString).toList();
 		} else if (String.class.equals(originalClass)) {
 			return Collections.singletonList((String) spelResolved);
 		} else if (boolean.class.equals(originalClass)) {
@@ -421,6 +425,85 @@ public class QFElementMatch {
 		}
 
 		return Collections.singletonList(spelResolved.toString());
+	}
+
+	@Override
+	public <E> void processPart(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder,
+			Map<String, List<Predicate>> predicatesMap, Map<String, Path<?>> pathsMap,
+			MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver, Class<E> entityClass) {
+
+		if (definition.isSubQuery()) {
+			LOGGER.trace("Element match is subquery");
+			processPartAsSubQuery(root, query, criteriaBuilder, predicatesMap, mlmap, spelResolver, entityClass);
+		} else {
+			LOGGER.trace("Element match is basic");
+			processAsElement(root, criteriaBuilder, predicatesMap, pathsMap, mlmap, spelResolver);
+		}
+
+	}
+
+	private <E> void processAsElement(Root<E> root, CriteriaBuilder criteriaBuilder,
+			Map<String, List<Predicate>> predicatesMap, Map<String, Path<?>> pathsMap,
+			MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver) {
+		initialize(spelResolver, mlmap);
+
+		if (!needToEvaluate()) {
+			return;
+		}
+
+		int index = 0;
+
+		List<Predicate> predicates = new ArrayList<>();
+
+		for (List<QFPath> path : paths) {
+			predicates.add(operation.generatePredicate(QueryUtils.getObject(root, path, pathsMap, false, false),
+					criteriaBuilder, this, index, mlmap));
+			index++;
+		}
+
+		Predicate surrondingPredicate = definition.getPredicateOperation().getPredicate(criteriaBuilder, predicates);
+
+		predicatesMap.computeIfAbsent(definition.getFilterName(), t -> new ArrayList<>()).add(surrondingPredicate);
+	}
+
+	private <E> void processPartAsSubQuery(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder,
+			Map<String, List<Predicate>> predicatesMap, MultiValueMap<String, Object> mlmap,
+			SpelResolverContext spelResolver, Class<E> entityClass) {
+		Map<String, Path<?>> subSelecthMap = new HashMap<>();
+
+		initialize(spelResolver, mlmap);
+
+		if (!needToEvaluate()) {
+			return;
+		}
+
+		int index = 0;
+		for (List<QFPath> path : paths) {
+
+			Subquery<E> subquery = query.subquery(entityClass);
+			Root<E> newRoot = subquery.from(entityClass);
+
+			subquery.select(newRoot);
+
+			Path<?> pathFinal = QueryUtils.getObject(newRoot, path, subSelecthMap, false, false);
+
+			QFOperationEnum op = operation;
+			if (op == QFOperationEnum.NOT_EQUAL) {
+				op = QFOperationEnum.EQUAL;
+			}
+
+			subquery.where(op.generatePredicate(pathFinal, criteriaBuilder, this, index, mlmap));
+
+			Predicate finalPredicate = criteriaBuilder.in(root).value(subquery);
+
+			if (operation == QFOperationEnum.NOT_EQUAL) {
+				finalPredicate = criteriaBuilder.not(finalPredicate);
+			}
+
+			predicatesMap.computeIfAbsent(definition.getFilterName(), k -> new ArrayList<>()).add(finalPredicate);
+
+			index++;
+		}
 	}
 
 }

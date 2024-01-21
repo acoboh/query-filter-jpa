@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.reflections.Reflections;
@@ -139,8 +138,7 @@ public class QFBeanFactoryPostProcessor implements ApplicationContextAware, Bean
 		List<String> packagesToAnalyze = getBeansWithAnnotation(EnableQueryFilter.class, false, (scan, instance) -> {
 			List<String> scanPackages = new ArrayList<>();
 			scanPackages.addAll(Arrays.asList(scan.basePackages()));
-			scanPackages.addAll(Stream.of(scan.basePackageClasses()).map(e -> e.getPackage().getName())
-					.collect(Collectors.toList()));
+			scanPackages.addAll(Stream.of(scan.basePackageClasses()).map(e -> e.getPackage().getName()).toList());
 			return scanPackages;
 		});
 
@@ -149,8 +147,7 @@ public class QFBeanFactoryPostProcessor implements ApplicationContextAware, Bean
 			packagesToAnalyze = getBeansWithAnnotation(ComponentScan.class, true, (scan, instance) -> {
 				List<String> scanPackages = new ArrayList<>();
 				scanPackages.addAll(Arrays.asList(scan.basePackages()));
-				scanPackages.addAll(Stream.of(scan.basePackageClasses()).map(e -> e.getPackage().getName())
-						.collect(Collectors.toList()));
+				scanPackages.addAll(Stream.of(scan.basePackageClasses()).map(e -> e.getPackage().getName()).toList());
 				return scanPackages;
 
 			});
@@ -158,9 +155,8 @@ public class QFBeanFactoryPostProcessor implements ApplicationContextAware, Bean
 
 		if (packagesToAnalyze.isEmpty()) {
 			LOGGER.debug("Trying get SpringBootApplication beans to search for QueryFilter classes...");
-			packagesToAnalyze = getBeansWithAnnotation(SpringBootApplication.class, false, (scan, instance) -> {
-				return Arrays.asList(instance.getClass().toString());
-			});
+			packagesToAnalyze = getBeansWithAnnotation(SpringBootApplication.class, false,
+					(scan, instance) -> Arrays.asList(instance.getClass().toString()));
 
 		}
 

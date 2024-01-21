@@ -17,7 +17,10 @@ import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Root;
 
-class QueryUtils {
+/**
+ * Class with query utilities
+ */
+public class QueryUtils {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(QueryUtils.class);
 
@@ -25,8 +28,18 @@ class QueryUtils {
 
 	}
 
+	/**
+	 * Get the object join
+	 * 
+	 * @param root         root entity
+	 * @param paths        paths to travel
+	 * @param pathsMap     map of older paths
+	 * @param isCollection if the final join is part of a collection or object
+	 * @param tryFetch     try to use fetch instead of join
+	 * @return return the final path of the object
+	 */
 	public static Path<?> getObject(Root<?> root, List<QFPath> paths, Map<String, Path<?>> pathsMap,
-			boolean isCollection) {
+			boolean isCollection, boolean tryFetch) {
 		String fullPath = getFullPath(paths, isCollection);
 
 		Path<?> ret = pathsMap.get(fullPath);
@@ -37,7 +50,7 @@ class QueryUtils {
 		if (paths.size() == 1 && paths.get(0).isFinal()) {
 			ret = root.get(paths.get(0).getPath());
 		} else {
-			ret = getJoinObject(root, paths, pathsMap);
+			ret = getJoinObject(root, paths, pathsMap, tryFetch);
 		}
 
 		pathsMap.put(fullPath, ret);
@@ -45,7 +58,8 @@ class QueryUtils {
 
 	}
 
-	public static Path<?> getJoinObject(Root<?> root, List<QFPath> paths, Map<String, Path<?>> pathsMap) {
+	private static Path<?> getJoinObject(Root<?> root, List<QFPath> paths, Map<String, Path<?>> pathsMap,
+			boolean tryFetch) {
 
 		From<?, ?> join = root;
 
@@ -68,19 +82,23 @@ class QueryUtils {
 			}
 
 			QFPath elem = paths.get(i);
-			switch (elem.getType()) {
-			case LIST:
-				join = join.joinList(elem.getPath());
-				break;
 
-			case SET:
-				join = join.joinSet(elem.getPath());
-				break;
-			case PROPERTY:
-			case ENUM:
-			default:
-				join = join.join(elem.getPath());
-				break;
+			if (tryFetch) {
+				join = (From<?, ?>) root.fetch(elem.getPath());
+			} else {
+				switch (elem.getType()) {
+				case LIST:
+					join = join.joinList(elem.getPath());
+					break;
+
+				case SET:
+					join = join.joinSet(elem.getPath());
+					break;
+				case PROPERTY, ENUM:
+				default:
+					join = join.join(elem.getPath());
+					break;
+				}
 			}
 
 			// Add to pathsMap
@@ -93,16 +111,28 @@ class QueryUtils {
 
 	}
 
+	/**
+	 * Parse orders with the criteria builder
+	 * 
+	 * @param sortDefinitionList list of sort definitions
+	 * @param cb                 criteria builder
+	 * @param root               root entity
+	 * @param pathsMap           older paths
+	 * @return the final order list
+	 */
 	public static List<Order> parseOrders(List<Pair<IDefinitionSortable, Direction>> sortDefinitionList,
 			CriteriaBuilder cb, Root<?> root, Map<String, Path<?>> pathsMap) {
 		ArrayList<Order> orderList = new ArrayList<>();
 
 		for (Pair<IDefinitionSortable, Direction> pair : sortDefinitionList) {
 			LOGGER.trace("Adding sort operation for {}", pair);
-			if (pair.getSecond() == Direction.ASC) {
-				orderList.add(cb.asc(getObject(root, pair.getFirst().getSortPaths(), pathsMap, false)));
-			} else {
-				orderList.add(cb.desc(getObject(root, pair.getFirst().getSortPaths(), pathsMap, false)));
+			int index = 0;
+			for (List<QFPath> paths : pair.getFirst().getPaths()) {
+				boolean autoFetch = pair.getFirst().isAutoFetch(index++);
+				LOGGER.trace("Autofetch is enabled on sort");
+				Path<?> path = getObject(root, paths, pathsMap, false, autoFetch);
+				Order order = pair.getSecond() == Direction.ASC ? cb.asc(path) : cb.desc(path);
+				orderList.add(order);
 			}
 
 		}
@@ -110,7 +140,7 @@ class QueryUtils {
 		return orderList;
 	}
 
-	public static String getFullPath(List<QFPath> paths, boolean isCollection) {
+	private static String getFullPath(List<QFPath> paths, boolean isCollection) {
 		String path = paths.stream().map(QFPath::getPath).collect(Collectors.joining("."));
 		return isCollection ? path + ".*" : path;
 	}

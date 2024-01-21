@@ -4,6 +4,7 @@
 [![javadoc](https://javadoc.io/badge2/io.github.acoboh/query-filter-jpa/javadoc.svg)](https://javadoc.io/doc/io.github.acoboh/query-filter-jpa)
 [![CodeQL](https://github.com/acoboh/query-filter-jpa/actions/workflows/codeql.yml/badge.svg)](https://github.com/acoboh/query-filter-jpa/actions/workflows/codeql.yml)
 [![Maven Publish](https://github.com/acoboh/query-filter-jpa/actions/workflows/maven-publish.yml/badge.svg)](https://github.com/acoboh/query-filter-jpa/actions/workflows/maven-publish.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=acoboh_query-filter-jpa&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=acoboh_query-filter-jpa)
 
 ## Introduction
 
@@ -162,7 +163,7 @@ public class PostRestController {
 
 	@GetMapping
 	public List<PostBlog> getPosts(
-			@RequestParam(required = false) @QFParam(PostFilterDef.class) QueryFilter<PostBlog> filter) {
+			@RequestParam(required = false,  defaultValue = "") @QFParam(PostFilterDef.class) QueryFilter<PostBlog> filter) {
 		return repository.findAll(filter);
 	}
 }
@@ -324,7 +325,7 @@ author[eq]=acobo&avgNote[gte]=5&sort=-avgNote
 You can concatenate multiple sort operations. If you do that, the order is important
 
 ```log
-sort=-avgNote&sort=+likes
+sort=-avgNote,+likes
 ```
 ```sql
 order by avgNote desc, likes asc
@@ -333,7 +334,7 @@ order by avgNote desc, likes asc
 If you change the order:
 
 ```log
-sort=+likes&sort=-avgNote
+sort=+likes,-avgNote
 ```
 ```sql
 order by likes asc, avgNote desc

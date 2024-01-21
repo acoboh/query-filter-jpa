@@ -20,16 +20,16 @@ import org.springframework.security.access.expression.SecurityExpressionHandler;
 @Configuration
 public class SpelResolverBeanConfig {
 
-	private static final String securityExpressionHandlerClass = "org.springframework.security.access.expression.SecurityExpressionHandler";
+	private static final String SECURITY_CLASS = "org.springframework.security.access.expression.SecurityExpressionHandler";
 
 	@Bean
-	@ConditionalOnMissingClass(securityExpressionHandlerClass)
+	@ConditionalOnMissingClass(SECURITY_CLASS)
 	SpelResolverContextBasic spelResolverContextBasic(HttpServletRequest request, HttpServletResponse response) {
 		return new SpelResolverContextBasic(request, response);
 	}
 
 	@Bean
-	@ConditionalOnClass(name = securityExpressionHandlerClass)
+	@ConditionalOnClass(name = SECURITY_CLASS)
 	SecuritySpelResolverContext securitySpelResolverContext(
 			List<SecurityExpressionHandler<?>> securityExpressionHandlers, HttpServletRequest request,
 			HttpServletResponse response) {

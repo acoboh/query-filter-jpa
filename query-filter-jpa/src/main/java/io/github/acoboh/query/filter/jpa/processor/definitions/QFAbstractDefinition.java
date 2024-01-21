@@ -121,7 +121,7 @@ public abstract class QFAbstractDefinition {
 				.count();
 
 		if (count == 0) {
-			LOGGER.debug("Ignored field {} because it doesn't has annotations");
+			LOGGER.debug("Ignored field {} because it doesn't has annotations", filterField);
 			return null;
 		} else if (count > 1) {
 			throw new QFAnnotationsException(filterField, filterClass, isQFElement, isQFJson, isQFDiscriminator,

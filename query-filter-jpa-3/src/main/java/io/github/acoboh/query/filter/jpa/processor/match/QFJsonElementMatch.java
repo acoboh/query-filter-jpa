@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.MultiValueMap;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -19,7 +20,15 @@ import com.fasterxml.jackson.databind.node.ValueNode;
 
 import io.github.acoboh.query.filter.jpa.exceptions.QFJsonParseException;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationJsonEnum;
+import io.github.acoboh.query.filter.jpa.processor.QFSpecificationPart;
+import io.github.acoboh.query.filter.jpa.processor.QueryUtils;
 import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionJson;
+import io.github.acoboh.query.filter.jpa.spel.SpelResolverContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
 /**
  * Class with JSON element matching definition
@@ -27,11 +36,11 @@ import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionJson;
  * @author Adrián Cobo
  * 
  */
-public class QFJsonElementMatch {
+public class QFJsonElementMatch implements QFSpecificationPart {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(QFJsonElementMatch.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(QFJsonElementMatch.class);
 
-	private final static ObjectMapper mapper = new ObjectMapper();
+	private static final ObjectMapper mapper = new ObjectMapper();
 
 	static {
 		mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
@@ -115,7 +124,6 @@ public class QFJsonElementMatch {
 				}
 				currentPath = currentPathBuilder.toString();
 
-				suffix = new ArrayList<>();
 			}
 
 			ValueNode valueNode = (ValueNode) jsonNode;
@@ -148,6 +156,18 @@ public class QFJsonElementMatch {
 	 */
 	public QFOperationJsonEnum getOperation() {
 		return operation;
+	}
+
+	@Override
+	public <E> void processPart(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder,
+			Map<String, List<Predicate>> predicatesMap, Map<String, Path<?>> pathsMap,
+			MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver, Class<E> entityClass) {
+
+		predicatesMap.computeIfAbsent(definition.getFilterName(), t -> new ArrayList<>())
+				.add(operation.generateJsonPredicate(
+						QueryUtils.getObject(root, definition.getPaths(), pathsMap, true, false), criteriaBuilder,
+						this));
+
 	}
 
 }

@@ -22,7 +22,7 @@ import io.github.acoboh.query.filter.jpa.annotations.QFParam;
 import io.github.acoboh.query.filter.jpa.domain.FilterBlogDef;
 import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.processor.QueryFilter;
-import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTest;
+import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
 
 /**
  * Test for spring converters
@@ -30,11 +30,11 @@ import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTest;
  * @author Adrián Cobo
  *
  */
-@SpringJUnitWebConfig(SpringIntegrationTest.Config.class)
+@SpringJUnitWebConfig(SpringIntegrationTestBase.Config.class)
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class ConverterTests {
+class ConverterTests {
 
 	@Autowired
 	private ConversionService conversionService;

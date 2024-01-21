@@ -84,8 +84,8 @@ public abstract class SpelResolverContext {
 	private void fillContextWithRequestValues(EvaluationContext context) {
 
 		Object pathObject = request.getAttribute(View.PATH_VARIABLES);
-		if (pathObject != null && pathObject instanceof Map<?, ?>) {
-			context.setVariable("_pathVariables", (Map<?, ?>) pathObject);
+		if (pathObject instanceof Map<?, ?>) {
+			context.setVariable("_pathVariables", pathObject);
 		}
 
 		ServletRequestParameterPropertyValues properties = new ServletRequestParameterPropertyValues(request);

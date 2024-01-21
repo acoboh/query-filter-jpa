@@ -2,15 +2,26 @@ package io.github.acoboh.query.filter.jpa.processor.match;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.MultiValueMap;
 
 import io.github.acoboh.query.filter.jpa.annotations.QFDiscriminator;
 import io.github.acoboh.query.filter.jpa.exceptions.QFDiscriminatorNotFoundException;
 import io.github.acoboh.query.filter.jpa.processor.QFPath;
+import io.github.acoboh.query.filter.jpa.processor.QFSpecificationPart;
+import io.github.acoboh.query.filter.jpa.processor.QueryUtils;
 import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionDiscriminator;
+import io.github.acoboh.query.filter.jpa.spel.SpelResolverContext;
 
 /**
  * Class with info about the discriminator matching for filtering
@@ -18,7 +29,7 @@ import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionDiscr
  * @author Adrián Cobo
  * 
  */
-public class QFDiscriminatorMatch {
+public class QFDiscriminatorMatch implements QFSpecificationPart {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(QFDiscriminatorMatch.class);
 
@@ -125,6 +136,34 @@ public class QFDiscriminatorMatch {
 	 */
 	public List<QFPath> getPath() {
 		return path;
+	}
+
+	@Override
+	public <E> void processPart(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder,
+			Map<String, List<Predicate>> predicatesMap, Map<String, Path<?>> pathsMap,
+			MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver, Class<E> entityClass) {
+
+		List<Predicate> orDiscriminators = new ArrayList<>();
+
+		if (isRoot) {
+			for (Class<?> clazz : matchingClasses) {
+				orDiscriminators.add(criteriaBuilder.equal(root.type(), clazz));
+				mlmap.add(definition.getFilterName(), clazz);
+			}
+
+		} else {
+
+			for (Class<?> clazz : matchingClasses) {
+				orDiscriminators.add(
+						criteriaBuilder.equal(QueryUtils.getObject(root, path, pathsMap, false, false).type(), clazz));
+				mlmap.add(definition.getFilterName(), clazz);
+			}
+
+		}
+
+		predicatesMap.computeIfAbsent(definition.getFilterName(), k -> new ArrayList<>())
+				.add(criteriaBuilder.or(orDiscriminators.toArray(new Predicate[orDiscriminators.size()])));
+
 	}
 
 }

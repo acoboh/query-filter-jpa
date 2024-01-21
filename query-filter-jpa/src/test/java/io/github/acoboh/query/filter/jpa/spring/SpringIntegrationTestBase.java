@@ -44,7 +44,7 @@ import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
  *
  * @author Adrián Cobo
  */
-public class SpringIntegrationTest {
+public class SpringIntegrationTestBase {
 
 	/**
 	 * Basic configuration tests

@@ -73,79 +73,89 @@ class OpenApiCustomiserImpl implements OpenApiCustomiser {
 		for (Entry<RequestMappingInfo, HandlerMethod> requestMapping : mappingHandler.getHandlerMethods().entrySet()) {
 			LOGGER.debug("Checking path {}", requestMapping.getKey());
 
-			for (Parameter param : requestMapping.getValue().getMethod().getParameters()) {
-				if (param.isAnnotationPresent(QFParam.class)) {
-					QFParam qfParamAnnotation = param.getAnnotation(QFParam.class);
+			processParameter(openApi, requestMapping);
 
-					ParameterizedType filterType = (ParameterizedType) param.getParameterizedType();
-					Class<?> classType = (Class<?>) filterType.getActualTypeArguments()[0];
+		}
+	}
 
-					ResolvableType resolvableBeanType = ResolvableType.forClassWithGenerics(QFProcessor.class,
-							qfParamAnnotation.value(), classType);
-					String[] names = applicationContext.getBeanNamesForType(resolvableBeanType);
-					if (names.length > 1) {
-						LOGGER.warn("Multiple beans found for type {}", resolvableBeanType);
-					} else if (names.length == 0) {
-						LOGGER.error("No bean found for type {}", resolvableBeanType);
-						continue;
-					}
+	private void processParameter(OpenAPI openApi, Entry<RequestMappingInfo, HandlerMethod> requestMapping) {
+		for (Parameter param : requestMapping.getValue().getMethod().getParameters()) {
+			if (param.isAnnotationPresent(QFParam.class)) {
+				QFParam qfParamAnnotation = param.getAnnotation(QFParam.class);
 
-					QFProcessor<?, ?> processor = applicationContext.getBean(names[0], QFProcessor.class);
+				ParameterizedType filterType = (ParameterizedType) param.getParameterizedType();
+				Class<?> classType = (Class<?>) filterType.getActualTypeArguments()[0];
 
-					Set<String> set;
-					if (requestMapping.getKey().getPathPatternsCondition() != null) {
-						set = requestMapping.getKey().getPathPatternsCondition().getPatternValues();
-					} else { // Otherwise will be illegal state exception
-						set = requestMapping.getKey().getPatternsCondition().getPatterns();
-					}
-
-					for (String path : set) { // For multiple mapping on same method
-
-						Optional<PathItem> optPath = openApi.getPaths().entrySet().stream()
-								.filter(e -> e.getKey().equals(path)).map(Map.Entry::getValue).findFirst();
-
-						if (!optPath.isPresent()) {
-							LOGGER.error("Error processing {} path", path);
-							continue;
-						}
-
-						Operation op = getOperation(optPath.get(),
-								requestMapping.getKey().getMethodsCondition().getMethods().iterator().next());
-
-						String paramName = param.getName();
-						if (param.isAnnotationPresent(RequestParam.class)) {
-							RequestParam requestParam = param.getAnnotation(RequestParam.class);
-							if (!requestParam.name().isEmpty()) {
-								paramName = requestParam.name();
-							}
-						}
-
-						final String finalParamName = paramName;
-
-						Optional<io.swagger.v3.oas.models.parameters.Parameter> optParam = op.getParameters().stream()
-								.filter(e -> e.getName().equals(finalParamName)).findFirst();
-
-						if (!optParam.isPresent()) {
-							LOGGER.error("Error getting parameter filter on path {}", path);
-							continue;
-						}
-
-						String actualDesc = optParam.get().getDescription();
-
-						LOGGER.debug("Override description {}", actualDesc);
-
-						optParam.get().setDescription(createDescription(qfParamAnnotation, processor));
-
-						// Force string schema on swagger
-						Schema<String> schema = new Schema<>();
-						schema.type("string");
-						optParam.get().setSchema(schema);
-
-					}
-
+				ResolvableType resolvableBeanType = ResolvableType.forClassWithGenerics(QFProcessor.class,
+						qfParamAnnotation.value(), classType);
+				String[] names = applicationContext.getBeanNamesForType(resolvableBeanType);
+				if (names.length > 1) {
+					LOGGER.warn("Multiple beans found for type {}", resolvableBeanType);
+				} else if (names.length == 0) {
+					LOGGER.error("No bean found for type {}", resolvableBeanType);
+					continue;
 				}
 
+				QFProcessor<?, ?> processor = applicationContext.getBean(names[0], QFProcessor.class);
+
+				Set<String> requestMappingPatterns;
+				if (requestMapping.getKey().getPathPatternsCondition() != null) {
+					requestMappingPatterns = requestMapping.getKey().getPathPatternsCondition().getPatternValues();
+				} else { // Otherwise will be illegal state exception
+					requestMappingPatterns = requestMapping.getKey().getPatternsCondition().getPatterns();
+				}
+
+				processPath(openApi, requestMapping, param, qfParamAnnotation, processor, requestMappingPatterns);
+
 			}
+
+		}
+	}
+
+	private void processPath(OpenAPI openApi, Entry<RequestMappingInfo, HandlerMethod> requestMapping, Parameter param,
+			QFParam qfParamAnnotation, QFProcessor<?, ?> processor, Set<String> requestMappingPatterns) {
+		
+		for (String path : requestMappingPatterns) { // For multiple mapping on same method
+
+			Optional<PathItem> optPath = openApi.getPaths().entrySet().stream()
+					.filter(e -> e.getKey().equals(path)).map(Map.Entry::getValue).findFirst();
+
+			if (!optPath.isPresent()) {
+				LOGGER.error("Error processing {} path", path);
+				continue;
+			}
+
+			Operation op = getOperation(optPath.get(),
+					requestMapping.getKey().getMethodsCondition().getMethods().iterator().next());
+
+			String paramName = param.getName();
+			if (param.isAnnotationPresent(RequestParam.class)) {
+				RequestParam requestParam = param.getAnnotation(RequestParam.class);
+				if (!requestParam.name().isEmpty()) {
+					paramName = requestParam.name();
+				}
+			}
+
+			final String finalParamName = paramName;
+
+			Optional<io.swagger.v3.oas.models.parameters.Parameter> optParam = op.getParameters().stream()
+					.filter(e -> e.getName().equals(finalParamName)).findFirst();
+
+			if (!optParam.isPresent()) {
+				LOGGER.error("Error getting parameter filter on path {}", path);
+				continue;
+			}
+
+			String actualDesc = optParam.get().getDescription();
+
+			LOGGER.debug("Override description {}", actualDesc);
+
+			optParam.get().setDescription(createDescription(qfParamAnnotation, processor));
+
+			// Force string schema on swagger
+			Schema<String> schema = new Schema<>();
+			schema.type("string");
+			optParam.get().setSchema(schema);
 
 		}
 	}

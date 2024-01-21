@@ -26,7 +26,7 @@ import io.github.acoboh.query.filter.jpa.exceptions.QueryFilterException;
 import io.github.acoboh.query.filter.jpa.model.Comments;
 import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.repositories.PostBlogRepository;
-import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTest;
+import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
 
 /**
  * Relational tests
@@ -34,11 +34,11 @@ import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTest;
  * @author Adrián Cobo
  *
  */
-@SpringJUnitWebConfig(SpringIntegrationTest.Config.class)
+@SpringJUnitWebConfig(SpringIntegrationTestBase.Config.class)
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class RelationalTest {
+class RelationalTest {
 
 	private static final PostBlog POST_EXAMPLE = new PostBlog();
 	private static final PostBlog POST_EXAMPLE_2 = new PostBlog();
@@ -138,9 +138,7 @@ public class RelationalTest {
 		assertThat(qf).isNotNull();
 
 		List<PostBlog> list = repository.findAll(qf);
-		assertThat(list).hasSize(2);
-
-		assertThat(list).containsExactlyInAnyOrder(POST_EXAMPLE, POST_EXAMPLE_2);
+		assertThat(list).hasSize(2).containsExactlyInAnyOrder(POST_EXAMPLE, POST_EXAMPLE_2);
 
 	}
 
@@ -152,9 +150,7 @@ public class RelationalTest {
 		assertThat(qf).isNotNull();
 
 		List<PostBlog> list = repository.findAll(qf);
-		assertThat(list).hasSize(1);
-
-		assertThat(list).containsExactlyInAnyOrder(POST_EXAMPLE_2);
+		assertThat(list).hasSize(1).containsExactlyInAnyOrder(POST_EXAMPLE_2);
 
 		// Test greater or equal than 2
 
@@ -189,9 +185,7 @@ public class RelationalTest {
 		assertThat(qf).isNotNull();
 
 		List<PostBlog> list = repository.findAll(qf);
-		assertThat(list).hasSize(1);
-
-		assertThat(list).containsExactlyInAnyOrder(POST_EXAMPLE);
+		assertThat(list).hasSize(1).containsExactlyInAnyOrder(POST_EXAMPLE);
 
 		// Test IN operator
 

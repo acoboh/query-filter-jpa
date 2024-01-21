@@ -1,5 +1,6 @@
 package io.github.acoboh.query.filter.jpa.openapi.config;
 
+import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,6 +8,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,6 +22,8 @@ import org.springframework.core.ResolvableType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import io.github.acoboh.query.filter.jpa.annotations.QFDiscriminator;
@@ -69,79 +73,88 @@ class OpenApiCustomiserImpl implements OpenApiCustomizer {
 		for (var requestMapping : mappingHandler.getHandlerMethods().entrySet()) {
 			LOGGER.debug("Checking path {}", requestMapping.getKey());
 
-			for (var param : requestMapping.getValue().getMethod().getParameters()) {
-				if (param.isAnnotationPresent(QFParam.class)) {
-					var qfParamAnnotation = param.getAnnotation(QFParam.class);
+			processParameter(openApi, requestMapping);
 
-					var filterType = (ParameterizedType) param.getParameterizedType();
-					Class<?> classType = (Class<?>) filterType.getActualTypeArguments()[0];
+		}
+	}
 
-					var resolvableBeanType = ResolvableType.forClassWithGenerics(QFProcessor.class,
-							qfParamAnnotation.value(), classType);
-					String[] names = applicationContext.getBeanNamesForType(resolvableBeanType);
-					if (names.length > 1) {
-						LOGGER.warn("Multiple beans found for type {}", resolvableBeanType);
-					} else if (names.length == 0) {
-						LOGGER.error("No bean found for type {}", resolvableBeanType);
-						continue;
-					}
+	private void processParameter(OpenAPI openApi, Entry<RequestMappingInfo, HandlerMethod> requestMapping) {
+		for (var param : requestMapping.getValue().getMethod().getParameters()) {
+			if (param.isAnnotationPresent(QFParam.class)) {
+				var qfParamAnnotation = param.getAnnotation(QFParam.class);
 
-					QFProcessor<?, ?> processor = applicationContext.getBean(names[0], QFProcessor.class);
+				var filterType = (ParameterizedType) param.getParameterizedType();
+				Class<?> classType = (Class<?>) filterType.getActualTypeArguments()[0];
 
-					Set<String> set;
-					if (requestMapping.getKey().getPathPatternsCondition() != null) {
-						set = requestMapping.getKey().getPathPatternsCondition().getPatternValues();
-					} else { // Otherwise will be illegal state exception
-						set = requestMapping.getKey().getPatternsCondition().getPatterns();
-					}
-
-					for (String path : set) { // For multiple mapping on same method
-
-						Optional<PathItem> optPath = openApi.getPaths().entrySet().stream()
-								.filter(e -> e.getKey().equals(path)).map(Map.Entry::getValue).findFirst();
-
-						if (optPath.isEmpty()) {
-							LOGGER.error("Error processing {} path", path);
-							continue;
-						}
-
-						Operation op = getOperation(optPath.get(),
-								requestMapping.getKey().getMethodsCondition().getMethods().iterator().next());
-
-						String paramName = param.getName();
-						if (param.isAnnotationPresent(RequestParam.class)) {
-							RequestParam requestParam = param.getAnnotation(RequestParam.class);
-							if (!requestParam.name().isEmpty()) {
-								paramName = requestParam.name();
-							}
-						}
-
-						final String finalParamName = paramName;
-
-						Optional<io.swagger.v3.oas.models.parameters.Parameter> optParam = op.getParameters().stream()
-								.filter(e -> e.getName().equals(finalParamName)).findFirst();
-
-						if (optParam.isEmpty()) {
-							LOGGER.error("Error getting parameter filter on path {}", path);
-							continue;
-						}
-
-						String actualDesc = optParam.get().getDescription();
-
-						LOGGER.debug("Override description {}", actualDesc);
-
-						optParam.get().setDescription(createDescription(qfParamAnnotation, processor));
-
-						// Force string schema on swagger
-						Schema<String> schema = new Schema<>();
-						schema.type("string");
-						optParam.get().setSchema(schema);
-					}
-
+				var resolvableBeanType = ResolvableType.forClassWithGenerics(QFProcessor.class,
+						qfParamAnnotation.value(), classType);
+				String[] names = applicationContext.getBeanNamesForType(resolvableBeanType);
+				if (names.length > 1) {
+					LOGGER.warn("Multiple beans found for type {}", resolvableBeanType);
+				} else if (names.length == 0) {
+					LOGGER.error("No bean found for type {}", resolvableBeanType);
+					continue;
 				}
+
+				QFProcessor<?, ?> processor = applicationContext.getBean(names[0], QFProcessor.class);
+
+				Set<String> requestMappingPatterns;
+				if (requestMapping.getKey().getPathPatternsCondition() != null) {
+					requestMappingPatterns = requestMapping.getKey().getPathPatternsCondition().getPatternValues();
+				} else { // Otherwise will be illegal state exception
+					requestMappingPatterns = requestMapping.getKey().getPatternsCondition().getPatterns();
+				}
+
+				processPath(openApi, requestMapping, param, qfParamAnnotation, processor, requestMappingPatterns);
 
 			}
 
+		}
+	}
+
+	private void processPath(OpenAPI openApi, Entry<RequestMappingInfo, HandlerMethod> requestMapping, Parameter param,
+			QFParam qfParamAnnotation, QFProcessor<?, ?> processor, Set<String> requestMappingPatterns) {
+		for (String path : requestMappingPatterns) { // For multiple mapping on same method
+
+			Optional<PathItem> optPath = openApi.getPaths().entrySet().stream().filter(e -> e.getKey().equals(path))
+					.map(Map.Entry::getValue).findFirst();
+
+			if (optPath.isEmpty()) {
+				LOGGER.error("Error processing {} path", path);
+				continue;
+			}
+
+			Operation op = getOperation(optPath.get(),
+					requestMapping.getKey().getMethodsCondition().getMethods().iterator().next());
+
+			String paramName = param.getName();
+			if (param.isAnnotationPresent(RequestParam.class)) {
+				RequestParam requestParam = param.getAnnotation(RequestParam.class);
+				if (!requestParam.name().isEmpty()) {
+					paramName = requestParam.name();
+				}
+			}
+
+			final String finalParamName = paramName;
+
+			Optional<io.swagger.v3.oas.models.parameters.Parameter> optParam = op.getParameters().stream()
+					.filter(e -> e.getName().equals(finalParamName)).findFirst();
+
+			if (optParam.isEmpty()) {
+				LOGGER.error("Error getting parameter filter on path {}", path);
+				continue;
+			}
+
+			String actualDesc = optParam.get().getDescription();
+
+			LOGGER.debug("Override description {}", actualDesc);
+
+			optParam.get().setDescription(createDescription(qfParamAnnotation, processor));
+
+			// Force string schema on swagger
+			Schema<String> schema = new Schema<>();
+			schema.type("string");
+			optParam.get().setSchema(schema);
 		}
 	}
 
@@ -175,10 +188,8 @@ class OpenApiCustomiserImpl implements OpenApiCustomizer {
 
 			}
 
-			if (def instanceof IDefinitionSortable idef) {
-				if (idef.isSortable()) {
-					builder.append(" <i>(Sortable)</i>");
-				}
+			if (def instanceof IDefinitionSortable idef && idef.isSortable()) {
+				builder.append(" <i>(Sortable)</i>");
 			}
 
 			if (def instanceof QFDefinitionDiscriminator qdefDiscriminator) {

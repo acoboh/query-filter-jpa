@@ -18,6 +18,10 @@ public class StringParseUtils {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(StringParseUtils.class);
 
+	private StringParseUtils() {
+		// Utility class
+	}
+	
 	/**
 	 * Get all parsed parts
 	 *

@@ -34,7 +34,7 @@ public class DateUtils {
 	public static DateTimeFormatter getFormatter(QFDate dateAnnotation) {
 		DateTimeFormatter formatter;
 
-		if (dateAnnotation.parseDefaulting() != null & dateAnnotation.parseDefaulting().length > 0) {
+		if (dateAnnotation.parseDefaulting() != null && dateAnnotation.parseDefaulting().length > 0) {
 			DateTimeFormatterBuilder builder = new DateTimeFormatterBuilder()
 					.appendPattern(dateAnnotation.timeFormat());
 
@@ -73,15 +73,12 @@ public class DateUtils {
 			return LocalDate.parse(value, formatter);
 		} else if (ZonedDateTime.class.isAssignableFrom(finalClass)) {
 			return ZonedDateTime.parse(value, formatter);
-		} else if (Date.class.isAssignableFrom(finalClass)) {
+		} else if (Date.class.isAssignableFrom(finalClass) || java.sql.Date.class.isAssignableFrom(finalClass)) {
 			LocalDate ld = LocalDate.parse(value, formatter);
 			return Date.valueOf(ld);
 		} else if (java.util.Date.class.isAssignableFrom(finalClass)) {
 			LocalDateTime dt = LocalDateTime.parse(value, formatter);
 			return java.util.Date.from(dt.toInstant(ZoneOffset.of(dateAnnotation.zoneOffset())));
-		} else if (java.sql.Date.class.isAssignableFrom(finalClass)) {
-			LocalDate ld = LocalDate.parse(value, formatter);
-			return Date.valueOf(ld);
 		}
 
 		return null;

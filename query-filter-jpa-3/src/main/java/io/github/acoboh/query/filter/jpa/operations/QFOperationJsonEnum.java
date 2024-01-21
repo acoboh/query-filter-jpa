@@ -27,7 +27,7 @@ public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
 			int i = 0;
 			for (Map.Entry<String, String> nodeEntry : match.getMapValues().entrySet()) {
 				predicates[i++] = cb.equal(
-						cb.function("jsonb_extract_path_text", String.class, path, cb.literal(nodeEntry.getKey())),
+						cb.function(JSON_EXTRACT_FUNCTION, String.class, path, cb.literal(nodeEntry.getKey())),
 						nodeEntry.getValue());
 			}
 
@@ -46,7 +46,7 @@ public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
 			for (Map.Entry<String, String> nodeEntry : match.getMapValues().entrySet()) {
 
 				predicates[i++] = cb.notEqual(
-						cb.function("jsonb_extract_path_text", String.class, path, cb.literal(nodeEntry.getKey())),
+						cb.function(JSON_EXTRACT_FUNCTION, String.class, path, cb.literal(nodeEntry.getKey())),
 						nodeEntry.getValue());
 			}
 
@@ -65,7 +65,7 @@ public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
 			for (Map.Entry<String, String> nodeEntry : match.getMapValues().entrySet()) {
 
 				predicates[i++] = PredicateUtils.parseLikePredicate(cb,
-						cb.function("jsonb_extract_path_text", String.class, path, cb.literal(nodeEntry.getKey())),
+						cb.function(JSON_EXTRACT_FUNCTION, String.class, path, cb.literal(nodeEntry.getKey())),
 						nodeEntry.getValue(), match.getDefinition().isCaseSensitive());
 			}
 
@@ -84,7 +84,7 @@ public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
 
 			for (Map.Entry<String, String> nodeEntry : match.getMapValues().entrySet()) {
 				predicates[i++] = PredicateUtils.parseStartsPredicate(cb,
-						cb.function("jsonb_extract_path_text", String.class, path, cb.literal(nodeEntry.getKey())),
+						cb.function(JSON_EXTRACT_FUNCTION, String.class, path, cb.literal(nodeEntry.getKey())),
 						nodeEntry.getValue(), match.getDefinition().isCaseSensitive());
 			}
 
@@ -102,7 +102,7 @@ public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
 			int i = 0;
 			for (Map.Entry<String, String> nodeEntry : match.getMapValues().entrySet()) {
 				predicates[i++] = PredicateUtils.parseEndsPredicate(cb,
-						cb.function("jsonb_extract_path_text", String.class, path, cb.literal(nodeEntry.getKey())),
+						cb.function(JSON_EXTRACT_FUNCTION, String.class, path, cb.literal(nodeEntry.getKey())),
 						nodeEntry.getValue(), match.getDefinition().isCaseSensitive());
 			}
 
@@ -111,6 +111,7 @@ public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
 	};
 
 	private static final Map<String, QFOperationJsonEnum> CONSTANTS = new HashMap<>();
+	private static final String JSON_EXTRACT_FUNCTION = "jsonb_extract_path_text";
 
 	static {
 		for (QFOperationJsonEnum c : values()) {

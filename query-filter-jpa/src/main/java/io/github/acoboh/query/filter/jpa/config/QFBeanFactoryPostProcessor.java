@@ -158,9 +158,8 @@ public class QFBeanFactoryPostProcessor implements ApplicationContextAware, Bean
 
 		if (packagesToAnalyze.isEmpty()) {
 			LOGGER.debug("Trying get SpringBootApplication beans to search for QueryFilter classes...");
-			packagesToAnalyze = getBeansWithAnnotation(SpringBootApplication.class, false, (scan, instance) -> {
-				return Arrays.asList(instance.getClass().toString());
-			});
+			packagesToAnalyze = getBeansWithAnnotation(SpringBootApplication.class, false,
+					(scan, instance) -> Arrays.asList(instance.getClass().toString()));
 
 		}
 

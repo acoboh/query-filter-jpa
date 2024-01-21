@@ -18,7 +18,10 @@ import org.springframework.data.util.Pair;
 
 import io.github.acoboh.query.filter.jpa.processor.definitions.traits.IDefinitionSortable;
 
-class QueryUtils {
+/**
+ * Class with query utilities
+ */
+public class QueryUtils {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(QueryUtils.class);
 
@@ -26,6 +29,16 @@ class QueryUtils {
 
 	}
 
+	/**
+	 * Get the object join
+	 * 
+	 * @param root         root entity
+	 * @param paths        paths to travel
+	 * @param pathsMap     map of older paths
+	 * @param isCollection if the final join is part of a collection or object
+	 * @param tryFetch     try to use fetch instead of join
+	 * @return return the final path of the object
+	 */
 	public static Path<?> getObject(Root<?> root, List<QFPath> paths, Map<String, Path<?>> pathsMap,
 			boolean isCollection, boolean tryFetch) {
 		String fullPath = getFullPath(paths, isCollection);
@@ -46,7 +59,7 @@ class QueryUtils {
 
 	}
 
-	public static Path<?> getJoinObject(Root<?> root, List<QFPath> paths, Map<String, Path<?>> pathsMap,
+	private static Path<?> getJoinObject(Root<?> root, List<QFPath> paths, Map<String, Path<?>> pathsMap,
 			boolean tryFetch) {
 
 		From<?, ?> join = root;
@@ -100,6 +113,15 @@ class QueryUtils {
 
 	}
 
+	/**
+	 * Parse orders with the criteria builder
+	 * 
+	 * @param sortDefinitionList list of sort definitions
+	 * @param cb                 criteria builder
+	 * @param root               root entity
+	 * @param pathsMap           older paths
+	 * @return the final order list
+	 */
 	public static List<Order> parseOrders(List<Pair<IDefinitionSortable, Direction>> sortDefinitionList,
 			CriteriaBuilder cb, Root<?> root, Map<String, Path<?>> pathsMap) {
 		ArrayList<Order> orderList = new ArrayList<>();
@@ -121,7 +143,7 @@ class QueryUtils {
 		return orderList;
 	}
 
-	public static String getFullPath(List<QFPath> paths, boolean isCollection) {
+	private static String getFullPath(List<QFPath> paths, boolean isCollection) {
 		String path = paths.stream().map(QFPath::getPath).collect(Collectors.joining("."));
 		return isCollection ? path + ".*" : path;
 	}

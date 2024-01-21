@@ -75,17 +75,10 @@ public class QueryFilter<E> implements Specification<E> {
 
 	private final String initialInput;
 
-//	private final List<QFElementMatch> valueMapping = new ArrayList<>();
-//	private final List<QFCollectionMatch> collectionMapping = new ArrayList<>();
-//	private final List<QFJsonElementMatch> jsonMapping = new ArrayList<>();
-//	private final List<QFDiscriminatorMatch> discriminatorMapping = new ArrayList<>();
-//	private final List<QFSpecificationPart> specifications = new LinkedList<>();
-
 	private final QFSpecificationsWarp specificationsWarp;
 
 	private final transient @Nullable Map<String, PredicateProcessorResolutor> predicateMap;
 
-//	private final transient List<QFElementMatch> defaultMatches;
 	private final transient List<Pair<IDefinitionSortable, Direction>> defaultSorting;
 
 	private final transient Map<String, QFAbstractDefinition> definitionMap;
@@ -116,7 +109,7 @@ public class QueryFilter<E> implements Specification<E> {
 
 		this.definitionMap = processor.getDefinitionMap();
 		this.queryFilterClassAnnotation = processor.getDefinitionClassAnnotation();
-//		this.specifications.addAll(processor.getDefaultMatches());
+
 		this.specificationsWarp = new QFSpecificationsWarp(processor.getDefaultMatches());
 
 		this.defaultSorting = processor.getDefaultSorting();
@@ -746,9 +739,7 @@ public class QueryFilter<E> implements Specification<E> {
 		MultiValueMap<String, Object> mlmap = new LinkedMultiValueMap<>(sortedParts.size());
 
 		for (QFSpecificationPart part : sortedParts) {
-
 			part.processPart(root, query, criteriaBuilder, predicatesMap, pathsMap, mlmap, spelResolver, entityClass);
-
 		}
 
 		Predicate finalPredicate = parseFinalPredicate(criteriaBuilder, predicatesMap);

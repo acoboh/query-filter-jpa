@@ -6,9 +6,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +29,8 @@ import io.github.acoboh.query.filter.jpa.exceptions.QFEnumException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFFieldOperationException;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 import io.github.acoboh.query.filter.jpa.processor.QFPath;
+import io.github.acoboh.query.filter.jpa.processor.QFSpecificationPart;
+import io.github.acoboh.query.filter.jpa.processor.QueryUtils;
 import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionElement;
 import io.github.acoboh.query.filter.jpa.spel.SpelResolverContext;
 import io.github.acoboh.query.filter.jpa.utils.DateUtils;
@@ -29,7 +41,7 @@ import io.github.acoboh.query.filter.jpa.utils.DateUtils;
  * @author Adrián Cobo
  * 
  */
-public class QFElementMatch {
+public class QFElementMatch implements QFSpecificationPart {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(QFElementMatch.class);
 
@@ -421,6 +433,87 @@ public class QFElementMatch {
 		}
 
 		return Collections.singletonList(spelResolved.toString());
+	}
+
+	@Override
+	public <E> void processPart(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder,
+			Map<String, List<Predicate>> predicatesMap, Map<String, Path<?>> pathsMap,
+			MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver, Class<E> entityClass) {
+
+		if (definition.isSubQuery()) {
+			LOGGER.trace("Element match is subquery");
+			processPartAsSubQuery(root, query, criteriaBuilder, predicatesMap, pathsMap, mlmap, spelResolver,
+					entityClass);
+		} else {
+			LOGGER.trace("Element match is basic");
+			processAsElement(root, criteriaBuilder, predicatesMap, pathsMap, mlmap, spelResolver);
+		}
+
+	}
+
+	private <E> void processAsElement(Root<E> root, CriteriaBuilder criteriaBuilder,
+			Map<String, List<Predicate>> predicatesMap, Map<String, Path<?>> pathsMap,
+			MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver) {
+		initialize(spelResolver, mlmap);
+
+		if (!needToEvaluate()) {
+			return;
+		}
+
+		int index = 0;
+
+		Predicate surrondingPredicate = definition.getPredicateOperation().getPredicate(criteriaBuilder);
+		List<Expression<Boolean>> expressions = surrondingPredicate.getExpressions();
+
+		for (List<QFPath> path : paths) {
+			expressions.add(operation.generatePredicate(QueryUtils.getObject(root, path, pathsMap, false, false),
+					criteriaBuilder, this, index, mlmap));
+			index++;
+		}
+
+		predicatesMap.computeIfAbsent(definition.getFilterName(), t -> new ArrayList<>()).add(surrondingPredicate);
+	}
+
+	private <E> void processPartAsSubQuery(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder,
+			Map<String, List<Predicate>> predicatesMap, Map<String, Path<?>> pathsMap,
+			MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver, Class<E> entityClass) {
+
+		Map<String, Path<?>> subSelecthMap = new HashMap<>();
+
+		initialize(spelResolver, mlmap);
+
+		if (!needToEvaluate()) {
+			return;
+		}
+
+		int index = 0;
+		for (List<QFPath> path : paths) {
+
+			Subquery<E> subquery = query.subquery(entityClass);
+			Root<E> newRoot = subquery.from(entityClass);
+
+			subquery.select(newRoot.as(entityClass));
+
+			Path<?> pathFinal = QueryUtils.getObject(newRoot, path, subSelecthMap, false, false);
+
+			QFOperationEnum op = operation;
+			if (op == QFOperationEnum.NOT_EQUAL) {
+				op = QFOperationEnum.EQUAL;
+			}
+
+			subquery.where(op.generatePredicate(pathFinal, criteriaBuilder, this, index, mlmap));
+
+			Predicate finalPredicate = criteriaBuilder.in(root).value(subquery);
+
+			if (operation == QFOperationEnum.NOT_EQUAL) {
+				finalPredicate = criteriaBuilder.not(finalPredicate);
+			}
+
+			predicatesMap.computeIfAbsent(definition.getFilterName(), k -> new ArrayList<>()).add(finalPredicate);
+
+			index++;
+		}
+
 	}
 
 }

@@ -19,7 +19,7 @@ public class QFDateParsingException extends QueryFilterException {
 	private final String field;
 	private final String value;
 	private final String format;
-	private final Object[] arguments;
+	private final transient Object[] arguments;
 
 	/**
 	 * Default constructor

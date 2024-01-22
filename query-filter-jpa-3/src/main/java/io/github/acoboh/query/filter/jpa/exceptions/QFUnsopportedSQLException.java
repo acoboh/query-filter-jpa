@@ -15,7 +15,7 @@ public class QFUnsopportedSQLException extends QueryFilterException {
 	private static final long serialVersionUID = 1L;
 	private static final String MESSAGE = "The operation {} is unsupported";
 
-	private final Object[] args;
+	private final transient Object[] args;
 	private final String field;
 	private final QFOperationEnum operation;
 

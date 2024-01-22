@@ -19,7 +19,7 @@ public class QFFieldOperationException extends QueryFilterException {
 	private final QFOperationEnum operation;
 
 	private final String field;
-	private final Object[] arguments;
+	private final transient Object[] arguments;
 
 	/**
 	 * Default constructor

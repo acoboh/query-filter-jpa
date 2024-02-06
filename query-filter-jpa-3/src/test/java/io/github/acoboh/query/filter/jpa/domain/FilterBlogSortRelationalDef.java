@@ -26,4 +26,7 @@ public class FilterBlogSortRelationalDef {
 	@QFElement(value = "comments.author", autoFetch = false)
 	private int commentAuthorElementError;
 
+	@QFElement("comments.extraData.id")
+	private int extraDataSort;
+
 }

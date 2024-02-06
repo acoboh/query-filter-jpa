@@ -84,7 +84,7 @@ public class QueryUtils {
 			QFPath elem = paths.get(i);
 
 			if (tryFetch) {
-				join = (From<?, ?>) root.fetch(elem.getPath());
+				join = (From<?, ?>) join.fetch(elem.getPath());
 			} else {
 				switch (elem.getType()) {
 				case LIST:

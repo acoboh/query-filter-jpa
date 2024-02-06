@@ -735,7 +735,12 @@ public class QueryFilter<E> implements Specification<E> {
 		query.distinct(distinct);
 
 		// Process sort
-		processSort(root, criteriaBuilder, query, pathsMap);
+		if (query.getResultType().equals(entityClass)) {
+			processSort(root, criteriaBuilder, query, pathsMap);
+		} else if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Final class is not the entity class so all sorts will be ignored. Final class {}",
+					query.getResultType());
+		}
 
 		List<QFSpecificationPart> sortedParts = specificationsWarp.getAllPartsSorted();
 

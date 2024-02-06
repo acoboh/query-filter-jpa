@@ -299,11 +299,10 @@ public class PostBlog {
 		this.tags = tags;
 	}
 
-	@Override
 	public String toString() {
 		return "PostBlog [uuid=" + uuid + ", author=" + author + ", text=" + text + ", avgNote=" + avgNote + ", likes="
 				+ likes + ", createDate=" + createDate + ", lastTimestamp=" + lastTimestamp + ", published=" + published
-				+ ", postType=" + postType + ", tags=" + Arrays.toString(tags) + "]";
+				+ ", postType=" + postType + ", comments=" + comments + ", tags=" + Arrays.toString(tags) + "]";
 	}
 
 }

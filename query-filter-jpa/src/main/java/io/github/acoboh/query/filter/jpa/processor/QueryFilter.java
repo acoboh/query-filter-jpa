@@ -64,12 +64,6 @@ import io.github.acoboh.query.filter.jpa.spel.SpelResolverContext;
  * @param <E> Entity model class
  * 
  */
-/**
- * @param <E>
- */
-/**
- * @param <E>
- */
 public class QueryFilter<E> implements Specification<E> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(QueryFilter.class);
@@ -748,7 +742,13 @@ public class QueryFilter<E> implements Specification<E> {
 		query.distinct(distinct);
 
 		// Sorts
-		processSort(root, criteriaBuilder, query, pathsMap);
+
+		if (query.getResultType().equals(entityClass)) {
+			processSort(root, criteriaBuilder, query, pathsMap);
+		} else if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Final class is not the entity class so all sorts will be ignored. Final class {}",
+					query.getResultType());
+		}
 
 		List<QFSpecificationPart> sortedParts = specificationsWarp.getAllPartsSorted();
 

@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThrows;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,6 +21,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.util.Pair;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -28,6 +31,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import io.github.acoboh.query.filter.jpa.domain.FilterBlogSortRelationalDef;
 import io.github.acoboh.query.filter.jpa.model.Comments;
+import io.github.acoboh.query.filter.jpa.model.ExtraData;
 import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.repositories.PostBlogRepository;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
@@ -73,6 +77,18 @@ class AutoFetchSortTest {
 
 		POST_EXAMPLE.setComments(commentsList);
 
+		List<ExtraData> extraDataList = new ArrayList<>();
+		extraDataList.add(new ExtraData(2, comment));
+		extraDataList.add(new ExtraData(4, comment));
+
+		comment.setExtraData(extraDataList);
+
+		List<ExtraData> extraDataList2 = new ArrayList<>();
+		extraDataList2.add(new ExtraData(6, comment2));
+		extraDataList2.add(new ExtraData(8, comment2));
+
+		comment2.setExtraData(extraDataList2);
+
 		POST_EXAMPLE_2.setUuid(UUID.randomUUID());
 		POST_EXAMPLE_2.setAuthor("Author 2");
 		POST_EXAMPLE_2.setText("Text 2");
@@ -103,6 +119,18 @@ class AutoFetchSortTest {
 		commentsList2.add(comment4);
 
 		POST_EXAMPLE_2.setComments(commentsList2);
+
+		List<ExtraData> extraDataList3 = new ArrayList<>();
+		extraDataList3.add(new ExtraData(5, comment3));
+		extraDataList3.add(new ExtraData(3, comment3));
+
+		comment3.setExtraData(extraDataList3);
+
+		List<ExtraData> extraDataList4 = new ArrayList<>();
+		extraDataList4.add(new ExtraData(12, comment4));
+		extraDataList4.add(new ExtraData(15, comment4));
+
+		comment4.setExtraData(extraDataList4);
 	}
 
 	@Autowired
@@ -213,6 +241,56 @@ class AutoFetchSortTest {
 
 		assertThat(ex.getCause().getCause().getMessage())
 				.startsWith("ERROR: for SELECT DISTINCT, ORDER BY expressions must appear in select list");
+
+	}
+
+	@Test
+	@DisplayName("5. Test 3 level joins auto-fetch")
+	@Order(5)
+	void testLevelJoinsAutoFetch() {
+		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("sort=+extraDataSort", QFParamType.RHS_COLON);
+
+		assertThat(qf).isNotNull();
+
+		assertThat(qf.isSorted()).isTrue();
+
+		assertThat(qf.isSortedBy("extraDataSort")).isTrue();
+
+		assertThat(qf.getSortFields()).containsExactly(Pair.of("extraDataSort", Direction.ASC));
+
+		List<PostBlog> found = repository.findAll(qf);
+
+		assertThat(found).hasSize(2).containsExactly(POST_EXAMPLE, POST_EXAMPLE_2);
+	}
+
+	@Test
+	@DisplayName("6. Test paginated sort")
+	@Order(6)
+	void testPaginatedSort() {
+		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("sort=+extraDataSort", QFParamType.RHS_COLON);
+
+		assertThat(qf).isNotNull();
+
+		assertThat(qf.isSorted()).isTrue();
+
+		assertThat(qf.isSortedBy("extraDataSort")).isTrue();
+
+		assertThat(qf.getSortFields()).containsExactly(Pair.of("extraDataSort", Direction.ASC));
+
+		Page<PostBlog> found = repository.findAll(qf, PageRequest.of(0, 1));
+
+		assertThat(found).hasSize(1).containsExactly(POST_EXAMPLE);
+
+		assertThat(found.getTotalElements()).isEqualTo(2);
+
+		// Clear sort
+		qf.clearSort();
+
+		found = repository.findAll(qf, PageRequest.of(0, 1));
+
+		assertThat(found).hasSize(1).containsExactly(POST_EXAMPLE);
+
+		assertThat(found.getTotalElements()).isEqualTo(2);
 
 	}
 

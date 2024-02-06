@@ -1,10 +1,14 @@
 package io.github.acoboh.query.filter.jpa.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 /**
  * Comments entity
@@ -26,6 +30,9 @@ public class Comments {
 	private String comment;
 
 	private int likes;
+
+	@OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ExtraData> extraData = new ArrayList<>();
 
 	/**
 	 * Get ID
@@ -117,6 +124,24 @@ public class Comments {
 		this.likes = likes;
 	}
 
+	/**
+	 * Get extra data
+	 * 
+	 * @return extra data
+	 */
+	public List<ExtraData> getExtraData() {
+		return extraData;
+	}
+
+	/**
+	 * Set extra data
+	 * 
+	 * @param extraData extra data
+	 */
+	public void setExtraData(List<ExtraData> extraData) {
+		this.extraData = extraData;
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(author, comment, id, likes, postBlog);
@@ -133,6 +158,12 @@ public class Comments {
 		Comments other = (Comments) obj;
 		return Objects.equals(author, other.author) && Objects.equals(comment, other.comment) && id == other.id
 				&& likes == other.likes && Objects.equals(postBlog, other.postBlog);
+	}
+
+	@Override
+	public String toString() {
+		return "Comments [id=" + id + ", author=" + author + ", comment=" + comment + ", likes=" + likes
+				+ ", extraData=" + extraData + "]";
 	}
 
 }

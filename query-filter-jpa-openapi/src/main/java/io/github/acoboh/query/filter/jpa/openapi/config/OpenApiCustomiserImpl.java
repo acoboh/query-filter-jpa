@@ -1,6 +1,5 @@
 package io.github.acoboh.query.filter.jpa.openapi.config;
 
-import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdoc.core.customizers.OpenApiCustomiser;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.MethodParameter;
 import org.springframework.core.ResolvableType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -79,11 +79,11 @@ class OpenApiCustomiserImpl implements OpenApiCustomiser {
 	}
 
 	private void processParameter(OpenAPI openApi, Entry<RequestMappingInfo, HandlerMethod> requestMapping) {
-		for (Parameter param : requestMapping.getValue().getMethod().getParameters()) {
-			if (param.isAnnotationPresent(QFParam.class)) {
-				QFParam qfParamAnnotation = param.getAnnotation(QFParam.class);
+		for (MethodParameter param : requestMapping.getValue().getMethodParameters()) {
+			QFParam qfParamAnnotation = param.getParameterAnnotation(QFParam.class);
+			if (qfParamAnnotation != null) {
 
-				ParameterizedType filterType = (ParameterizedType) param.getParameterizedType();
+				ParameterizedType filterType = (ParameterizedType) param.getGenericParameterType();
 				Class<?> classType = (Class<?>) filterType.getActualTypeArguments()[0];
 
 				ResolvableType resolvableBeanType = ResolvableType.forClassWithGenerics(QFProcessor.class,
@@ -105,20 +105,32 @@ class OpenApiCustomiserImpl implements OpenApiCustomiser {
 					requestMappingPatterns = requestMapping.getKey().getPatternsCondition().getPatterns();
 				}
 
-				processPath(openApi, requestMapping, param, qfParamAnnotation, processor, requestMappingPatterns);
+				String paramName = param.getParameterName();
+				LOGGER.trace("Param name from MethodParam {}", paramName);
+				if (paramName == null) {
+					paramName = param.getParameter().getName();
+					LOGGER.trace("Param name from parameter {}", paramName);
+				}
+				RequestParam requestParamAnnotation = param.getParameterAnnotation(RequestParam.class);
+				if (requestParamAnnotation != null && !requestParamAnnotation.name().isEmpty()) {
+					paramName = requestParamAnnotation.name();
+					LOGGER.trace("Param name from RequestParam annotation {}", paramName);
+				}
+
+				processPath(openApi, requestMapping, paramName, qfParamAnnotation, processor, requestMappingPatterns);
 
 			}
 
 		}
 	}
 
-	private void processPath(OpenAPI openApi, Entry<RequestMappingInfo, HandlerMethod> requestMapping, Parameter param,
+	private void processPath(OpenAPI openApi, Entry<RequestMappingInfo, HandlerMethod> requestMapping, String paramName,
 			QFParam qfParamAnnotation, QFProcessor<?, ?> processor, Set<String> requestMappingPatterns) {
-		
+
 		for (String path : requestMappingPatterns) { // For multiple mapping on same method
 
-			Optional<PathItem> optPath = openApi.getPaths().entrySet().stream()
-					.filter(e -> e.getKey().equals(path)).map(Map.Entry::getValue).findFirst();
+			Optional<PathItem> optPath = openApi.getPaths().entrySet().stream().filter(e -> e.getKey().equals(path))
+					.map(Map.Entry::getValue).findFirst();
 
 			if (!optPath.isPresent()) {
 				LOGGER.error("Error processing {} path", path);
@@ -128,18 +140,8 @@ class OpenApiCustomiserImpl implements OpenApiCustomiser {
 			Operation op = getOperation(optPath.get(),
 					requestMapping.getKey().getMethodsCondition().getMethods().iterator().next());
 
-			String paramName = param.getName();
-			if (param.isAnnotationPresent(RequestParam.class)) {
-				RequestParam requestParam = param.getAnnotation(RequestParam.class);
-				if (!requestParam.name().isEmpty()) {
-					paramName = requestParam.name();
-				}
-			}
-
-			final String finalParamName = paramName;
-
 			Optional<io.swagger.v3.oas.models.parameters.Parameter> optParam = op.getParameters().stream()
-					.filter(e -> e.getName().equals(finalParamName)).findFirst();
+					.filter(e -> e.getName().equals(paramName)).findFirst();
 
 			if (!optParam.isPresent()) {
 				LOGGER.error("Error getting parameter filter on path {}", path);

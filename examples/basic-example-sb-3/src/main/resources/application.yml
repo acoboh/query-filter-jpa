@@ -11,6 +11,6 @@ spring:
     hibernate:
       ddl-auto: update
       
-ogging:
+logging:
   level:
     io.github.acoboh: trace

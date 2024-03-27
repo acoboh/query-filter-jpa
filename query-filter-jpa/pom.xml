@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>io.github.acoboh</groupId>
 		<artifactId>query-filter-jpa-parent</artifactId>
-		<version>0.2.1</version>
+		<version>0.2.2-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
 
@@ -33,7 +33,7 @@
 		<hibernate.version>5.6.15.Final</hibernate.version>
 
 		<!-- Spring security dependencies -->
-		<spring-security.version>5.7.11</spring-security.version>
+		<spring-security.version>5.7.12</spring-security.version>
 
 		<!-- Javax dependencies -->
 		<javax-servlet-api.version>4.0.1</javax-servlet-api.version>

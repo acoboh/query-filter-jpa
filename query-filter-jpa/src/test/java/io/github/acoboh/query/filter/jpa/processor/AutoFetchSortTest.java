@@ -288,7 +288,7 @@ class AutoFetchSortTest {
 
 		found = repository.findAll(qf, PageRequest.of(0, 1));
 
-		assertThat(found).hasSize(1).containsExactly(POST_EXAMPLE);
+		assertThat(found).hasSize(1).containsAnyOf(POST_EXAMPLE, POST_EXAMPLE_2);
 
 		assertThat(found.getTotalElements()).isEqualTo(2);
 

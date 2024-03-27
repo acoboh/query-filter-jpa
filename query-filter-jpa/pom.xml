@@ -49,7 +49,7 @@
 		<jackson-databind.version>2.13.5</jackson-databind.version>
 
 		<!-- Hypersistance tests -->
-		<hypersistance.version>3.6.0</hypersistance.version>
+		<hypersistance.version>3.6.1</hypersistance.version>
 
 		<!--Logging dependencies -->
 		<logback.version>1.2.13</logback.version>

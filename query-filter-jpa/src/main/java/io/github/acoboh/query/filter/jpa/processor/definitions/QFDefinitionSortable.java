@@ -2,9 +2,8 @@ package io.github.acoboh.query.filter.jpa.processor.definitions;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-
-import org.springframework.data.util.Pair;
 
 import io.github.acoboh.query.filter.jpa.annotations.QFBlockParsing;
 import io.github.acoboh.query.filter.jpa.annotations.QFSortable;
@@ -21,15 +20,21 @@ public class QFDefinitionSortable extends QFAbstractDefinition implements IDefin
 
 	private final boolean autoFetch;
 
+	private final List<String> fullPath;
+
 	QFDefinitionSortable(Field filterField, Class<?> filterClass, Class<?> entityClass, QFBlockParsing blockParsing,
 			QFSortable sortableAnnotation) throws QueryFilterDefinitionException {
 		super(filterField, filterClass, entityClass, blockParsing);
 
-		Pair<Class<?>, List<QFPath>> pairDef = ClassUtils.getPathsFrom(sortableAnnotation.value(), filterClass,
-				entityClass, true);
-		paths = new ArrayList<>(1);
-		paths.add(pairDef.getSecond());
+		paths = new ArrayList<>(1); // Only one path
+
+		FieldClassProcessor fieldClassProcessor = new FieldClassProcessor(entityClass, sortableAnnotation.value(),
+				true);
+		paths.add(fieldClassProcessor.getPaths());
+
 		autoFetch = sortableAnnotation.autoFetch();
+
+		this.fullPath = Arrays.asList(sortableAnnotation.value());
 	}
 
 	@Override
@@ -45,6 +50,11 @@ public class QFDefinitionSortable extends QFAbstractDefinition implements IDefin
 	@Override
 	public boolean isAutoFetch(int index) {
 		return autoFetch;
+	}
+
+	@Override
+	public List<String> getPathField() {
+		return fullPath;
 	}
 
 }

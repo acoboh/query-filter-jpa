@@ -39,4 +39,11 @@ public interface IDefinitionSortable {
 	 */
 	public boolean isSortable();
 
+	/**
+	 * Get full path field
+	 * 
+	 * @return full path field
+	 */
+	public List<String> getPathField();
+
 }

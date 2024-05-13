@@ -171,6 +171,8 @@ class AutoFetchSortTest {
 
 		assertThat(qf.getSortFields()).containsExactly(Pair.of("commentAuthorSort", Direction.ASC));
 
+		assertThat(qf.getSortFieldWithFullPath()).containsExactly(Pair.of("comments.author", Direction.ASC));
+
 		List<PostBlog> found = repository.findAll(qf);
 
 		assertThat(found).hasSize(2).containsExactly(POST_EXAMPLE_2, POST_EXAMPLE);
@@ -192,6 +194,8 @@ class AutoFetchSortTest {
 
 		assertThat(qf.getSortFields()).containsExactly(Pair.of("commentAuthorElement", Direction.DESC));
 
+		assertThat(qf.getSortFieldWithFullPath()).containsExactly(Pair.of("comments.author", Direction.DESC));
+
 		List<PostBlog> found = repository.findAll(qf);
 
 		assertThat(found).hasSize(2).containsExactly(POST_EXAMPLE, POST_EXAMPLE_2);
@@ -212,6 +216,8 @@ class AutoFetchSortTest {
 		assertThat(qf.isSortedBy("commentAuthorSortError")).isTrue();
 
 		assertThat(qf.getSortFields()).containsExactly(Pair.of("commentAuthorSortError", Direction.DESC));
+
+		assertThat(qf.getSortFieldWithFullPath()).containsExactly(Pair.of("comments.author", Direction.DESC));
 
 		InvalidDataAccessResourceUsageException ex = assertThrows(InvalidDataAccessResourceUsageException.class,
 				() -> repository.findAll(qf));
@@ -236,6 +242,8 @@ class AutoFetchSortTest {
 
 		assertThat(qf.getSortFields()).containsExactly(Pair.of("commentAuthorElementError", Direction.DESC));
 
+		assertThat(qf.getSortFieldWithFullPath()).containsExactly(Pair.of("comments.author", Direction.DESC));
+
 		InvalidDataAccessResourceUsageException ex = assertThrows(InvalidDataAccessResourceUsageException.class,
 				() -> repository.findAll(qf));
 
@@ -258,6 +266,8 @@ class AutoFetchSortTest {
 
 		assertThat(qf.getSortFields()).containsExactly(Pair.of("extraDataSort", Direction.ASC));
 
+		assertThat(qf.getSortFieldWithFullPath()).containsExactly(Pair.of("comments.extraData.id", Direction.ASC));
+
 		List<PostBlog> found = repository.findAll(qf);
 
 		assertThat(found).hasSize(2).containsExactly(POST_EXAMPLE, POST_EXAMPLE_2);
@@ -276,6 +286,8 @@ class AutoFetchSortTest {
 		assertThat(qf.isSortedBy("extraDataSort")).isTrue();
 
 		assertThat(qf.getSortFields()).containsExactly(Pair.of("extraDataSort", Direction.ASC));
+
+		assertThat(qf.getSortFieldWithFullPath()).containsExactly(Pair.of("comments.extraData.id", Direction.ASC));
 
 		Page<PostBlog> found = repository.findAll(qf, PageRequest.of(0, 1));
 

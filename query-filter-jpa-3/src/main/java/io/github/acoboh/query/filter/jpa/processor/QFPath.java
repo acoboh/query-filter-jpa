@@ -18,7 +18,7 @@ public class QFPath {
 	 * @author Adrián Cobo
 	 *
 	 */
-	public enum QueryFilterElementDefType {
+	public enum QFElementDefType {
 
 		/**
 		 * Type is property
@@ -44,24 +44,27 @@ public class QFPath {
 	private final Field field;
 	private final String path;
 
-	private QueryFilterElementDefType type;
+	private QFElementDefType type;
 
 	private Class<?> fieldClass;
 
-	private boolean isFinal = true;
+	private boolean isFinal;
 
 	/**
 	 * Default constructor
 	 *
-	 * @param type  element type
-	 * @param field field
-	 * @param path  path
+	 * @param type       element type
+	 * @param field      field
+	 * @param path       path
+	 * @param fieldClass field class
+	 * @param isFinal    if the field is final
 	 */
-	public QFPath(QueryFilterElementDefType type, Field field, String path) {
+	public QFPath(Field field, String path, QFElementDefType type, Class<?> fieldClass, boolean isFinal) {
 		this.type = type;
 		this.field = field;
 		this.path = path;
-		this.fieldClass = field.getType();
+		this.fieldClass = fieldClass;
+		this.isFinal = isFinal;
 	}
 
 	/**
@@ -69,7 +72,7 @@ public class QFPath {
 	 *
 	 * @return type of path
 	 */
-	public QueryFilterElementDefType getType() {
+	public QFElementDefType getType() {
 		return type;
 	}
 
@@ -78,7 +81,7 @@ public class QFPath {
 	 *
 	 * @param type type
 	 */
-	public void setType(QueryFilterElementDefType type) {
+	public void setType(QFElementDefType type) {
 		this.type = type;
 	}
 

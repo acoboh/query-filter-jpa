@@ -45,6 +45,8 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 	private final List<Class<?>> finalClasses;
 	private final List<Boolean> autoFetchPaths;
 
+	private final List<String> fullPath;
+
 	// Extra properties
 	private final boolean subQuery;
 	private final boolean sortable;
@@ -82,17 +84,11 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 		}
 
 		// Initialize paths and classes
-		Pair<List<Class<?>>, List<List<QFPath>>> pairDef = setupPaths(elementAnnotations, filterClass, entityClass);
+		Pair<List<Class<?>>, List<List<QFPath>>> pairDef = setupPaths(elementAnnotations, entityClass);
 		this.paths = pairDef.getSecond();
 		this.finalClasses = pairDef.getFirst();
 
 		this.autoFetchPaths = Stream.of(elementAnnotations).map(QFElement::autoFetch).collect(Collectors.toList());
-
-		LOGGER.debug("Checking sortable on element annotations");
-		if (elementAnnotations.length != 1) {
-			LOGGER.warn(
-					"Multiple element annotations checked for all properties. All must be true to be consider true");
-		}
 
 		LOGGER.debug("Checking sortable on element annotations");
 		if (elementAnnotations.length != 1) {
@@ -114,10 +110,12 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 		} else {
 			dateTimeFormatter = null;
 		}
+
+		this.fullPath = Stream.of(elementAnnotations).map(QFElement::value).collect(Collectors.toList());
 	}
 
 	private static Pair<List<Class<?>>, List<List<QFPath>>> setupPaths(QFElement[] elementAnnotations,
-			Class<?> filterClass, Class<?> entityClass) throws QueryFilterDefinitionException {
+			Class<?> entityClass) throws QueryFilterDefinitionException {
 		LOGGER.debug("Creating paths for all element annotation. Total {}", elementAnnotations.length);
 
 		List<Class<?>> finalClasses = new ArrayList<>();
@@ -125,10 +123,14 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 
 		for (QFElement elem : elementAnnotations) {
 			LOGGER.trace("Creating paths for element annotation {}", elem);
-			Pair<Class<?>, List<QFPath>> pairDef = ClassUtils.getPathsFrom(elem.value(), filterClass, entityClass,
-					true);
-			finalClasses.add(pairDef.getFirst());
-			paths.add(pairDef.getSecond());
+
+			FieldClassProcessor fieldClassProcessor = new FieldClassProcessor(entityClass, elem.value(), true);
+
+			List<QFPath> path = fieldClassProcessor.getPaths();
+			paths.add(path);
+
+			finalClasses.add(fieldClassProcessor.getFinalClass());
+
 		}
 
 		long distinct = paths.stream().map(e -> e.get(e.size() - 1)).map(QFPath::getFieldClass).distinct().count();
@@ -287,6 +289,11 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 	 */
 	public Class<?> getFirstFinalClass() {
 		return finalClasses.get(0);
+	}
+
+	@Override
+	public List<String> getPathField() {
+		return fullPath;
 	}
 
 }

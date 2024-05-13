@@ -76,7 +76,6 @@ public class ClassUtils {
 	 * If the field is enum, the path is modified
 	 *
 	 * @param fieldClass Class to check
-	 * @param list       List of paths
 	 * @return true if primitive, false otherwise
 	 */
 	public static boolean isPrimitiveOrBasic(Class<?> fieldClass) {

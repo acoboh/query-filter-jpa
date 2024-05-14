@@ -102,6 +102,8 @@ class SortTest {
 
 		assertThat(qf.getSortFields()).containsExactly(Pair.of("author", Direction.ASC));
 
+		assertThat(qf.getSortFieldWithFullPath()).containsExactly(Pair.of("author", Direction.ASC));
+
 		var found = repository.findAll(qf);
 
 		assertThat(found).hasSize(2).containsExactly(POST_EXAMPLE, POST_EXAMPLE_2);
@@ -120,6 +122,10 @@ class SortTest {
 		qf.clearSort();
 
 		assertThat(qf.isSorted()).isFalse();
+
+		assertThat(qf.getSortFields()).isEmpty();
+
+		assertThat(qf.getSortFieldWithFullPath()).isEmpty();
 
 		var found = repository.findAll(qf);
 
@@ -141,6 +147,8 @@ class SortTest {
 		assertThat(qf.isSortedBy("author")).isFalse();
 
 		assertThat(qf.getSortFields()).containsExactly(Pair.of("likes", Direction.DESC));
+
+		assertThat(qf.getSortFieldWithFullPath()).containsExactly(Pair.of("likes", Direction.DESC));
 
 		var found = repository.findAll(qf);
 
@@ -175,6 +183,9 @@ class SortTest {
 		assertThat(qf.getSortFields()).containsExactly(Pair.of("likes", Direction.DESC),
 				Pair.of("lastTimestamp", Direction.ASC));
 
+		assertThat(qf.getSortFieldWithFullPath()).containsExactly(Pair.of("likes", Direction.DESC),
+				Pair.of("lastTimestamp", Direction.ASC));
+
 		var found = repository.findAll(qf);
 
 		assertThat(found).hasSize(2).containsExactly(POST_EXAMPLE_2, POST_EXAMPLE);
@@ -182,6 +193,26 @@ class SortTest {
 		qf.clearSort();
 
 		assertThat(qf.isSorted()).isFalse();
+
+		found = repository.findAll(qf);
+
+		assertThat(found).hasSize(2).containsExactlyInAnyOrder(POST_EXAMPLE, POST_EXAMPLE_2);
+
+		qf = queryFilterProcessor.newQueryFilter("sort=-likes,+lastTimestamp,+author", QFParamType.RHS_COLON);
+
+		assertThat(qf.isSorted()).isTrue();
+
+		assertThat(qf.isSortedBy("likes")).isTrue();
+
+		assertThat(qf.isSortedBy("author")).isTrue();
+
+		assertThat(qf.isSortedBy("lastTimestamp")).isTrue();
+
+		assertThat(qf.getSortFields()).containsExactly(Pair.of("likes", Direction.DESC),
+				Pair.of("lastTimestamp", Direction.ASC), Pair.of("author", Direction.ASC));
+
+		assertThat(qf.getSortFieldWithFullPath()).containsExactly(Pair.of("likes", Direction.DESC),
+				Pair.of("lastTimestamp", Direction.ASC), Pair.of("author", Direction.ASC));
 
 		found = repository.findAll(qf);
 
@@ -206,6 +237,8 @@ class SortTest {
 		assertThat(qf.isSortedBy("lastTimestamp")).isFalse();
 
 		assertThat(qf.getSortFields()).containsExactly(Pair.of("likes", Direction.DESC));
+		
+		assertThat(qf.getSortFieldWithFullPath()).containsExactly(Pair.of("likes", Direction.DESC));
 
 		var found = repository.findAll(qf);
 

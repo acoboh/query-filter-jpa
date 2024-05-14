@@ -4,8 +4,6 @@ import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
 
-import org.springframework.data.util.Pair;
-
 import io.github.acoboh.query.filter.jpa.annotations.QFBlockParsing;
 import io.github.acoboh.query.filter.jpa.annotations.QFDiscriminator;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
@@ -27,9 +25,8 @@ public class QFDefinitionDiscriminator extends QFAbstractDefinition {
 		this.discriminatorAnnotation = discriminatorAnnotation;
 
 		if (!discriminatorAnnotation.path().isEmpty()) {
-			Pair<Class<?>, List<QFPath>> pairDef = ClassUtils.getPathsFrom(discriminatorAnnotation.path(), filterClass,
-					entityClass, false);
-			this.paths = pairDef.getSecond();
+			var fieldClassProcessor = new FieldClassProcessor(entityClass, discriminatorAnnotation.path(), true);
+			this.paths = fieldClassProcessor.getPaths();
 		} else {
 			this.paths = Collections.emptyList();
 		}

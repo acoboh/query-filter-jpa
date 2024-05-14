@@ -1,6 +1,6 @@
 package io.github.acoboh.query.filter.jpa.exceptions.definition;
 
-import io.github.acoboh.query.filter.jpa.processor.QFPath.QueryFilterElementDefType;
+import io.github.acoboh.query.filter.jpa.processor.QFPath.QFElementDefType;
 
 /**
  * Exception thrown if the element can not be filter collection type
@@ -12,7 +12,7 @@ public class QFCollectionNotSupported extends QueryFilterDefinitionException {
 
 	private final String filterName;
 	private final Class<?> filterClass;
-	private final QueryFilterElementDefType actualType;
+	private final QFElementDefType actualType;
 
 	/**
 	 * Default constructor
@@ -21,7 +21,7 @@ public class QFCollectionNotSupported extends QueryFilterDefinitionException {
 	 * @param filterClass filter class
 	 * @param type        element type
 	 */
-	public QFCollectionNotSupported(String filterName, Class<?> filterClass, QueryFilterElementDefType type) {
+	public QFCollectionNotSupported(String filterName, Class<?> filterClass, QFElementDefType type) {
 		super(MESSAGE, filterName, filterClass, type);
 		this.filterName = filterName;
 		this.filterClass = filterClass;
@@ -45,7 +45,7 @@ public class QFCollectionNotSupported extends QueryFilterDefinitionException {
 	/**
 	 * @return actual type
 	 */
-	public QueryFilterElementDefType getActualType() {
+	public QFElementDefType getActualType() {
 		return actualType;
 	}
 

@@ -132,7 +132,7 @@ public class QFElementMatch implements QFSpecificationPart {
 			matchClasses.add(finalClass);
 
 			// Check is an enumeration
-			boolean isEnum = lastPath.getType() == QFPath.QueryFilterElementDefType.ENUM;
+			boolean isEnum = lastPath.getType() == QFPath.QFElementDefType.ENUM;
 			isEnumList.add(isEnum);
 
 			List<Object> parsedPathValue = new ArrayList<>(processedValues.size());

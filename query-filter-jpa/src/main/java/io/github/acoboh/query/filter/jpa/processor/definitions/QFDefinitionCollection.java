@@ -4,22 +4,20 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 
-import org.springframework.data.util.Pair;
-
 import io.github.acoboh.query.filter.jpa.annotations.QFBlockParsing;
 import io.github.acoboh.query.filter.jpa.annotations.QFCollectionElement;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFCollectionNotSupported;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 import io.github.acoboh.query.filter.jpa.processor.QFPath;
-import io.github.acoboh.query.filter.jpa.processor.QFPath.QueryFilterElementDefType;
+import io.github.acoboh.query.filter.jpa.processor.QFPath.QFElementDefType;
 
 /**
  * Definition for collection filter field
  */
 public class QFDefinitionCollection extends QFAbstractDefinition {
 
-	private static final List<QueryFilterElementDefType> allowedTypes = Arrays.asList(QueryFilterElementDefType.LIST,
-			QueryFilterElementDefType.SET);
+	private static final List<QFElementDefType> allowedTypes = Arrays.asList(QFElementDefType.LIST,
+			QFElementDefType.SET);
 
 	private final List<QFPath> paths;
 
@@ -27,9 +25,9 @@ public class QFDefinitionCollection extends QFAbstractDefinition {
 			QFCollectionElement collectionElement) throws QueryFilterDefinitionException {
 		super(filterField, filterClass, entityClass, blockParsing);
 
-		Pair<Class<?>, List<QFPath>> pairDef = ClassUtils.getPathsFrom(collectionElement.value(), filterClass,
-				entityClass, false);
-		this.paths = pairDef.getSecond();
+		FieldClassProcessor fieldClassProcessor = new FieldClassProcessor(entityClass, collectionElement.value(), false);
+
+		this.paths = fieldClassProcessor.getPaths();
 
 		if (!collectionElement.name().isEmpty()) {
 			super.filterName = collectionElement.name();

@@ -438,6 +438,28 @@ public class QueryFilter<E> implements Specification<E> {
 	}
 
 	/**
+	 * Get all the sort fields with full path
+	 * <p>
+	 * This is useful to use {@linkplain org.springframework.data.domain.Pageable} with
+	 * {@linkplain org.springframework.data.domain.Sort}
+	 *
+	 * @return list of a pair of sorting fields
+	 */
+	public List<Pair<String, Direction>> getSortFieldWithFullPath() {
+		List<Pair<IDefinitionSortable, Direction>> list = defaultSortEnabled ? defaultSorting : sortDefinitionList;
+
+		List<Pair<String, Direction>> ret = new ArrayList<>();
+		for (var pair : list) {
+			for (var path : pair.getFirst().getPathField()) {
+				ret.add(Pair.of(path, pair.getSecond()));
+			}
+		}
+
+		return ret;
+
+	}
+
+	/**
 	 * Get if the filter is sorted by the selected field
 	 *
 	 * @param field field to check

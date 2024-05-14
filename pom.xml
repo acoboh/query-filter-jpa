@@ -7,7 +7,7 @@
 
 	<groupId>io.github.acoboh</groupId>
 	<artifactId>query-filter-jpa-parent</artifactId>
-	<version>0.2.2-SNAPSHOT</version>
+	<version>0.3.0-SNAPSHOT</version>
 
 	<packaging>pom</packaging>
 
@@ -61,7 +61,7 @@
 		<maven-gpg-plugin.version>3.1.0</maven-gpg-plugin.version>
 
 		<datasource-proxy.version>1.6</datasource-proxy.version>
-		<testcontainers.version>1.19.7</testcontainers.version>
+		<testcontainers.version>1.19.8</testcontainers.version>
 		<junit.version>5.10.2</junit.version>
 		<assertj-core.version>3.25.3</assertj-core.version>
 

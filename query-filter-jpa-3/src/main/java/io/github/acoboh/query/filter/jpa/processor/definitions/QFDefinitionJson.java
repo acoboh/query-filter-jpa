@@ -3,8 +3,6 @@ package io.github.acoboh.query.filter.jpa.processor.definitions;
 import java.lang.reflect.Field;
 import java.util.List;
 
-import org.springframework.data.util.Pair;
-
 import io.github.acoboh.query.filter.jpa.annotations.QFBlockParsing;
 import io.github.acoboh.query.filter.jpa.annotations.QFJsonElement;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFJsonException;
@@ -30,10 +28,9 @@ public class QFDefinitionJson extends QFAbstractDefinition {
 			super.filterName = jsonAnnotation.name();
 		}
 
-		Pair<Class<?>, List<QFPath>> pairDef = ClassUtils.getPathsFrom(jsonAnnotation.value(), filterClass, entityClass,
-				false);
+		var fieldClassProcessor = new FieldClassProcessor(entityClass, jsonAnnotation.value(), false);
 
-		this.paths = pairDef.getSecond();
+		this.paths = fieldClassProcessor.getPaths();
 
 		QFPath last = paths.get(paths.size() - 1);
 		if (!last.getField().isAnnotationPresent(Column.class)) {

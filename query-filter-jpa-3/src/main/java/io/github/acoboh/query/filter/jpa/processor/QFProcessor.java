@@ -109,7 +109,7 @@ public class QFProcessor<F, E> {
 
 		Map<String, QFAbstractDefinition> map = new HashMap<>();
 
-		for (Field field : filterClass.getDeclaredFields()) {
+		for (Field field : getAllFieldsFromClassAndSuperClass(filterClass)) {
 
 			var qfd = QFAbstractDefinition.buildDefinition(field, filterClass, queryFilterClass.value());
 			if (qfd == null) {
@@ -121,6 +121,18 @@ public class QFProcessor<F, E> {
 		}
 
 		return map;
+	}
+
+	private static List<Field> getAllFieldsFromClassAndSuperClass(Class<?> filterClass) {
+		List<Field> fields = new ArrayList<>();
+
+		Collections.addAll(fields, filterClass.getDeclaredFields());
+
+		if (filterClass.getSuperclass() != null && filterClass.getSuperclass() != Object.class) {
+			fields.addAll(getAllFieldsFromClassAndSuperClass(filterClass.getSuperclass()));
+		}
+
+		return fields;
 	}
 
 	private static List<QFElementMatch> defaultMatches(Map<String, QFAbstractDefinition> definitionMap) {

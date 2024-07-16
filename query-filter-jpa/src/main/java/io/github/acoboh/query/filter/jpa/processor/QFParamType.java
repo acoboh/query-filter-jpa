@@ -20,9 +20,7 @@ public enum QFParamType {
 	 * </code>
 	 * 
 	 */
-	RHS_COLON(
-			"[a-zA-Z0-9\\.]+\\=(?:[a-zA-Z]+|\\~|\\^|\\$)\\:[a-zA-Z0-9\\p{L}\\,\\s\\:\\-\\_\\.\\*\\%/\\(\\)\\@\\+\\{\\}\\'\\=]*", // Full regex
-			"([a-zA-Z0-9\\.]+)\\=([a-zA-Z]+)\\:([a-zA-Z0-9\\p{L}\\,\\s\\:\\-\\_\\.\\*\\%/\\(\\)\\@\\+\\{\\}\\'\\=]*)", // Pattern Regex
+	RHS_COLON("(([^&=]+)=([a-zA-Z]+):((?:[^&]|&[^a-zA-Z0-9])*[^&]*))|(sort=([^&]+))", // Pattern Regex
 			"RHS Colon"),
 
 	/**
@@ -35,29 +33,17 @@ public enum QFParamType {
 	 * </code>
 	 * 
 	 */
-	LHS_BRACKETS("[a-zA-Z0-9\\.]+\\[[a-zA-Z]+]\\=[a-zA-Z0-9\\p{L}\\,\\s\\:\\-\\_\\.\\*\\%/\\(\\)\\@\\+\\{\\}\\=\\']*", // Full regex
-			"([a-zA-Z0-9\\.]+)\\[([a-zA-Z]+)]\\=([a-zA-Z0-9\\p{L}\\,\\s\\:\\-\\_\\.\\*\\%/\\(\\)\\@\\+\\{\\}\\=\\']*)", // Pattern Regex
+	LHS_BRACKETS(
+			"(([^&=]+)\\[([a-zA-Z]+)\\]=((?:[^&]|&[^a-zA-Z0-9])*[^&]*))|(sort=([^&]+))", // Pattern Regex
 			"LHS Brackets"); // Name
-
-	private final String fullRegex;
 
 	private final Pattern pattern;
 
 	private final String beatifulName;
 
-	QFParamType(String fullRegex, String regexPattern, String beatifulName) {
-		this.fullRegex = fullRegex;
+	QFParamType(String regexPattern, String beatifulName) {
 		this.pattern = Pattern.compile(regexPattern);
 		this.beatifulName = beatifulName;
-	}
-
-	/**
-	 * Get full regex
-	 *
-	 * @return full regex
-	 */
-	public String getFullRegex() {
-		return fullRegex;
 	}
 
 	/**

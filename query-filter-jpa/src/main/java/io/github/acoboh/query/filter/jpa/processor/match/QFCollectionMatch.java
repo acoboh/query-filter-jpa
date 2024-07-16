@@ -92,7 +92,7 @@ public class QFCollectionMatch implements QFSpecificationPart {
 		}
 
 		predicatesMap.computeIfAbsent(definition.getFilterName(), t -> new ArrayList<>())
-				.add(operation.generateCollectionPredicate(expression, criteriaBuilder, this));
+				.add(operation.generateCollectionPredicate(expression, criteriaBuilder, this, mlmap));
 
 	}
 

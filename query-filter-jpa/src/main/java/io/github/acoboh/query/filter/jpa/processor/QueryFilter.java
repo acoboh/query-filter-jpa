@@ -41,6 +41,7 @@ import io.github.acoboh.query.filter.jpa.exceptions.QFNotValuable;
 import io.github.acoboh.query.filter.jpa.exceptions.QFOperationNotFoundException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFParseException;
 import io.github.acoboh.query.filter.jpa.operations.QFCollectionOperationEnum;
+import io.github.acoboh.query.filter.jpa.operations.QFOperationDiscriminatorEnum;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationJsonEnum;
 import io.github.acoboh.query.filter.jpa.predicate.PredicateProcessorResolutor;
@@ -190,7 +191,7 @@ public class QueryFilter<E> implements Specification<E> {
 
 		} else if (def instanceof QFDefinitionDiscriminator) {
 			qfSpecificationPart = new QFDiscriminatorMatch(Arrays.asList(value.split(",")),
-					(QFDefinitionDiscriminator) def);
+					QFOperationDiscriminatorEnum.fromValue(op), (QFDefinitionDiscriminator) def);
 		} else if (def instanceof QFDefinitionJson) {
 			qfSpecificationPart = new QFJsonElementMatch(value, QFOperationJsonEnum.fromValue(op),
 					(QFDefinitionJson) def);
@@ -253,17 +254,16 @@ public class QueryFilter<E> implements Specification<E> {
 	/**
 	 * Manually adds a new operation on any field
 	 * <p>
-	 * Only works with element and discriminators. Otherwise will throw {@linkplain QFNotValuable} exception
+	 * Only works with element. Otherwise will throw {@linkplain QFNotValuable} exception
 	 *
 	 * @param field     field of filter
 	 * @param operation operation to be applied
 	 * @param values    list of values
-	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException         if the field is not found
-	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFDiscriminatorNotFoundException if the discriminator is not allowed
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException if the field is not found
 	 * @see #addNewField(String, QFOperationEnum, String)
 	 */
 	public void addNewField(String field, QFOperationEnum operation, List<String> values)
-			throws QFFieldNotFoundException, QFDiscriminatorNotFoundException {
+			throws QFFieldNotFoundException {
 
 		Assert.notNull(field, FIELD_NOT_NULL_MESSAGE);
 		Assert.notNull(operation, OPERATION_NOT_NULL_MESSAGE);
@@ -274,16 +274,40 @@ public class QueryFilter<E> implements Specification<E> {
 			throw new QFFieldNotFoundException(field);
 		}
 
-		QFSpecificationPart qfSpecificationPart;
-		if (def instanceof QFDefinitionElement) {
-			qfSpecificationPart = new QFElementMatch(values, operation, (QFDefinitionElement) def);
-		} else if (def instanceof QFDefinitionDiscriminator) {
-			qfSpecificationPart = new QFDiscriminatorMatch(values, (QFDefinitionDiscriminator) def);
-		} else {
+		if (!(def instanceof QFDefinitionElement)) {
 			throw new QFNotValuable(field);
 		}
 
+		QFSpecificationPart qfSpecificationPart = new QFElementMatch(values, operation, (QFDefinitionElement) def);
 		specificationsWarp.addSpecification(qfSpecificationPart);
+
+	}
+
+	/**
+	 * Manually adds a new operation on discriminator fields
+	 * 
+	 * @param field     field of filter
+	 * @param operation operation to be applied
+	 * @param classes   list of values
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException if the field is not found
+	 */
+	public void addNewField(String field, QFOperationDiscriminatorEnum operation, List<String> classes) {
+
+		Assert.notNull(field, FIELD_NOT_NULL_MESSAGE);
+		Assert.notNull(operation, OPERATION_NOT_NULL_MESSAGE);
+		Assert.notNull(classes, VALUES_NOT_NULL_MESSAGE);
+
+		QFAbstractDefinition def = definitionMap.get(field);
+		if (def == null) {
+			throw new QFFieldNotFoundException(field);
+		}
+
+		if (!(def instanceof QFDefinitionDiscriminator)) {
+			throw new QFNotValuable(field);
+		}
+
+		QFDiscriminatorMatch match = new QFDiscriminatorMatch(classes, operation, (QFDefinitionDiscriminator) def);
+		specificationsWarp.addSpecification(match);
 
 	}
 
@@ -345,11 +369,9 @@ public class QueryFilter<E> implements Specification<E> {
 	 * @param field     field of filter
 	 * @param operation operation to be applied
 	 * @param value     value to match. Can be multiple values joined by a ',' (comma)
-	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException         if the field is not found
-	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFDiscriminatorNotFoundException if the discriminator is not allowed
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException if the field is not found
 	 */
-	public void addNewField(String field, QFOperationEnum operation, String value)
-			throws QFFieldNotFoundException, QFDiscriminatorNotFoundException {
+	public void addNewField(String field, QFOperationEnum operation, String value) throws QFFieldNotFoundException {
 
 		Assert.notNull(field, FIELD_NOT_NULL_MESSAGE);
 		Assert.notNull(operation, OPERATION_NOT_NULL_MESSAGE);
@@ -480,13 +502,11 @@ public class QueryFilter<E> implements Specification<E> {
 	 * @param field     Field filter name
 	 * @param operation Operation to apply
 	 * @param value     value of filter
-	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException         Missing field exception
-	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFDiscriminatorNotFoundException if the discriminator value is not allowed
-	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFNotValuable                    if the field is not valuable or type
-	 *                                                                                       compatible
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException Missing field exception
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFNotValuable            if the field is not valuable or type compatible
 	 */
 	public void overrideField(String field, QFOperationEnum operation, String value)
-			throws QFFieldNotFoundException, QFDiscriminatorNotFoundException, QFNotValuable {
+			throws QFFieldNotFoundException, QFNotValuable {
 
 		Assert.notNull(field, FIELD_NOT_NULL_MESSAGE);
 		Assert.notNull(operation, OPERATION_NOT_NULL_MESSAGE);
@@ -497,19 +517,45 @@ public class QueryFilter<E> implements Specification<E> {
 			throw new QFFieldNotFoundException(field);
 		}
 
-		if (def instanceof QFDefinitionElement) {
-			specificationsWarp.deleteSpecificationField(field);
-			QFElementMatch match = new QFElementMatch(Arrays.asList(value.split(",")), operation,
-					(QFDefinitionElement) def);
-			specificationsWarp.addSpecification(match);
-		} else if (def instanceof QFDefinitionDiscriminator) {
-			specificationsWarp.deleteSpecificationField(field);
-			QFDiscriminatorMatch match = new QFDiscriminatorMatch(Arrays.asList(value.split(",")),
-					(QFDefinitionDiscriminator) def);
-			specificationsWarp.addSpecification(match);
-		} else {
+		if (!(def instanceof QFDefinitionElement)) {
 			throw new QFNotValuable(field);
 		}
+
+		specificationsWarp.deleteSpecificationField(field);
+		QFElementMatch match = new QFElementMatch(Arrays.asList(value.split(",")), operation,
+				(QFDefinitionElement) def);
+		specificationsWarp.addSpecification(match);
+
+	}
+
+	/**
+	 * Override any discriminator field. If not present, a new field will be created
+	 * 
+	 * @param field     Field filter name
+	 * @param operation Operation to apply
+	 * @param value     value of filter
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException Missing field exception
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFNotValuable            if the field is not valuable or type compatible
+	 */
+	public void overrideField(String field, QFOperationDiscriminatorEnum operation, String value) {
+
+		Assert.notNull(field, FIELD_NOT_NULL_MESSAGE);
+		Assert.notNull(operation, OPERATION_NOT_NULL_MESSAGE);
+		Assert.notNull(value, "value cannot be null");
+
+		QFAbstractDefinition def = definitionMap.get(field);
+		if (def == null) {
+			throw new QFFieldNotFoundException(field);
+		}
+
+		if (!(def instanceof QFDefinitionDiscriminator)) {
+			throw new QFNotValuable(field);
+		}
+
+		specificationsWarp.deleteSpecificationField(field);
+		QFDiscriminatorMatch match = new QFDiscriminatorMatch(Arrays.asList(value.split(",")), operation,
+				(QFDefinitionDiscriminator) def);
+		specificationsWarp.addSpecification(match);
 
 	}
 
@@ -594,7 +640,6 @@ public class QueryFilter<E> implements Specification<E> {
 		if (qfSpec == null) {
 			return null;
 		} else if (qfSpec instanceof QFElementMatch) {
-
 			return ((QFElementMatch) qfSpec).getOriginalValues();
 		} else if (qfSpec instanceof QFDiscriminatorMatch) {
 			return ((QFDiscriminatorMatch) qfSpec).getValues();

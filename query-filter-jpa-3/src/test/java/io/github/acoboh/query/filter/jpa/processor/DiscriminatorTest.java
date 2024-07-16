@@ -133,6 +133,35 @@ class DiscriminatorTest {
 	}
 
 	@Test
+	@DisplayName("5. Not equal discriminator")
+	@Order(5)
+	void testNotEqual() {
+
+		QueryFilter<Topic> qf = queryFilterProcessor.newQueryFilter("type=ne:POST", QFParamType.RHS_COLON);
+
+		assertThat(qf).isNotNull();
+
+		List<Topic> list = repository.findAll(qf);
+		assertThat(list).hasSize(1).containsExactly(ANN_EXAMPLE);
+
+	}
+
+	@Test
+	@DisplayName("6. Not in discriminator")
+	@Order(6)
+	void testNotIn() {
+
+		QueryFilter<Topic> qf = queryFilterProcessor.newQueryFilter("type=nin:POST,ANNOUNCEMENT",
+				QFParamType.RHS_COLON);
+
+		assertThat(qf).isNotNull();
+
+		List<Topic> list = repository.findAll(qf);
+		assertThat(list).isEmpty();
+
+	}
+
+	@Test
 	@DisplayName("5. Test by clear BBDD")
 	@Order(10)
 	void clearBBDD() {

@@ -7,8 +7,6 @@ import java.util.Set;
 
 import org.springframework.util.MultiValueMap;
 
-import com.google.common.collect.Sets;
-
 import io.github.acoboh.query.filter.jpa.contributor.ArrayFunction;
 import io.github.acoboh.query.filter.jpa.exceptions.QFOperationNotFoundException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFUnsopportedSQLException;
@@ -364,17 +362,6 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 
 		return ret;
 
-	}
-
-	private static final Set<QFOperationEnum> DISCRIMINATOR_OPERATIONS = Sets.newHashSet(EQUAL, NOT_EQUAL, IN, NOT_IN);
-
-	/**
-	 * Get set of discriminator operations
-	 *
-	 * @return discriminator operations
-	 */
-	public static Set<QFOperationEnum> getOperationsOfDiscriminators() {
-		return DISCRIMINATOR_OPERATIONS;
 	}
 
 	/** {@inheritDoc} */

@@ -35,13 +35,6 @@ public @interface QFDefinitionClass {
 	boolean sortable() default true;
 
 	/**
-	 * Sort property key name
-	 *
-	 * @return sort key
-	 */
-	String sortProperty() default "sort";
-
-	/**
 	 * Used to select a default predicate. Empty if no predicated must be used
 	 *
 	 * @return default predicate name

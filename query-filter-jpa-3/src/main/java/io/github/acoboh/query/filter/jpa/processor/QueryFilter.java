@@ -74,7 +74,6 @@ public class QueryFilter<E> implements Specification<E> {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final String REGEX_SORT = "^[a-zA-Z0-9]+=([+-]?[a-zA-Z0-9]+)(,[+-]?[a-zA-Z0-9]+)*+$";
 	private static final Pattern REGEX_PATTERN = Pattern.compile("([+-])([a-zA-Z0-9]+)");
 
 	private final String initialInput;
@@ -132,18 +131,24 @@ public class QueryFilter<E> implements Specification<E> {
 		this.initialInput = input != null ? input : "";
 
 		if (input != null && !input.isEmpty()) {
-			String[] parts = input.split("&");
 
-			for (String part : parts) {
-				if (part.matches(type.getFullRegex())) {
-					parseValuePart(part, type);
-				} else if (part.matches(REGEX_SORT)) {
-					parseSortPart(part);
+			var matcher = type.getPattern().matcher(input);
+
+			while (matcher.find()) {
+				if (LOGGER.isTraceEnabled()) {
+					LOGGER.trace("Processing part {}", matcher.group());
+				}
+
+				if (matcher.group(1) != null) {
+					parseValuePart(matcher.group(2), matcher.group(3), matcher.group(4));
+				} else if (matcher.group(5) != null) {
+					parseSortPart(matcher.group(6));
 				} else {
-					throw new QFParseException(part, input);
+					throw new QFParseException(matcher.group(), input);
 				}
 
 			}
+
 		}
 
 		isConstructor = false;
@@ -167,19 +172,9 @@ public class QueryFilter<E> implements Specification<E> {
 		return predicateClass;
 	}
 
-	private void parseValuePart(String part, QFParamType type)
+	private void parseValuePart(String field, String op, String value)
 			throws QFParseException, QFFieldNotFoundException, QFOperationNotFoundException,
 			QFDiscriminatorNotFoundException, QFBlockException, QFJsonParseException, QFNotValuable {
-
-		Matcher matcher = type.getPattern().matcher(part);
-		if (!(matcher.find() && matcher.groupCount() == 3)) {
-			LOGGER.error("Error parsing part {}. Matcher not found matches", part);
-			throw new QFParseException(part, type.name());
-		}
-
-		String field = matcher.group(1);
-		String op = matcher.group(2);
-		String value = matcher.group(3);
 
 		QFAbstractDefinition def = definitionMap.get(field);
 		if (def == null) {
@@ -211,24 +206,12 @@ public class QueryFilter<E> implements Specification<E> {
 
 	}
 
-	private void parseSortPart(String part)
+	private void parseSortPart(String values)
 			throws QFParseException, QFNotSortableException, QFMultipleSortException, QFFieldNotFoundException {
 
-		if (!part.startsWith(queryFilterClassAnnotation.sortProperty() + "=")) {
-			throw new QFParseException(part, "sort part");
-		}
+		Matcher matcher = REGEX_PATTERN.matcher(values);
 
-		String partPostEqual = part.substring(part.indexOf('='));
-
-		String[] parts = partPostEqual.split(",");
-
-		for (String orderPart : parts) {
-
-			Matcher matcher = REGEX_PATTERN.matcher(orderPart);
-			if (!matcher.find() || matcher.groupCount() != 2) {
-				LOGGER.error("Error parsing sort part {}, Matcher not found matches", orderPart);
-				throw new QFParseException(orderPart, "sort part");
-			}
+		while (matcher.find()) {
 
 			String order = matcher.group(1);
 			String fieldName = matcher.group(2);

@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.util.MultiValueMap;
+
 import io.github.acoboh.query.filter.jpa.exceptions.QFOperationNotFoundException;
 import io.github.acoboh.query.filter.jpa.operations.resolutors.QFPredicateCollectionResolutor;
 import io.github.acoboh.query.filter.jpa.processor.match.QFCollectionMatch;
@@ -24,7 +26,8 @@ public enum QFCollectionOperationEnum implements QFPredicateCollectionResolutor 
 	EQUAL("eq") {
 		@Override
 		public <C extends Collection<?>> Predicate generateCollectionPredicate(Expression<C> path, CriteriaBuilder cb,
-				QFCollectionMatch match) {
+				QFCollectionMatch match, MultiValueMap<String, Object> mlContext) {
+			mlContext.add(match.getDefinition().getFilterName(), match.getValue());
 			return cb.equal(cb.size(path), match.getValue());
 		}
 	},
@@ -34,7 +37,8 @@ public enum QFCollectionOperationEnum implements QFPredicateCollectionResolutor 
 	NOT_EQUAL("ne") {
 		@Override
 		public <C extends Collection<?>> Predicate generateCollectionPredicate(Expression<C> path, CriteriaBuilder cb,
-				QFCollectionMatch match) {
+				QFCollectionMatch match, MultiValueMap<String, Object> mlContext) {
+			mlContext.add(match.getDefinition().getFilterName(), match.getValue());
 			return cb.notEqual(cb.size(path), match.getValue());
 		}
 	},
@@ -44,7 +48,8 @@ public enum QFCollectionOperationEnum implements QFPredicateCollectionResolutor 
 	GREATER_THAN("gt") {
 		@Override
 		public <C extends Collection<?>> Predicate generateCollectionPredicate(Expression<C> path, CriteriaBuilder cb,
-				QFCollectionMatch match) {
+				QFCollectionMatch match, MultiValueMap<String, Object> mlContext) {
+			mlContext.add(match.getDefinition().getFilterName(), match.getValue());
 			return cb.greaterThan(cb.size(path), match.getValue());
 		}
 	},
@@ -54,7 +59,8 @@ public enum QFCollectionOperationEnum implements QFPredicateCollectionResolutor 
 	GREATER_EQUAL_THAN("gte") {
 		@Override
 		public <C extends Collection<?>> Predicate generateCollectionPredicate(Expression<C> path, CriteriaBuilder cb,
-				QFCollectionMatch match) {
+				QFCollectionMatch match, MultiValueMap<String, Object> mlContext) {
+			mlContext.add(match.getDefinition().getFilterName(), match.getValue());
 			return cb.greaterThanOrEqualTo(cb.size(path), match.getValue());
 		}
 	},
@@ -64,7 +70,8 @@ public enum QFCollectionOperationEnum implements QFPredicateCollectionResolutor 
 	LESS_THAN("lt") {
 		@Override
 		public <C extends Collection<?>> Predicate generateCollectionPredicate(Expression<C> path, CriteriaBuilder cb,
-				QFCollectionMatch match) {
+				QFCollectionMatch match, MultiValueMap<String, Object> mlContext) {
+			mlContext.add(match.getDefinition().getFilterName(), match.getValue());
 			return cb.lessThan(cb.size(path), match.getValue());
 		}
 	},
@@ -74,7 +81,8 @@ public enum QFCollectionOperationEnum implements QFPredicateCollectionResolutor 
 	LESS_EQUAL_THAN("lte") {
 		@Override
 		public <C extends Collection<?>> Predicate generateCollectionPredicate(Expression<C> path, CriteriaBuilder cb,
-				QFCollectionMatch match) {
+				QFCollectionMatch match, MultiValueMap<String, Object> mlContext) {
+			mlContext.add(match.getDefinition().getFilterName(), match.getValue());
 			return cb.lessThanOrEqualTo(cb.size(path), match.getValue());
 		}
 	};

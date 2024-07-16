@@ -27,6 +27,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 
 import io.github.acoboh.query.filter.jpa.annotations.QFDiscriminator;
 import io.github.acoboh.query.filter.jpa.annotations.QFParam;
+import io.github.acoboh.query.filter.jpa.operations.QFOperationDiscriminatorEnum;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationJsonEnum;
 import io.github.acoboh.query.filter.jpa.processor.QFProcessor;
@@ -194,11 +195,9 @@ class OpenApiCustomiserImpl implements OpenApiCustomizer {
 			}
 
 			if (def instanceof QFDefinitionDiscriminator qdefDiscriminator) {
-
-				Set<QFOperationEnum> qfOperations = QFOperationEnum.getOperationsOfDiscriminators();
 				builder.append(" Operations: [<i>");
-				String operationsAvailable = qfOperations.stream().map(QFOperationEnum::getValue)
-						.collect(Collectors.joining(","));
+				String operationsAvailable = Stream.of(QFOperationDiscriminatorEnum.values())
+						.map(QFOperationDiscriminatorEnum::getOperation).collect(Collectors.joining(","));
 				builder.append(operationsAvailable).append("</i>]");
 
 				builder.append(" Possible Values: [");

@@ -33,7 +33,6 @@ import org.springframework.util.Assert;
 
 import io.github.acoboh.query.filter.jpa.annotations.EnableQueryFilter;
 import io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass;
-import io.github.acoboh.query.filter.jpa.exceptions.QueryFilterException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 import io.github.acoboh.query.filter.jpa.processor.QFProcessor;
 
@@ -169,7 +168,7 @@ public class QFBeanFactoryPostProcessor implements ApplicationContextAware, Bean
 				QFProcessor<?, ?> qfp = registerQueryFilterClass(cl, beanFactory);
 				mapProcessors.put(cl, qfp);
 			} catch (QueryFilterDefinitionException e) {
-				throw new BeanCreationException("Error creating bean query filter", e);
+				throw new BeanCreationException("Error creating bean query filter for class " + cl.getName(), e);
 			}
 		}
 
@@ -200,8 +199,9 @@ public class QFBeanFactoryPostProcessor implements ApplicationContextAware, Bean
 			QFProcessor<?, ?> ret = new QFProcessor<>(cl, annotationClass.value(), applicationContext);
 			bf.registerSingleton(beanName, ret);
 			return ret;
-		} catch (QueryFilterException e) {
-			LOGGER.error("Error registering bean query filter of class {}", cl);
+		} catch (QueryFilterDefinitionException e) {
+			LOGGER.error("Error registering bean query filter of class {} for entity class {}", cl,
+					annotationClass.value());
 			throw e;
 		}
 

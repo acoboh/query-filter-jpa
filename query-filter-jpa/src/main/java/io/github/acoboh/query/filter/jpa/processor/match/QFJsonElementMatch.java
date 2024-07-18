@@ -166,8 +166,8 @@ public class QFJsonElementMatch implements QFSpecificationPart {
 
 		predicatesMap.computeIfAbsent(definition.getFilterName(), t -> new ArrayList<>())
 				.add(operation.generateJsonPredicate(
-						QueryUtils.getObject(root, definition.getPaths(), pathsMap, true, false), criteriaBuilder,
-						this));
+						QueryUtils.getObject(root, definition.getPaths(), pathsMap, true, false, criteriaBuilder),
+						criteriaBuilder, this));
 
 	}
 

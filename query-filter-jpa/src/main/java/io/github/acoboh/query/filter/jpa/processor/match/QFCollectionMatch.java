@@ -81,7 +81,7 @@ public class QFCollectionMatch implements QFSpecificationPart {
 			Map<String, List<Predicate>> predicatesMap, Map<String, Path<?>> pathsMap,
 			MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver, Class<E> entityClass) {
 
-		Path<?> expressionPath = QueryUtils.getObject(root, definition.getPaths(), pathsMap, true, false);
+		Path<?> expressionPath = QueryUtils.getObject(root, definition.getPaths(), pathsMap, true, false, criteriaBuilder);
 
 		Expression<? extends java.util.Collection<?>> expression;
 

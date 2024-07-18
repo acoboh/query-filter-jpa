@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.From;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
@@ -37,10 +38,11 @@ public class QueryUtils {
 	 * @param pathsMap     map of older paths
 	 * @param isCollection if the final join is part of a collection or object
 	 * @param tryFetch     try to use fetch instead of join
+	 * @param cb           criteria builder
 	 * @return return the final path of the object
 	 */
 	public static Path<?> getObject(Root<?> root, List<QFPath> paths, Map<String, Path<?>> pathsMap,
-			boolean isCollection, boolean tryFetch) {
+			boolean isCollection, boolean tryFetch, CriteriaBuilder cb) {
 		String fullPath = getFullPath(paths, isCollection);
 
 		Path<?> ret = pathsMap.get(fullPath);
@@ -49,9 +51,16 @@ public class QueryUtils {
 		}
 
 		if (paths.size() == 1 && paths.get(0).isFinal()) {
+
+			QFPath firstPath = paths.get(0);
+
+			if (firstPath.getTreatClass() != null) {
+				root = getTreatCast(root, firstPath.getTreatClass(), cb);
+			}
+
 			ret = root.get(paths.get(0).getPath());
 		} else {
-			ret = getJoinObject(root, paths, pathsMap, tryFetch);
+			ret = getJoinObject(root, paths, pathsMap, tryFetch, cb);
 		}
 
 		pathsMap.put(fullPath, ret);
@@ -60,7 +69,7 @@ public class QueryUtils {
 	}
 
 	private static Path<?> getJoinObject(Root<?> root, List<QFPath> paths, Map<String, Path<?>> pathsMap,
-			boolean tryFetch) {
+			boolean tryFetch, CriteriaBuilder cb) {
 
 		From<?, ?> join = root;
 
@@ -69,13 +78,19 @@ public class QueryUtils {
 
 		for (int i = 0; i < paths.size(); i++) {
 
-			base.append(prefix).append(paths.get(i).getPath());
+			base.append(prefix).append(paths.get(i).getPathName());
 			prefix = ".";
 
 			Path<?> pathRet = pathsMap.get(base.toString());
 			if (pathRet != null) {
 				join = (From<?, ?>) pathRet;
 				continue;
+			}
+
+			Class<?> asTreat = paths.get(i).getTreatClass();
+
+			if (asTreat != null && !Void.class.equals(asTreat)) {
+				join = getTreatCast(join, asTreat, cb);
 			}
 
 			if (i + 1 == paths.size() && paths.get(i).isFinal()) { // if last element and final
@@ -133,7 +148,7 @@ public class QueryUtils {
 			for (List<QFPath> paths : pair.getFirst().getPaths()) {
 				boolean autoFetch = pair.getFirst().isAutoFetch(index++);
 				LOGGER.trace("Autofetch is enabled on sort");
-				Path<?> path = getObject(root, paths, pathsMap, false, autoFetch);
+				Path<?> path = getObject(root, paths, pathsMap, false, autoFetch, cb);
 				Order order = pair.getSecond() == Direction.ASC ? cb.asc(path) : cb.desc(path);
 				orderList.add(order);
 			}
@@ -144,7 +159,32 @@ public class QueryUtils {
 	}
 
 	private static String getFullPath(List<QFPath> paths, boolean isCollection) {
-		String path = paths.stream().map(QFPath::getPath).collect(Collectors.joining("."));
+		String path = paths.stream().map(QFPath::getPathName).collect(Collectors.joining("."));
 		return isCollection ? path + ".*" : path;
 	}
+
+	@SuppressWarnings("unchecked")
+	private static <X, T extends X> Root<T> getTreatCast(Root<?> root, Class<?> type, CriteriaBuilder cb) {
+		Root<X> castedRoot = (Root<X>) root;
+		Class<T> castedType = (Class<T>) type;
+		return cb.treat(castedRoot, castedType);
+	}
+
+	@SuppressWarnings("unchecked")
+	private static <X, T, V extends T> From<?, ?> getTreatCast(From<?, ?> join, Class<?> type, CriteriaBuilder cb) {
+
+		if (join instanceof Root) {
+			Root<T> castedRoot = (Root<T>) join;
+			Class<V> castedType = (Class<V>) type;
+			return cb.treat(castedRoot, castedType);
+		} else if (join instanceof Join) {
+			Join<X, T> castedJoin = (Join<X, T>) join;
+			Class<V> castedType = (Class<V>) type;
+			return cb.treat(castedJoin, castedType);
+		} else {
+			throw new IllegalArgumentException("Join type not supported");
+		}
+
+	}
+
 }

@@ -2,10 +2,13 @@ package io.github.acoboh.query.filter.jpa.processor.definitions;
 
 import java.lang.reflect.Field;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.github.acoboh.query.filter.jpa.annotations.QFBlockParsing;
 import io.github.acoboh.query.filter.jpa.annotations.QFDiscriminator;
+import io.github.acoboh.query.filter.jpa.exceptions.definition.QFDiscriminatorException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 import io.github.acoboh.query.filter.jpa.processor.QFPath;
 
@@ -16,6 +19,9 @@ public class QFDefinitionDiscriminator extends QFAbstractDefinition {
 
 	private final QFDiscriminator discriminatorAnnotation;
 	private final List<QFPath> paths;
+	private final Class<?> finalClass;
+
+	private Map<String, Class<?>> discriminatorMap = new HashMap<>();
 
 	QFDefinitionDiscriminator(Field filterField, Class<?> filterClass, Class<?> entityClass,
 			QFBlockParsing blockParsing, QFDiscriminator discriminatorAnnotation)
@@ -25,17 +31,32 @@ public class QFDefinitionDiscriminator extends QFAbstractDefinition {
 		this.discriminatorAnnotation = discriminatorAnnotation;
 
 		if (!discriminatorAnnotation.path().isEmpty()) {
-
+			// Process path
 			FieldClassProcessor fieldClassProcessor = new FieldClassProcessor(entityClass,
-					discriminatorAnnotation.path(), true);
+					discriminatorAnnotation.path(), false, null, null); // TODO Fix
 			this.paths = fieldClassProcessor.getPaths();
+			this.finalClass = fieldClassProcessor.getFinalClass();
 
 		} else {
 			this.paths = Collections.emptyList();
+			this.finalClass = entityClass;
 		}
 
 		if (!discriminatorAnnotation.name().isEmpty()) {
 			super.filterName = discriminatorAnnotation.name();
+		}
+
+		for (QFDiscriminator.Value value : discriminatorAnnotation.value()) {
+			if (discriminatorMap.containsKey(value.name())) {
+				throw new QFDiscriminatorException("Duplicate discriminator value name {}", value.name());
+			}
+
+			if (!finalClass.isAssignableFrom(value.type())) {
+				throw new QFDiscriminatorException("Entity class '{}' is not assignable from value class '{}'",
+						finalClass, value.type());
+			}
+
+			discriminatorMap.put(value.name(), value.type());
 		}
 
 	}
@@ -56,6 +77,24 @@ public class QFDefinitionDiscriminator extends QFAbstractDefinition {
 	 */
 	public List<QFPath> getPaths() {
 		return paths;
+	}
+
+	/**
+	 * Get final entity class
+	 * 
+	 * @return final entity class
+	 */
+	public Class<?> getFinalClass() {
+		return finalClass;
+	}
+
+	/**
+	 * Get the discriminator map
+	 * 
+	 * @return discriminator map
+	 */
+	public Map<String, Class<?>> getDiscriminatorMap() {
+		return discriminatorMap;
 	}
 
 }

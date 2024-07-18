@@ -3,13 +3,11 @@ package io.github.acoboh.query.filter.jpa.processor.match;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.MultiValueMap;
 
-import io.github.acoboh.query.filter.jpa.annotations.QFDiscriminator;
 import io.github.acoboh.query.filter.jpa.exceptions.QFDiscriminatorNotFoundException;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationDiscriminatorEnum;
 import io.github.acoboh.query.filter.jpa.processor.QFPath;
@@ -64,10 +62,9 @@ public class QFDiscriminatorMatch implements QFSpecificationPart {
 
 		for (String parsedValue : values) {
 
-			Class<?> foundClass = Stream.of(definition.getDiscriminatorAnnotation().value())
-					.filter(e -> e.name().equals(parsedValue)).map(QFDiscriminator.Value::type).findFirst()
-					.orElse(null);
+			Class<?> foundClass = definition.getDiscriminatorMap().get(parsedValue);
 			if (foundClass == null) {
+				LOGGER.error("The value {} is not a valid discriminator for the field", parsedValue);
 				throw new QFDiscriminatorNotFoundException(parsedValue, definition.getFilterName());
 			}
 			matchingClasses.add(foundClass);
@@ -153,7 +150,7 @@ public class QFDiscriminatorMatch implements QFSpecificationPart {
 		if (isRoot) {
 			expression = root.type();
 		} else {
-			expression = QueryUtils.getObject(root, path, pathsMap, false, false).type();
+			expression = QueryUtils.getObject(root, path, pathsMap, false, false, criteriaBuilder).type();
 		}
 
 		predicatesMap.computeIfAbsent(definition.getFilterName(), t -> new ArrayList<>()).add(operation

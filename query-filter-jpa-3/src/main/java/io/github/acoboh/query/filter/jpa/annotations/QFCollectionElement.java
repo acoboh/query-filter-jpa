@@ -32,4 +32,46 @@ public @interface QFCollectionElement {
 	 * @return name
 	 */
 	String name() default "";
+
+	/**
+	 * Select the class of the element if it is only available on a nested Discriminator class.
+	 * <p>
+	 * Example: <blockquote>
+	 * 
+	 * <pre>
+	 * &#64;Entity
+	 * &#64;Inheritance(strategy = InheritanceType.JOINED)
+	 * public class ParentEntity {
+	 *     // Base data
+	 * }
+	 * 
+	 * &#64;Entity
+	 * public class SubclassAEntity extends ParentEntity {
+	 *     // Subclass A data
+	 *     &#64;OneToMany
+	 *     private List links;
+	 * }
+	 * 
+	 * &#64;QFDefinitionClass(ParentEntity.class)
+	 * public class FilterParentEntityDef {
+	 *    &#64;QFCollectionElement(value = "links", subClassMapping = SubclassAEntity.class)
+	 *    private int links;
+	 * }
+	 * }
+	 * </pre>
+	 * 
+	 * </blockquote>
+	 * 
+	 * @return subClassMapping
+	 */
+	Class<?> subClassMapping() default Void.class;
+
+	/**
+	 * Select the path of the subclass level if it is only available on a nested Discriminator class.
+	 * <p>
+	 * Need to be used with {@linkplain #subClassMapping()}
+	 * 
+	 * @return path to apply subclass scanning
+	 */
+	String subClassMappingPath() default "";
 }

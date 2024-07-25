@@ -28,7 +28,6 @@ public class QFDefinitionSortable extends QFAbstractDefinition implements IDefin
 
 		paths = new ArrayList<>(1); // Only one path
 
-		// TODO Fix
 		FieldClassProcessor fieldClassProcessor = new FieldClassProcessor(entityClass, sortableAnnotation.value(), true,
 				null, null);
 		paths.add(fieldClassProcessor.getPaths());

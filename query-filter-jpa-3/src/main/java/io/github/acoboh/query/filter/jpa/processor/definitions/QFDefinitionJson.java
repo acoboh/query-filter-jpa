@@ -28,7 +28,6 @@ public class QFDefinitionJson extends QFAbstractDefinition {
 			super.filterName = jsonAnnotation.name();
 		}
 
-		// TODO Fix
 		var fieldClassProcessor = new FieldClassProcessor(entityClass, jsonAnnotation.value(), false, null, null);
 
 		this.paths = fieldClassProcessor.getPaths();

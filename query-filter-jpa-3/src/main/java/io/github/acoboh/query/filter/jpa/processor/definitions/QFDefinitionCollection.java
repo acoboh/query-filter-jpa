@@ -25,7 +25,8 @@ public class QFDefinitionCollection extends QFAbstractDefinition {
 			QFCollectionElement collectionElement) throws QueryFilterDefinitionException {
 		super(filterField, filterClass, entityClass, blockParsing);
 
-		var fieldClassProcessor = new FieldClassProcessor(entityClass, collectionElement.value(), false);
+		var fieldClassProcessor = new FieldClassProcessor(entityClass, collectionElement.value(), false,
+				collectionElement.subClassMapping(), collectionElement.subClassMappingPath());
 
 		this.paths = fieldClassProcessor.getPaths();
 

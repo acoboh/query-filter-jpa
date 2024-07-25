@@ -465,7 +465,7 @@ public class QFElementMatch implements QFSpecificationPart {
 		List<Expression<Boolean>> expressions = surrondingPredicate.getExpressions();
 
 		for (List<QFPath> path : paths) {
-			expressions.add(operation.generatePredicate(QueryUtils.getObject(root, path, pathsMap, false, false),
+			expressions.add(operation.generatePredicate(QueryUtils.getObject(root, path, pathsMap, false, false, criteriaBuilder),
 					criteriaBuilder, this, index, mlmap));
 			index++;
 		}
@@ -493,7 +493,7 @@ public class QFElementMatch implements QFSpecificationPart {
 
 			subquery.select(newRoot.as(entityClass));
 
-			Path<?> pathFinal = QueryUtils.getObject(newRoot, path, subSelecthMap, false, false);
+			Path<?> pathFinal = QueryUtils.getObject(newRoot, path, subSelecthMap, false, false, criteriaBuilder);
 
 			QFOperationEnum op = operation;
 			if (op == QFOperationEnum.NOT_EQUAL) {

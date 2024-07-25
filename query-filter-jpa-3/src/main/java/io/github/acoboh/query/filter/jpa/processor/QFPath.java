@@ -50,6 +50,8 @@ public class QFPath {
 
 	private boolean isFinal;
 
+	private final Class<?> treatClass;
+
 	/**
 	 * Default constructor
 	 *
@@ -58,13 +60,16 @@ public class QFPath {
 	 * @param path       path
 	 * @param fieldClass field class
 	 * @param isFinal    if the field is final
+	 * @param treatClass treat class
 	 */
-	public QFPath(Field field, String path, QFElementDefType type, Class<?> fieldClass, boolean isFinal) {
+	public QFPath(Field field, String path, QFElementDefType type, Class<?> fieldClass, boolean isFinal,
+			Class<?> treatClass) {
 		this.type = type;
 		this.field = field;
 		this.path = path;
 		this.fieldClass = fieldClass;
 		this.isFinal = isFinal;
+		this.treatClass = treatClass;
 	}
 
 	/**
@@ -139,4 +144,25 @@ public class QFPath {
 		return path;
 	}
 
+	/**
+	 * Get path name for map with treat class
+	 * 
+	 * @return path name
+	 */
+	public String getPathName() {
+		if (treatClass != null && !Void.class.equals(treatClass)) {
+			return path + "-asTreat-" + treatClass.getSimpleName();
+		}
+
+		return path;
+	}
+
+	/**
+	 * Get treat class
+	 * 
+	 * @return null if not set
+	 */
+	public Class<?> getTreatClass() {
+		return treatClass;
+	}
 }

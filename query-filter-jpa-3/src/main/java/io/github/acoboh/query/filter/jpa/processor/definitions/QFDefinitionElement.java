@@ -122,7 +122,8 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 
 		for (QFElement elem : elementAnnotations) {
 			LOGGER.trace("Creating paths for element annotation {}", elem);
-			var fieldClassProcessor = new FieldClassProcessor(entityClass, elem.value(), true);
+			var fieldClassProcessor = new FieldClassProcessor(entityClass, elem.value(), true, elem.subClassMapping(),
+					elem.subClassMappingPath());
 
 			List<QFPath> path = fieldClassProcessor.getPaths();
 			paths.add(path);

@@ -212,7 +212,9 @@ public class QueryFilter<E> implements Specification<E> {
 
 		Matcher matcher = REGEX_PATTERN.matcher(values);
 
+		boolean match = false;
 		while (matcher.find()) {
+			match = true;
 
 			String order = matcher.group(1);
 			String fieldName = matcher.group(2);
@@ -222,7 +224,7 @@ public class QueryFilter<E> implements Specification<E> {
 				throw new QFFieldNotFoundException(fieldName);
 			}
 
-			if (!(def instanceof IDefinitionSortable)) {
+			if (!(def instanceof IDefinitionSortable idef) || !idef.isSortable()) {
 				throw new QFNotSortableException(fieldName);
 			}
 
@@ -231,16 +233,20 @@ public class QueryFilter<E> implements Specification<E> {
 			}
 
 			Direction dir;
-			if (order.equals("+")) {
-				dir = Direction.ASC;
-			} else {
+			if (order.equals("-")) {
 				dir = Direction.DESC;
+			} else {
+				dir = Direction.ASC;
 			}
 
 			Pair<IDefinitionSortable, Direction> pair = Pair.of((IDefinitionSortable) def, dir);
 			this.sortDefinitionList.add(pair);
 			this.defaultSortEnabled = false;
 
+		}
+
+		if (!match) {
+			throw new QFParseException(values, initialInput);
 		}
 
 	}
@@ -400,7 +406,7 @@ public class QueryFilter<E> implements Specification<E> {
 			throw new QFFieldNotFoundException(field);
 		}
 
-		if (!(def instanceof IDefinitionSortable)) {
+		if (!(def instanceof IDefinitionSortable idef) || !idef.isSortable()) {
 			throw new QFNotSortableException(field);
 		}
 

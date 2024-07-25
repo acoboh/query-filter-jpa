@@ -49,7 +49,7 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 
 	// Extra properties
 	private final boolean subQuery;
-	private final boolean sortable;
+	private boolean sortable;
 	private final boolean caseSensitive;
 	private final boolean arrayTyped;
 	private final boolean spelExpression;
@@ -104,6 +104,13 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 		order = Stream.of(elementAnnotations).mapToInt(QFElement::order).max().getAsInt();
 		subQuery = Stream.of(elementAnnotations).allMatch(QFElement::subquery);
 
+		// Check discriminator path mapping
+		if (sortable && Stream.of(elementAnnotations)
+				.anyMatch(e -> !e.subClassMapping().equals(Void.class) && !e.subClassMappingPath().isEmpty())) {
+			sortable = false;
+			LOGGER.warn("Sortable for filter '{}' of class '{}' has been disabled", filterField, filterClass);
+		}
+
 		if (dateAnnotation != null) {
 			// Try type
 			dateTimeFormatter = checkDateTimeFormatter();
@@ -124,7 +131,8 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 		for (QFElement elem : elementAnnotations) {
 			LOGGER.trace("Creating paths for element annotation {}", elem);
 
-			FieldClassProcessor fieldClassProcessor = new FieldClassProcessor(entityClass, elem.value(), true);
+			FieldClassProcessor fieldClassProcessor = new FieldClassProcessor(entityClass, elem.value(), true,
+					elem.subClassMapping(), elem.subClassMappingPath());
 
 			List<QFPath> path = fieldClassProcessor.getPaths();
 			paths.add(path);

@@ -146,4 +146,43 @@ public @interface QFElement {
 	 */
 	boolean autoFetch() default true;
 
+	/**
+	 * Select the class of the element if it is only available on a nested Discriminator class.
+	 * <p>
+	 * Example: <blockquote>
+	 * 
+	 * <pre>
+	 * {@code @Entity }
+	 * {@code @Inheritance(strategy = InheritanceType.JOINED)}
+	 * public class ParentEntity {
+	 *     // Base data
+	 * }
+	 * 
+	 * {@code @Entity }
+	 * public class SubclassAEntity extends ParentEntity {
+	 *     // Subclass A data
+	 *     private String subClassField;
+	 * }
+	 * 
+	 * {@code @QFDefinitionClass(ParentEntity.class)}
+	 * public class FilterParentEntityDef {
+	 *    {@code @QFElement(value = "subClassField", subClassMapping = SubclassAEntity.class)}
+	 *    private String subClassField;
+	 * {@code}}
+	 * </pre>
+	 * 
+	 * </blockquote>
+	 * 
+	 * @return subClassMapping
+	 */
+	Class<?> subClassMapping() default Void.class;
+
+	/**
+	 * Select the path of the subclass level if it is only available on a nested Discriminator class.
+	 * <p>
+	 * Need to be used with {@linkplain #subClassMapping()}
+	 * 
+	 * @return path to apply subclass scanning
+	 */
+	String subClassMappingPath() default "";
 }

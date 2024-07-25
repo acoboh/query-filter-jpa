@@ -456,8 +456,9 @@ public class QFElementMatch implements QFSpecificationPart {
 		List<Predicate> predicates = new ArrayList<>();
 
 		for (List<QFPath> path : paths) {
-			predicates.add(operation.generatePredicate(QueryUtils.getObject(root, path, pathsMap, false, false),
-					criteriaBuilder, this, index, mlmap));
+			predicates.add(operation.generatePredicate(
+					QueryUtils.getObject(root, path, pathsMap, false, false, criteriaBuilder), criteriaBuilder, this,
+					index, mlmap));
 			index++;
 		}
 
@@ -485,7 +486,7 @@ public class QFElementMatch implements QFSpecificationPart {
 
 			subquery.select(newRoot);
 
-			Path<?> pathFinal = QueryUtils.getObject(newRoot, path, subSelecthMap, false, false);
+			Path<?> pathFinal = QueryUtils.getObject(newRoot, path, subSelecthMap, false, false, criteriaBuilder);
 
 			QFOperationEnum op = operation;
 			if (op == QFOperationEnum.NOT_EQUAL) {

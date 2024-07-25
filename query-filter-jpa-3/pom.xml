@@ -26,38 +26,27 @@
 		<maven.compiler.testTarget>${jdk-test.version}</maven.compiler.testTarget>
 
 		<!-- Spring dependencies -->
-		<spring.version>6.0.18</spring.version>
-		<spring-boot.version>3.1.10</spring-boot.version>
-
-		<!-- Hibernate dependencies -->
-		<hibernate.version>6.2.22.Final</hibernate.version>
-
-		<!-- Spring security dependencies -->
-		<spring-security.version>6.2.3</spring-security.version>
-
-		<!-- Jakarta dependencies -->
-		<jakarta-servlet-api.version>6.0.0</jakarta-servlet-api.version>
-		<jakarta-validation.version>3.0.2</jakarta-validation.version>
+		<spring-boot.version>3.3.2</spring-boot.version>
 
 		<!-- Reflections -->
 		<reflections.version>0.10.2</reflections.version>
 
-		<!-- Hikari CP -->
-		<hikari-cp.version>5.0.1</hikari-cp.version>
-
-		<!-- Jackson -->
-		<jackson-databind.version>2.15.4</jackson-databind.version>
-
 		<!-- Hypersistance tests -->
-		<hypersistance.version>3.6.1</hypersistance.version>
-
-		<!--Logging dependencies -->
-		<logback.version>1.4.14</logback.version>
+		<hypersistance.version>3.8.1</hypersistance.version>
 
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
+
+			<!-- Spring Boot BOM -->
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>${spring-boot.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 
 		</dependencies>
 	</dependencyManagement>
@@ -67,34 +56,29 @@
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-jpa</artifactId>
-			<version>${spring-boot.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
-			<groupId>org.hibernate</groupId>
+			<groupId>org.hibernate.orm</groupId>
 			<artifactId>hibernate-core</artifactId>
-			<version>${hibernate.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>jakarta.servlet</groupId>
 			<artifactId>jakarta.servlet-api</artifactId>
-			<version>${jakarta-servlet-api.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>jakarta.validation</groupId>
 			<artifactId>jakarta.validation-api</artifactId>
-			<version>${jakarta-validation.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-beans</artifactId>
-			<version>${spring.version}</version>
 			<scope>provided</scope>
 			<optional>true</optional>
 		</dependency>
@@ -102,7 +86,6 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-			<version>${spring.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -111,7 +94,6 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
-			<version>${spring.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -119,7 +101,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-autoconfigure</artifactId>
-			<version>${spring-boot.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -127,7 +108,6 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
-			<version>${spring-security.version}</version>
 			<scope>provided</scope>
 			<optional>true</optional>
 		</dependency>
@@ -135,7 +115,6 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
-			<version>${spring-security.version}</version>
 			<scope>provided</scope>
 			<optional>true</optional>
 		</dependency>
@@ -144,7 +123,6 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>${jackson-databind.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -163,7 +141,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-configuration-processor</artifactId>
-			<version>${spring-boot.version}</version>
 			<optional>true</optional>
 		</dependency>
 
@@ -172,7 +149,6 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
-			<version>${spring.version}</version>
 			<type>jar</type>
 			<scope>test</scope>
 		</dependency>
@@ -180,7 +156,6 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
-			<version>${spring-security.version}</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -230,7 +205,6 @@
 		<dependency>
 			<groupId>com.zaxxer</groupId>
 			<artifactId>HikariCP</artifactId>
-			<version>${hikari-cp.version}</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -252,7 +226,6 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>${logback.version}</version>
 			<scope>provided</scope>
 			<optional>true</optional>
 		</dependency>

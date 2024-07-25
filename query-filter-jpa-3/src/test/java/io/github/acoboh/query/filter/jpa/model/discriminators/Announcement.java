@@ -5,7 +5,6 @@ import java.util.Objects;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
 
 /**
  * Announcement entity class
@@ -14,7 +13,6 @@ import jakarta.persistence.Table;
  *
  */
 @Entity(name = "Announcement")
-@Table(name = "announcement")
 @DiscriminatorValue("2")
 public class Announcement extends Topic {
 

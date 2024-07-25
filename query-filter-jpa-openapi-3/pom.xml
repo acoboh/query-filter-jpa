@@ -26,10 +26,10 @@
 		<maven.compiler.testTarget>${jdk-test.version}</maven.compiler.testTarget>
 
 		<!-- Spring dependencies -->
-		<spring.version>6.0.18</spring.version>
+		<spring.version>6.1.11</spring.version>
 
 		<!--OpenAPI dependencies -->
-		<openapi.version>2.2.0</openapi.version>
+		<openapi.version>2.6.0</openapi.version>
 
 	</properties>
 

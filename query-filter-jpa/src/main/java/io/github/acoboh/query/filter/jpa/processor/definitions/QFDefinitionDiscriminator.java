@@ -33,7 +33,7 @@ public class QFDefinitionDiscriminator extends QFAbstractDefinition {
 		if (!discriminatorAnnotation.path().isEmpty()) {
 			// Process path
 			FieldClassProcessor fieldClassProcessor = new FieldClassProcessor(entityClass,
-					discriminatorAnnotation.path(), false, null, null); // TODO Fix
+					discriminatorAnnotation.path(), false, null, null);
 			this.paths = fieldClassProcessor.getPaths();
 			this.finalClass = fieldClassProcessor.getFinalClass();
 

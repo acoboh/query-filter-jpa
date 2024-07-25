@@ -28,9 +28,6 @@
 		<!-- Spring dependencies -->
 		<spring-boot.version>3.3.2</spring-boot.version>
 
-		<!-- Hibernate dependencies -->
-		<hibernate.version>6.5.2.Final</hibernate.version>
-
 		<!-- Reflections -->
 		<reflections.version>0.10.2</reflections.version>
 
@@ -63,9 +60,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.hibernate</groupId>
+			<groupId>org.hibernate.orm</groupId>
 			<artifactId>hibernate-core</artifactId>
-			<version>${hibernate.version}</version>
 			<scope>provided</scope>
 		</dependency>
 

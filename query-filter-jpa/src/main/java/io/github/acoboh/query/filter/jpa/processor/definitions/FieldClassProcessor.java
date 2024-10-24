@@ -140,7 +140,7 @@ class FieldClassProcessor {
 		boolean isFinal = false;
 		QFElementDefType type;
 
-		if (fieldClass.isAssignableFrom(Enum.class) || fieldClass.isEnum()) {
+		if (Enum.class.isAssignableFrom(fieldClass) || fieldClass.isEnum()) {
 			type = QFElementDefType.ENUM;
 			isFinal = true;
 		} else if (ClassUtils.isPrimitiveOrBasic(fieldClass)) {
@@ -149,9 +149,9 @@ class FieldClassProcessor {
 		} else if (fieldClass.isArray()) {
 			finalClass = fieldClass.getComponentType();
 			type = QFElementDefType.LIST;
-		} else if (fieldClass.isAssignableFrom(List.class) || fieldClass.isAssignableFrom(Set.class)) {
+		} else if (List.class.isAssignableFrom(fieldClass) || Set.class.isAssignableFrom(fieldClass)) {
 			finalClass = ClassUtils.getClassOfList(field);
-			type = fieldClass.isAssignableFrom(List.class) ? QFElementDefType.LIST : QFElementDefType.SET;
+			type = List.class.isAssignableFrom(fieldClass) ? QFElementDefType.LIST : QFElementDefType.SET;
 		} else {
 			type = QFElementDefType.PROPERTY;
 		}
@@ -160,7 +160,7 @@ class FieldClassProcessor {
 	}
 
 	private static boolean couldBeFinal(Class<?> clazz) {
-		return clazz.isAssignableFrom(Enum.class) || clazz.isEnum() || ClassUtils.isPrimitiveOrBasic(clazz);
+		return Enum.class.isAssignableFrom(clazz) || clazz.isEnum() || ClassUtils.isPrimitiveOrBasic(clazz);
 	}
 
 }

@@ -26,13 +26,13 @@
 		<maven.compiler.testTarget>${jdk-test.version}</maven.compiler.testTarget>
 
 		<!-- Spring dependencies -->
-		<spring-boot.version>3.3.2</spring-boot.version>
+		<spring-boot.version>3.3.5</spring-boot.version>
 
 		<!-- Reflections -->
 		<reflections.version>0.10.2</reflections.version>
 
 		<!-- Hypersistance tests -->
-		<hypersistance.version>3.8.1</hypersistance.version>
+		<hypersistance.version>3.8.3</hypersistance.version>
 
 	</properties>
 

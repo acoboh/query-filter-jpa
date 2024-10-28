@@ -32,7 +32,7 @@
 		<reflections.version>0.10.2</reflections.version>
 
 		<!-- Hypersistance tests -->
-		<hypersistance.version>3.8.1</hypersistance.version>
+		<hypersistance.version>3.8.3</hypersistance.version>
 
 	</properties>
 

@@ -29,7 +29,7 @@ You can install the library by adding the following dependency to your project's
 <dependency>
     <groupId>io.github.acoboh</groupId>
     <artifactId>query-filter-jpa</artifactId>
-    <version>0.3.0</version>
+    <version>0.3.1</version>
 </dependency>
 ``` 
 
@@ -39,7 +39,7 @@ You can install the library by adding the following dependency to your project's
 <dependency>
     <groupId>io.github.acoboh</groupId>
     <artifactId>query-filter-jpa-3</artifactId>
-    <version>0.3.0</version>
+    <version>0.3.1</version>
 </dependency>
 ```
 
@@ -194,7 +194,7 @@ You need to import the following library:
 <dependency>
     <groupId>io.github.acoboh</groupId>
     <artifactId>query-filter-jpa-openapi</artifactId>
-    <version>0.3.0</version>
+    <version>0.3.1</version>
 </dependency>
 ``` 
 
@@ -204,7 +204,7 @@ You need to import the following library:
 <dependency>
     <groupId>io.github.acoboh</groupId>
     <artifactId>query-filter-jpa-openapi-3</artifactId>
-    <version>0.3.0</version>
+    <version>0.3.1</version>
 </dependency>
 ```
 

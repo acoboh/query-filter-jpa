@@ -24,19 +24,19 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!-- Spring Boot-->
-		<spring-boot.version>3.1.7</spring-boot.version>
+		<spring-boot.version>3.3.5</spring-boot.version>
 
 		<!-- Springdoc for OpenAPI-->
-		<springdoc.version>2.2.0</springdoc.version>
+		<springdoc.version>2.6.0</springdoc.version>
 
 		<!-- Hypersistance utils -->
-		<hypersistance-utils.version>3.6.0</hypersistance-utils.version>
+		<hypersistance-utils.version>3.8.3</hypersistance-utils.version>
 
 		<!-- Query Filter Versions -->
-		<query-filter.version>0.2.1</query-filter.version>
+		<query-filter.version>0.3.1</query-filter.version>
 
 		<!-- Mapstruct -->
-		<mapstruct.version>1.5.5.Final</mapstruct.version>
+		<mapstruct.version>1.6.2</mapstruct.version>
 
 	</properties>
 
@@ -88,7 +88,7 @@
 
 		<dependency>
 			<groupId>io.hypersistence</groupId>
-			<artifactId>hypersistence-utils-hibernate-60</artifactId>
+			<artifactId>hypersistence-utils-hibernate-63</artifactId>
 			<version>${hypersistance-utils.version}</version>
 		</dependency>
 

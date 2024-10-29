@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>io.github.acoboh</groupId>
 		<artifactId>query-filter-jpa-parent</artifactId>
-		<version>0.3.1</version>
+		<version>0.3.2-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
 

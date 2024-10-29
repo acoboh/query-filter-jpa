@@ -9,9 +9,7 @@ updates:
       interval: "weekly"
     ignore:
       - dependency-name: "org.apache.maven.plugins:maven-source-plugin"
-        versions: 
-          - "4.x.x"
-          - "*-beta-*" # Ignore actual betas
+        versions: ["4.x"] # Ignore actual betas
 
   # Spring Boot 2 Versions
   - package-ecosystem: "maven"

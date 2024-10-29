@@ -1,0 +1,35 @@
+version: 2
+updates:
+  - package-ecosystem: "maven"
+    directories: 
+      - "/query-filter-jpa"
+      - "/query-filter-openapi"
+    schedule:
+      interval: "weekly"
+    ignore:
+      - dependency-name: "org.springframework.boot:spring-boot-dependencies"
+        versions: ["3.x"] # Ignora las versiones 3.x para este directorio
+      - dependency-name: "org.springframework:spring-webmvc"
+        versions: ["6.x.x"]
+      - dependency-name: "org.springframework:spring-beans"
+        versions: ["6.x.x"]
+      - dependency-name: "org.springframework:spring-context"
+        versions: ["6.x.x"]
+      - dependency-name: "org.springdoc:springdoc-openapi-common"
+        versions: ["1.8.x"]
+      
+
+  - package-ecosystem: "maven"
+    directories: 
+      - "/query-filter-jpa-3"
+      - "/query-filter-openapi-3"
+    schedule:
+      interval: "weekly"
+    ignore:
+      - dependency-name: "org.springframework.boot:spring-boot-dependencies"
+        versions: ["2.x"] # Ignora las versiones 2.x para este directorio
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"

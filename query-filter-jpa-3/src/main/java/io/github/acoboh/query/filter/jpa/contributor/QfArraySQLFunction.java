@@ -3,6 +3,7 @@ package io.github.acoboh.query.filter.jpa.contributor;
 import java.util.List;
 
 import org.hibernate.QueryException;
+import org.hibernate.query.ReturnableType;
 import org.hibernate.query.sqm.function.AbstractSqmSelfRenderingFunctionDescriptor;
 import org.hibernate.query.sqm.produce.function.ArgumentTypesValidator;
 import org.hibernate.query.sqm.produce.function.FunctionParameterType;
@@ -56,8 +57,7 @@ class QfArraySQLFunction extends AbstractSqmSelfRenderingFunctionDescriptor {
 
 	@Override
 	public void render(SqlAppender sqlAppender, List<? extends SqlAstNode> sqlAstArguments,
-			SqlAstTranslator<?> walker) {
-
+			ReturnableType<?> returnType, SqlAstTranslator<?> walker) {
 		if (sqlAstArguments.size() < 2) {
 			throw new QueryException("Array function not enough arguments", sqlAppender.toString());
 		}
@@ -78,7 +78,6 @@ class QfArraySQLFunction extends AbstractSqmSelfRenderingFunctionDescriptor {
 		}
 
 		sqlAppender.append("]) and true ");
-
 	}
 
 }

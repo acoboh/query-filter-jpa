@@ -16,7 +16,7 @@ import jakarta.persistence.OneToMany;
 public class PostBlog extends BaseEntity {
 
 	public enum PostType {
-		EDUCATIONAL, INFO, SOCIAL
+		EDUCATIONAL, INFO, SOCIAL,VIDEO
 	}
 
 	private String title;

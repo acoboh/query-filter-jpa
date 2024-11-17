@@ -1,22 +1,8 @@
 package io.github.acoboh.query.filter.jpa.processor;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.util.Pair;
-
 import io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass;
 import io.github.acoboh.query.filter.jpa.annotations.QFPredicate;
+import io.github.acoboh.query.filter.jpa.config.ApplicationContextAwareSupport;
 import io.github.acoboh.query.filter.jpa.exceptions.QueryFilterException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFClassException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFElementException;
@@ -27,261 +13,278 @@ import io.github.acoboh.query.filter.jpa.processor.definitions.QFAbstractDefinit
 import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionElement;
 import io.github.acoboh.query.filter.jpa.processor.definitions.traits.IDefinitionSortable;
 import io.github.acoboh.query.filter.jpa.processor.match.QFElementMatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.util.Pair;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Class to process all query filters.
  * <p>
  * It allows the user to create a new instance of {@linkplain QueryFilter} for using as {@linkplain Specification}
  *
- * @author Adrián Cobo
  * @param <F> Filter definition class
  * @param <E> Entity model class
- * 
+ * @author Adrián Cobo
  */
 public class QFProcessor<F, E> {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(QFProcessor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(QFProcessor.class);
 
-	private final Class<F> filterClass;
+    private final Class<F> filterClass;
 
-	private final Class<E> entityClass;
+    private final Class<E> entityClass;
 
-	private final QFDefinitionClass queryFilterClass;
+    private final QFDefinitionClass queryFilterClass;
 
-	private final Map<String, QFAbstractDefinition> definitionMap;
+    private final Map<String, QFAbstractDefinition> definitionMap;
 
-	private final List<QFElementMatch> defaultMatches;
+    private final List<QFElementMatch> defaultMatches;
 
-	private final List<Pair<IDefinitionSortable, Direction>> defaultSorting;
+    private final List<Pair<IDefinitionSortable, Direction>> defaultSorting;
 
-	private final ApplicationContext appContext;
+    private final ApplicationContext appContext;
 
-	private Map<String, PredicateProcessorResolutor> predicateMap;
-	private String predicateName;
-	private PredicateProcessorResolutor defaultPredicate;
+    private Map<String, PredicateProcessorResolutor> predicateMap;
+    private String predicateName;
+    private PredicateProcessorResolutor defaultPredicate;
 
-	/**
-	 * Default constructor
-	 *
-	 * @param filterClass filter class
-	 * @param entityClass entity class
-	 * @param appContext  application context for spel expressions
-	 * @throws io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException if any exception on parsing
-	 */
-	public QFProcessor(Class<F> filterClass, Class<E> entityClass, ApplicationContext appContext)
-			throws QueryFilterDefinitionException {
+    public QFProcessor(Class<F> filterClass, Class<E> entityClass, ApplicationContextAwareSupport appContext) throws QueryFilterDefinitionException {
+        this(filterClass, entityClass, appContext.getApplicationContext());
+    }
 
-		this.filterClass = filterClass;
-		this.entityClass = entityClass;
-		this.appContext = appContext;
+    /**
+     * Default constructor
+     *
+     * @param filterClass filter class
+     * @param entityClass entity class
+     * @param appContext  application context for spel expressions
+     * @throws io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException if any exception on parsing
+     */
+    public QFProcessor(Class<F> filterClass, Class<E> entityClass, ApplicationContext appContext)
+            throws QueryFilterDefinitionException {
 
-		if (!filterClass.isAnnotationPresent(QFDefinitionClass.class)) {
-			throw new QFClassException(QFDefinitionClass.class, filterClass.getName());
-		}
+        this.filterClass = filterClass;
+        this.entityClass = entityClass;
+        this.appContext = appContext;
 
-		this.queryFilterClass = filterClass.getAnnotation(QFDefinitionClass.class);
-		if (this.queryFilterClass.value() != entityClass) {
-			throw new QFClassException(queryFilterClass.value(), filterClass, entityClass);
-		}
+        if (!filterClass.isAnnotationPresent(QFDefinitionClass.class)) {
+            throw new QFClassException(QFDefinitionClass.class, filterClass.getName());
+        }
 
-		this.definitionMap = getDefinition(filterClass, queryFilterClass);
-		this.defaultMatches = defaultMatches(definitionMap);
-		this.defaultSorting = getDefaultSorting(queryFilterClass, definitionMap, filterClass);
+        this.queryFilterClass = filterClass.getAnnotation(QFDefinitionClass.class);
+        if (this.queryFilterClass.value() != entityClass) {
+            throw new QFClassException(queryFilterClass.value(), filterClass, entityClass);
+        }
 
-		LOGGER.debug("Initializing query filter predicates...");
+        this.definitionMap = getDefinition(filterClass, queryFilterClass);
+        this.defaultMatches = defaultMatches(definitionMap);
+        this.defaultSorting = getDefaultSorting(queryFilterClass, definitionMap, filterClass);
 
-		QFPredicate[] predicatesAnnotations = filterClass.getAnnotationsByType(QFPredicate.class);
-		if (predicatesAnnotations.length != 0) {
-			LOGGER.debug("Must be processed {} predicates on class {}", predicatesAnnotations.length, queryFilterClass);
-			predicateMap = resolvePredicates(predicatesAnnotations, definitionMap);
-			predicateName = queryFilterClass.defaultPredicate();
-			if (!predicateName.isEmpty()) {
-				defaultPredicate = predicateMap.get(predicateName);
-				if (defaultPredicate == null) {
-					throw new IllegalStateException("Unable to found default predicate");
-				}
-			}
-		}
-	}
+        LOGGER.debug("Initializing query filter predicates...");
 
-	private static Map<String, QFAbstractDefinition> getDefinition(Class<?> filterClass,
-			QFDefinitionClass queryFilterClass) throws QueryFilterDefinitionException {
+        QFPredicate[] predicatesAnnotations = filterClass.getAnnotationsByType(QFPredicate.class);
+        if (predicatesAnnotations.length != 0) {
+            LOGGER.debug("Must be processed {} predicates on class {}", predicatesAnnotations.length, queryFilterClass);
+            predicateMap = resolvePredicates(predicatesAnnotations, definitionMap);
+            predicateName = queryFilterClass.defaultPredicate();
+            if (!predicateName.isEmpty()) {
+                defaultPredicate = predicateMap.get(predicateName);
+                if (defaultPredicate == null) {
+                    throw new IllegalStateException("Unable to found default predicate");
+                }
+            }
+        }
+    }
 
-		Map<String, QFAbstractDefinition> map = new HashMap<>();
+    private static Map<String, QFAbstractDefinition> getDefinition(Class<?> filterClass,
+                                                                   QFDefinitionClass queryFilterClass) throws QueryFilterDefinitionException {
 
-		for (Field field : getAllFieldsFromClassAndSuperClass(filterClass)) {
+        Map<String, QFAbstractDefinition> map = new HashMap<>();
 
-			var qfd = QFAbstractDefinition.buildDefinition(field, filterClass, queryFilterClass.value());
-			if (qfd == null) {
-				continue;
-			}
+        for (Field field : getAllFieldsFromClassAndSuperClass(filterClass)) {
 
-			map.put(qfd.getFilterName(), qfd);
+            var qfd = QFAbstractDefinition.buildDefinition(field, filterClass, queryFilterClass.value());
+            if (qfd == null) {
+                continue;
+            }
 
-		}
+            map.put(qfd.getFilterName(), qfd);
 
-		return map;
-	}
+        }
 
-	private static List<Field> getAllFieldsFromClassAndSuperClass(Class<?> filterClass) {
-		List<Field> fields = new ArrayList<>();
+        return map;
+    }
 
-		Collections.addAll(fields, filterClass.getDeclaredFields());
+    private static List<Field> getAllFieldsFromClassAndSuperClass(Class<?> filterClass) {
+        List<Field> fields = new ArrayList<>();
 
-		if (filterClass.getSuperclass() != null && filterClass.getSuperclass() != Object.class) {
-			fields.addAll(getAllFieldsFromClassAndSuperClass(filterClass.getSuperclass()));
-		}
+        Collections.addAll(fields, filterClass.getDeclaredFields());
 
-		return fields;
-	}
+        if (filterClass.getSuperclass() != null && filterClass.getSuperclass() != Object.class) {
+            fields.addAll(getAllFieldsFromClassAndSuperClass(filterClass.getSuperclass()));
+        }
 
-	private static List<QFElementMatch> defaultMatches(Map<String, QFAbstractDefinition> definitionMap) {
-		List<QFElementMatch> ret = new ArrayList<>();
+        return fields;
+    }
 
-		for (var abstractDef : definitionMap.values()) {
-			if (abstractDef instanceof QFDefinitionElement def) {
-				for (var elem : def.getElementAnnotations()) {
-					if (elem.defaultValues().length > 0) {
-						ret.add(new QFElementMatch(Arrays.asList(elem.defaultValues()), elem.defaultOperation(), def));
-					}
-				}
-			}
-		}
+    private static List<QFElementMatch> defaultMatches(Map<String, QFAbstractDefinition> definitionMap) {
+        List<QFElementMatch> ret = new ArrayList<>();
 
-		return Collections.unmodifiableList(ret);
-	}
+        for (var abstractDef : definitionMap.values()) {
+            if (abstractDef instanceof QFDefinitionElement def) {
+                for (var elem : def.getElementAnnotations()) {
+                    if (elem.defaultValues().length > 0) {
+                        ret.add(new QFElementMatch(Arrays.asList(elem.defaultValues()), elem.defaultOperation(), def));
+                    }
+                }
+            }
+        }
 
-	private static List<Pair<IDefinitionSortable, Direction>> getDefaultSorting(QFDefinitionClass queryFilterClass,
-			Map<String, QFAbstractDefinition> definitionMap, Class<?> filterClass)
-			throws QueryFilterDefinitionException {
+        return Collections.unmodifiableList(ret);
+    }
 
-		if (queryFilterClass.defaultSort() == null || queryFilterClass.defaultSort().length == 0) {
-			return Collections.emptyList();
-		}
+    private static List<Pair<IDefinitionSortable, Direction>> getDefaultSorting(QFDefinitionClass queryFilterClass,
+                                                                                Map<String, QFAbstractDefinition> definitionMap, Class<?> filterClass)
+            throws QueryFilterDefinitionException {
 
-		List<Pair<IDefinitionSortable, Direction>> ret = new ArrayList<>();
+        if (queryFilterClass.defaultSort() == null || queryFilterClass.defaultSort().length == 0) {
+            return Collections.emptyList();
+        }
 
-		for (var sort : queryFilterClass.defaultSort()) {
+        List<Pair<IDefinitionSortable, Direction>> ret = new ArrayList<>();
 
-			var definition = definitionMap.get(sort.value());
-			if (definition == null) {
-				throw new QFElementException(sort.value(), filterClass);
-			}
+        for (var sort : queryFilterClass.defaultSort()) {
 
-			if (!(definition instanceof IDefinitionSortable)) {
-				throw new QFNotSortableDefinitionException(definition.getFilterName(), filterClass);
-			}
+            var definition = definitionMap.get(sort.value());
+            if (definition == null) {
+                throw new QFElementException(sort.value(), filterClass);
+            }
 
-			ret.add(Pair.of((IDefinitionSortable) definition, sort.direction()));
+            if (!(definition instanceof IDefinitionSortable)) {
+                throw new QFNotSortableDefinitionException(definition.getFilterName(), filterClass);
+            }
 
-		}
+            ret.add(Pair.of((IDefinitionSortable) definition, sort.direction()));
 
-		return Collections.unmodifiableList(ret);
+        }
 
-	}
+        return Collections.unmodifiableList(ret);
 
-	private static Map<String, PredicateProcessorResolutor> resolvePredicates(QFPredicate[] predicates,
-			Map<String, QFAbstractDefinition> definitionMap) {
-		Map<String, PredicateProcessorResolutor> ret = new HashMap<>();
+    }
 
-		for (var predicate : predicates) {
-			ret.put(predicate.name(), new PredicateProcessorResolutor(predicate.expression(), definitionMap,
-					predicate.includeMissing(), predicate.missingOperator()));
-		}
+    private static Map<String, PredicateProcessorResolutor> resolvePredicates(QFPredicate[] predicates,
+                                                                              Map<String, QFAbstractDefinition> definitionMap) {
+        Map<String, PredicateProcessorResolutor> ret = new HashMap<>();
 
-		return Collections.unmodifiableMap(ret);
-	}
+        for (var predicate : predicates) {
+            ret.put(predicate.name(), new PredicateProcessorResolutor(predicate.expression(), definitionMap,
+                    predicate.includeMissing(), predicate.missingOperator()));
+        }
 
-	/**
-	 * Create a new {@linkplain QueryFilter} instance
-	 *
-	 * @param input string filter
-	 * @param type  standard type
-	 * @return new {@linkplain QueryFilter} instance
-	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QueryFilterException if any parsing exception occurs
-	 */
-	public QueryFilter<E> newQueryFilter(String input, QFParamType type) throws QueryFilterException {
-		return new QueryFilter<>(input, type, this);
-	}
+        return Collections.unmodifiableMap(ret);
+    }
 
-	/**
-	 * Get all definitions of any field
-	 *
-	 * @return map of definitions
-	 */
-	public Map<String, QFAbstractDefinition> getDefinitionMap() {
-		return definitionMap;
-	}
+    /**
+     * Create a new {@linkplain QueryFilter} instance
+     *
+     * @param input string filter
+     * @param type  standard type
+     * @return new {@linkplain QueryFilter} instance
+     * @throws io.github.acoboh.query.filter.jpa.exceptions.QueryFilterException if any parsing exception occurs
+     */
+    public QueryFilter<E> newQueryFilter(String input, QFParamType type) throws QueryFilterException {
+        return new QueryFilter<>(input, type, this);
+    }
 
-	/**
-	 * Get filter class
-	 *
-	 * @return filter class
-	 */
-	public Class<F> getFilterClass() {
-		return filterClass;
-	}
+    /**
+     * Get all definitions of any field
+     *
+     * @return map of definitions
+     */
+    public Map<String, QFAbstractDefinition> getDefinitionMap() {
+        return definitionMap;
+    }
 
-	/**
-	 * Get entity class
-	 *
-	 * @return entity model class
-	 */
-	public Class<E> getEntityClass() {
-		return entityClass;
-	}
+    /**
+     * Get filter class
+     *
+     * @return filter class
+     */
+    public Class<F> getFilterClass() {
+        return filterClass;
+    }
 
-	/**
-	 * Get definition class annotation
-	 * 
-	 * @return definition class annotation
-	 */
-	protected QFDefinitionClass getDefinitionClassAnnotation() {
-		return queryFilterClass;
-	}
+    /**
+     * Get entity class
+     *
+     * @return entity model class
+     */
+    public Class<E> getEntityClass() {
+        return entityClass;
+    }
 
-	/**
-	 * Get default matches of the processor
-	 * 
-	 * @return default matches
-	 */
-	protected List<QFElementMatch> getDefaultMatches() {
-		return defaultMatches;
-	}
+    /**
+     * Get definition class annotation
+     *
+     * @return definition class annotation
+     */
+    protected QFDefinitionClass getDefinitionClassAnnotation() {
+        return queryFilterClass;
+    }
 
-	/**
-	 * Get default sorting operations
-	 * 
-	 * @return default sorting operations
-	 */
-	protected List<Pair<IDefinitionSortable, Direction>> getDefaultSorting() {
-		return defaultSorting;
-	}
+    /**
+     * Get default matches of the processor
+     *
+     * @return default matches
+     */
+    protected List<QFElementMatch> getDefaultMatches() {
+        return defaultMatches;
+    }
 
-	/**
-	 * Get application context
-	 * 
-	 * @return application context
-	 */
-	protected ApplicationContext getApplicationContext() {
-		return appContext;
-	}
+    /**
+     * Get default sorting operations
+     *
+     * @return default sorting operations
+     */
+    protected List<Pair<IDefinitionSortable, Direction>> getDefaultSorting() {
+        return defaultSorting;
+    }
 
-	/**
-	 * Get predicate map
-	 * 
-	 * @return predicate map
-	 */
-	protected Map<String, PredicateProcessorResolutor> getPredicateMap() {
-		return predicateMap;
-	}
+    /**
+     * Get application context
+     *
+     * @return application context
+     */
+    protected ApplicationContext getApplicationContext() {
+        return appContext;
+    }
 
-	/**
-	 * Get default predicate
-	 * 
-	 * @return default predicate
-	 */
-	protected String getDefaultPredicate() {
-		return predicateName;
-	}
+    /**
+     * Get predicate map
+     *
+     * @return predicate map
+     */
+    protected Map<String, PredicateProcessorResolutor> getPredicateMap() {
+        return predicateMap;
+    }
+
+    /**
+     * Get default predicate
+     *
+     * @return default predicate
+     */
+    protected String getDefaultPredicate() {
+        return predicateName;
+    }
 }

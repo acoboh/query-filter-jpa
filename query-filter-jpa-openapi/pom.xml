@@ -6,7 +6,7 @@
 		<groupId>io.github.acoboh</groupId>
 		<artifactId>query-filter-jpa-parent</artifactId>
 		<version>0.3.2-SNAPSHOT</version>
-		<relativePath>../</relativePath>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>query-filter-jpa-openapi</artifactId>

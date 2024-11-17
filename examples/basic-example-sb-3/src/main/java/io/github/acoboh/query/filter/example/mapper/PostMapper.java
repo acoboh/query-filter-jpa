@@ -7,7 +7,7 @@ import org.mapstruct.MappingTarget;
 import io.github.acoboh.query.filter.example.domain.PostDTO;
 import io.github.acoboh.query.filter.example.entities.PostBlog;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface PostMapper {
 
 	PostDTO postToPostDTO(PostBlog post);

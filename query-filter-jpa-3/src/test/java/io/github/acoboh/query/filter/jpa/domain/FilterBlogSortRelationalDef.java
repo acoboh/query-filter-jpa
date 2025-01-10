@@ -7,26 +7,25 @@ import io.github.acoboh.query.filter.jpa.model.PostBlog;
 
 /**
  * Example for sort with relational classes
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 @QFDefinitionClass(PostBlog.class)
 public class FilterBlogSortRelationalDef {
 
-	@QFSortable("comments.author")
-	private int commentAuthorSort;
+    @QFSortable("comments.author")
+    private int commentAuthorSort;
 
-	@QFSortable(value = "comments.author", autoFetch = false)
-	private int commentAuthorSortError;
+    @QFSortable(value = "comments.author", autoFetch = false)
+    private int commentAuthorSortError;
 
-	@QFElement("comments.author")
-	private int commentAuthorElement;
+    @QFElement("comments.author")
+    private int commentAuthorElement;
 
-	@QFElement(value = "comments.author", autoFetch = false)
-	private int commentAuthorElementError;
+    @QFElement(value = "comments.author", autoFetch = false)
+    private int commentAuthorElementError;
 
-	@QFElement("comments.extraData.id")
-	private int extraDataSort;
+    @QFElement("comments.extraData.id")
+    private int extraDataSort;
 
 }

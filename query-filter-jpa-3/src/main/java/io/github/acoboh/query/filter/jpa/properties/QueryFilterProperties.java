@@ -8,31 +8,30 @@ import org.springframework.validation.annotation.Validated;
  * Query filter configuration properties
  *
  * @author Adrián Cobo
- * 
  */
 @ConfigurationProperties(value = "query-filter")
 @Configuration
 @Validated
 public class QueryFilterProperties {
 
-	private AdvisorProperties advisor = new AdvisorProperties();
+    private AdvisorProperties advisor = new AdvisorProperties();
 
-	/**
-	 * Get advisor properties
-	 *
-	 * @return advisor properties
-	 */
-	public AdvisorProperties getAdvisor() {
-		return advisor;
-	}
+    /**
+     * Get advisor properties
+     *
+     * @return advisor properties
+     */
+    public AdvisorProperties getAdvisor() {
+        return advisor;
+    }
 
-	/**
-	 * Set advisor properties
-	 *
-	 * @param advisor advisor properties
-	 */
-	public void setAdvisor(AdvisorProperties advisor) {
-		this.advisor = advisor;
-	}
+    /**
+     * Set advisor properties
+     *
+     * @param advisor advisor properties
+     */
+    public void setAdvisor(AdvisorProperties advisor) {
+        this.advisor = advisor;
+    }
 
 }

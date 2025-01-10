@@ -1,11 +1,11 @@
 package io.github.acoboh.query.filter.jpa.model.discriminators.joined;
 
-import java.util.Objects;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+
+import java.util.Objects;
 
 /**
  * Parent entity
@@ -14,96 +14,96 @@ import jakarta.persistence.InheritanceType;
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class ParentEntity {
 
-	/**
-	 * Type enum
-	 */
-	public enum TypeEnum {
-		/**
-		 * A type
-		 */
-		A,
-		/**
-		 * B type
-		 */
-		B
-	}
+    /**
+     * Type enum
+     */
+    public enum TypeEnum {
+        /**
+         * A type
+         */
+        A,
+        /**
+         * B type
+         */
+        B
+    }
 
-	@Id
-	private String id;
+    @Id
+    private String id;
 
-	private TypeEnum type;
+    private TypeEnum type;
 
-	private boolean active = false;
+    private boolean active = false;
 
-	/**
-	 * Get the id
-	 * 
-	 * @return the id
-	 */
-	public String getId() {
-		return id;
-	}
+    /**
+     * Get the id
+     *
+     * @return the id
+     */
+    public String getId() {
+        return id;
+    }
 
-	/**
-	 * Set the id
-	 * 
-	 * @param id
-	 */
-	public void setId(String id) {
-		this.id = id;
-	}
+    /**
+     * Set the id
+     *
+     * @param id
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	/**
-	 * Get the type
-	 * 
-	 * @return the type
-	 */
-	public TypeEnum getType() {
-		return type;
-	}
+    /**
+     * Get the type
+     *
+     * @return the type
+     */
+    public TypeEnum getType() {
+        return type;
+    }
 
-	/**
-	 * Set the type
-	 * 
-	 * @param type
-	 */
-	public void setType(TypeEnum type) {
-		this.type = type;
-	}
+    /**
+     * Set the type
+     *
+     * @param type
+     */
+    public void setType(TypeEnum type) {
+        this.type = type;
+    }
 
-	/**
-	 * Get the active
-	 * 
-	 * @return the active
-	 */
-	public boolean isActive() {
-		return active;
-	}
+    /**
+     * Get the active
+     *
+     * @return the active
+     */
+    public boolean isActive() {
+        return active;
+    }
 
-	/**
-	 * Set the active
-	 * 
-	 * @param active
-	 */
-	public void setActive(boolean active) {
-		this.active = active;
-	}
+    /**
+     * Set the active
+     *
+     * @param active
+     */
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(active, id, type);
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(active, id, type);
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ParentEntity other = (ParentEntity) obj;
-		return active == other.active && Objects.equals(id, other.id) && type == other.type;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ParentEntity other = (ParentEntity) obj;
+        return active == other.active && Objects.equals(id, other.id) && type == other.type;
+    }
 
 }

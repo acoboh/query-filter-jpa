@@ -7,7 +7,7 @@ import io.github.acoboh.query.filter.jpa.annotations.QFElement;
  */
 public class BaseFilterDef {
 
-	@QFElement("uuid")
-	private String uuid;
+    @QFElement("uuid")
+    private String uuid;
 
 }

@@ -6,20 +6,19 @@ import io.github.acoboh.query.filter.jpa.model.subquery.UserModel;
 
 /**
  * Basic example with subquery on query filter definition
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 @QFDefinitionClass(UserModel.class)
 public class UserModelFilterDef {
 
-	@QFElement("username")
-	private String username;
+    @QFElement("username")
+    private String username;
 
-	@QFElement(value = "roles.name", subquery = true)
-	private String role;
+    @QFElement(value = "roles.name", subquery = true)
+    private String role;
 
-	@QFElement(value = "roles.name")
-	private String roleNotSub;
+    @QFElement(value = "roles.name")
+    private String roleNotSub;
 
 }

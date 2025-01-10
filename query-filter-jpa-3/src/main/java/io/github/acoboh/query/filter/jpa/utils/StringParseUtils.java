@@ -1,146 +1,144 @@
 package io.github.acoboh.query.filter.jpa.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import io.github.acoboh.query.filter.jpa.predicate.PredicatePart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.github.acoboh.query.filter.jpa.predicate.PredicatePart;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Utility class to parse predicates
  *
  * @author Adrián Cobo
- * 
  */
 public class StringParseUtils {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(StringParseUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StringParseUtils.class);
 
-	private StringParseUtils() {
-		// Utility class
-	}
-	
-	/**
-	 * Get all parsed parts
-	 *
-	 * @param predicateExp predicate expression
-	 * @return parts
-	 */
-	public static List<PredicatePart> parseParts(String predicateExp) {
+    private StringParseUtils() {
+        // Utility class
+    }
 
-		int level = 0;
+    /**
+     * Get all parsed parts
+     *
+     * @param predicateExp predicate expression
+     * @return parts
+     */
+    public static List<PredicatePart> parseParts(String predicateExp) {
 
-		List<PredicatePart> ret = new ArrayList<>();
+        int level = 0;
 
-		StringBuilder builder = new StringBuilder();
+        List<PredicatePart> ret = new ArrayList<>();
 
-		for (int i = 0; i < predicateExp.length(); i++) {
+        StringBuilder builder = new StringBuilder();
 
-			char cTemp = predicateExp.charAt(i);
+        for (int i = 0; i < predicateExp.length(); i++) {
 
-			switch (cTemp) {
-			case '(':
-				// Starts
-				level++;
+            char cTemp = predicateExp.charAt(i);
 
-				if (level > 1) {
-					builder.append(cTemp);
-				}
+            switch (cTemp) {
+                case '(':
+                    // Starts
+                    level++;
 
-				break;
+                    if (level > 1) {
+                        builder.append(cTemp);
+                    }
 
-			case ')':
-				level--;
-				if (level == 0) {
-					ret.add(new PredicatePart(balanceLevelParenthesis(builder.toString()), true));
-					builder = new StringBuilder();
-				} else if (level > 0) {
-					builder.append(cTemp);
-				}
+                    break;
 
-				break;
-			case ' ':
-				if (level == 0) {
+                case ')':
+                    level--;
+                    if (level == 0) {
+                        ret.add(new PredicatePart(balanceLevelParenthesis(builder.toString()), true));
+                        builder = new StringBuilder();
+                    } else if (level > 0) {
+                        builder.append(cTemp);
+                    }
 
-					String s = builder.toString();
-					if (!s.isEmpty()) {
-						ret.add(new PredicatePart(balanceLevelParenthesis(builder.toString()), false));
-					}
+                    break;
+                case ' ':
+                    if (level == 0) {
 
-					builder = new StringBuilder();
-				} else {
-					builder.append(cTemp);
-				}
-				break;
+                        String s = builder.toString();
+                        if (!s.isEmpty()) {
+                            ret.add(new PredicatePart(balanceLevelParenthesis(builder.toString()), false));
+                        }
 
-			default:
-				builder.append(cTemp);
+                        builder = new StringBuilder();
+                    } else {
+                        builder.append(cTemp);
+                    }
+                    break;
 
-			}
-		}
+                default:
+                    builder.append(cTemp);
 
-		String finalS = builder.toString();
-		if (!finalS.isEmpty()) {
-			ret.add(new PredicatePart(balanceLevelParenthesis(builder.toString()), false));
-		}
+            }
+        }
 
-		LOGGER.trace("End of parse");
+        String finalS = builder.toString();
+        if (!finalS.isEmpty()) {
+            ret.add(new PredicatePart(balanceLevelParenthesis(builder.toString()), false));
+        }
 
-		return ret;
+        LOGGER.trace("End of parse");
 
-	}
+        return ret;
 
-	/**
-	 * Balance the level parenthesis of any expression
-	 *
-	 * @param exp expression
-	 * @return balance level parenthesis
-	 */
-	public static String balanceLevelParenthesis(String exp) {
+    }
 
-		// (X OR A) AND (X OR B) -> INVALID
-		// ((X OR A) AND (X OR B)) -> VALID
+    /**
+     * Balance the level parenthesis of any expression
+     *
+     * @param exp expression
+     * @return balance level parenthesis
+     */
+    public static String balanceLevelParenthesis(String exp) {
 
-		exp = exp.replaceAll(" +", " ").trim();
-		if (!exp.startsWith("(") && !exp.endsWith(")")) {
-			return exp;
-		}
+        // (X OR A) AND (X OR B) -> INVALID
+        // ((X OR A) AND (X OR B)) -> VALID
 
-		int level = 0;
+        exp = exp.replaceAll(" +", " ").trim();
+        if (!exp.startsWith("(") && !exp.endsWith(")")) {
+            return exp;
+        }
 
-		for (int i = 0; i < exp.length(); i++) {
+        int level = 0;
 
-			char cTemp = exp.charAt(i);
+        for (int i = 0; i < exp.length(); i++) {
 
-			switch (cTemp) {
-			case '(':
-				level++;
-				break;
-			case ')':
-				level--;
-				if (level == 0 && i < exp.length() - 1) {
-					return exp;
-				}
+            char cTemp = exp.charAt(i);
 
-				break;
-			default:
-				break;
-			}
+            switch (cTemp) {
+                case '(':
+                    level++;
+                    break;
+                case ')':
+                    level--;
+                    if (level == 0 && i < exp.length() - 1) {
+                        return exp;
+                    }
 
-		}
+                    break;
+                default:
+                    break;
+            }
 
-		if (level == 0) {
-			String ret = exp.substring(1, exp.length() - 1);
-			if (ret.startsWith("(") && ret.endsWith(")")) {
-				return balanceLevelParenthesis(ret);
-			}
-			return ret;
+        }
 
-		} else {
-			throw new IllegalStateException("Illegal expression. Review parenthesis");
-		}
+        if (level == 0) {
+            String ret = exp.substring(1, exp.length() - 1);
+            if (ret.startsWith("(") && ret.endsWith(")")) {
+                return balanceLevelParenthesis(ret);
+            }
+            return ret;
 
-	}
+        } else {
+            throw new IllegalStateException("Illegal expression. Review parenthesis");
+        }
+
+    }
 }

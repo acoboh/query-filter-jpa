@@ -7,20 +7,19 @@ import io.github.acoboh.query.filter.jpa.model.PostBlog;
 
 /**
  * Basic example of filter
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 @QFDefinitionClass(PostBlog.class)
 public class FilterCollectionBlogDef {
 
-	@QFElement("author")
-	private String author;
+    @QFElement("author")
+    private String author;
 
-	@QFCollectionElement("comments")
-	private int commentsSize;
-	
-	@QFElement("comments.author")
-	private String authorComments;
+    @QFCollectionElement("comments")
+    private int commentsSize;
+
+    @QFElement("comments.author")
+    private String authorComments;
 
 }

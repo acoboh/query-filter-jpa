@@ -5,20 +5,19 @@ import org.hibernate.boot.model.FunctionContributor;
 
 /**
  * Function contributor implementation
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 public class FunctionContributorImpl implements FunctionContributor {
 
-	@Override
-	public void contributeFunctions(FunctionContributions functionContributions) {
-		for (var fEnum : ArrayFunction.values()) {
-			var function = new QfArraySQLFunction(fEnum.getName(), fEnum.getOperator(),
-					functionContributions.getTypeConfiguration());
-			functionContributions.getFunctionRegistry().register(fEnum.getName(), function);
-		}
+    @Override
+    public void contributeFunctions(FunctionContributions functionContributions) {
+        for (var fEnum : ArrayFunction.values()) {
+            var function = new QfArraySQLFunction(fEnum.getName(), fEnum.getOperator(),
+                    functionContributions.getTypeConfiguration());
+            functionContributions.getFunctionRegistry().register(fEnum.getName(), function);
+        }
 
-	}
+    }
 
 }

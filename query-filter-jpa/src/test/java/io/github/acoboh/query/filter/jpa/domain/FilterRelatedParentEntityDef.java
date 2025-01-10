@@ -14,15 +14,15 @@ import io.github.acoboh.query.filter.jpa.model.discriminators.joined.SubclassBEn
 @QFDefinitionClass(RelatedParent.class)
 public class FilterRelatedParentEntityDef {
 
-	@QFElement("parent.type")
-	private TypeEnum type;
+    @QFElement("parent.type")
+    private TypeEnum type;
 
-	@QFDiscriminator(path = "parent", value = {
-			@QFDiscriminator.Value(name = "subclassA", type = SubclassAEntity.class),
-			@QFDiscriminator.Value(name = "subclassB", type = SubclassBEntity.class) })
-	private String discriminatorType;
+    @QFDiscriminator(path = "parent", value = {
+            @QFDiscriminator.Value(name = "subclassA", type = SubclassAEntity.class),
+            @QFDiscriminator.Value(name = "subclassB", type = SubclassBEntity.class)})
+    private String discriminatorType;
 
-	@QFElement(value = "parent.subClassField", subClassMapping = SubclassAEntity.class, subClassMappingPath = "parent")
-	private String subClassAField;
+    @QFElement(value = "parent.subClassField", subClassMapping = SubclassAEntity.class, subClassMappingPath = "parent")
+    private String subClassAField;
 
 }

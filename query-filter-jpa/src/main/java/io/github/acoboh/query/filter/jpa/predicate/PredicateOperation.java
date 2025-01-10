@@ -1,77 +1,74 @@
 package io.github.acoboh.query.filter.jpa.predicate;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Predicate;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Predicate;
 
 /**
  * Predicate operations for custom predicates enumeration
  *
  * @author Adrián Cobo
- * 
  */
 public enum PredicateOperation {
 
-	/**
-	 * And operator
-	 */
-	AND("AND") {
-		@Override
-		public Predicate getPredicate(CriteriaBuilder cb) {
-			return cb.conjunction();
-		}
-	},
+    /**
+     * And operator
+     */
+    AND("AND") {
+        @Override
+        public Predicate getPredicate(CriteriaBuilder cb) {
+            return cb.conjunction();
+        }
+    },
 
-	/**
-	 * Or operator
-	 */
-	OR("OR") {
-		@Override
-		public Predicate getPredicate(CriteriaBuilder cb) {
-			return cb.disjunction();
-		}
-	};
+    /**
+     * Or operator
+     */
+    OR("OR") {
+        @Override
+        public Predicate getPredicate(CriteriaBuilder cb) {
+            return cb.disjunction();
+        }
+    };
 
-	private static final Map<String, PredicateOperation> map;
+    private static final Map<String, PredicateOperation> map;
 
-	static {
-		map = Stream.of(PredicateOperation.values()).collect(Collectors.toMap(PredicateOperation::getValue, e -> e));
-	}
+    static {
+        map = Stream.of(PredicateOperation.values()).collect(Collectors.toMap(PredicateOperation::getValue, e -> e));
+    }
 
-	private final String value;
+    private final String value;
 
-	PredicateOperation(String value) {
-		this.value = value;
-	}
+    PredicateOperation(String value) {
+        this.value = value;
+    }
 
-	/**
-	 * Get the enumerated from the string value
-	 *
-	 * @param value String value of operation to be found
-	 * @return predicate operation found. Null if the operation is not found
-	 */
-	public static PredicateOperation getOperator(String value) {
-		return map.get(value);
-	}
+    /**
+     * Get the enumerated from the string value
+     *
+     * @param value String value of operation to be found
+     * @return predicate operation found. Null if the operation is not found
+     */
+    public static PredicateOperation getOperator(String value) {
+        return map.get(value);
+    }
 
-	/**
-	 * Resolve the predicate with criteria builder
-	 * 
-	 * @param cb Criteria builder
-	 *
-	 * @return the predicate
-	 */
-	public abstract Predicate getPredicate(CriteriaBuilder cb);
+    /**
+     * Resolve the predicate with criteria builder
+     *
+     * @param cb Criteria builder
+     * @return the predicate
+     */
+    public abstract Predicate getPredicate(CriteriaBuilder cb);
 
-	/**
-	 * Get the value of the predicate
-	 * 
-	 * @return value of the predicate
-	 */
-	public String getValue() {
-		return value;
-	}
+    /**
+     * Get the value of the predicate
+     *
+     * @return value of the predicate
+     */
+    public String getValue() {
+        return value;
+    }
 }

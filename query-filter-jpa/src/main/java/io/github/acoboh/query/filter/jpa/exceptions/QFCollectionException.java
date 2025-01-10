@@ -7,52 +7,52 @@ import org.springframework.http.HttpStatus;
  */
 public class QFCollectionException extends QueryFilterException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final String MESSAGE = "The field '{}' can not be used as a collection. Reason {}";
+    private static final String MESSAGE = "The field '{}' can not be used as a collection. Reason {}";
 
-	private final String field;
-	private final String reason;
-	private final transient Object[] arguments;
+    private final String field;
+    private final String reason;
+    private final transient Object[] arguments;
 
-	/**
-	 * @param field  field
-	 * @param reason reason
-	 */
-	public QFCollectionException(String field, String reason) {
-		super(MESSAGE, reason);
-		this.field = field;
-		this.reason = reason;
-		arguments = new Object[] { field };
-	}
+    /**
+     * @param field  field
+     * @param reason reason
+     */
+    public QFCollectionException(String field, String reason) {
+        super(MESSAGE, reason);
+        this.field = field;
+        this.reason = reason;
+        arguments = new Object[]{field};
+    }
 
-	/**
-	 * @return field
-	 */
-	public String getField() {
-		return field;
-	}
+    /**
+     * @return field
+     */
+    public String getField() {
+        return field;
+    }
 
-	/**
-	 * @return reason
-	 */
-	public String getReason() {
-		return reason;
-	}
+    /**
+     * @return reason
+     */
+    public String getReason() {
+        return reason;
+    }
 
-	@Override
-	public HttpStatus getHttpStatus() {
-		return HttpStatus.INTERNAL_SERVER_ERROR;
-	}
+    @Override
+    public HttpStatus getHttpStatus() {
+        return HttpStatus.INTERNAL_SERVER_ERROR;
+    }
 
-	@Override
-	public Object[] getArguments() {
-		return arguments;
-	}
+    @Override
+    public Object[] getArguments() {
+        return arguments;
+    }
 
-	@Override
-	public String getMessageCode() {
-		return "qf.exceptions.collection";
-	}
+    @Override
+    public String getMessageCode() {
+        return "qf.exceptions.collection";
+    }
 
 }

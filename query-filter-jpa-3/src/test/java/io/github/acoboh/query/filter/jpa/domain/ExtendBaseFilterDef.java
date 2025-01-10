@@ -10,7 +10,7 @@ import io.github.acoboh.query.filter.jpa.model.PostBlog;
 @QFDefinitionClass(PostBlog.class)
 public class ExtendBaseFilterDef extends BaseFilterDef {
 
-	@QFElement("author")
-	private String author;
+    @QFElement("author")
+    private String author;
 
 }

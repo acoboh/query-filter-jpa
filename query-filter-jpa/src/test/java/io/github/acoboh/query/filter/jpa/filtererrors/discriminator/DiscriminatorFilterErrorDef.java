@@ -8,15 +8,14 @@ import io.github.acoboh.query.filter.jpa.model.discriminators.Topic;
 
 /**
  * Discriminator error definition
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 @QFDefinitionClass(Topic.class)
 public class DiscriminatorFilterErrorDef {
 
-	@QFDiscriminator({ @QFDiscriminator.Value(name = "ANNOUNCEMENT", type = Announcement.class),
-			@QFDiscriminator.Value(name = "POST", type = PostBlog.class) })
-	private String type;
+    @QFDiscriminator({@QFDiscriminator.Value(name = "ANNOUNCEMENT", type = Announcement.class),
+            @QFDiscriminator.Value(name = "POST", type = PostBlog.class)})
+    private String type;
 
 }

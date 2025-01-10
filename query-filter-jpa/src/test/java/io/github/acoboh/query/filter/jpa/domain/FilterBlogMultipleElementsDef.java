@@ -8,33 +8,32 @@ import io.github.acoboh.query.filter.jpa.predicate.PredicateOperation;
 
 /**
  * Basic example for multiple query filter elements on same field
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 @QFDefinitionClass(PostBlog.class)
 public class FilterBlogMultipleElementsDef {
 
-	// @formatter:off
+    // @formatter:off
 	@QFElements(operation = PredicateOperation.OR, value = { 
 			@QFElement("author"),
 			@QFElement("text") 
 		}
 	)
 	// @formatter:on
-	private String multipleOr;
+    private String multipleOr;
 
-	// @formatter:off
+    // @formatter:off
 	@QFElements(operation = PredicateOperation.AND, value = { 
 			@QFElement("author"),
 			@QFElement("text") 
 		}
 	)
 	// @formatter:on
-	private String multipleAnd;
+    private String multipleAnd;
 
-	@QFElement("author")
-	@QFElement("text")
-	private String multipleDefault;
+    @QFElement("author")
+    @QFElement("text")
+    private String multipleDefault;
 
 }

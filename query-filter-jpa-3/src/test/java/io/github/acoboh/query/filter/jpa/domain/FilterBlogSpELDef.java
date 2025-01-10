@@ -8,18 +8,17 @@ import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 
 /**
  * Example with basic spel expressions
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 @QFDefinitionClass(PostBlog.class)
 public class FilterBlogSpELDef {
 
-	@QFElement("likes")
-	private int likes;
+    @QFElement("likes")
+    private int likes;
 
-	@QFElement(value = "comments.likes", isSpPELExpression = true, defaultValues = "#likes * 10", defaultOperation = QFOperationEnum.GREATER_THAN, order = 0)
-	@QFBlockParsing
-	private int commentLikes;
+    @QFElement(value = "comments.likes", isSpPELExpression = true, defaultValues = "#likes * 10", defaultOperation = QFOperationEnum.GREATER_THAN, order = 0)
+    @QFBlockParsing
+    private int commentLikes;
 
 }

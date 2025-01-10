@@ -7,16 +7,16 @@ package io.github.acoboh.query.filter.jpa.exceptions.definition;
  */
 public class QFJsonException extends QueryFilterDefinitionException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Custom message exception
-	 * 
-	 * @param message message
-	 * @param args    args of message
-	 */
-	public QFJsonException(String message, Object... args) {
-		super(message, args);
-	}
+    /**
+     * Custom message exception
+     *
+     * @param message message
+     * @param args    args of message
+     */
+    public QFJsonException(String message, Object... args) {
+        super(message, args);
+    }
 
 }

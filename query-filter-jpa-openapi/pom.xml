@@ -27,7 +27,7 @@
 		<maven.compiler.testTarget>${jdk-test.version}</maven.compiler.testTarget>
 
 		<!-- Spring dependencies -->
-		<spring.version>5.3.39</spring.version>
+		<spring.version>6.1.14</spring.version>
 
 		<!--OpenAPI dependencies -->
 		<openapi.version>1.6.15</openapi.version>

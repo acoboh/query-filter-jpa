@@ -1,17 +1,19 @@
 package io.github.acoboh.query.filter.jpa.predicate;
 
-import io.github.acoboh.query.filter.jpa.processor.definitions.QFAbstractDefinition;
-import io.github.acoboh.query.filter.jpa.utils.StringParseUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Predicate;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.github.acoboh.query.filter.jpa.processor.definitions.QFAbstractDefinition;
+import io.github.acoboh.query.filter.jpa.utils.StringParseUtils;
 
 /**
  * Predicate level class.
@@ -20,155 +22,159 @@ import java.util.Set;
  */
 class PredicateLevel {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PredicateLevel.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(PredicateLevel.class);
 
-    private final List<String> levelParts = new ArrayList<>();
-    private final List<PredicatePart> parts;
-    private List<PredicateLevel> nestedLevels;
-    private PredicateOperation levelOperator;
-    private Set<String> fieldsSet;
+	private final List<String> levelParts = new ArrayList<>();
+	private final List<PredicatePart> parts;
+	private List<PredicateLevel> nestedLevels;
+	private PredicateOperation levelOperator;
+	private Set<String> fieldsSet;
 
-    /**
-     * Predicate constructor
-     *
-     * @param expression expression of predicate
-     * @param fullMap    map definition of filter to be used
-     */
-    public PredicateLevel(String expression, Map<String, QFAbstractDefinition> fullMap) {
+	/**
+	 * Predicate constructor
+	 *
+	 * @param expression
+	 *            expression of predicate
+	 * @param fullMap
+	 *            map definition of filter to be used
+	 */
+	public PredicateLevel(String expression, Map<String, QFAbstractDefinition> fullMap) {
 
-        parts = StringParseUtils.parseParts(expression);
+		parts = StringParseUtils.parseParts(expression);
 
-        if (parts.isEmpty()) {
-            return;
-        }
+		if (parts.isEmpty()) {
+			return;
+		}
 
-        if (parts.size() == 1) {
-            LOGGER.debug("Parts has size 1, must be simplified");
-            levelParts.add(parts.get(0).getPart());
+		if (parts.size() == 1) {
+			LOGGER.debug("Parts has size 1, must be simplified");
+			levelParts.add(parts.get(0).getPart());
 
-            return;
-        }
+			return;
+		}
 
-        for (int i = 0; i < parts.size(); i++) {
+		for (int i = 0; i < parts.size(); i++) {
 
-            PredicatePart part = parts.get(i);
-            LOGGER.trace("Parsing parts {}", part);
+			PredicatePart part = parts.get(i);
+			LOGGER.trace("Parsing parts {}", part);
 
-            if (i % 2 == 1) {
-                LOGGER.trace("Parsing part as operator {}", part.getPart());
-                PredicateOperation operator = PredicateOperation.getOperator(part.getPart());
-                if (operator == null) {
-                    LOGGER.error("Unexpected part {}. Must be an operator", part.getPart());
-                    throw new IllegalStateException("Unexpected part. Must be an operator");
-                }
+			if (i % 2 == 1) {
+				LOGGER.trace("Parsing part as operator {}", part.getPart());
+				PredicateOperation operator = PredicateOperation.getOperator(part.getPart());
+				if (operator == null) {
+					LOGGER.error("Unexpected part {}. Must be an operator", part.getPart());
+					throw new IllegalStateException("Unexpected part. Must be an operator");
+				}
 
-                if (levelOperator == null) {
-                    levelOperator = operator;
-                } else if (levelOperator != operator) {
-                    LOGGER.error(
-                            "Operators mixed on same level. Found {} and {} on the same level. Review the parenthesis",
-                            levelOperator, operator);
-                    throw new IllegalStateException("Mixed operators on same level");
-                }
-            } else {
-                if (part.isNested()) {
-                    LOGGER.trace("Parsing nested level as new predicate");
+				if (levelOperator == null) {
+					levelOperator = operator;
+				} else if (levelOperator != operator) {
+					LOGGER.error(
+							"Operators mixed on same level. Found {} and {} on the same level. Review the parenthesis",
+							levelOperator, operator);
+					throw new IllegalStateException("Mixed operators on same level");
+				}
+			} else {
+				if (part.isNested()) {
+					LOGGER.trace("Parsing nested level as new predicate");
 
-                    PredicateLevel nestedLevel = new PredicateLevel(part.getPart(), fullMap);
-                    switch (nestedLevel.parts.size()) {
-                        case 0:
-                            LOGGER.trace("Nested level is empty. Ignore them");
-                            continue;
-                        case 1:
-                            LOGGER.trace("Nested level must be simplified");
-                            levelParts.addAll(nestedLevel.levelParts);
-                            continue;
-                        default:
-                            LOGGER.trace("Adding as nested level");
-                            if (nestedLevels == null) {
-                                nestedLevels = new ArrayList<>();
-                            }
+					PredicateLevel nestedLevel = new PredicateLevel(part.getPart(), fullMap);
+					switch (nestedLevel.parts.size()) {
+						case 0 :
+							LOGGER.trace("Nested level is empty. Ignore them");
+							continue;
+						case 1 :
+							LOGGER.trace("Nested level must be simplified");
+							levelParts.addAll(nestedLevel.levelParts);
+							continue;
+						default :
+							LOGGER.trace("Adding as nested level");
+							if (nestedLevels == null) {
+								nestedLevels = new ArrayList<>();
+							}
 
-                            nestedLevels.add(nestedLevel);
-                    }
+							nestedLevels.add(nestedLevel);
+					}
 
-                } else {
+				} else {
 
-                    if (!fullMap.containsKey(part.getPart())) {
-                        LOGGER.error("Error missing part {} on definition map", part.getPart());
-                        throw new IllegalStateException("Missing part on definition map");
-                    }
+					if (!fullMap.containsKey(part.getPart())) {
+						LOGGER.error("Error missing part {} on definition map", part.getPart());
+						throw new IllegalStateException("Missing part on definition map");
+					}
 
-                    levelParts.add(part.getPart());
+					levelParts.add(part.getPart());
 
-                }
-            }
-        }
+				}
+			}
+		}
 
-    }
+	}
 
-    /**
-     * Get the filtered fields
-     *
-     * @return set of filtered field
-     */
-    public Set<String> getFilteredFields() {
-        if (fieldsSet == null) { // Cache fields
+	/**
+	 * Get the filtered fields
+	 *
+	 * @return set of filtered field
+	 */
+	public Set<String> getFilteredFields() {
+		if (fieldsSet == null) { // Cache fields
 
-            fieldsSet = new LinkedHashSet<>();
+			fieldsSet = new LinkedHashSet<>();
 
-            fieldsSet.addAll(levelParts);
+			fieldsSet.addAll(levelParts);
 
-            if (nestedLevels != null && !nestedLevels.isEmpty()) {
-                nestedLevels.forEach(e -> fieldsSet.addAll(e.getFilteredFields()));
-            }
+			if (nestedLevels != null && !nestedLevels.isEmpty()) {
+				nestedLevels.forEach(e -> fieldsSet.addAll(e.getFilteredFields()));
+			}
 
-        }
+		}
 
-        return fieldsSet;
-    }
+		return fieldsSet;
+	}
 
-    /**
-     * Resolve the level of the predicate
-     *
-     * @param cb         Criteria builder
-     * @param predicates Predicates to be used on nested levels for resolution
-     * @return Predicate used
-     */
-    public Predicate resolveLevel(CriteriaBuilder cb, Map<String, Predicate> predicates) {
+	/**
+	 * Resolve the level of the predicate
+	 *
+	 * @param cb
+	 *            Criteria builder
+	 * @param predicates
+	 *            Predicates to be used on nested levels for resolution
+	 * @return Predicate used
+	 */
+	public Predicate resolveLevel(CriteriaBuilder cb, Map<String, Predicate> predicates) {
 
-        Predicate res = levelOperator.getPredicate(cb);
+		Predicate res = levelOperator.getPredicate(cb);
 
-        if (!levelParts.isEmpty()) {
+		if (!levelParts.isEmpty()) {
 
-            for (String part : levelParts) {
-                Predicate predicate = predicates.get(part);
-                if (predicate != null) {
-                    res.getExpressions().add(predicate);
-                }
-            }
+			for (String part : levelParts) {
+				Predicate predicate = predicates.get(part);
+				if (predicate != null) {
+					res.getExpressions().add(predicate);
+				}
+			}
 
-        }
+		}
 
-        if (nestedLevels != null && !nestedLevels.isEmpty()) {
-            for (PredicateLevel level : nestedLevels) {
+		if (nestedLevels != null && !nestedLevels.isEmpty()) {
+			for (PredicateLevel level : nestedLevels) {
 
-                Predicate customPredicate = level.resolveLevel(cb, predicates);
-                if (customPredicate.getExpressions().isEmpty()) {
-                    LOGGER.trace("Empty predicate nested level. Ignored");
-                } else if (customPredicate.getExpressions().size() == 1) {
-                    LOGGER.trace("Single expression on nested level. Unwrap predicate");
-                    res.getExpressions().add(customPredicate.getExpressions().get(0));
+				Predicate customPredicate = level.resolveLevel(cb, predicates);
+				if (customPredicate.getExpressions().isEmpty()) {
+					LOGGER.trace("Empty predicate nested level. Ignored");
+				} else if (customPredicate.getExpressions().size() == 1) {
+					LOGGER.trace("Single expression on nested level. Unwrap predicate");
+					res.getExpressions().add(customPredicate.getExpressions().get(0));
 
-                } else {
-                    res.getExpressions().add(customPredicate);
-                }
+				} else {
+					res.getExpressions().add(customPredicate);
+				}
 
-            }
-        }
+			}
+		}
 
-        return res;
+		return res;
 
-    }
+	}
 
 }

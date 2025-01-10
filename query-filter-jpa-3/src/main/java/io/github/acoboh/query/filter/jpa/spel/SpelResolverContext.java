@@ -1,7 +1,8 @@
 package io.github.acoboh.query.filter.jpa.spel;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.PropertyValue;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
@@ -10,8 +11,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.ServletRequestParameterPropertyValues;
 import org.springframework.web.servlet.View;
 
-import java.util.Map;
-import java.util.stream.Collectors;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * SPEL Context base to resolve SpEL expressions
@@ -20,87 +21,91 @@ import java.util.stream.Collectors;
  */
 public abstract class SpelResolverContext {
 
-    /**
-     * Http servlet request parameter
-     */
-    protected final HttpServletRequest request;
+	/**
+	 * Http servlet request parameter
+	 */
+	protected final HttpServletRequest request;
 
-    /**
-     * Http servlet response parameter
-     */
-    protected final HttpServletResponse response;
+	/**
+	 * Http servlet response parameter
+	 */
+	protected final HttpServletResponse response;
 
-    /**
-     * Default constructor
-     *
-     * @param request  the servlet request
-     * @param response the servlet response
-     */
-    protected SpelResolverContext(HttpServletRequest request, HttpServletResponse response) {
-        this.request = request;
-        this.response = response;
-    }
+	/**
+	 * Default constructor
+	 *
+	 * @param request
+	 *            the servlet request
+	 * @param response
+	 *            the servlet response
+	 */
+	protected SpelResolverContext(HttpServletRequest request, HttpServletResponse response) {
+		this.request = request;
+		this.response = response;
+	}
 
-    /**
-     * Evaluate any expression
-     *
-     * @param securityExpression expression to evaluate
-     * @param contextValues      actual context values
-     * @return object evaluated
-     */
-    public Object evaluate(String securityExpression, MultiValueMap<String, Object> contextValues) {
+	/**
+	 * Evaluate any expression
+	 *
+	 * @param securityExpression
+	 *            expression to evaluate
+	 * @param contextValues
+	 *            actual context values
+	 * @return object evaluated
+	 */
+	public Object evaluate(String securityExpression, MultiValueMap<String, Object> contextValues) {
 
-        ExpressionParser expressionParser = getExpressionParser();
+		ExpressionParser expressionParser = getExpressionParser();
 
-        Expression expression = expressionParser.parseExpression(securityExpression);
+		Expression expression = expressionParser.parseExpression(securityExpression);
 
-        EvaluationContext context = getEvaluationContext();
+		EvaluationContext context = getEvaluationContext();
 
-        if (request != null) {
-            fillContextWithRequestValues(context);
-        }
+		if (request != null) {
+			fillContextWithRequestValues(context);
+		}
 
-        fillContextWithMap(context, contextValues);
+		fillContextWithMap(context, contextValues);
 
-        return expression.getValue(context);
+		return expression.getValue(context);
 
-    }
+	}
 
-    /**
-     * Get expression parser to resolve de SpEL expression
-     *
-     * @return the expression parser to use
-     */
-    public abstract ExpressionParser getExpressionParser();
+	/**
+	 * Get expression parser to resolve de SpEL expression
+	 *
+	 * @return the expression parser to use
+	 */
+	public abstract ExpressionParser getExpressionParser();
 
-    /**
-     * Get the evaluation context of the expression
-     *
-     * @return evaluation context to use
-     */
-    public abstract EvaluationContext getEvaluationContext();
+	/**
+	 * Get the evaluation context of the expression
+	 *
+	 * @return evaluation context to use
+	 */
+	public abstract EvaluationContext getEvaluationContext();
 
-    private void fillContextWithRequestValues(EvaluationContext context) {
+	private void fillContextWithRequestValues(EvaluationContext context) {
 
-        Object pathObject = request.getAttribute(View.PATH_VARIABLES);
-        if (pathObject instanceof Map<?, ?> map) {
-            context.setVariable("_pathVariables", map);
-        }
+		Object pathObject = request.getAttribute(View.PATH_VARIABLES);
+		if (pathObject instanceof Map<?, ?> map) {
+			context.setVariable("_pathVariables", map);
+		}
 
-        var properties = new ServletRequestParameterPropertyValues(request);
-        Map<String, Object> requestParams = properties.getPropertyValueList().stream()
-                .collect(Collectors.toMap(PropertyValue::getName, PropertyValue::getValue));
+		var properties = new ServletRequestParameterPropertyValues(request);
+		Map<String, Object> requestParams = properties.getPropertyValueList().stream()
+				.collect(Collectors.toMap(PropertyValue::getName, PropertyValue::getValue));
 
-        context.setVariable("_parameters", requestParams);
-    }
+		context.setVariable("_parameters", requestParams);
+	}
 
-    private void fillContextWithMap(EvaluationContext context, MultiValueMap<String, Object> contextValues) {
-        contextValues.forEach((k, v) -> {
-            if (v.size() > 1) {
-                context.setVariable(k, v);
-            } else if (v.size() == 1) {
-                context.setVariable(k, v.get(0));
-            }
-        });
-    }
+	private void fillContextWithMap(EvaluationContext context, MultiValueMap<String, Object> contextValues) {
+		contextValues.forEach((k, v) -> {
+			if (v.size() > 1) {
+				context.setVariable(k, v);
+			} else if (v.size() == 1) {
+				context.setVariable(k, v.get(0));
+			}
+		});
+	}
 }

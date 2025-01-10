@@ -1,8 +1,8 @@
 package io.github.acoboh.query.filter.jpa.exceptions;
 
-import org.springframework.http.HttpStatus;
-
 import java.io.Serial;
+
+import org.springframework.http.HttpStatus;
 
 /**
  * Exception thrown when the field is not a valid filter parameter
@@ -11,55 +11,56 @@ import java.io.Serial;
  */
 public class QFNotValuable extends QueryFilterException {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
-    private static final String MESSAGE = "The field '{}' is not valuable";
+	@Serial
+	private static final long serialVersionUID = 1L;
+	private static final String MESSAGE = "The field '{}' is not valuable";
 
-    private final String field;
-    private final transient Object[] arguments;
+	private final String field;
+	private final transient Object[] arguments;
 
-    /**
-     * Default constructor
-     *
-     * @param field field
-     */
-    public QFNotValuable(String field) {
-        super(MESSAGE, field);
-        this.field = field;
-        this.arguments = new Object[]{field};
-    }
+	/**
+	 * Default constructor
+	 *
+	 * @param field
+	 *            field
+	 */
+	public QFNotValuable(String field) {
+		super(MESSAGE, field);
+		this.field = field;
+		this.arguments = new Object[]{field};
+	}
 
-    /**
-     * Get field
-     *
-     * @return field
-     */
-    public String getField() {
-        return field;
-    }
+	/**
+	 * Get field
+	 *
+	 * @return field
+	 */
+	public String getField() {
+		return field;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public HttpStatus getHttpStatus() {
-        return HttpStatus.BAD_REQUEST;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public HttpStatus getHttpStatus() {
+		return HttpStatus.BAD_REQUEST;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object[] getArguments() {
-        return arguments;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object[] getArguments() {
+		return arguments;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getMessageCode() {
-        return "qf.exceptions.notValuable";
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getMessageCode() {
+		return "qf.exceptions.notValuable";
+	}
 
 }

@@ -13,13 +13,13 @@ import io.github.acoboh.query.filter.jpa.model.PostBlog;
 @QFDefinitionClass(PostBlog.class)
 public class FilterCollectionBlogDef {
 
-    @QFElement("author")
-    private String author;
+	@QFElement("author")
+	private String author;
 
-    @QFCollectionElement("comments")
-    private int commentsSize;
+	@QFCollectionElement("comments")
+	private int commentsSize;
 
-    @QFElement("comments.author")
-    private String authorComments;
+	@QFElement("comments.author")
+	private String authorComments;
 
 }

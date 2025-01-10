@@ -1,7 +1,8 @@
 package io.github.acoboh.query.filter.jpa.repositories;
 
-import io.github.acoboh.query.filter.jpa.model.subquery.RoleModel;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import io.github.acoboh.query.filter.jpa.model.subquery.RoleModel;
 
 /**
  * Role repository

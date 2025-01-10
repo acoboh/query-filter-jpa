@@ -1,8 +1,8 @@
 package io.github.acoboh.query.filter.jpa.model.discriminators.joined;
 
-import jakarta.persistence.Entity;
-
 import java.util.Objects;
+
+import jakarta.persistence.Entity;
 
 /**
  * Subclass B entity
@@ -10,44 +10,44 @@ import java.util.Objects;
 @Entity
 public class SubclassBEntity extends ParentEntity {
 
-    private String text;
+	private String text;
 
-    /**
-     * Get the text
-     *
-     * @return the text
-     */
-    public String getText() {
-        return text;
-    }
+	/**
+	 * Get the text
+	 *
+	 * @return the text
+	 */
+	public String getText() {
+		return text;
+	}
 
-    /**
-     * Set the text
-     *
-     * @param text
-     */
-    public void setText(String text) {
-        this.text = text;
-    }
+	/**
+	 * Set the text
+	 *
+	 * @param text
+	 */
+	public void setText(String text) {
+		this.text = text;
+	}
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + Objects.hash(text);
-        return result;
-    }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(text);
+		return result;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        SubclassBEntity other = (SubclassBEntity) obj;
-        return Objects.equals(text, other.text);
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SubclassBEntity other = (SubclassBEntity) obj;
+		return Objects.equals(text, other.text);
+	}
 
 }

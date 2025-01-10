@@ -10,7 +10,7 @@ import io.github.acoboh.query.filter.jpa.model.PostBlog;
 @QFDefinitionClass(PostBlog.class)
 public class FilterBlogDefaultValuesDef {
 
-    @QFElement(value = "author", defaultValues = "Author 1")
-    private String author;
+	@QFElement(value = "author", defaultValues = "Author 1")
+	private String author;
 
 }

@@ -1,19 +1,21 @@
 package io.github.acoboh.query.filter.jpa.annotations;
 
-import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 
 /**
  * Used to force hide from parsing phase.
  * <p>
- * You can specify internal parsing like roles or administrator fields you do not want to set visible for external usage. After
- * the creation, you can add the field with methods of class {@link io.github.acoboh.query.filter.jpa.processor.QueryFilter}
+ * You can specify internal parsing like roles or administrator fields you do
+ * not want to set visible for external usage. After the creation, you can add
+ * the field with methods of class
+ * {@link io.github.acoboh.query.filter.jpa.processor.QueryFilter}
  * <p>
  * Methods available:
  * <p>

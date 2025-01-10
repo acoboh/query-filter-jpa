@@ -14,8 +14,8 @@ import io.github.acoboh.query.filter.jpa.model.discriminators.Topic;
 @QFDefinitionClass(Topic.class)
 public class DiscriminatorFilterDef {
 
-    @QFDiscriminator({@QFDiscriminator.Value(name = "ANNOUNCEMENT", type = Announcement.class),
-            @QFDiscriminator.Value(name = "POST", type = Post.class)})
-    private String type;
+	@QFDiscriminator({@QFDiscriminator.Value(name = "ANNOUNCEMENT", type = Announcement.class),
+			@QFDiscriminator.Value(name = "POST", type = Post.class)})
+	private String type;
 
 }

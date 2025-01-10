@@ -9,17 +9,19 @@ import java.io.Serial;
  */
 public class QFTypeException extends QueryFilterDefinitionException {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
-    private static final String MESSAGE = "The field '{}' can not be parsed. {}";
+	@Serial
+	private static final long serialVersionUID = 1L;
+	private static final String MESSAGE = "The field '{}' can not be parsed. {}";
 
-    /**
-     * Default constructor
-     *
-     * @param field  field
-     * @param reason reason
-     */
-    public QFTypeException(String field, String reason) {
-        super(MESSAGE, field, reason);
-    }
+	/**
+	 * Default constructor
+	 *
+	 * @param field
+	 *            field
+	 * @param reason
+	 *            reason
+	 */
+	public QFTypeException(String field, String reason) {
+		super(MESSAGE, field, reason);
+	}
 }

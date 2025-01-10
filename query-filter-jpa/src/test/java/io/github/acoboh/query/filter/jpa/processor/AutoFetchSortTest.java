@@ -1,11 +1,17 @@
 package io.github.acoboh.query.filter.jpa.processor;
 
-import io.github.acoboh.query.filter.jpa.domain.FilterBlogSortRelationalDef;
-import io.github.acoboh.query.filter.jpa.model.Comments;
-import io.github.acoboh.query.filter.jpa.model.ExtraData;
-import io.github.acoboh.query.filter.jpa.model.PostBlog;
-import io.github.acoboh.query.filter.jpa.repositories.PostBlogRepository;
-import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertThrows;
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -23,17 +29,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertThrows;
+import io.github.acoboh.query.filter.jpa.domain.FilterBlogSortRelationalDef;
+import io.github.acoboh.query.filter.jpa.model.Comments;
+import io.github.acoboh.query.filter.jpa.model.ExtraData;
+import io.github.acoboh.query.filter.jpa.model.PostBlog;
+import io.github.acoboh.query.filter.jpa.repositories.PostBlogRepository;
+import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
 
 @SpringJUnitWebConfig(SpringIntegrationTestBase.Config.class)
 @ExtendWith(SpringExtension.class)
@@ -41,276 +42,297 @@ import static org.junit.Assert.assertThrows;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class AutoFetchSortTest {
 
-    private static final PostBlog POST_EXAMPLE = new PostBlog();
-    private static final PostBlog POST_EXAMPLE_2 = new PostBlog();
-
-    static {
-        POST_EXAMPLE.setUuid(UUID.randomUUID());
-        POST_EXAMPLE.setAuthor("Author");
-        POST_EXAMPLE.setText("Text");
-        POST_EXAMPLE.setAvgNote(2.5d);
-        POST_EXAMPLE.setLikes(100);
-        POST_EXAMPLE.setCreateDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)); // Truncated to avoid rounding issues with Java > 8 and BBDD
-        POST_EXAMPLE.setLastTimestamp(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS))); // Truncated to avoid rounding issues with Java > 8 and BBDD
-        POST_EXAMPLE.setPublished(true);
-        POST_EXAMPLE.setPostType(PostBlog.PostType.TEXT);
-
-        Set<Comments> commentsList = new HashSet<>();
+	private static final PostBlog POST_EXAMPLE = new PostBlog();
+	private static final PostBlog POST_EXAMPLE_2 = new PostBlog();
+
+	static {
+		POST_EXAMPLE.setUuid(UUID.randomUUID());
+		POST_EXAMPLE.setAuthor("Author");
+		POST_EXAMPLE.setText("Text");
+		POST_EXAMPLE.setAvgNote(2.5d);
+		POST_EXAMPLE.setLikes(100);
+		POST_EXAMPLE.setCreateDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)); // Truncated to avoid rounding
+																						// issues with Java > 8 and BBDD
+		POST_EXAMPLE.setLastTimestamp(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS))); // Truncated
+																												// to
+																												// avoid
+																												// rounding
+																												// issues
+																												// with
+																												// Java
+																												// > 8
+																												// and
+																												// BBDD
+		POST_EXAMPLE.setPublished(true);
+		POST_EXAMPLE.setPostType(PostBlog.PostType.TEXT);
+
+		Set<Comments> commentsList = new HashSet<>();
+
+		Comments comment = new Comments();
+		comment.setId(1);
+		comment.setAuthor("Author 2");
+		comment.setComment("Comment 1");
+		comment.setLikes(1);
+		comment.setPostBlog(POST_EXAMPLE);
+
+		Comments comment2 = new Comments();
+		comment2.setId(2);
+		comment2.setAuthor("Author 4");
+		comment2.setComment("Comment 2");
+		comment2.setLikes(2);
+		comment2.setPostBlog(POST_EXAMPLE);
+
+		commentsList.add(comment);
+		commentsList.add(comment2);
+
+		POST_EXAMPLE.setComments(commentsList);
+
+		List<ExtraData> extraDataList = new ArrayList<>();
+		extraDataList.add(new ExtraData(2, comment));
+		extraDataList.add(new ExtraData(4, comment));
+
+		comment.setExtraData(extraDataList);
+
+		List<ExtraData> extraDataList2 = new ArrayList<>();
+		extraDataList2.add(new ExtraData(6, comment2));
+		extraDataList2.add(new ExtraData(8, comment2));
+
+		comment2.setExtraData(extraDataList2);
+
+		POST_EXAMPLE_2.setUuid(UUID.randomUUID());
+		POST_EXAMPLE_2.setAuthor("Author 2");
+		POST_EXAMPLE_2.setText("Text 2");
+		POST_EXAMPLE_2.setAvgNote(0.5d);
+		POST_EXAMPLE_2.setLikes(0);
+		POST_EXAMPLE_2.setCreateDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)); // Truncated to avoid rounding
+																							// issues with Java > 8 and
+																							// BBDD
+		POST_EXAMPLE_2.setLastTimestamp(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS))); // Truncated
+																												// to
+																												// avoid
+																												// rounding
+																												// issues
+																												// with
+																												// Java
+																												// > 8
+																												// and
+																												// BBDD
+		POST_EXAMPLE_2.setPublished(false);
+		POST_EXAMPLE_2.setPostType(PostBlog.PostType.VIDEO);
 
-        Comments comment = new Comments();
-        comment.setId(1);
-        comment.setAuthor("Author 2");
-        comment.setComment("Comment 1");
-        comment.setLikes(1);
-        comment.setPostBlog(POST_EXAMPLE);
-
-        Comments comment2 = new Comments();
-        comment2.setId(2);
-        comment2.setAuthor("Author 4");
-        comment2.setComment("Comment 2");
-        comment2.setLikes(2);
-        comment2.setPostBlog(POST_EXAMPLE);
+		Set<Comments> commentsList2 = new HashSet<>();
 
-        commentsList.add(comment);
-        commentsList.add(comment2);
+		Comments comment3 = new Comments();
+		comment3.setId(3);
+		comment3.setAuthor("Author 1");
+		comment3.setComment("Comment 3");
+		comment3.setLikes(3);
+		comment3.setPostBlog(POST_EXAMPLE_2);
 
-        POST_EXAMPLE.setComments(commentsList);
+		Comments comment4 = new Comments();
+		comment4.setId(4);
+		comment4.setAuthor("Author 3");
+		comment4.setComment("Comment 4");
+		comment4.setLikes(4);
+		comment4.setPostBlog(POST_EXAMPLE_2);
 
-        List<ExtraData> extraDataList = new ArrayList<>();
-        extraDataList.add(new ExtraData(2, comment));
-        extraDataList.add(new ExtraData(4, comment));
+		commentsList2.add(comment3);
+		commentsList2.add(comment4);
 
-        comment.setExtraData(extraDataList);
+		POST_EXAMPLE_2.setComments(commentsList2);
 
-        List<ExtraData> extraDataList2 = new ArrayList<>();
-        extraDataList2.add(new ExtraData(6, comment2));
-        extraDataList2.add(new ExtraData(8, comment2));
+		List<ExtraData> extraDataList3 = new ArrayList<>();
+		extraDataList3.add(new ExtraData(5, comment3));
+		extraDataList3.add(new ExtraData(3, comment3));
 
-        comment2.setExtraData(extraDataList2);
+		comment3.setExtraData(extraDataList3);
 
-        POST_EXAMPLE_2.setUuid(UUID.randomUUID());
-        POST_EXAMPLE_2.setAuthor("Author 2");
-        POST_EXAMPLE_2.setText("Text 2");
-        POST_EXAMPLE_2.setAvgNote(0.5d);
-        POST_EXAMPLE_2.setLikes(0);
-        POST_EXAMPLE_2.setCreateDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)); // Truncated to avoid rounding issues with Java > 8 and BBDD
-        POST_EXAMPLE_2.setLastTimestamp(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS))); // Truncated to avoid rounding issues with Java > 8 and BBDD
-        POST_EXAMPLE_2.setPublished(false);
-        POST_EXAMPLE_2.setPostType(PostBlog.PostType.VIDEO);
+		List<ExtraData> extraDataList4 = new ArrayList<>();
+		extraDataList4.add(new ExtraData(12, comment4));
+		extraDataList4.add(new ExtraData(15, comment4));
 
-        Set<Comments> commentsList2 = new HashSet<>();
+		comment4.setExtraData(extraDataList4);
+	}
 
-        Comments comment3 = new Comments();
-        comment3.setId(3);
-        comment3.setAuthor("Author 1");
-        comment3.setComment("Comment 3");
-        comment3.setLikes(3);
-        comment3.setPostBlog(POST_EXAMPLE_2);
+	@Autowired
+	private QFProcessor<FilterBlogSortRelationalDef, PostBlog> queryFilterProcessor;
 
-        Comments comment4 = new Comments();
-        comment4.setId(4);
-        comment4.setAuthor("Author 3");
-        comment4.setComment("Comment 4");
-        comment4.setLikes(4);
-        comment4.setPostBlog(POST_EXAMPLE_2);
+	@Autowired
+	private PostBlogRepository repository;
 
-        commentsList2.add(comment3);
-        commentsList2.add(comment4);
+	@Test
+	@DisplayName("0. Setup")
+	@Order(Ordered.HIGHEST_PRECEDENCE)
+	void setup() {
 
-        POST_EXAMPLE_2.setComments(commentsList2);
+		assertThat(queryFilterProcessor).isNotNull();
+		assertThat(repository).isNotNull();
 
-        List<ExtraData> extraDataList3 = new ArrayList<>();
-        extraDataList3.add(new ExtraData(5, comment3));
-        extraDataList3.add(new ExtraData(3, comment3));
+		assertThat(repository.findAll()).isEmpty();
 
-        comment3.setExtraData(extraDataList3);
+		repository.saveAndFlush(POST_EXAMPLE);
+		repository.saveAndFlush(POST_EXAMPLE_2);
 
-        List<ExtraData> extraDataList4 = new ArrayList<>();
-        extraDataList4.add(new ExtraData(12, comment4));
-        extraDataList4.add(new ExtraData(15, comment4));
+		assertThat(repository.findAll()).hasSize(2).containsExactlyInAnyOrder(POST_EXAMPLE, POST_EXAMPLE_2);
 
-        comment4.setExtraData(extraDataList4);
-    }
+	}
 
-    @Autowired
-    private QFProcessor<FilterBlogSortRelationalDef, PostBlog> queryFilterProcessor;
+	@Test
+	@DisplayName("1. Test sort by only sort")
+	@Order(1)
+	void testSortBase() {
 
-    @Autowired
-    private PostBlogRepository repository;
+		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("sort=+commentAuthorSort",
+				QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
 
-    @Test
-    @DisplayName("0. Setup")
-    @Order(Ordered.HIGHEST_PRECEDENCE)
-    void setup() {
+		assertThat(qf.isSorted()).isTrue();
 
-        assertThat(queryFilterProcessor).isNotNull();
-        assertThat(repository).isNotNull();
+		assertThat(qf.isSortedBy("commentAuthorSort")).isTrue();
 
-        assertThat(repository.findAll()).isEmpty();
+		assertThat(qf.getSortFields()).containsExactly(Pair.of("commentAuthorSort", Direction.ASC));
 
-        repository.saveAndFlush(POST_EXAMPLE);
-        repository.saveAndFlush(POST_EXAMPLE_2);
+		assertThat(qf.getSortFieldWithFullPath()).containsExactly(Pair.of("comments.author", Direction.ASC));
 
-        assertThat(repository.findAll()).hasSize(2).containsExactlyInAnyOrder(POST_EXAMPLE, POST_EXAMPLE_2);
+		List<PostBlog> found = repository.findAll(qf);
 
-    }
+		assertThat(found).hasSize(2).containsExactly(POST_EXAMPLE_2, POST_EXAMPLE);
 
-    @Test
-    @DisplayName("1. Test sort by only sort")
-    @Order(1)
-    void testSortBase() {
+	}
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("sort=+commentAuthorSort",
-                QFParamType.RHS_COLON);
-        assertThat(qf).isNotNull();
+	@Test
+	@DisplayName("2. Test sort by element sort")
+	@Order(2)
+	void testSortElement() {
 
-        assertThat(qf.isSorted()).isTrue();
+		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("sort=-commentAuthorElement",
+				QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
 
-        assertThat(qf.isSortedBy("commentAuthorSort")).isTrue();
+		assertThat(qf.isSorted()).isTrue();
 
-        assertThat(qf.getSortFields()).containsExactly(Pair.of("commentAuthorSort", Direction.ASC));
+		assertThat(qf.isSortedBy("commentAuthorElement")).isTrue();
 
-        assertThat(qf.getSortFieldWithFullPath()).containsExactly(Pair.of("comments.author", Direction.ASC));
+		assertThat(qf.getSortFields()).containsExactly(Pair.of("commentAuthorElement", Direction.DESC));
 
-        List<PostBlog> found = repository.findAll(qf);
+		assertThat(qf.getSortFieldWithFullPath()).containsExactly(Pair.of("comments.author", Direction.DESC));
 
-        assertThat(found).hasSize(2).containsExactly(POST_EXAMPLE_2, POST_EXAMPLE);
+		List<PostBlog> found = repository.findAll(qf);
 
-    }
+		assertThat(found).hasSize(2).containsExactly(POST_EXAMPLE, POST_EXAMPLE_2);
 
-    @Test
-    @DisplayName("2. Test sort by element sort")
-    @Order(2)
-    void testSortElement() {
+	}
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("sort=-commentAuthorElement",
-                QFParamType.RHS_COLON);
-        assertThat(qf).isNotNull();
+	@Test
+	@DisplayName("3. Test sort error without autofetch on sort")
+	@Order(3)
+	void testSortErrorSort() {
 
-        assertThat(qf.isSorted()).isTrue();
+		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("sort=-commentAuthorSortError",
+				QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
 
-        assertThat(qf.isSortedBy("commentAuthorElement")).isTrue();
+		assertThat(qf.isSorted()).isTrue();
 
-        assertThat(qf.getSortFields()).containsExactly(Pair.of("commentAuthorElement", Direction.DESC));
+		assertThat(qf.isSortedBy("commentAuthorSortError")).isTrue();
 
-        assertThat(qf.getSortFieldWithFullPath()).containsExactly(Pair.of("comments.author", Direction.DESC));
+		assertThat(qf.getSortFields()).containsExactly(Pair.of("commentAuthorSortError", Direction.DESC));
 
-        List<PostBlog> found = repository.findAll(qf);
+		assertThat(qf.getSortFieldWithFullPath()).containsExactly(Pair.of("comments.author", Direction.DESC));
 
-        assertThat(found).hasSize(2).containsExactly(POST_EXAMPLE, POST_EXAMPLE_2);
+		InvalidDataAccessResourceUsageException ex = assertThrows(InvalidDataAccessResourceUsageException.class,
+				() -> repository.findAll(qf));
 
-    }
+		assertThat(ex.getCause().getCause().getMessage())
+				.startsWith("ERROR: for SELECT DISTINCT, ORDER BY expressions must appear in select list");
 
-    @Test
-    @DisplayName("3. Test sort error without autofetch on sort")
-    @Order(3)
-    void testSortErrorSort() {
+	}
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("sort=-commentAuthorSortError",
-                QFParamType.RHS_COLON);
-        assertThat(qf).isNotNull();
+	@Test
+	@DisplayName("4. Test sort error without autofetch on element")
+	@Order(4)
+	void testSortErrorElement() {
 
-        assertThat(qf.isSorted()).isTrue();
+		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("sort=-commentAuthorElementError",
+				QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
 
-        assertThat(qf.isSortedBy("commentAuthorSortError")).isTrue();
+		assertThat(qf.isSorted()).isTrue();
 
-        assertThat(qf.getSortFields()).containsExactly(Pair.of("commentAuthorSortError", Direction.DESC));
+		assertThat(qf.isSortedBy("commentAuthorElementError")).isTrue();
 
-        assertThat(qf.getSortFieldWithFullPath()).containsExactly(Pair.of("comments.author", Direction.DESC));
+		assertThat(qf.getSortFields()).containsExactly(Pair.of("commentAuthorElementError", Direction.DESC));
 
-        InvalidDataAccessResourceUsageException ex = assertThrows(InvalidDataAccessResourceUsageException.class,
-                () -> repository.findAll(qf));
+		assertThat(qf.getSortFieldWithFullPath()).containsExactly(Pair.of("comments.author", Direction.DESC));
 
-        assertThat(ex.getCause().getCause().getMessage())
-                .startsWith("ERROR: for SELECT DISTINCT, ORDER BY expressions must appear in select list");
+		InvalidDataAccessResourceUsageException ex = assertThrows(InvalidDataAccessResourceUsageException.class,
+				() -> repository.findAll(qf));
 
-    }
+		assertThat(ex.getCause().getCause().getMessage())
+				.startsWith("ERROR: for SELECT DISTINCT, ORDER BY expressions must appear in select list");
 
-    @Test
-    @DisplayName("4. Test sort error without autofetch on element")
-    @Order(4)
-    void testSortErrorElement() {
+	}
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("sort=-commentAuthorElementError",
-                QFParamType.RHS_COLON);
-        assertThat(qf).isNotNull();
+	@Test
+	@DisplayName("5. Test 3 level joins auto-fetch")
+	@Order(5)
+	void testLevelJoinsAutoFetch() {
+		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("sort=+extraDataSort", QFParamType.RHS_COLON);
 
-        assertThat(qf.isSorted()).isTrue();
+		assertThat(qf).isNotNull();
 
-        assertThat(qf.isSortedBy("commentAuthorElementError")).isTrue();
+		assertThat(qf.isSorted()).isTrue();
 
-        assertThat(qf.getSortFields()).containsExactly(Pair.of("commentAuthorElementError", Direction.DESC));
+		assertThat(qf.isSortedBy("extraDataSort")).isTrue();
 
-        assertThat(qf.getSortFieldWithFullPath()).containsExactly(Pair.of("comments.author", Direction.DESC));
+		assertThat(qf.getSortFields()).containsExactly(Pair.of("extraDataSort", Direction.ASC));
 
-        InvalidDataAccessResourceUsageException ex = assertThrows(InvalidDataAccessResourceUsageException.class,
-                () -> repository.findAll(qf));
+		assertThat(qf.getSortFieldWithFullPath()).containsExactly(Pair.of("comments.extraData.id", Direction.ASC));
 
-        assertThat(ex.getCause().getCause().getMessage())
-                .startsWith("ERROR: for SELECT DISTINCT, ORDER BY expressions must appear in select list");
+		List<PostBlog> found = repository.findAll(qf);
 
-    }
+		assertThat(found).hasSize(2).containsExactly(POST_EXAMPLE, POST_EXAMPLE_2);
+	}
 
-    @Test
-    @DisplayName("5. Test 3 level joins auto-fetch")
-    @Order(5)
-    void testLevelJoinsAutoFetch() {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("sort=+extraDataSort", QFParamType.RHS_COLON);
+	@Test
+	@DisplayName("6. Test paginated sort")
+	@Order(6)
+	void testPaginatedSort() {
+		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("sort=+extraDataSort", QFParamType.RHS_COLON);
 
-        assertThat(qf).isNotNull();
+		assertThat(qf).isNotNull();
 
-        assertThat(qf.isSorted()).isTrue();
+		assertThat(qf.isSorted()).isTrue();
 
-        assertThat(qf.isSortedBy("extraDataSort")).isTrue();
+		assertThat(qf.isSortedBy("extraDataSort")).isTrue();
 
-        assertThat(qf.getSortFields()).containsExactly(Pair.of("extraDataSort", Direction.ASC));
+		assertThat(qf.getSortFields()).containsExactly(Pair.of("extraDataSort", Direction.ASC));
 
-        assertThat(qf.getSortFieldWithFullPath()).containsExactly(Pair.of("comments.extraData.id", Direction.ASC));
+		assertThat(qf.getSortFieldWithFullPath()).containsExactly(Pair.of("comments.extraData.id", Direction.ASC));
 
-        List<PostBlog> found = repository.findAll(qf);
+		Page<PostBlog> found = repository.findAll(qf, PageRequest.of(0, 1));
 
-        assertThat(found).hasSize(2).containsExactly(POST_EXAMPLE, POST_EXAMPLE_2);
-    }
+		assertThat(found).hasSize(1).containsExactly(POST_EXAMPLE);
 
-    @Test
-    @DisplayName("6. Test paginated sort")
-    @Order(6)
-    void testPaginatedSort() {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("sort=+extraDataSort", QFParamType.RHS_COLON);
+		assertThat(found.getTotalElements()).isEqualTo(2);
 
-        assertThat(qf).isNotNull();
+		// Clear sort
+		qf.clearSort();
 
-        assertThat(qf.isSorted()).isTrue();
+		found = repository.findAll(qf, PageRequest.of(0, 1));
 
-        assertThat(qf.isSortedBy("extraDataSort")).isTrue();
+		assertThat(found).hasSize(1).containsAnyOf(POST_EXAMPLE, POST_EXAMPLE_2);
 
-        assertThat(qf.getSortFields()).containsExactly(Pair.of("extraDataSort", Direction.ASC));
+		assertThat(found.getTotalElements()).isEqualTo(2);
 
-        assertThat(qf.getSortFieldWithFullPath()).containsExactly(Pair.of("comments.extraData.id", Direction.ASC));
+	}
 
-        Page<PostBlog> found = repository.findAll(qf, PageRequest.of(0, 1));
-
-        assertThat(found).hasSize(1).containsExactly(POST_EXAMPLE);
-
-        assertThat(found.getTotalElements()).isEqualTo(2);
-
-        // Clear sort
-        qf.clearSort();
-
-        found = repository.findAll(qf, PageRequest.of(0, 1));
-
-        assertThat(found).hasSize(1).containsAnyOf(POST_EXAMPLE, POST_EXAMPLE_2);
-
-        assertThat(found.getTotalElements()).isEqualTo(2);
-
-    }
-
-    @Test
-    @DisplayName("END. Test by clear BBDD")
-    @Order(Ordered.LOWEST_PRECEDENCE)
-    void clearBBDD() {
-        repository.deleteAll();
-        assertThat(repository.findAll()).isEmpty();
-    }
+	@Test
+	@DisplayName("END. Test by clear BBDD")
+	@Order(Ordered.LOWEST_PRECEDENCE)
+	void clearBBDD() {
+		repository.deleteAll();
+		assertThat(repository.findAll()).isEmpty();
+	}
 
 }

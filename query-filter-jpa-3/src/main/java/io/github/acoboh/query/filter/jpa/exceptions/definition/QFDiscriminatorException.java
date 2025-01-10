@@ -9,17 +9,19 @@ import java.io.Serial;
  */
 public class QFDiscriminatorException extends QueryFilterDefinitionException {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
+	@Serial
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * Default constructor
-     *
-     * @param message message
-     * @param args    arguments of message
-     */
-    public QFDiscriminatorException(String message, Object... args) {
-        super(message, args);
-    }
+	/**
+	 * Default constructor
+	 *
+	 * @param message
+	 *            message
+	 * @param args
+	 *            arguments of message
+	 */
+	public QFDiscriminatorException(String message, Object... args) {
+		super(message, args);
+	}
 
 }

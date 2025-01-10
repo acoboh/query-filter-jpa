@@ -1,5 +1,11 @@
 package io.github.acoboh.query.filter.jpa.processor.match;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.util.MultiValueMap;
+
 import io.github.acoboh.query.filter.jpa.exceptions.QFCollectionException;
 import io.github.acoboh.query.filter.jpa.operations.QFCollectionOperationEnum;
 import io.github.acoboh.query.filter.jpa.processor.QFSpecificationPart;
@@ -12,85 +18,83 @@ import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import org.springframework.util.MultiValueMap;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Adrián Cobo
  */
 public class QFCollectionMatch implements QFSpecificationPart {
 
-    private final QFDefinitionCollection definition;
+	private final QFDefinitionCollection definition;
 
-    private final QFCollectionOperationEnum operation;
+	private final QFCollectionOperationEnum operation;
 
-    private final int value;
+	private final int value;
 
-    /**
-     * Default constructor
-     *
-     * @param definition definition of element
-     * @param operation  operation of the element
-     * @param value      value of the element operation
-     */
-    public QFCollectionMatch(QFDefinitionCollection definition, QFCollectionOperationEnum operation, int value) {
-        super();
-        this.definition = definition;
-        this.operation = operation;
-        this.value = value;
+	/**
+	 * Default constructor
+	 *
+	 * @param definition
+	 *            definition of element
+	 * @param operation
+	 *            operation of the element
+	 * @param value
+	 *            value of the element operation
+	 */
+	public QFCollectionMatch(QFDefinitionCollection definition, QFCollectionOperationEnum operation, int value) {
+		super();
+		this.definition = definition;
+		this.operation = operation;
+		this.value = value;
 
-    }
+	}
 
-    /**
-     * Get collection operation
-     *
-     * @return collection operation
-     */
-    public QFCollectionOperationEnum getOperation() {
-        return operation;
-    }
+	/**
+	 * Get collection operation
+	 *
+	 * @return collection operation
+	 */
+	public QFCollectionOperationEnum getOperation() {
+		return operation;
+	}
 
-    /**
-     * Get value of the collection operation
-     *
-     * @return value
-     */
-    public int getValue() {
-        return value;
-    }
+	/**
+	 * Get value of the collection operation
+	 *
+	 * @return value
+	 */
+	public int getValue() {
+		return value;
+	}
 
-    /**
-     * Get element definition
-     *
-     * @return element definition
-     */
-    public QFDefinitionCollection getDefinition() {
-        return definition;
-    }
+	/**
+	 * Get element definition
+	 *
+	 * @return element definition
+	 */
+	public QFDefinitionCollection getDefinition() {
+		return definition;
+	}
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <E> void processPart(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder,
-                                Map<String, List<Predicate>> predicatesMap, Map<String, Path<?>> pathsMap,
-                                MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver, Class<E> entityClass) {
+	@SuppressWarnings("unchecked")
+	@Override
+	public <E> void processPart(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder,
+			Map<String, List<Predicate>> predicatesMap, Map<String, Path<?>> pathsMap,
+			MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver, Class<E> entityClass) {
 
-        Path<?> expressionPath = QueryUtils.getObject(root, definition.getPaths(), pathsMap, true, false,
-                criteriaBuilder);
+		Path<?> expressionPath = QueryUtils.getObject(root, definition.getPaths(), pathsMap, true, false,
+				criteriaBuilder);
 
-        Expression<? extends java.util.Collection<?>> expression;
+		Expression<? extends java.util.Collection<?>> expression;
 
-        try {
-            expression = (Expression<? extends java.util.Collection<?>>) expressionPath;
-        } catch (ClassCastException e) {
-            throw new QFCollectionException(definition.getFilterName(), e.getMessage());
-        }
+		try {
+			expression = (Expression<? extends java.util.Collection<?>>) expressionPath;
+		} catch (ClassCastException e) {
+			throw new QFCollectionException(definition.getFilterName(), e.getMessage());
+		}
 
-        predicatesMap.computeIfAbsent(definition.getFilterName(), t -> new ArrayList<>())
-                .add(operation.generateCollectionPredicate(expression, criteriaBuilder, this, mlmap));
+		predicatesMap.computeIfAbsent(definition.getFilterName(), t -> new ArrayList<>())
+				.add(operation.generateCollectionPredicate(expression, criteriaBuilder, this, mlmap));
 
-    }
+	}
 
 }

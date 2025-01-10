@@ -9,17 +9,19 @@ import java.io.Serial;
  */
 public class QFJsonException extends QueryFilterDefinitionException {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
+	@Serial
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * Custom message exception
-     *
-     * @param message message
-     * @param args    args of message
-     */
-    public QFJsonException(String message, Object... args) {
-        super(message, args);
-    }
+	/**
+	 * Custom message exception
+	 *
+	 * @param message
+	 *            message
+	 * @param args
+	 *            args of message
+	 */
+	public QFJsonException(String message, Object... args) {
+		super(message, args);
+	}
 
 }

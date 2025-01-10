@@ -7,14 +7,14 @@ import org.springframework.stereotype.Component;
 @Component("applicationContextAwareSupport")
 public class ApplicationContextAwareSupport implements ApplicationContextAware {
 
-    private ApplicationContext applicationContextAware;
+	private ApplicationContext applicationContextAware;
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) {
-        this.applicationContextAware = applicationContext;
-    }
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) {
+		this.applicationContextAware = applicationContext;
+	}
 
-    public ApplicationContext getApplicationContext() {
-        return applicationContextAware;
-    }
+	public ApplicationContext getApplicationContext() {
+		return applicationContextAware;
+	}
 }

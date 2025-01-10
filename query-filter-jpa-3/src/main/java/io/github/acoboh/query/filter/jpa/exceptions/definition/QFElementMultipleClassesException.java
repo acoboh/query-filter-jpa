@@ -9,15 +9,15 @@ import java.io.Serial;
  */
 public class QFElementMultipleClassesException extends QueryFilterDefinitionException {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
-    private static final String MESSAGE = "Multiple classes matches the same element";
+	@Serial
+	private static final long serialVersionUID = 1L;
+	private static final String MESSAGE = "Multiple classes matches the same element";
 
-    /**
-     * Default constructor
-     */
-    public QFElementMultipleClassesException() {
-        super(MESSAGE);
-    }
+	/**
+	 * Default constructor
+	 */
+	public QFElementMultipleClassesException() {
+		super(MESSAGE);
+	}
 
 }

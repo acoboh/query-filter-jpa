@@ -8,16 +8,18 @@ package io.github.acoboh.query.filter.jpa.exceptions.definition;
  */
 public class QFElementException extends QueryFilterDefinitionException {
 
-    private static final long serialVersionUID = 1L;
-    private static final String MESSAGE = "The field '{}' is not present on the class '{}'";
+	private static final long serialVersionUID = 1L;
+	private static final String MESSAGE = "The field '{}' is not present on the class '{}'";
 
-    /**
-     * Default constructor
-     *
-     * @param field field
-     * @param clazz class
-     */
-    public QFElementException(String field, Class<?> clazz) {
-        super(MESSAGE, field, clazz);
-    }
+	/**
+	 * Default constructor
+	 *
+	 * @param field
+	 *            field
+	 * @param clazz
+	 *            class
+	 */
+	public QFElementException(String field, Class<?> clazz) {
+		super(MESSAGE, field, clazz);
+	}
 }

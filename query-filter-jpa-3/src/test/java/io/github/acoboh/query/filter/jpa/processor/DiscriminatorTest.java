@@ -1,12 +1,13 @@
 package io.github.acoboh.query.filter.jpa.processor;
 
-import io.github.acoboh.query.filter.jpa.domain.DiscriminatorFilterDef;
-import io.github.acoboh.query.filter.jpa.exceptions.QFDiscriminatorNotFoundException;
-import io.github.acoboh.query.filter.jpa.model.discriminators.Announcement;
-import io.github.acoboh.query.filter.jpa.model.discriminators.Post;
-import io.github.acoboh.query.filter.jpa.model.discriminators.Topic;
-import io.github.acoboh.query.filter.jpa.repositories.PostDiscriminatorRepository;
-import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertThrows;
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -18,13 +19,13 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertThrows;
+import io.github.acoboh.query.filter.jpa.domain.DiscriminatorFilterDef;
+import io.github.acoboh.query.filter.jpa.exceptions.QFDiscriminatorNotFoundException;
+import io.github.acoboh.query.filter.jpa.model.discriminators.Announcement;
+import io.github.acoboh.query.filter.jpa.model.discriminators.Post;
+import io.github.acoboh.query.filter.jpa.model.discriminators.Topic;
+import io.github.acoboh.query.filter.jpa.repositories.PostDiscriminatorRepository;
+import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
 
 /**
  * Discriminator tests
@@ -37,134 +38,134 @@ import static org.junit.Assert.assertThrows;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class DiscriminatorTest {
 
-    @Autowired
-    private QFProcessor<DiscriminatorFilterDef, Topic> queryFilterProcessor;
+	@Autowired
+	private QFProcessor<DiscriminatorFilterDef, Topic> queryFilterProcessor;
 
-    @Autowired
-    private PostDiscriminatorRepository repository;
+	@Autowired
+	private PostDiscriminatorRepository repository;
 
-    private static final Post POST_EXAMPLE = new Post();
-    private static final Announcement ANN_EXAMPLE = new Announcement();
+	private static final Post POST_EXAMPLE = new Post();
+	private static final Announcement ANN_EXAMPLE = new Announcement();
 
-    static {
+	static {
 
-        POST_EXAMPLE.setOwner("Owner 1");
-        POST_EXAMPLE.setTitle("Title 1");
-        POST_EXAMPLE.setContent("Content 1");
+		POST_EXAMPLE.setOwner("Owner 1");
+		POST_EXAMPLE.setTitle("Title 1");
+		POST_EXAMPLE.setContent("Content 1");
 
-        ANN_EXAMPLE.setOwner("Owner 2");
-        ANN_EXAMPLE.setTitle("Title 2");
-        ANN_EXAMPLE.setValidUntil(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)));
+		ANN_EXAMPLE.setOwner("Owner 2");
+		ANN_EXAMPLE.setTitle("Title 2");
+		ANN_EXAMPLE.setValidUntil(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)));
 
-    }
+	}
 
-    @Test
-    @DisplayName("0. Setup")
-    @Order(0)
-    void setup() {
+	@Test
+	@DisplayName("0. Setup")
+	@Order(0)
+	void setup() {
 
-        assertThat(queryFilterProcessor).isNotNull();
-        assertThat(repository).isNotNull();
+		assertThat(queryFilterProcessor).isNotNull();
+		assertThat(repository).isNotNull();
 
-        assertThat(repository.findAll()).isEmpty();
+		assertThat(repository.findAll()).isEmpty();
 
-        repository.saveAndFlush(POST_EXAMPLE);
-        repository.saveAndFlush(ANN_EXAMPLE);
+		repository.saveAndFlush(POST_EXAMPLE);
+		repository.saveAndFlush(ANN_EXAMPLE);
 
-        assertThat(repository.findAll()).hasSize(2).containsExactlyInAnyOrder(POST_EXAMPLE, ANN_EXAMPLE);
-    }
+		assertThat(repository.findAll()).hasSize(2).containsExactlyInAnyOrder(POST_EXAMPLE, ANN_EXAMPLE);
+	}
 
-    @Test
-    @DisplayName("1. Announcement discriminator")
-    @Order(1)
-    void announcementDiscriminator() {
+	@Test
+	@DisplayName("1. Announcement discriminator")
+	@Order(1)
+	void announcementDiscriminator() {
 
-        QueryFilter<Topic> qf = queryFilterProcessor.newQueryFilter("type=eq:ANNOUNCEMENT", QFParamType.RHS_COLON);
+		QueryFilter<Topic> qf = queryFilterProcessor.newQueryFilter("type=eq:ANNOUNCEMENT", QFParamType.RHS_COLON);
 
-        assertThat(qf).isNotNull();
+		assertThat(qf).isNotNull();
 
-        List<Topic> list = repository.findAll(qf);
-        assertThat(list).hasSize(1).containsExactly(ANN_EXAMPLE);
+		List<Topic> list = repository.findAll(qf);
+		assertThat(list).hasSize(1).containsExactly(ANN_EXAMPLE);
 
-    }
+	}
 
-    @Test
-    @DisplayName("2. Post discriminator")
-    @Order(2)
-    void postDiscriminator() {
+	@Test
+	@DisplayName("2. Post discriminator")
+	@Order(2)
+	void postDiscriminator() {
 
-        QueryFilter<Topic> qf = queryFilterProcessor.newQueryFilter("type=eq:POST", QFParamType.RHS_COLON);
+		QueryFilter<Topic> qf = queryFilterProcessor.newQueryFilter("type=eq:POST", QFParamType.RHS_COLON);
 
-        assertThat(qf).isNotNull();
+		assertThat(qf).isNotNull();
 
-        List<Topic> list = repository.findAll(qf);
-        assertThat(list).hasSize(1).containsExactly(POST_EXAMPLE);
+		List<Topic> list = repository.findAll(qf);
+		assertThat(list).hasSize(1).containsExactly(POST_EXAMPLE);
 
-    }
+	}
 
-    @Test
-    @DisplayName("3. All discriminator")
-    @Order(3)
-    void allDiscriminator() {
+	@Test
+	@DisplayName("3. All discriminator")
+	@Order(3)
+	void allDiscriminator() {
 
-        QueryFilter<Topic> qf = queryFilterProcessor.newQueryFilter("type=in:ANNOUNCEMENT,POST", QFParamType.RHS_COLON);
+		QueryFilter<Topic> qf = queryFilterProcessor.newQueryFilter("type=in:ANNOUNCEMENT,POST", QFParamType.RHS_COLON);
 
-        assertThat(qf).isNotNull();
+		assertThat(qf).isNotNull();
 
-        List<Topic> list = repository.findAll(qf);
-        assertThat(list).hasSize(2).containsExactlyInAnyOrder(POST_EXAMPLE, ANN_EXAMPLE);
+		List<Topic> list = repository.findAll(qf);
+		assertThat(list).hasSize(2).containsExactlyInAnyOrder(POST_EXAMPLE, ANN_EXAMPLE);
 
-    }
+	}
 
-    @Test
-    @DisplayName("4. Error type discriminator")
-    @Order(4)
-    void errorDiscriminator() {
+	@Test
+	@DisplayName("4. Error type discriminator")
+	@Order(4)
+	void errorDiscriminator() {
 
-        QFDiscriminatorNotFoundException ex = assertThrows(QFDiscriminatorNotFoundException.class,
-                () -> queryFilterProcessor.newQueryFilter("type=in:POST_ERROR", QFParamType.RHS_COLON));
+		QFDiscriminatorNotFoundException ex = assertThrows(QFDiscriminatorNotFoundException.class,
+				() -> queryFilterProcessor.newQueryFilter("type=in:POST_ERROR", QFParamType.RHS_COLON));
 
-        assertThat(ex).isNotNull();
-        assertThat(ex.getValue()).isEqualTo("POST_ERROR");
-        assertThat(ex.getField()).isEqualTo("type");
+		assertThat(ex).isNotNull();
+		assertThat(ex.getValue()).isEqualTo("POST_ERROR");
+		assertThat(ex.getField()).isEqualTo("type");
 
-    }
+	}
 
-    @Test
-    @DisplayName("5. Not equal discriminator")
-    @Order(5)
-    void testNotEqual() {
+	@Test
+	@DisplayName("5. Not equal discriminator")
+	@Order(5)
+	void testNotEqual() {
 
-        QueryFilter<Topic> qf = queryFilterProcessor.newQueryFilter("type=ne:POST", QFParamType.RHS_COLON);
+		QueryFilter<Topic> qf = queryFilterProcessor.newQueryFilter("type=ne:POST", QFParamType.RHS_COLON);
 
-        assertThat(qf).isNotNull();
+		assertThat(qf).isNotNull();
 
-        List<Topic> list = repository.findAll(qf);
-        assertThat(list).hasSize(1).containsExactly(ANN_EXAMPLE);
+		List<Topic> list = repository.findAll(qf);
+		assertThat(list).hasSize(1).containsExactly(ANN_EXAMPLE);
 
-    }
+	}
 
-    @Test
-    @DisplayName("6. Not in discriminator")
-    @Order(6)
-    void testNotIn() {
+	@Test
+	@DisplayName("6. Not in discriminator")
+	@Order(6)
+	void testNotIn() {
 
-        QueryFilter<Topic> qf = queryFilterProcessor.newQueryFilter("type=nin:POST,ANNOUNCEMENT",
-                QFParamType.RHS_COLON);
+		QueryFilter<Topic> qf = queryFilterProcessor.newQueryFilter("type=nin:POST,ANNOUNCEMENT",
+				QFParamType.RHS_COLON);
 
-        assertThat(qf).isNotNull();
+		assertThat(qf).isNotNull();
 
-        List<Topic> list = repository.findAll(qf);
-        assertThat(list).isEmpty();
+		List<Topic> list = repository.findAll(qf);
+		assertThat(list).isEmpty();
 
-    }
+	}
 
-    @Test
-    @DisplayName("5. Test by clear BBDD")
-    @Order(10)
-    void clearBBDD() {
-        repository.deleteAll();
-        assertThat(repository.findAll()).isEmpty();
-    }
+	@Test
+	@DisplayName("5. Test by clear BBDD")
+	@Order(10)
+	void clearBBDD() {
+		repository.deleteAll();
+		assertThat(repository.findAll()).isEmpty();
+	}
 
 }

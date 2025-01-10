@@ -1,13 +1,14 @@
 package io.github.acoboh.query.filter.jpa.processor;
 
-import io.github.acoboh.query.filter.jpa.domain.FilterBlogDef;
-import io.github.acoboh.query.filter.jpa.exceptions.QFBlockException;
-import io.github.acoboh.query.filter.jpa.exceptions.QFNotValuable;
-import io.github.acoboh.query.filter.jpa.exceptions.QueryFilterException;
-import io.github.acoboh.query.filter.jpa.model.PostBlog;
-import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
-import io.github.acoboh.query.filter.jpa.repositories.PostBlogRepository;
-import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.UUID;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -19,14 +20,14 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
-import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import io.github.acoboh.query.filter.jpa.domain.FilterBlogDef;
+import io.github.acoboh.query.filter.jpa.exceptions.QFBlockException;
+import io.github.acoboh.query.filter.jpa.exceptions.QFNotValuable;
+import io.github.acoboh.query.filter.jpa.exceptions.QueryFilterException;
+import io.github.acoboh.query.filter.jpa.model.PostBlog;
+import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
+import io.github.acoboh.query.filter.jpa.repositories.PostBlogRepository;
+import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
 
 /**
  * Basic tests
@@ -39,222 +40,232 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class BasicTest {
 
-    private static final PostBlog POST_EXAMPLE = new PostBlog();
+	private static final PostBlog POST_EXAMPLE = new PostBlog();
 
-    static {
-        POST_EXAMPLE.setUuid(UUID.randomUUID());
-        POST_EXAMPLE.setAuthor("author");
-        POST_EXAMPLE.setText("text");
-        POST_EXAMPLE.setAvgNote(2.5d);
-        POST_EXAMPLE.setLikes(100);
-        POST_EXAMPLE.setCreateDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)); // Truncated to avoid rounding issues with Java > 8 and BBDD
-        POST_EXAMPLE.setLastTimestamp(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS))); // Truncated to avoid rounding issues with Java > 8 and BBDD
-        POST_EXAMPLE.setPublished(true);
-        POST_EXAMPLE.setPostType(PostBlog.PostType.TEXT);
-    }
+	static {
+		POST_EXAMPLE.setUuid(UUID.randomUUID());
+		POST_EXAMPLE.setAuthor("author");
+		POST_EXAMPLE.setText("text");
+		POST_EXAMPLE.setAvgNote(2.5d);
+		POST_EXAMPLE.setLikes(100);
+		POST_EXAMPLE.setCreateDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)); // Truncated to avoid rounding
+																						// issues with Java > 8 and BBDD
+		POST_EXAMPLE.setLastTimestamp(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS))); // Truncated
+																												// to
+																												// avoid
+																												// rounding
+																												// issues
+																												// with
+																												// Java
+																												// > 8
+																												// and
+																												// BBDD
+		POST_EXAMPLE.setPublished(true);
+		POST_EXAMPLE.setPostType(PostBlog.PostType.TEXT);
+	}
 
-    @Autowired
-    private QFProcessor<FilterBlogDef, PostBlog> queryFilterProcessor;
+	@Autowired
+	private QFProcessor<FilterBlogDef, PostBlog> queryFilterProcessor;
 
-    @Autowired
-    private PostBlogRepository repository;
+	@Autowired
+	private PostBlogRepository repository;
 
-    private static void assertPostEqual(PostBlog actual) {
-        assertThat(POST_EXAMPLE.getAuthor()).isEqualTo(actual.getAuthor());
-        assertThat(POST_EXAMPLE.getText()).isEqualTo(actual.getText());
-        assertThat(POST_EXAMPLE.getAvgNote()).isEqualTo(actual.getAvgNote());
-        assertThat(POST_EXAMPLE.getLikes()).isEqualTo(actual.getLikes());
-        assertThat(POST_EXAMPLE.getCreateDate()).isEqualTo(actual.getCreateDate());
-        assertThat(POST_EXAMPLE.getLastTimestamp()).isEqualTo(actual.getLastTimestamp());
-        assertThat(POST_EXAMPLE.isPublished()).isEqualTo(actual.isPublished());
-        assertThat(POST_EXAMPLE.getPostType()).isEqualTo(actual.getPostType());
-        assertThat(POST_EXAMPLE.getUuid()).isEqualTo(actual.getUuid());
-    }
+	private static void assertPostEqual(PostBlog actual) {
+		assertThat(POST_EXAMPLE.getAuthor()).isEqualTo(actual.getAuthor());
+		assertThat(POST_EXAMPLE.getText()).isEqualTo(actual.getText());
+		assertThat(POST_EXAMPLE.getAvgNote()).isEqualTo(actual.getAvgNote());
+		assertThat(POST_EXAMPLE.getLikes()).isEqualTo(actual.getLikes());
+		assertThat(POST_EXAMPLE.getCreateDate()).isEqualTo(actual.getCreateDate());
+		assertThat(POST_EXAMPLE.getLastTimestamp()).isEqualTo(actual.getLastTimestamp());
+		assertThat(POST_EXAMPLE.isPublished()).isEqualTo(actual.isPublished());
+		assertThat(POST_EXAMPLE.getPostType()).isEqualTo(actual.getPostType());
+		assertThat(POST_EXAMPLE.getUuid()).isEqualTo(actual.getUuid());
+	}
 
-    @Test
-    @DisplayName("0. Setup")
-    @Order(1)
-    void setup() {
+	@Test
+	@DisplayName("0. Setup")
+	@Order(1)
+	void setup() {
 
-        assertThat(queryFilterProcessor).isNotNull();
-        assertThat(repository).isNotNull();
+		assertThat(queryFilterProcessor).isNotNull();
+		assertThat(repository).isNotNull();
 
-        assertThat(repository.findAll()).isEmpty();
+		assertThat(repository.findAll()).isEmpty();
 
-        repository.saveAndFlush(POST_EXAMPLE);
-    }
+		repository.saveAndFlush(POST_EXAMPLE);
+	}
 
-    @Test
-    @DisplayName("1. Test empty query")
-    @Order(2)
-    void testQueryByName() throws QueryFilterException {
+	@Test
+	@DisplayName("1. Test empty query")
+	@Order(2)
+	void testQueryByName() throws QueryFilterException {
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("", QFParamType.RHS_COLON);
-        assertThat(qf).isNotNull();
+		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("", QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
 
-        List<PostBlog> list = repository.findAll(qf);
-        assertThat(list).hasSize(1);
+		List<PostBlog> list = repository.findAll(qf);
+		assertThat(list).hasSize(1);
 
-        PostBlog postBlog = list.get(0);
-        assertPostEqual(postBlog);
+		PostBlog postBlog = list.get(0);
+		assertPostEqual(postBlog);
 
-        qf = queryFilterProcessor.newQueryFilter("", QFParamType.LHS_BRACKETS);
-        assertThat(qf).isNotNull();
+		qf = queryFilterProcessor.newQueryFilter("", QFParamType.LHS_BRACKETS);
+		assertThat(qf).isNotNull();
 
-        list = repository.findAll(qf);
-        assertThat(list).hasSize(1);
+		list = repository.findAll(qf);
+		assertThat(list).hasSize(1);
 
-        list.get(0);
-        assertPostEqual(postBlog);
-    }
+		list.get(0);
+		assertPostEqual(postBlog);
+	}
 
-    @Test
-    @DisplayName("2. Test by author")
-    @Order(3)
-    void testQueryByAuthor() throws QueryFilterException {
+	@Test
+	@DisplayName("2. Test by author")
+	@Order(3)
+	void testQueryByAuthor() throws QueryFilterException {
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("author=like:auth", QFParamType.RHS_COLON);
-        assertThat(qf).isNotNull();
+		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("author=like:auth", QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
 
-        List<PostBlog> list = repository.findAll(qf);
-        assertThat(list).hasSize(1);
+		List<PostBlog> list = repository.findAll(qf);
+		assertThat(list).hasSize(1);
 
-        PostBlog postBlog = list.get(0);
-        assertPostEqual(postBlog);
+		PostBlog postBlog = list.get(0);
+		assertPostEqual(postBlog);
 
-        qf = queryFilterProcessor.newQueryFilter("author[like]=auth", QFParamType.LHS_BRACKETS);
-        assertThat(qf).isNotNull();
+		qf = queryFilterProcessor.newQueryFilter("author[like]=auth", QFParamType.LHS_BRACKETS);
+		assertThat(qf).isNotNull();
 
-        list = repository.findAll(qf);
-        assertThat(list).hasSize(1);
+		list = repository.findAll(qf);
+		assertThat(list).hasSize(1);
 
-        postBlog = list.get(0);
-        assertPostEqual(postBlog);
+		postBlog = list.get(0);
+		assertPostEqual(postBlog);
 
-    }
+	}
 
-    @Test
-    @DisplayName("3. Test by not existing author")
-    @Order(4)
-    void testQueryByMissingAuthor() throws QueryFilterException {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("author=like:example", QFParamType.RHS_COLON);
-        assertThat(qf).isNotNull();
+	@Test
+	@DisplayName("3. Test by not existing author")
+	@Order(4)
+	void testQueryByMissingAuthor() throws QueryFilterException {
+		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("author=like:example", QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
 
-        List<PostBlog> list = repository.findAll(qf);
-        assertThat(list).isEmpty();
+		List<PostBlog> list = repository.findAll(qf);
+		assertThat(list).isEmpty();
 
-        qf = queryFilterProcessor.newQueryFilter("author[like]=example", QFParamType.LHS_BRACKETS);
-        assertThat(qf).isNotNull();
+		qf = queryFilterProcessor.newQueryFilter("author[like]=example", QFParamType.LHS_BRACKETS);
+		assertThat(qf).isNotNull();
 
-        list = repository.findAll(qf);
-        assertThat(list).isEmpty();
-    }
+		list = repository.findAll(qf);
+		assertThat(list).isEmpty();
+	}
 
-    @Test
-    @DisplayName("4. Test by avgNote")
-    @Order(5)
-    void testQueryByAvgNote() throws QueryFilterException {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("avgNote=gt:1.2", QFParamType.RHS_COLON);
-        assertThat(qf).isNotNull();
+	@Test
+	@DisplayName("4. Test by avgNote")
+	@Order(5)
+	void testQueryByAvgNote() throws QueryFilterException {
+		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("avgNote=gt:1.2", QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
 
-        List<PostBlog> list = repository.findAll(qf);
-        assertThat(list).hasSize(1);
+		List<PostBlog> list = repository.findAll(qf);
+		assertThat(list).hasSize(1);
 
-        PostBlog postBlog = list.get(0);
-        assertPostEqual(postBlog);
-    }
+		PostBlog postBlog = list.get(0);
+		assertPostEqual(postBlog);
+	}
 
-    @Test
-    @DisplayName("5. Test by avgNote less than 1")
-    @Order(6)
-    void testQueryByAvgNoteLessThan1() throws QueryFilterException {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("avgNote=lt:1.2", QFParamType.RHS_COLON);
-        assertThat(qf).isNotNull();
+	@Test
+	@DisplayName("5. Test by avgNote less than 1")
+	@Order(6)
+	void testQueryByAvgNoteLessThan1() throws QueryFilterException {
+		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("avgNote=lt:1.2", QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
 
-        List<PostBlog> list = repository.findAll(qf);
-        assertThat(list).isEmpty();
-    }
+		List<PostBlog> list = repository.findAll(qf);
+		assertThat(list).isEmpty();
+	}
 
-    @Test
-    @DisplayName("6. Test by create date")
-    @Order(7)
-    void testQueryByCreateDate() throws QueryFilterException {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("createDate=gt:2020-01-01T00:00:00Z",
-                QFParamType.RHS_COLON);
-        assertThat(qf).isNotNull();
+	@Test
+	@DisplayName("6. Test by create date")
+	@Order(7)
+	void testQueryByCreateDate() throws QueryFilterException {
+		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("createDate=gt:2020-01-01T00:00:00Z",
+				QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
 
-        List<PostBlog> list = repository.findAll(qf);
-        assertThat(list).hasSize(1);
+		List<PostBlog> list = repository.findAll(qf);
+		assertThat(list).hasSize(1);
 
-        PostBlog postBlog = list.get(0);
-        assertPostEqual(postBlog);
-    }
+		PostBlog postBlog = list.get(0);
+		assertPostEqual(postBlog);
+	}
 
-    @Test
-    @DisplayName("7. Test by last timestamp")
-    @Order(8)
-    void testQueryByLastTimestamp() throws QueryFilterException {
+	@Test
+	@DisplayName("7. Test by last timestamp")
+	@Order(8)
+	void testQueryByLastTimestamp() throws QueryFilterException {
 
-        QFNotValuable ex = assertThrows(QFNotValuable.class, () -> queryFilterProcessor
-                .newQueryFilter("lastTimestamp=gt:2020-01-01T00:00:00Z", QFParamType.RHS_COLON));
+		QFNotValuable ex = assertThrows(QFNotValuable.class, () -> queryFilterProcessor
+				.newQueryFilter("lastTimestamp=gt:2020-01-01T00:00:00Z", QFParamType.RHS_COLON));
 
-        assertThat(ex).isNotNull();
+		assertThat(ex).isNotNull();
 
-        assertThat(ex.getField()).isEqualTo("lastTimestamp");
-    }
+		assertThat(ex.getField()).isEqualTo("lastTimestamp");
+	}
 
-    @Test
-    @DisplayName("8. Test by published is blocked. Assert throws QueryFilterException")
-    @Order(9)
-    void testQueryByPublished() {
+	@Test
+	@DisplayName("8. Test by published is blocked. Assert throws QueryFilterException")
+	@Order(9)
+	void testQueryByPublished() {
 
-        QueryFilterException qfException = assertThrows(QueryFilterException.class, () -> {
-            queryFilterProcessor.newQueryFilter("published=eq:true", QFParamType.RHS_COLON);
-        });
+		QueryFilterException qfException = assertThrows(QueryFilterException.class, () -> {
+			queryFilterProcessor.newQueryFilter("published=eq:true", QFParamType.RHS_COLON);
+		});
 
-        assertThat(qfException.getClass()).isAssignableFrom(QFBlockException.class);
+		assertThat(qfException.getClass()).isAssignableFrom(QFBlockException.class);
 
-        QFBlockException qfBlockException = (QFBlockException) qfException;
-        assertThat(qfBlockException.getField()).isEqualTo("published");
+		QFBlockException qfBlockException = (QFBlockException) qfException;
+		assertThat(qfBlockException.getField()).isEqualTo("published");
 
-    }
+	}
 
-    @Test
-    @DisplayName("9. Test by post type")
-    @Order(10)
-    void testQueryByPostType() throws QueryFilterException {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("postType=eq:TEXT", QFParamType.RHS_COLON);
-        assertThat(qf).isNotNull();
+	@Test
+	@DisplayName("9. Test by post type")
+	@Order(10)
+	void testQueryByPostType() throws QueryFilterException {
+		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("postType=eq:TEXT", QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
 
-        List<PostBlog> list = repository.findAll(qf);
-        assertThat(list).hasSize(1);
+		List<PostBlog> list = repository.findAll(qf);
+		assertThat(list).hasSize(1);
 
-        PostBlog postBlog = list.get(0);
-        assertPostEqual(postBlog);
-    }
+		PostBlog postBlog = list.get(0);
+		assertPostEqual(postBlog);
+	}
 
-    @Test
-    @DisplayName("10. Test by published is allowed manually")
-    @Order(11)
-    void testQueryByPublishedManually() throws QueryFilterException {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter(null, QFParamType.RHS_COLON);
-        assertThat(qf).isNotNull();
+	@Test
+	@DisplayName("10. Test by published is allowed manually")
+	@Order(11)
+	void testQueryByPublishedManually() throws QueryFilterException {
+		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter(null, QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
 
-        qf.addNewField("published", QFOperationEnum.EQUAL, "true");
+		qf.addNewField("published", QFOperationEnum.EQUAL, "true");
 
-        List<PostBlog> list = repository.findAll(qf);
-        assertThat(list).hasSize(1);
+		List<PostBlog> list = repository.findAll(qf);
+		assertThat(list).hasSize(1);
 
-        PostBlog postBlog = list.get(0);
-        assertPostEqual(postBlog);
+		PostBlog postBlog = list.get(0);
+		assertPostEqual(postBlog);
 
-    }
+	}
 
-    @Test
-    @DisplayName("11. Test by clear BBDD")
-    @Order(12)
-    void clearBBDD() {
-        repository.deleteAll();
-        assertThat(repository.findAll()).isEmpty();
-    }
+	@Test
+	@DisplayName("11. Test by clear BBDD")
+	@Order(12)
+	void clearBBDD() {
+		repository.deleteAll();
+		assertThat(repository.findAll()).isEmpty();
+	}
 }

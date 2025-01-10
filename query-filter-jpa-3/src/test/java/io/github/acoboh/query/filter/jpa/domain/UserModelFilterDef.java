@@ -12,13 +12,13 @@ import io.github.acoboh.query.filter.jpa.model.subquery.UserModel;
 @QFDefinitionClass(UserModel.class)
 public class UserModelFilterDef {
 
-    @QFElement("username")
-    private String username;
+	@QFElement("username")
+	private String username;
 
-    @QFElement(value = "roles.name", subquery = true)
-    private String role;
+	@QFElement(value = "roles.name", subquery = true)
+	private String role;
 
-    @QFElement(value = "roles.name")
-    private String roleNotSub;
+	@QFElement(value = "roles.name")
+	private String roleNotSub;
 
 }

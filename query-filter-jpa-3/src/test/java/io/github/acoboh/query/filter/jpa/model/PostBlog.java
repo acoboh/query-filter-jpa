@@ -1,6 +1,7 @@
 package io.github.acoboh.query.filter.jpa.model;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Objects;
@@ -58,6 +59,8 @@ public class PostBlog {
 
 	private Timestamp lastTimestamp;
 
+	private Instant instant;
+
 	private boolean published;
 
 	@Enumerated(EnumType.STRING)
@@ -94,8 +97,8 @@ public class PostBlog {
 		return Objects.equals(author, other.author)
 				&& Double.doubleToLongBits(avgNote) == Double.doubleToLongBits(other.avgNote)
 				&& createDate.equals(other.createDate) && lastTimestamp.equals(other.lastTimestamp)
-				&& likes == other.likes && postType == other.postType && published == other.published
-				&& Objects.equals(text, other.text) && Objects.equals(uuid, other.uuid)
+				&& Objects.equals(instant, other.instant) && likes == other.likes && postType == other.postType
+				&& published == other.published && Objects.equals(text, other.text) && Objects.equals(uuid, other.uuid)
 				&& Arrays.equals(tags, other.tags);
 	}
 
@@ -230,6 +233,25 @@ public class PostBlog {
 	 */
 	public void setLastTimestamp(Timestamp lastTimestamp) {
 		this.lastTimestamp = lastTimestamp;
+	}
+
+	/**
+	 * Get instant
+	 *
+	 * @return instant
+	 */
+	public Instant getInstant() {
+		return instant;
+	}
+
+	/**
+	 * Set new instant
+	 *
+	 * @param instant
+	 *            new instant
+	 */
+	public void setInstant(Instant instant) {
+		this.instant = instant;
 	}
 
 	/**

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThrows;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
 
@@ -50,6 +51,7 @@ class DatesTest {
 		POST_EXAMPLE.setLikes(1);
 		POST_EXAMPLE.setCreateDate(LocalDateTime.of(2022, 01, 01, 12, 30, 0));
 		POST_EXAMPLE.setLastTimestamp(Timestamp.valueOf(LocalDateTime.of(2022, 05, 10, 22, 13, 24)));
+		POST_EXAMPLE.setInstant(LocalDateTime.of(2022, 01, 01, 12, 30, 0).toInstant(ZoneOffset.UTC));
 		POST_EXAMPLE.setPublished(true);
 		POST_EXAMPLE.setPostType(PostBlog.PostType.TEXT);
 
@@ -59,6 +61,7 @@ class DatesTest {
 		POST_EXAMPLE_2.setAvgNote(0.5d);
 		POST_EXAMPLE_2.setLikes(2);
 		POST_EXAMPLE_2.setCreateDate(LocalDateTime.of(2023, 01, 01, 12, 30, 0));
+		POST_EXAMPLE_2.setLastTimestamp(Timestamp.valueOf(LocalDateTime.of(2023, 05, 10, 22, 13, 24)));
 		POST_EXAMPLE_2.setLastTimestamp(Timestamp.valueOf(LocalDateTime.of(2023, 05, 10, 22, 13, 24)));
 		POST_EXAMPLE_2.setPublished(false);
 		POST_EXAMPLE_2.setPostType(PostBlog.PostType.VIDEO);
@@ -167,6 +170,21 @@ class DatesTest {
 	void customFormatWithDefaults() throws QueryFilterException {
 
 		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("withDefaults=eq:2022/01/01",
+				QFParamType.RHS_COLON);
+
+		assertThat(qf).isNotNull();
+
+		List<PostBlog> createDateResults = repository.findAll(qf);
+		assertThat(createDateResults).hasSize(1).containsExactly(POST_EXAMPLE);
+
+	}
+
+	@Test
+	@DisplayName("7. Test instant types")
+	@Order(7)
+	void testInstantTypes() throws QueryFilterException {
+
+		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("instant=eq:2022-01-01T12:30:00Z",
 				QFParamType.RHS_COLON);
 
 		assertThat(qf).isNotNull();

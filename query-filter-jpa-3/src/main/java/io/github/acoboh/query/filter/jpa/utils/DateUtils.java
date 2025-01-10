@@ -2,6 +2,7 @@ package io.github.acoboh.query.filter.jpa.utils;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -83,6 +84,9 @@ public class DateUtils {
 		} else if (java.util.Date.class.isAssignableFrom(finalClass)) {
 			LocalDateTime dt = LocalDateTime.parse(value, formatter);
 			return java.util.Date.from(dt.toInstant(ZoneOffset.of(dateAnnotation.zoneOffset())));
+		} else if (Instant.class.isAssignableFrom(finalClass)) {
+			LocalDateTime dt = LocalDateTime.parse(value, formatter);
+			return dt.toInstant(ZoneOffset.of(dateAnnotation.zoneOffset()));
 		}
 
 		return null;

@@ -31,10 +31,12 @@ public @interface QFDate {
 
 	/**
 	 * Timezone to be used on parsing
+	 * 
+	 * @see java.time.ZoneOffset#of(String)
 	 *
 	 * @return timezone
 	 */
-	String zoneOffset() default "UTC";
+	String zoneOffset() default "Z";
 
 	/**
 	 * Default parts of date for default formating

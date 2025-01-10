@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -84,7 +85,8 @@ public class ClassUtils {
 			Enum.class, // Enums
 			UUID.class, // UUID
 			LocalDateTime.class, // LocalDateTime
-			Timestamp.class // Timestamp
+			Timestamp.class, // Timestamp
+			Instant.class // Instant
 	);
 
 	/**

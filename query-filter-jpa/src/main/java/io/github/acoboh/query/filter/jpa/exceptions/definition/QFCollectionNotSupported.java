@@ -16,10 +16,13 @@ public class QFCollectionNotSupported extends QueryFilterDefinitionException {
 
 	/**
 	 * Default constructor
-	 * 
-	 * @param filterName  filter name
-	 * @param filterClass filter class
-	 * @param type        element type
+	 *
+	 * @param filterName
+	 *            filter name
+	 * @param filterClass
+	 *            filter class
+	 * @param type
+	 *            element type
 	 */
 	public QFCollectionNotSupported(String filterName, Class<?> filterClass, QFElementDefType type) {
 		super(MESSAGE, filterName, filterClass, type);

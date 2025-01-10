@@ -21,7 +21,7 @@ public class QFDefinitionDiscriminator extends QFAbstractDefinition {
 	private final List<QFPath> paths;
 	private final Class<?> finalClass;
 
-	private Map<String, Class<?>> discriminatorMap = new HashMap<>();
+	private final Map<String, Class<?>> discriminatorMap = new HashMap<>();
 
 	QFDefinitionDiscriminator(Field filterField, Class<?> filterClass, Class<?> entityClass,
 			QFBlockParsing blockParsing, QFDiscriminator discriminatorAnnotation)
@@ -70,7 +70,7 @@ public class QFDefinitionDiscriminator extends QFAbstractDefinition {
 
 	/**
 	 * Get paths of the discriminator field
-	 * 
+	 *
 	 * @return paths
 	 */
 	public List<QFPath> getPaths() {
@@ -79,7 +79,7 @@ public class QFDefinitionDiscriminator extends QFAbstractDefinition {
 
 	/**
 	 * Get final entity class
-	 * 
+	 *
 	 * @return final entity class
 	 */
 	public Class<?> getFinalClass() {
@@ -88,7 +88,7 @@ public class QFDefinitionDiscriminator extends QFAbstractDefinition {
 
 	/**
 	 * Get the discriminator map
-	 * 
+	 *
 	 * @return discriminator map
 	 */
 	public Map<String, Class<?>> getDiscriminatorMap() {

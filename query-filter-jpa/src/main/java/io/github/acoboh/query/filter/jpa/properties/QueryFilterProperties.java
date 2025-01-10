@@ -8,7 +8,6 @@ import org.springframework.validation.annotation.Validated;
  * Query filter configuration properties
  *
  * @author Adrián Cobo
- * 
  */
 @ConfigurationProperties(value = "query-filter")
 @Configuration
@@ -29,7 +28,8 @@ public class QueryFilterProperties {
 	/**
 	 * Set advisor properties
 	 *
-	 * @param advisor advisor properties
+	 * @param advisor
+	 *            advisor properties
 	 */
 	public void setAdvisor(AdvisorProperties advisor) {
 		this.advisor = advisor;

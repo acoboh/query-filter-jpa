@@ -5,18 +5,17 @@ import java.lang.reflect.Field;
 /**
  * Class with info of the instrospect data for any entity model
  * <p>
- * Store info about the actual property like if it is a property or a one to many relation
+ * Store info about the actual property like if it is a property or a one to
+ * many relation
  *
  * @author Adrián Cobo
- * 
  */
 public class QFPath {
 
 	/**
 	 * Element type of the path
-	 * 
-	 * @author Adrián Cobo
 	 *
+	 * @author Adrián Cobo
 	 */
 	public enum QFElementDefType {
 
@@ -55,12 +54,18 @@ public class QFPath {
 	/**
 	 * Default constructor
 	 *
-	 * @param type       element type
-	 * @param field      field
-	 * @param path       path
-	 * @param fieldClass field class
-	 * @param isFinal    if the field is final
-	 * @param treatClass treat class
+	 * @param type
+	 *            element type
+	 * @param field
+	 *            field
+	 * @param path
+	 *            path
+	 * @param fieldClass
+	 *            field class
+	 * @param isFinal
+	 *            if the field is final
+	 * @param treatClass
+	 *            treat class
 	 */
 	public QFPath(Field field, String path, QFElementDefType type, Class<?> fieldClass, boolean isFinal,
 			Class<?> treatClass) {
@@ -84,7 +89,8 @@ public class QFPath {
 	/**
 	 * Set new type
 	 *
-	 * @param type type
+	 * @param type
+	 *            type
 	 */
 	public void setType(QFElementDefType type) {
 		this.type = type;
@@ -102,7 +108,8 @@ public class QFPath {
 	/**
 	 * Set class of field
 	 *
-	 * @param fieldClass new class of field
+	 * @param fieldClass
+	 *            new class of field
 	 */
 	public void setFieldClass(Class<?> fieldClass) {
 		this.fieldClass = fieldClass;
@@ -120,7 +127,8 @@ public class QFPath {
 	/**
 	 * Set new value of final
 	 *
-	 * @param isFinal new value of final
+	 * @param isFinal
+	 *            new value of final
 	 */
 	public void setFinal(boolean isFinal) {
 		this.isFinal = isFinal;
@@ -146,7 +154,7 @@ public class QFPath {
 
 	/**
 	 * Get path name for map with treat class
-	 * 
+	 *
 	 * @return path name
 	 */
 	public String getPathName() {
@@ -159,7 +167,7 @@ public class QFPath {
 
 	/**
 	 * Get treat class
-	 * 
+	 *
 	 * @return null if not set
 	 */
 	public Class<?> getTreatClass() {

@@ -16,13 +16,13 @@ import jakarta.persistence.criteria.Predicate;
 public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
 
 	/**
-	 * 
+	 *
 	 */
 	EQUAL("eq") {
 		@Override
 		public Predicate generateJsonPredicate(Path<?> path, CriteriaBuilder cb, QFJsonElementMatch match) {
 
-			Predicate[] predicates = new Predicate[match.getMapValues().entrySet().size()];
+			Predicate[] predicates = new Predicate[match.getMapValues().size()];
 
 			int i = 0;
 			for (Map.Entry<String, String> nodeEntry : match.getMapValues().entrySet()) {
@@ -35,12 +35,12 @@ public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
 		}
 	},
 	/**
-	* 
-	*/
+	 *
+	 */
 	NOT_EQUAL("ne") {
 		@Override
 		public Predicate generateJsonPredicate(Path<?> path, CriteriaBuilder cb, QFJsonElementMatch match) {
-			Predicate[] predicates = new Predicate[match.getMapValues().entrySet().size()];
+			Predicate[] predicates = new Predicate[match.getMapValues().size()];
 
 			int i = 0;
 			for (Map.Entry<String, String> nodeEntry : match.getMapValues().entrySet()) {
@@ -54,12 +54,12 @@ public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
 		}
 	},
 	/**
-	* 
-	*/
+	 *
+	 */
 	LIKE("like") {
 		@Override
 		public Predicate generateJsonPredicate(Path<?> path, CriteriaBuilder cb, QFJsonElementMatch match) {
-			Predicate[] predicates = new Predicate[match.getMapValues().entrySet().size()];
+			Predicate[] predicates = new Predicate[match.getMapValues().size()];
 			int i = 0;
 
 			for (Map.Entry<String, String> nodeEntry : match.getMapValues().entrySet()) {
@@ -73,12 +73,12 @@ public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
 		}
 	},
 	/**
-	* 
-	*/
+	 *
+	 */
 	STARTS_WITH("starts") {
 		@Override
 		public Predicate generateJsonPredicate(Path<?> path, CriteriaBuilder cb, QFJsonElementMatch match) {
-			Predicate[] predicates = new Predicate[match.getMapValues().entrySet().size()];
+			Predicate[] predicates = new Predicate[match.getMapValues().size()];
 
 			int i = 0;
 
@@ -92,12 +92,12 @@ public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
 		}
 	},
 	/**
-	* 
-	*/
+	 *
+	 */
 	ENDS_WITH("ends") {
 		@Override
 		public Predicate generateJsonPredicate(Path<?> path, CriteriaBuilder cb, QFJsonElementMatch match) {
-			Predicate[] predicates = new Predicate[match.getMapValues().entrySet().size()];
+			Predicate[] predicates = new Predicate[match.getMapValues().size()];
 
 			int i = 0;
 			for (Map.Entry<String, String> nodeEntry : match.getMapValues().entrySet()) {
@@ -133,9 +133,11 @@ public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
 	/**
 	 * Find operation from the parameter value
 	 *
-	 * @param value parameter value
+	 * @param value
+	 *            parameter value
 	 * @return operation found
-	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFOperationNotFoundException if the operation is not found
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFOperationNotFoundException
+	 *             if the operation is not found
 	 */
 	public static QFOperationJsonEnum fromValue(String value) throws QFOperationNotFoundException {
 		QFOperationJsonEnum constant = CONSTANTS.get(value);

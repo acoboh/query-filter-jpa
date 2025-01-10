@@ -12,15 +12,16 @@ import jakarta.servlet.http.HttpServletResponse;
  * SPEL Context resolver bean
  *
  * @author Adrián Cobo
- * 
  */
 class SpelResolverContextBasic extends SpelResolverContext {
 
 	/**
 	 * Default constructor
-	 * 
-	 * @param request  request
-	 * @param response response
+	 *
+	 * @param request
+	 *            request
+	 * @param response
+	 *            response
 	 */
 	public SpelResolverContextBasic(HttpServletRequest request, HttpServletResponse response) {
 		super(request, response);

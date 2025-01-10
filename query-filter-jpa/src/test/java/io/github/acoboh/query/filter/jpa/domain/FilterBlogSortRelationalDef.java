@@ -7,9 +7,8 @@ import io.github.acoboh.query.filter.jpa.model.PostBlog;
 
 /**
  * Example for sort with relational classes
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 @QFDefinitionClass(PostBlog.class)
 public class FilterBlogSortRelationalDef {

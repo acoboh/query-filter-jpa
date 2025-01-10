@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
  * Exception throw the selected discriminator value is not present
  *
  * @author Adrián Cobo
- * 
  */
 public class QFDiscriminatorNotFoundException extends QueryFilterException {
 
@@ -21,14 +20,16 @@ public class QFDiscriminatorNotFoundException extends QueryFilterException {
 	/**
 	 * Default constructor
 	 *
-	 * @param value selected value
-	 * @param field selected field
+	 * @param value
+	 *            selected value
+	 * @param field
+	 *            selected field
 	 */
 	public QFDiscriminatorNotFoundException(String value, String field) {
 		super(DISCRIMINATOR_NOT_FOUND, value, field);
 		this.value = value;
 		this.field = field;
-		this.arguments = new Object[] { value, field };
+		this.arguments = new Object[]{value, field};
 	}
 
 	/**
@@ -49,19 +50,25 @@ public class QFDiscriminatorNotFoundException extends QueryFilterException {
 		return field;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public HttpStatus getHttpStatus() {
 		return HttpStatus.BAD_REQUEST;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object[] getArguments() {
 		return arguments;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String getMessageCode() {
 		return "qf.exceptions.discriminatorTypeMissing";

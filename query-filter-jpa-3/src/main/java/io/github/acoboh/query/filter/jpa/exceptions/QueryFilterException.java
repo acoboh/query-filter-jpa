@@ -1,5 +1,7 @@
 package io.github.acoboh.query.filter.jpa.exceptions;
 
+import java.io.Serial;
+
 import org.slf4j.helpers.MessageFormatter;
 
 import io.github.acoboh.query.filter.jpa.exceptions.language.ExceptionLanguageResolver;
@@ -8,17 +10,19 @@ import io.github.acoboh.query.filter.jpa.exceptions.language.ExceptionLanguageRe
  * Just to catch a single exception on QueryFilter
  *
  * @author Adrián Cobo
- * 
  */
 public abstract class QueryFilterException extends RuntimeException implements ExceptionLanguageResolver {
 
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Default constructor
 	 *
-	 * @param message message
-	 * @param args    arguments
+	 * @param message
+	 *            message
+	 * @param args
+	 *            arguments
 	 */
 	protected QueryFilterException(String message, Object... args) {
 		super(MessageFormatter.arrayFormat(message, args).getMessage());
@@ -27,9 +31,12 @@ public abstract class QueryFilterException extends RuntimeException implements E
 	/**
 	 * Default constructor with cause
 	 *
-	 * @param message   message
-	 * @param throwable cause
-	 * @param args      arguments
+	 * @param message
+	 *            message
+	 * @param throwable
+	 *            cause
+	 * @param args
+	 *            arguments
 	 */
 	protected QueryFilterException(String message, Throwable throwable, Object... args) {
 		super(MessageFormatter.arrayFormat(message, args).getMessage(), throwable);

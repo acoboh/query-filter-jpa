@@ -27,9 +27,11 @@ public class ExtraData {
 
 	/**
 	 * All fields constructor
-	 * 
-	 * @param id      id
-	 * @param comment comment
+	 *
+	 * @param id
+	 *            id
+	 * @param comment
+	 *            comment
 	 */
 	public ExtraData(int id, Comments comment) {
 		super();
@@ -39,7 +41,7 @@ public class ExtraData {
 
 	/**
 	 * Get ID
-	 * 
+	 *
 	 * @return ID
 	 */
 	public int getId() {
@@ -48,8 +50,9 @@ public class ExtraData {
 
 	/**
 	 * Set ID
-	 * 
-	 * @param id New ID
+	 *
+	 * @param id
+	 *            New ID
 	 */
 	public void setId(int id) {
 		this.id = id;
@@ -57,7 +60,7 @@ public class ExtraData {
 
 	/**
 	 * Get comment
-	 * 
+	 *
 	 * @return comment
 	 */
 	public Comments getComment() {
@@ -66,8 +69,9 @@ public class ExtraData {
 
 	/**
 	 * Set new comment
-	 * 
-	 * @param comment new comment
+	 *
+	 * @param comment
+	 *            new comment
 	 */
 	public void setComment(Comments comment) {
 		this.comment = comment;

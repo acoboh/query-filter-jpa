@@ -4,7 +4,6 @@ package io.github.acoboh.query.filter.jpa.contributor;
  * Custom contributor to list PostgreSQL Array operations
  *
  * @author Adrián Cobo
- * 
  */
 public enum ArrayFunction {
 

@@ -15,7 +15,6 @@ import java.time.temporal.ChronoField;
  * </p>
  *
  * @author Adrián Cobo
- * 
  */
 @Documented
 @Retention(RUNTIME)
@@ -23,7 +22,8 @@ import java.time.temporal.ChronoField;
 public @interface QFDate {
 
 	/**
-	 * Used to set a format time. If it is empty, a timestamp default format will be used
+	 * Used to set a format time. If it is empty, a timestamp default format will be
+	 * used
 	 *
 	 * @return Time format used
 	 */
@@ -32,39 +32,41 @@ public @interface QFDate {
 	/**
 	 * Timezone to be used on parsing
 	 * 
+	 * @see java.time.ZoneOffset#of(String)
+	 *
 	 * @return timezone
 	 */
-	String zoneOffset() default "UTC";
+	String zoneOffset() default "Z";
 
 	/**
 	 * Default parts of date for default formating
-	 * 
-	 * @return list of date parts
+	 *
+	 * @return array of date parts
 	 */
 	QFDateDefault[] parseDefaulting() default {};
 
 	/**
 	 * Allows the user to create default parsing parts.
 	 * <p>
-	 * 
-	 * An example of usage is when the user only filter by date but the actual model field is a timestamp. With this functionality you
-	 * can set the hours, minutes and seconds of the full timestamp
-	 * 
-	 * @author Adrián Cobo
+	 * <p>
+	 * An example of usage is when the user only filter by date but the actual model
+	 * field is a timestamp. With this functionality you can set the hours, minutes
+	 * and seconds of the full timestamp
 	 *
+	 * @author Adrián Cobo
 	 */
-	public @interface QFDateDefault {
+	@interface QFDateDefault {
 
 		/**
 		 * Chrono field
-		 * 
+		 *
 		 * @return Chrono field
 		 */
 		ChronoField chronoField();
 
 		/**
 		 * Default value
-		 * 
+		 *
 		 * @return default value
 		 */
 		long value();

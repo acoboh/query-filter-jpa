@@ -8,7 +8,6 @@ import org.springframework.validation.annotation.Validated;
  * Advisor configuration properties
  *
  * @author Adrián Cobo
- * 
  */
 @Validated
 public class AdvisorProperties {
@@ -35,7 +34,8 @@ public class AdvisorProperties {
 	/**
 	 * Modify status of advisor
 	 *
-	 * @param enabled new status
+	 * @param enabled
+	 *            new status
 	 */
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
@@ -53,7 +53,8 @@ public class AdvisorProperties {
 	/**
 	 * Set new message source base name
 	 *
-	 * @param messageSourceBaseName new message source base name
+	 * @param messageSourceBaseName
+	 *            new message source base name
 	 */
 	public void setMessageSourceBaseName(String messageSourceBaseName) {
 		this.messageSourceBaseName = messageSourceBaseName;
@@ -71,7 +72,8 @@ public class AdvisorProperties {
 	/**
 	 * Set new message source encoding
 	 *
-	 * @param messageSourceDefaultEncoding new message source encoding
+	 * @param messageSourceDefaultEncoding
+	 *            new message source encoding
 	 */
 	public void setMessageSourceDefaultEncoding(String messageSourceDefaultEncoding) {
 		this.messageSourceDefaultEncoding = messageSourceDefaultEncoding;
@@ -89,7 +91,8 @@ public class AdvisorProperties {
 	/**
 	 * Set if the message source use code as default message
 	 *
-	 * @param messageSourceUseCodeAsDefaultMessage if the message source use code as default message
+	 * @param messageSourceUseCodeAsDefaultMessage
+	 *            if the message source use code as default message
 	 */
 	public void setMessageSourceUseCodeAsDefaultMessage(boolean messageSourceUseCodeAsDefaultMessage) {
 		this.messageSourceUseCodeAsDefaultMessage = messageSourceUseCodeAsDefaultMessage;

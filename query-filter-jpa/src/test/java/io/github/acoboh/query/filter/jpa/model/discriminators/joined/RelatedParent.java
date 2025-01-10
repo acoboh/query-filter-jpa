@@ -22,7 +22,7 @@ public class RelatedParent {
 
 	/**
 	 * Get the id
-	 * 
+	 *
 	 * @return the id
 	 */
 	public String getId() {
@@ -31,7 +31,7 @@ public class RelatedParent {
 
 	/**
 	 * Set the id
-	 * 
+	 *
 	 * @param id
 	 */
 	public void setId(String id) {
@@ -40,7 +40,7 @@ public class RelatedParent {
 
 	/**
 	 * Get the parent
-	 * 
+	 *
 	 * @return the parent
 	 */
 	public ParentEntity getParent() {
@@ -49,7 +49,7 @@ public class RelatedParent {
 
 	/**
 	 * Set the parent
-	 * 
+	 *
 	 * @param parent
 	 */
 	public void setParent(ParentEntity parent) {

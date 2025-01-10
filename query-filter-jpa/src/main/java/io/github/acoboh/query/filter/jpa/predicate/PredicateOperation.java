@@ -11,7 +11,6 @@ import javax.persistence.criteria.Predicate;
  * Predicate operations for custom predicates enumeration
  *
  * @author Adrián Cobo
- * 
  */
 public enum PredicateOperation {
 
@@ -50,7 +49,8 @@ public enum PredicateOperation {
 	/**
 	 * Get the enumerated from the string value
 	 *
-	 * @param value String value of operation to be found
+	 * @param value
+	 *            String value of operation to be found
 	 * @return predicate operation found. Null if the operation is not found
 	 */
 	public static PredicateOperation getOperator(String value) {
@@ -59,16 +59,16 @@ public enum PredicateOperation {
 
 	/**
 	 * Resolve the predicate with criteria builder
-	 * 
-	 * @param cb Criteria builder
 	 *
+	 * @param cb
+	 *            Criteria builder
 	 * @return the predicate
 	 */
 	public abstract Predicate getPredicate(CriteriaBuilder cb);
 
 	/**
 	 * Get the value of the predicate
-	 * 
+	 *
 	 * @return value of the predicate
 	 */
 	public String getValue() {

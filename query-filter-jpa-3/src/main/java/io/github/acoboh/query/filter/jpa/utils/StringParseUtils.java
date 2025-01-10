@@ -12,7 +12,6 @@ import io.github.acoboh.query.filter.jpa.predicate.PredicatePart;
  * Utility class to parse predicates
  *
  * @author Adrián Cobo
- * 
  */
 public class StringParseUtils {
 
@@ -21,11 +20,12 @@ public class StringParseUtils {
 	private StringParseUtils() {
 		// Utility class
 	}
-	
+
 	/**
 	 * Get all parsed parts
 	 *
-	 * @param predicateExp predicate expression
+	 * @param predicateExp
+	 *            predicate expression
 	 * @return parts
 	 */
 	public static List<PredicatePart> parseParts(String predicateExp) {
@@ -41,42 +41,42 @@ public class StringParseUtils {
 			char cTemp = predicateExp.charAt(i);
 
 			switch (cTemp) {
-			case '(':
-				// Starts
-				level++;
+				case '(' :
+					// Starts
+					level++;
 
-				if (level > 1) {
-					builder.append(cTemp);
-				}
-
-				break;
-
-			case ')':
-				level--;
-				if (level == 0) {
-					ret.add(new PredicatePart(balanceLevelParenthesis(builder.toString()), true));
-					builder = new StringBuilder();
-				} else if (level > 0) {
-					builder.append(cTemp);
-				}
-
-				break;
-			case ' ':
-				if (level == 0) {
-
-					String s = builder.toString();
-					if (!s.isEmpty()) {
-						ret.add(new PredicatePart(balanceLevelParenthesis(builder.toString()), false));
+					if (level > 1) {
+						builder.append(cTemp);
 					}
 
-					builder = new StringBuilder();
-				} else {
-					builder.append(cTemp);
-				}
-				break;
+					break;
 
-			default:
-				builder.append(cTemp);
+				case ')' :
+					level--;
+					if (level == 0) {
+						ret.add(new PredicatePart(balanceLevelParenthesis(builder.toString()), true));
+						builder = new StringBuilder();
+					} else if (level > 0) {
+						builder.append(cTemp);
+					}
+
+					break;
+				case ' ' :
+					if (level == 0) {
+
+						String s = builder.toString();
+						if (!s.isEmpty()) {
+							ret.add(new PredicatePart(balanceLevelParenthesis(builder.toString()), false));
+						}
+
+						builder = new StringBuilder();
+					} else {
+						builder.append(cTemp);
+					}
+					break;
+
+				default :
+					builder.append(cTemp);
 
 			}
 		}
@@ -95,7 +95,8 @@ public class StringParseUtils {
 	/**
 	 * Balance the level parenthesis of any expression
 	 *
-	 * @param exp expression
+	 * @param exp
+	 *            expression
 	 * @return balance level parenthesis
 	 */
 	public static String balanceLevelParenthesis(String exp) {
@@ -115,18 +116,18 @@ public class StringParseUtils {
 			char cTemp = exp.charAt(i);
 
 			switch (cTemp) {
-			case '(':
-				level++;
-				break;
-			case ')':
-				level--;
-				if (level == 0 && i < exp.length() - 1) {
-					return exp;
-				}
+				case '(' :
+					level++;
+					break;
+				case ')' :
+					level--;
+					if (level == 0 && i < exp.length() - 1) {
+						return exp;
+					}
 
-				break;
-			default:
-				break;
+					break;
+				default :
+					break;
 			}
 
 		}

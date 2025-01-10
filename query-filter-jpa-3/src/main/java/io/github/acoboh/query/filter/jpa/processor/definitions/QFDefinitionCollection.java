@@ -46,7 +46,7 @@ public class QFDefinitionCollection extends QFAbstractDefinition {
 
 	/**
 	 * Get definition paths of the collection
-	 * 
+	 *
 	 * @return paths
 	 */
 	public List<QFPath> getPaths() {

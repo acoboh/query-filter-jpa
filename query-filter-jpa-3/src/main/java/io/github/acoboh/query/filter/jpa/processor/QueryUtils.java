@@ -31,13 +31,19 @@ public class QueryUtils {
 
 	/**
 	 * Get the object join
-	 * 
-	 * @param root         root entity
-	 * @param paths        paths to travel
-	 * @param pathsMap     map of older paths
-	 * @param isCollection if the final join is part of a collection or object
-	 * @param tryFetch     try to use fetch instead of join
-	 * @param cb           Criteria Builder
+	 *
+	 * @param root
+	 *            root entity
+	 * @param paths
+	 *            paths to travel
+	 * @param pathsMap
+	 *            map of older paths
+	 * @param isCollection
+	 *            if the final join is part of a collection or object
+	 * @param tryFetch
+	 *            try to use fetch instead of join
+	 * @param cb
+	 *            Criteria Builder
 	 * @return return the final path of the object
 	 */
 	public static Path<?> getObject(Root<?> root, List<QFPath> paths, Map<String, Path<?>> pathsMap,
@@ -102,9 +108,9 @@ public class QueryUtils {
 				join = (From<?, ?>) join.fetch(elem.getPath());
 			} else {
 				join = switch (elem.getType()) {
-				case LIST -> join.joinList(elem.getPath());
-				case SET -> join.joinSet(elem.getPath());
-				case PROPERTY, ENUM -> join.join(elem.getPath());
+					case LIST -> join.joinList(elem.getPath());
+					case SET -> join.joinSet(elem.getPath());
+					case PROPERTY, ENUM -> join.join(elem.getPath());
 				};
 			}
 
@@ -120,11 +126,15 @@ public class QueryUtils {
 
 	/**
 	 * Parse orders with the criteria builder
-	 * 
-	 * @param sortDefinitionList list of sort definitions
-	 * @param cb                 criteria builder
-	 * @param root               root entity
-	 * @param pathsMap           older paths
+	 *
+	 * @param sortDefinitionList
+	 *            list of sort definitions
+	 * @param cb
+	 *            criteria builder
+	 * @param root
+	 *            root entity
+	 * @param pathsMap
+	 *            older paths
 	 * @return the final order list
 	 */
 	public static List<Order> parseOrders(List<Pair<IDefinitionSortable, Direction>> sortDefinitionList,

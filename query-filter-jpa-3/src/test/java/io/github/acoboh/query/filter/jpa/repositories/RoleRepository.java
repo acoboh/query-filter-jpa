@@ -6,9 +6,8 @@ import io.github.acoboh.query.filter.jpa.model.subquery.RoleModel;
 
 /**
  * Role repository
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 public interface RoleRepository extends JpaRepository<RoleModel, Long> {
 

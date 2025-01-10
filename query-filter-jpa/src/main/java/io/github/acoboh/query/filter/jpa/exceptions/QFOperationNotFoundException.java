@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
  * Exception when the operation is not found
  *
  * @author Adrián Cobo
- * 
  */
 public class QFOperationNotFoundException extends QueryFilterException {
 
@@ -20,12 +19,13 @@ public class QFOperationNotFoundException extends QueryFilterException {
 	/**
 	 * Default constructor
 	 *
-	 * @param operation operation
+	 * @param operation
+	 *            operation
 	 */
 	public QFOperationNotFoundException(String operation) {
 		super(MESSAGE, operation);
 		this.operation = operation;
-		this.arguments = new Object[] { operation };
+		this.arguments = new Object[]{operation};
 	}
 
 	/**
@@ -37,19 +37,25 @@ public class QFOperationNotFoundException extends QueryFilterException {
 		return operation;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public HttpStatus getHttpStatus() {
 		return HttpStatus.BAD_REQUEST;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object[] getArguments() {
 		return arguments;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String getMessageCode() {
 		return "qf.exceptions.operationNotFound";

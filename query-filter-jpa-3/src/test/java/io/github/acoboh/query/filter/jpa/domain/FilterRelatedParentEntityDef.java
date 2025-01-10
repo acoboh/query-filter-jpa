@@ -17,9 +17,8 @@ public class FilterRelatedParentEntityDef {
 	@QFElement("parent.type")
 	private TypeEnum type;
 
-	@QFDiscriminator(path = "parent", value = {
-			@QFDiscriminator.Value(name = "subclassA", type = SubclassAEntity.class),
-			@QFDiscriminator.Value(name = "subclassB", type = SubclassBEntity.class) })
+	@QFDiscriminator(path = "parent", value = {@QFDiscriminator.Value(name = "subclassA", type = SubclassAEntity.class),
+			@QFDiscriminator.Value(name = "subclassB", type = SubclassBEntity.class)})
 	private String discriminatorType;
 
 	@QFElement(value = "parent.subClassField", subClassMapping = SubclassAEntity.class, subClassMappingPath = "parent")

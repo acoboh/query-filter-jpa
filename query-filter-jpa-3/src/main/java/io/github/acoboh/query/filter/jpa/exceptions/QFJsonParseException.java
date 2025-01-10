@@ -1,5 +1,7 @@
 package io.github.acoboh.query.filter.jpa.exceptions;
 
+import java.io.Serial;
+
 import org.springframework.http.HttpStatus;
 
 /**
@@ -8,10 +10,10 @@ import org.springframework.http.HttpStatus;
  * </p>
  *
  * @author Adrián Cobo
- * 
  */
 public class QFJsonParseException extends QueryFilterException {
 
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	private final String field;
@@ -20,13 +22,15 @@ public class QFJsonParseException extends QueryFilterException {
 	/**
 	 * Default constructor
 	 *
-	 * @param field     field
-	 * @param throwable throwable exception
+	 * @param field
+	 *            field
+	 * @param throwable
+	 *            throwable exception
 	 */
 	public QFJsonParseException(String field, Throwable throwable) {
 		super("Error parsing json", throwable);
 		this.field = field;
-		this.arguments = new Object[] { field, throwable.getLocalizedMessage() };
+		this.arguments = new Object[]{field, throwable.getLocalizedMessage()};
 	}
 
 	/**
@@ -38,19 +42,25 @@ public class QFJsonParseException extends QueryFilterException {
 		return field;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public HttpStatus getHttpStatus() {
 		return HttpStatus.BAD_REQUEST;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object[] getArguments() {
 		return arguments;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String getMessageCode() {
 		return "qf.exceptions.json";

@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -29,8 +30,10 @@ public class ClassUtils {
 	/**
 	 * Get the field of a class
 	 *
-	 * @param fromClass Class to get the field
-	 * @param fieldName Field name to get
+	 * @param fromClass
+	 *            Class to get the field
+	 * @param fieldName
+	 *            Field name to get
 	 * @return Field found
 	 */
 	public static Field getDeclaredFieldSuperclass(Class<?> fromClass, String fieldName) {
@@ -52,10 +55,10 @@ public class ClassUtils {
 
 	/**
 	 * Get class of a list or set type class
-	 * 
-	 * @param field Field to check
+	 *
+	 * @param field
+	 *            Field to check
 	 * @return Class of the list
-	 * @throws QFTypeException
 	 */
 	public static Class<?> getClassOfList(Field field) throws QFTypeException {
 
@@ -83,7 +86,8 @@ public class ClassUtils {
 			Enum.class, // Enums
 			UUID.class, // UUID
 			LocalDateTime.class, // LocalDateTime
-			Timestamp.class // Timestamp
+			Timestamp.class, // Timestamp
+			Instant.class // Instant
 	);
 
 	/**
@@ -91,7 +95,8 @@ public class ClassUtils {
 	 * <p>
 	 * If the field is enum, the path is modified
 	 *
-	 * @param fieldClass Class to check
+	 * @param fieldClass
+	 *            Class to check
 	 * @return true if primitive, false otherwise
 	 */
 	public static boolean isPrimitiveOrBasic(Class<?> fieldClass) {
@@ -103,7 +108,8 @@ public class ClassUtils {
 	/**
 	 * Check if the field is an enum
 	 *
-	 * @param fieldClass Class to check
+	 * @param fieldClass
+	 *            Class to check
 	 * @return true if enum, false otherwise
 	 */
 	public static boolean isEnum(Class<?> fieldClass) {
@@ -113,7 +119,8 @@ public class ClassUtils {
 	/**
 	 * Check if the field is a list, array or set
 	 *
-	 * @param fieldClass Class to check
+	 * @param fieldClass
+	 *            Class to check
 	 * @return true if list, array or set, false otherwise
 	 */
 	public static boolean isListArrayOrSet(Class<?> fieldClass) {

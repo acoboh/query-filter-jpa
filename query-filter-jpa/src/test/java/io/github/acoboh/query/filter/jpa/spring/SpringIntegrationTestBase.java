@@ -48,9 +48,8 @@ public class SpringIntegrationTestBase {
 
 	/**
 	 * Basic configuration tests
-	 * 
-	 * @author Adrián Cobo
 	 *
+	 * @author Adrián Cobo
 	 */
 	@Configuration
 	@EnableJpaRepositories(basePackageClasses = PostBlogRepository.class)
@@ -137,7 +136,7 @@ public class SpringIntegrationTestBase {
 
 		/**
 		 * Hibernate properties
-		 * 
+		 *
 		 * @return hibernate properties
 		 */
 		protected Properties properties() {
@@ -150,8 +149,9 @@ public class SpringIntegrationTestBase {
 
 		/**
 		 * Additional properties
-		 * 
-		 * @param properties properties base
+		 *
+		 * @param properties
+		 *            properties base
 		 */
 		protected void additionalProperties(Properties properties) {
 			properties.setProperty("hibernate.metadata_builder_contributor",
@@ -160,12 +160,12 @@ public class SpringIntegrationTestBase {
 
 		/**
 		 * Packages to scan
-		 * 
+		 *
 		 * @return packages to scan
 		 */
 		protected String[] packagesToScan() {
-			return new String[] { "io.github.acoboh.query.filter.jpa.model",
-					"io.github.acoboh.query.filter.jpa.model.discriminators" };
+			return new String[]{"io.github.acoboh.query.filter.jpa.model",
+					"io.github.acoboh.query.filter.jpa.model.discriminators"};
 		}
 
 	}

@@ -4,7 +4,6 @@ package io.github.acoboh.query.filter.jpa.exceptions.definition;
  * Exception thrown when the date class is not supported
  *
  * @author Adrián Cobo
- * 
  */
 public class QFDateClassNotSupported extends QueryFilterDefinitionException {
 
@@ -17,8 +16,10 @@ public class QFDateClassNotSupported extends QueryFilterDefinitionException {
 	/**
 	 * Default constructor
 	 *
-	 * @param clazz class not supported
-	 * @param field field which is not supported
+	 * @param clazz
+	 *            class not supported
+	 * @param field
+	 *            field which is not supported
 	 */
 	public QFDateClassNotSupported(Class<?> clazz, String field) {
 		super(MESSAGE, clazz, field);

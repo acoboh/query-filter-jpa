@@ -7,9 +7,8 @@ import io.github.acoboh.query.filter.jpa.model.subquery.UserModel;
 
 /**
  * User repository
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 public interface UserRepository extends JpaSpecificationExecutor<UserModel>, JpaRepository<UserModel, Long> {
 

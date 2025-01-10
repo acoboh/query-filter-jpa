@@ -22,7 +22,6 @@ import jakarta.servlet.http.HttpServletResponse;
  * SPEL Context resolver bean
  *
  * @author Adrián Cobo
- * 
  */
 class SecuritySpelResolverContext extends SpelResolverContext {
 
@@ -33,9 +32,12 @@ class SecuritySpelResolverContext extends SpelResolverContext {
 	/**
 	 * Default constructor
 	 *
-	 * @param securityExpressionHandlers security expression handlers
-	 * @param request                    actual request
-	 * @param response                   actual response
+	 * @param securityExpressionHandlers
+	 *            security expression handlers
+	 * @param request
+	 *            actual request
+	 * @param response
+	 *            actual response
 	 */
 	public SecuritySpelResolverContext(List<SecurityExpressionHandler<?>> securityExpressionHandlers,
 			HttpServletRequest request, HttpServletResponse response) {

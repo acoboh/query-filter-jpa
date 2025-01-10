@@ -33,8 +33,10 @@ class PredicateLevel {
 	/**
 	 * Predicate constructor
 	 *
-	 * @param expression expression of predicate
-	 * @param fullMap    map definition of filter to be used
+	 * @param expression
+	 *            expression of predicate
+	 * @param fullMap
+	 *            map definition of filter to be used
 	 */
 	public PredicateLevel(String expression, Map<String, QFAbstractDefinition> fullMap) {
 
@@ -78,20 +80,20 @@ class PredicateLevel {
 
 					PredicateLevel nestedLevel = new PredicateLevel(part.getPart(), fullMap);
 					switch (nestedLevel.parts.size()) {
-					case 0:
-						LOGGER.trace("Nested level is empty. Ignore them");
-						continue;
-					case 1:
-						LOGGER.trace("Nested level must be simplified");
-						levelParts.addAll(nestedLevel.levelParts);
-						continue;
-					default:
-						LOGGER.trace("Adding as nested level");
-						if (nestedLevels == null) {
-							nestedLevels = new ArrayList<>();
-						}
+						case 0 :
+							LOGGER.trace("Nested level is empty. Ignore them");
+							continue;
+						case 1 :
+							LOGGER.trace("Nested level must be simplified");
+							levelParts.addAll(nestedLevel.levelParts);
+							continue;
+						default :
+							LOGGER.trace("Adding as nested level");
+							if (nestedLevels == null) {
+								nestedLevels = new ArrayList<>();
+							}
 
-						nestedLevels.add(nestedLevel);
+							nestedLevels.add(nestedLevel);
 					}
 
 				} else {
@@ -112,7 +114,7 @@ class PredicateLevel {
 	/**
 	 * Get the filtered fields
 	 *
-	 * @return List of filtered field
+	 * @return set of filtered field
 	 */
 	public Set<String> getFilteredFields() {
 		if (fieldsSet == null) { // Cache fields
@@ -133,8 +135,10 @@ class PredicateLevel {
 	/**
 	 * Resolve the level of the predicate
 	 *
-	 * @param cb         Criteria builder
-	 * @param predicates Predicates to be used on nested levels for resolution
+	 * @param cb
+	 *            Criteria builder
+	 * @param predicates
+	 *            Predicates to be used on nested levels for resolution
 	 * @return Predicate used
 	 */
 	public Predicate resolveLevel(CriteriaBuilder cb, Map<String, Predicate> predicates) {

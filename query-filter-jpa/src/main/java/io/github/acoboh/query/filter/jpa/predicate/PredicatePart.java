@@ -6,7 +6,6 @@ import org.springframework.util.Assert;
  * Predicate part
  *
  * @author Adrián Cobo
- * 
  */
 public class PredicatePart {
 
@@ -17,8 +16,10 @@ public class PredicatePart {
 	/**
 	 * Create a new predicate part
 	 *
-	 * @param part   parted
-	 * @param nested if it is nested
+	 * @param part
+	 *            parted
+	 * @param nested
+	 *            if it is nested
 	 */
 	public PredicatePart(String part, boolean nested) {
 		Assert.notNull(part, "Predicate part cannot be null");

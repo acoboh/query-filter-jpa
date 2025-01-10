@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
  * Exception if the field is not found on the filter
  *
  * @author Adrián Cobo
- * 
  */
 public class QFFieldNotFoundException extends QueryFilterException {
 
@@ -20,12 +19,13 @@ public class QFFieldNotFoundException extends QueryFilterException {
 	/**
 	 * Default constructor
 	 *
-	 * @param field field not found
+	 * @param field
+	 *            field not found
 	 */
 	public QFFieldNotFoundException(String field) {
 		super(MESSAGE, field);
 		this.field = field;
-		this.arguments = new Object[] { field };
+		this.arguments = new Object[]{field};
 	}
 
 	/**
@@ -37,19 +37,25 @@ public class QFFieldNotFoundException extends QueryFilterException {
 		return field;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public HttpStatus getHttpStatus() {
 		return HttpStatus.BAD_REQUEST;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object[] getArguments() {
 		return arguments;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String getMessageCode() {
 		return "qf.exceptions.missingField";

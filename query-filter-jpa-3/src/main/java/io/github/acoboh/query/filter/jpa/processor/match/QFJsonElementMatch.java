@@ -34,7 +34,6 @@ import jakarta.persistence.criteria.Root;
  * Class with JSON element matching definition
  *
  * @author Adrián Cobo
- * 
  */
 public class QFJsonElementMatch implements QFSpecificationPart {
 
@@ -55,10 +54,14 @@ public class QFJsonElementMatch implements QFSpecificationPart {
 	/**
 	 * Default constructor
 	 *
-	 * @param value      value
-	 * @param operation  operation
-	 * @param definition definition
-	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFJsonParseException if any JSON parsing exception
+	 * @param value
+	 *            value
+	 * @param operation
+	 *            operation
+	 * @param definition
+	 *            definition
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFJsonParseException
+	 *             if any JSON parsing exception
 	 */
 	public QFJsonElementMatch(String value, QFOperationJsonEnum operation, QFDefinitionJson definition)
 			throws QFJsonParseException {
@@ -82,10 +85,13 @@ public class QFJsonElementMatch implements QFSpecificationPart {
 
 	/**
 	 * Secondary constructor to bypass the JSON parsing options
-	 * 
-	 * @param value      map of values
-	 * @param operation  operation
-	 * @param definition definition on json field
+	 *
+	 * @param value
+	 *            map of values
+	 * @param operation
+	 *            operation
+	 * @param definition
+	 *            definition on json field
 	 */
 	public QFJsonElementMatch(Map<String, String> value, QFOperationJsonEnum operation, QFDefinitionJson definition) {
 		this.definition = definition;

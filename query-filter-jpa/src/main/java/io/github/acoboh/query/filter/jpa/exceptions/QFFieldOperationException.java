@@ -8,7 +8,6 @@ import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
  * Exception thrown when the operation is not allowed on a field
  *
  * @author Adrián Cobo
- * 
  */
 public class QFFieldOperationException extends QueryFilterException {
 
@@ -24,14 +23,16 @@ public class QFFieldOperationException extends QueryFilterException {
 	/**
 	 * Default constructor
 	 *
-	 * @param operation operation not allowed
-	 * @param field     field
+	 * @param operation
+	 *            operation not allowed
+	 * @param field
+	 *            field
 	 */
 	public QFFieldOperationException(QFOperationEnum operation, String field) {
 		super(MESSAGE, operation, field);
 		this.operation = operation;
 		this.field = field;
-		this.arguments = new Object[] { operation, field };
+		this.arguments = new Object[]{operation, field};
 	}
 
 	/**
@@ -52,19 +53,25 @@ public class QFFieldOperationException extends QueryFilterException {
 		return field;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public HttpStatus getHttpStatus() {
 		return HttpStatus.BAD_REQUEST;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object[] getArguments() {
 		return arguments;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String getMessageCode() {
 		return "qf.exceptions.operationFieldNotValid";

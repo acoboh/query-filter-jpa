@@ -8,9 +8,8 @@ import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 
 /**
  * Example with basic spel expressions
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 @QFDefinitionClass(PostBlog.class)
 public class FilterBlogSpELDef {

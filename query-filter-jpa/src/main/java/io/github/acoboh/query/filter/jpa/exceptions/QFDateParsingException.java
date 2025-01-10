@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
  * Exception throw when any date formating error occurs
  *
  * @author Adrián Cobo
- * 
  */
 public class QFDateParsingException extends QueryFilterException {
 
@@ -24,17 +23,21 @@ public class QFDateParsingException extends QueryFilterException {
 	/**
 	 * Default constructor
 	 *
-	 * @param field  field to be parsed
-	 * @param value  value to be parsed
-	 * @param format original format
-	 * @param e      original date time parsing exception
+	 * @param field
+	 *            field to be parsed
+	 * @param value
+	 *            value to be parsed
+	 * @param format
+	 *            original format
+	 * @param e
+	 *            original date time parsing exception
 	 */
 	public QFDateParsingException(String field, String value, String format, DateTimeParseException e) {
 		super(MESSAGE, e, field, value, format, e);
 		this.field = field;
 		this.value = value;
 		this.format = format;
-		this.arguments = new Object[] { value, field, format };
+		this.arguments = new Object[]{value, field, format};
 	}
 
 	/**
@@ -64,19 +67,25 @@ public class QFDateParsingException extends QueryFilterException {
 		return format;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public HttpStatus getHttpStatus() {
 		return HttpStatus.BAD_REQUEST;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object[] getArguments() {
 		return arguments;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String getMessageCode() {
 		return "qf.exceptions.dateParse";

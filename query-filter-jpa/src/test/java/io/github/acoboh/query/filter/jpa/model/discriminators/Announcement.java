@@ -9,9 +9,8 @@ import javax.persistence.Table;
 
 /**
  * Announcement entity class
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 @Entity(name = "Announcement")
 @Table(name = "announcement")
@@ -22,7 +21,7 @@ public class Announcement extends Topic {
 
 	/**
 	 * Valid until
-	 * 
+	 *
 	 * @return valid until
 	 */
 	public Timestamp getValidUntil() {
@@ -31,8 +30,9 @@ public class Announcement extends Topic {
 
 	/**
 	 * Set valid until
-	 * 
-	 * @param validUntil new valid until
+	 *
+	 * @param validUntil
+	 *            new valid until
 	 */
 	public void setValidUntil(Timestamp validUntil) {
 		this.validUntil = validUntil;

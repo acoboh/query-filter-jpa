@@ -4,7 +4,6 @@ package io.github.acoboh.query.filter.jpa.exceptions.definition;
  * Exception throw for all the discriminator exceptions
  *
  * @author Adrián Cobo
- * 
  */
 public class QFDiscriminatorException extends QueryFilterDefinitionException {
 
@@ -13,8 +12,10 @@ public class QFDiscriminatorException extends QueryFilterDefinitionException {
 	/**
 	 * Default constructor
 	 *
-	 * @param message message
-	 * @param args    arguments of message
+	 * @param message
+	 *            message
+	 * @param args
+	 *            arguments of message
 	 */
 	public QFDiscriminatorException(String message, Object... args) {
 		super(message, args);

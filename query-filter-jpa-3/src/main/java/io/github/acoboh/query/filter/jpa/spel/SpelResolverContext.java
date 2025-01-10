@@ -3,6 +3,7 @@ package io.github.acoboh.query.filter.jpa.spel;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.PropertyValue;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
@@ -17,7 +18,6 @@ import jakarta.servlet.http.HttpServletResponse;
  * SPEL Context base to resolve SpEL expressions
  *
  * @author Adrián Cobo
- * 
  */
 public abstract class SpelResolverContext {
 
@@ -34,8 +34,10 @@ public abstract class SpelResolverContext {
 	/**
 	 * Default constructor
 	 *
-	 * @param request  the servlet request
-	 * @param response the servlet response
+	 * @param request
+	 *            the servlet request
+	 * @param response
+	 *            the servlet response
 	 */
 	protected SpelResolverContext(HttpServletRequest request, HttpServletResponse response) {
 		this.request = request;
@@ -45,8 +47,10 @@ public abstract class SpelResolverContext {
 	/**
 	 * Evaluate any expression
 	 *
-	 * @param securityExpression expression to evaluate
-	 * @param contextValues      actual context values
+	 * @param securityExpression
+	 *            expression to evaluate
+	 * @param contextValues
+	 *            actual context values
 	 * @return object evaluated
 	 */
 	public Object evaluate(String securityExpression, MultiValueMap<String, Object> contextValues) {
@@ -69,14 +73,14 @@ public abstract class SpelResolverContext {
 
 	/**
 	 * Get expression parser to resolve de SpEL expression
-	 * 
+	 *
 	 * @return the expression parser to use
 	 */
 	public abstract ExpressionParser getExpressionParser();
 
 	/**
 	 * Get the evaluation context of the expression
-	 * 
+	 *
 	 * @return evaluation context to use
 	 */
 	public abstract EvaluationContext getEvaluationContext();
@@ -84,13 +88,13 @@ public abstract class SpelResolverContext {
 	private void fillContextWithRequestValues(EvaluationContext context) {
 
 		Object pathObject = request.getAttribute(View.PATH_VARIABLES);
-		if (pathObject != null && pathObject instanceof Map<?, ?> map) {
+		if (pathObject instanceof Map<?, ?> map) {
 			context.setVariable("_pathVariables", map);
 		}
 
 		var properties = new ServletRequestParameterPropertyValues(request);
 		Map<String, Object> requestParams = properties.getPropertyValueList().stream()
-				.collect(Collectors.toMap(e -> e.getName(), e -> e.getValue()));
+				.collect(Collectors.toMap(PropertyValue::getName, PropertyValue::getValue));
 
 		context.setVariable("_parameters", requestParams);
 	}

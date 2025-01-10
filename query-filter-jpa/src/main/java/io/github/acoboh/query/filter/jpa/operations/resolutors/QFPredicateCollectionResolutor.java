@@ -16,10 +16,14 @@ public interface QFPredicateCollectionResolutor {
 	/**
 	 * Generate predicate of collection elements
 	 *
-	 * @param path      path of criteria builder
-	 * @param cb        criteria builder
-	 * @param match     element matched
-	 * @param mlContext context
+	 * @param path
+	 *            path of criteria builder
+	 * @param cb
+	 *            criteria builder
+	 * @param match
+	 *            element matched
+	 * @param mlContext
+	 *            context
 	 * @return predicate resolver
 	 */
 	<C extends java.util.Collection<?>> Predicate generateCollectionPredicate(Expression<C> path, CriteriaBuilder cb,

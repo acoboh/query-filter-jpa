@@ -16,13 +16,12 @@ import io.github.acoboh.query.filter.jpa.processor.match.QFCollectionMatch;
 
 /**
  * Enumeration with all the collection operations
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 public enum QFCollectionOperationEnum implements QFPredicateCollectionResolutor {
 	/**
-	 * 
+	 *
 	 */
 	EQUAL("eq") {
 		@Override
@@ -33,8 +32,8 @@ public enum QFCollectionOperationEnum implements QFPredicateCollectionResolutor 
 		}
 	},
 	/**
-	* 
-	*/
+	 *
+	 */
 	NOT_EQUAL("ne") {
 		@Override
 		public <C extends Collection<?>> Predicate generateCollectionPredicate(Expression<C> path, CriteriaBuilder cb,
@@ -44,8 +43,8 @@ public enum QFCollectionOperationEnum implements QFPredicateCollectionResolutor 
 		}
 	},
 	/**
-	* 
-	*/
+	 *
+	 */
 	GREATER_THAN("gt") {
 		@Override
 		public <C extends Collection<?>> Predicate generateCollectionPredicate(Expression<C> path, CriteriaBuilder cb,
@@ -55,8 +54,8 @@ public enum QFCollectionOperationEnum implements QFPredicateCollectionResolutor 
 		}
 	},
 	/**
-	* 
-	*/
+	 *
+	 */
 	GREATER_EQUAL_THAN("gte") {
 		@Override
 		public <C extends Collection<?>> Predicate generateCollectionPredicate(Expression<C> path, CriteriaBuilder cb,
@@ -66,8 +65,8 @@ public enum QFCollectionOperationEnum implements QFPredicateCollectionResolutor 
 		}
 	},
 	/**
-	* 
-	*/
+	 *
+	 */
 	LESS_THAN("lt") {
 		@Override
 		public <C extends Collection<?>> Predicate generateCollectionPredicate(Expression<C> path, CriteriaBuilder cb,
@@ -77,8 +76,8 @@ public enum QFCollectionOperationEnum implements QFPredicateCollectionResolutor 
 		}
 	},
 	/**
-	* 
-	*/
+	 *
+	 */
 	LESS_EQUAL_THAN("lte") {
 		@Override
 		public <C extends Collection<?>> Predicate generateCollectionPredicate(Expression<C> path, CriteriaBuilder cb,
@@ -110,9 +109,11 @@ public enum QFCollectionOperationEnum implements QFPredicateCollectionResolutor 
 	/**
 	 * Find operation from the parameter value
 	 *
-	 * @param value parameter value
+	 * @param value
+	 *            parameter value
 	 * @return operation found
-	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFOperationNotFoundException if the operation is not found
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFOperationNotFoundException
+	 *             if the operation is not found
 	 */
 	public static QFCollectionOperationEnum fromValue(String value) throws QFOperationNotFoundException {
 		QFCollectionOperationEnum constant = CONSTANTS.get(value);

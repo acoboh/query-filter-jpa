@@ -7,9 +7,8 @@ import io.github.acoboh.query.filter.jpa.model.PostBlog;
 
 /**
  * Basic example of filter
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 @QFDefinitionClass(PostBlog.class)
 public class FilterCollectionBlogDef {
@@ -19,7 +18,7 @@ public class FilterCollectionBlogDef {
 
 	@QFCollectionElement("comments")
 	private int commentsSize;
-	
+
 	@QFElement("comments.author")
 	private String authorComments;
 

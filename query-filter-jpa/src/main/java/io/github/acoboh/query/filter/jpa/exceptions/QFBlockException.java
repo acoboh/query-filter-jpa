@@ -3,10 +3,10 @@ package io.github.acoboh.query.filter.jpa.exceptions;
 import org.springframework.http.HttpStatus;
 
 /**
- * Exception thrown when the field is marked as blocked and the user is trying to filter from string filters
+ * Exception thrown when the field is marked as blocked and the user is trying
+ * to filter from string filters
  *
  * @author Adrián Cobo
- * 
  */
 public class QFBlockException extends QueryFilterException {
 
@@ -19,12 +19,13 @@ public class QFBlockException extends QueryFilterException {
 	/**
 	 * Construct
 	 *
-	 * @param field name of the field
+	 * @param field
+	 *            name of the field
 	 */
 	public QFBlockException(String field) {
 		super(MESSAGE, field);
 		this.field = field;
-		this.arguments = new Object[] { field };
+		this.arguments = new Object[]{field};
 	}
 
 	/**
@@ -36,19 +37,25 @@ public class QFBlockException extends QueryFilterException {
 		return field;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public HttpStatus getHttpStatus() {
 		return HttpStatus.BAD_REQUEST;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object[] getArguments() {
 		return arguments;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String getMessageCode() {
 		return "qf.exceptions.blocked";

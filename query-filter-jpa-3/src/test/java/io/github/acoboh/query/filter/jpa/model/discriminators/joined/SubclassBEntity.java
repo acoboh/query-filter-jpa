@@ -14,7 +14,7 @@ public class SubclassBEntity extends ParentEntity {
 
 	/**
 	 * Get the text
-	 * 
+	 *
 	 * @return the text
 	 */
 	public String getText() {
@@ -23,7 +23,7 @@ public class SubclassBEntity extends ParentEntity {
 
 	/**
 	 * Set the text
-	 * 
+	 *
 	 * @param text
 	 */
 	public void setText(String text) {

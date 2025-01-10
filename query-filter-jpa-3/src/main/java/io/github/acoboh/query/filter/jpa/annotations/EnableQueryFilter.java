@@ -10,23 +10,24 @@ import java.lang.annotation.Target;
  * Class to configure packages of Filter Class
  *
  * @author Adrián Cobo
- * 
  */
 @Retention(RUNTIME)
 @Target(TYPE)
 public @interface EnableQueryFilter {
 
 	/**
-	 * Base package names to find classes with {@linkplain QFDefinitionClass} annotations
-	 * 
-	 * @return list of packages to search
+	 * Base package names to find classes with {@linkplain QFDefinitionClass}
+	 * annotations
+	 *
+	 * @return array of packages to search
 	 */
 	String[] basePackages() default {};
 
 	/**
-	 * Base package classes to find classes with {@linkplain QFDefinitionClass} annotations
-	 * 
-	 * @return list of package classes to search
+	 * Base package classes to find classes with {@linkplain QFDefinitionClass}
+	 * annotations
+	 *
+	 * @return array of package classes to search
 	 */
 	Class<?>[] basePackageClasses() default {};
 

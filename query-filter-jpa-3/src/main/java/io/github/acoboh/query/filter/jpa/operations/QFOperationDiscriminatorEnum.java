@@ -83,10 +83,12 @@ public enum QFOperationDiscriminatorEnum implements QFPredicateDiscriminatorReso
 
 	/**
 	 * Get the operation from the value
-	 * 
-	 * @param value value of the operation
+	 *
+	 * @param value
+	 *            value of the operation
 	 * @return operation
-	 * @throws QFOperationNotFoundException if the operation is not found
+	 * @throws QFOperationNotFoundException
+	 *             if the operation is not found
 	 */
 	public static QFOperationDiscriminatorEnum fromValue(String value) {
 		QFOperationDiscriminatorEnum operationEnum = operationMap.get(value);

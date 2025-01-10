@@ -22,45 +22,54 @@ class QfArraySQLFunction implements SQLFunction {
 	 * Constructor for QfArraySQLFunction.
 	 * </p>
 	 *
-	 * @param operator used on SQL queries
+	 * @param operator
+	 *            used on SQL queries
 	 */
 	public QfArraySQLFunction(String operator) {
 		this.operator = operator;
 	}
 
-	private String operator;
+	private final String operator;
 
 	/**
 	 * Get the operator used on SQL queries
-	 * 
+	 *
 	 * @return operator
 	 */
 	public String getOperator() {
 		return operator;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean hasArguments() {
 		return true;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean hasParenthesesIfNoArguments() {
 		return true;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Type getReturnType(Type firstArgumentType, Mapping mapping) throws QueryException {
 		return BooleanType.INSTANCE;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public String render(Type firstArgumentType, @SuppressWarnings("rawtypes") List arguments,
-			SessionFactoryImplementor factory) throws QueryException {
+	public String render(Type firstArgumentType, List arguments, SessionFactoryImplementor factory)
+			throws QueryException {
 
 		if (arguments.size() < 2) {
 			throw new QueryException("Array function not enough arguments");

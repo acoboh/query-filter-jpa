@@ -33,10 +33,10 @@ import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
 
 /**
- * Class with info about the filtered field. Contains all the entity fields of the same filter field
+ * Class with info about the filtered field. Contains all the entity fields of
+ * the same filter field
  *
  * @author Adrián Cobo
- * 
  */
 public class QFElementMatch implements QFSpecificationPart {
 
@@ -55,16 +55,19 @@ public class QFElementMatch implements QFSpecificationPart {
 	private List<String> processedValues;
 	private List<List<Object>> parsedValues;
 
-	private DateTimeFormatter formatter;
+	private final DateTimeFormatter formatter;
 
 	private boolean initialized = false;
 
 	/**
 	 * Default constructor
 	 *
-	 * @param values     list of matching values
-	 * @param operation  operation to be applied
-	 * @param definition field definition
+	 * @param values
+	 *            list of matching values
+	 * @param operation
+	 *            operation to be applied
+	 * @param definition
+	 *            field definition
 	 */
 	public QFElementMatch(List<String> values, QFOperationEnum operation, QFDefinitionElement definition) {
 
@@ -87,13 +90,17 @@ public class QFElementMatch implements QFSpecificationPart {
 	/**
 	 * Initialize spel expressions
 	 *
-	 * @param spelResolver spel resolver interface
-	 * @param context      context of values
+	 * @param spelResolver
+	 *            spel resolver interface
+	 * @param context
+	 *            context of values
 	 * @return true if initialized successfully
-	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldOperationException if any operation exception
-	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFEnumException           if any enumeration exception
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldOperationException
+	 *             if any operation exception
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFEnumException
+	 *             if any enumeration exception
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	public boolean initialize(SpelResolverContext spelResolver, MultiValueMap<String, Object> context)
 			throws QFFieldOperationException, QFEnumException {
 
@@ -213,7 +220,8 @@ public class QFElementMatch implements QFSpecificationPart {
 	/**
 	 * Get final class of each model field
 	 *
-	 * @param index index model field
+	 * @param index
+	 *            index model field
 	 * @return final class of the field
 	 */
 	public Class<?> matchClass(int index) {
@@ -227,7 +235,8 @@ public class QFElementMatch implements QFSpecificationPart {
 	/**
 	 * List of parsed values on each field
 	 *
-	 * @param index index of field
+	 * @param index
+	 *            index of field
 	 * @return list of values
 	 */
 	public List<Object> parsedValues(int index) {
@@ -252,7 +261,8 @@ public class QFElementMatch implements QFSpecificationPart {
 	/**
 	 * Get the first parsed value of the field
 	 *
-	 * @param index index of model field
+	 * @param index
+	 *            index of model field
 	 * @return first parsed value
 	 */
 	public Object getPrimaryParsedValue(int index) {
@@ -305,19 +315,19 @@ public class QFElementMatch implements QFSpecificationPart {
 		}
 
 		switch (operation) {
-		case GREATER_THAN, GREATER_EQUAL_THAN, LESS_THAN, LESS_EQUAL_THAN:
-			if (!Comparable.class.isAssignableFrom(clazz) && !clazz.isPrimitive()) {
-				throw new QFFieldOperationException(operation, definition.getFilterName());
-			}
-			break;
+			case GREATER_THAN, GREATER_EQUAL_THAN, LESS_THAN, LESS_EQUAL_THAN :
+				if (!Comparable.class.isAssignableFrom(clazz) && !clazz.isPrimitive()) {
+					throw new QFFieldOperationException(operation, definition.getFilterName());
+				}
+				break;
 
-		case ENDS_WITH, STARTS_WITH, LIKE:
-			if (!String.class.isAssignableFrom(clazz)) {
-				throw new QFFieldOperationException(operation, definition.getFilterName());
-			}
-			break;
-		default:
-			LOGGER.trace("Operation {} allowed on field {} by default", operation, definition.getFilterName());
+			case ENDS_WITH, STARTS_WITH, LIKE :
+				if (!String.class.isAssignableFrom(clazz)) {
+					throw new QFFieldOperationException(operation, definition.getFilterName());
+				}
+				break;
+			default :
+				LOGGER.trace("Operation {} allowed on field {} by default", operation, definition.getFilterName());
 		}
 	}
 

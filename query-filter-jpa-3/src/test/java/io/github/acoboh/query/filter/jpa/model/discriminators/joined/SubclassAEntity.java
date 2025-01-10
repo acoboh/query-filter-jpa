@@ -16,7 +16,7 @@ public class SubclassAEntity extends ParentEntity {
 
 	/**
 	 * Get the sub class field
-	 * 
+	 *
 	 * @return the sub class field
 	 */
 	public String getSubClassField() {
@@ -25,7 +25,7 @@ public class SubclassAEntity extends ParentEntity {
 
 	/**
 	 * Set the subclass field
-	 * 
+	 *
 	 * @param subClassField
 	 */
 	public void setSubClassField(String subClassField) {
@@ -34,7 +34,7 @@ public class SubclassAEntity extends ParentEntity {
 
 	/**
 	 * Get the flag
-	 * 
+	 *
 	 * @return the flag
 	 */
 	public boolean isFlag() {
@@ -43,7 +43,7 @@ public class SubclassAEntity extends ParentEntity {
 
 	/**
 	 * Set the flag
-	 * 
+	 *
 	 * @param flag
 	 */
 	public void setFlag(boolean flag) {

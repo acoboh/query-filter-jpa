@@ -1,6 +1,7 @@
 package io.github.acoboh.query.filter.jpa.domain;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoField;
 
@@ -13,9 +14,8 @@ import io.github.acoboh.query.filter.jpa.model.PostBlog;
 
 /**
  * Basic dates query filter definition
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 @QFDefinitionClass(PostBlog.class)
 public class FilterBlogDatesDef {
@@ -35,10 +35,14 @@ public class FilterBlogDatesDef {
 	@QFElement("createDate")
 	private LocalDateTime lastTimestampCustomFormat;
 
+	@QFElement("instant")
+	@QFDate
+	private Instant instant;
+
 	@QFDate(timeFormat = "yyyy/MM/dd", parseDefaulting = {
 			@QFDateDefault(chronoField = ChronoField.HOUR_OF_DAY, value = 12),
 			@QFDateDefault(chronoField = ChronoField.MINUTE_OF_HOUR, value = 30),
-			@QFDateDefault(chronoField = ChronoField.SECOND_OF_MINUTE, value = 0) })
+			@QFDateDefault(chronoField = ChronoField.SECOND_OF_MINUTE, value = 0)})
 	@QFElement("createDate")
 	private LocalDateTime withDefaults;
 

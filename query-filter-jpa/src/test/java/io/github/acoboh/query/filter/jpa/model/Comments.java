@@ -13,9 +13,8 @@ import javax.persistence.OneToMany;
 
 /**
  * Comments entity
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 @Entity
 public class Comments {
@@ -37,7 +36,7 @@ public class Comments {
 
 	/**
 	 * Get ID
-	 * 
+	 *
 	 * @return ID
 	 */
 	public int getId() {
@@ -46,7 +45,7 @@ public class Comments {
 
 	/**
 	 * Set new ID
-	 * 
+	 *
 	 * @param id
 	 */
 	public void setId(int id) {
@@ -55,7 +54,7 @@ public class Comments {
 
 	/**
 	 * Get author
-	 * 
+	 *
 	 * @return author
 	 */
 	public String getAuthor() {
@@ -64,8 +63,9 @@ public class Comments {
 
 	/**
 	 * Set new author
-	 * 
-	 * @param author new author
+	 *
+	 * @param author
+	 *            new author
 	 */
 	public void setAuthor(String author) {
 		this.author = author;
@@ -73,7 +73,7 @@ public class Comments {
 
 	/**
 	 * Get post blog
-	 * 
+	 *
 	 * @return post blog
 	 */
 	public PostBlog getPostBlog() {
@@ -82,8 +82,9 @@ public class Comments {
 
 	/**
 	 * Set new post blog
-	 * 
-	 * @param postBlog new post blog
+	 *
+	 * @param postBlog
+	 *            new post blog
 	 */
 	public void setPostBlog(PostBlog postBlog) {
 		this.postBlog = postBlog;
@@ -91,7 +92,7 @@ public class Comments {
 
 	/**
 	 * Get comment
-	 * 
+	 *
 	 * @return comment
 	 */
 	public String getComment() {
@@ -100,8 +101,9 @@ public class Comments {
 
 	/**
 	 * Set new comment
-	 * 
-	 * @param comment new comment
+	 *
+	 * @param comment
+	 *            new comment
 	 */
 	public void setComment(String comment) {
 		this.comment = comment;
@@ -109,7 +111,7 @@ public class Comments {
 
 	/**
 	 * Get likes
-	 * 
+	 *
 	 * @return likes
 	 */
 	public int getLikes() {
@@ -118,8 +120,9 @@ public class Comments {
 
 	/**
 	 * Set new likes
-	 * 
-	 * @param likes new likes
+	 *
+	 * @param likes
+	 *            new likes
 	 */
 	public void setLikes(int likes) {
 		this.likes = likes;
@@ -127,7 +130,7 @@ public class Comments {
 
 	/**
 	 * Get extra data
-	 * 
+	 *
 	 * @return extra data
 	 */
 	public List<ExtraData> getExtraData() {
@@ -136,8 +139,9 @@ public class Comments {
 
 	/**
 	 * Set extra data
-	 * 
-	 * @param extraData extra data
+	 *
+	 * @param extraData
+	 *            extra data
 	 */
 	public void setExtraData(List<ExtraData> extraData) {
 		this.extraData = extraData;

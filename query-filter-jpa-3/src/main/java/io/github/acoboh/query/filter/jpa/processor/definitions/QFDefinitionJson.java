@@ -59,7 +59,7 @@ public class QFDefinitionJson extends QFAbstractDefinition {
 
 	/**
 	 * Get definition paths
-	 * 
+	 *
 	 * @return paths
 	 */
 	public List<QFPath> getPaths() {

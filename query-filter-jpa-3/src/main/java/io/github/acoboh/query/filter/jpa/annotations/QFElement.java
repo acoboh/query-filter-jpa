@@ -16,30 +16,33 @@ import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
  * <p>
  * Name is the field selected on the query filter input string
  * <p>
- * Path is the access level to the object of the {@link io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass} selected
- * class
+ * Path is the access level to the object of the
+ * {@link io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass}
+ * selected class
  * <p>
- * You can choose the element type directly instead of check the class type using <b>abstractElement</b> value in annotation
+ * You can choose the element type directly instead of check the class type
+ * using <b>abstractElement</b> value in annotation
  *
  * @author Adrián Cobo
- * 
  */
 
 @Documented
 @Retention(RUNTIME)
-@Target({ FIELD, ANNOTATION_TYPE })
+@Target({FIELD, ANNOTATION_TYPE})
 @Repeatable(QFElements.class)
 public @interface QFElement {
 
 	/**
-	 * Path to check the input part. Is the full level access until the variable you want to filter
+	 * Path to check the input part. Is the full level access until the variable you
+	 * want to filter
 	 *
 	 * @return value
 	 */
 	String value();
 
 	/**
-	 * Name to use in the input filter. If it is not specified, it will be used the name of the variable associated
+	 * Name to use in the input filter. If it is not specified, it will be used the
+	 * name of the variable associated
 	 *
 	 * @return name
 	 */
@@ -74,7 +77,8 @@ public @interface QFElement {
 	QFOperationEnum defaultOperation() default QFOperationEnum.EQUAL;
 
 	/**
-	 * If True, only case-sensitive string will be match on like operations. Otherwise, all strings will match.
+	 * If True, only case-sensitive string will be match on like operations.
+	 * Otherwise, all strings will match.
 	 *
 	 * <p>
 	 * Example:
@@ -109,11 +113,13 @@ public @interface QFElement {
 	 * &#64;security.isAuthorized(),isAuthenticated()
 	 * </code>
 	 * <p>
-	 * In this case, only the first part <code>@security.isAuthorized()</code> will be used
+	 * In this case, only the first part <code>@security.isAuthorized()</code> will
+	 * be used
 	 * <p>
 	 * You can also reuse vales from other fields used example:
 	 * <p>
-	 * Example of use the value of a query element named 'otherElement' to check if filter value is greater than 10
+	 * Example of use the value of a query element named 'otherElement' to check if
+	 * filter value is greater than 10
 	 * <p>
 	 * <code>
 	 * #otherElement &gt; 10
@@ -126,14 +132,16 @@ public @interface QFElement {
 	boolean isSpPELExpression() default false;
 
 	/**
-	 * Can specify if any filter property is null or empty, will be ignored and removed from the filter
+	 * Can specify if any filter property is null or empty, will be ignored and
+	 * removed from the filter
 	 *
 	 * @return true, if null and blank values will be ignored. False otherwise
 	 */
 	boolean blankIgnore() default true;
 
 	/**
-	 * Order for resolver filter. It its need if any QueryFilterElement is SpEL and needs the values from previous fields
+	 * Order for resolver filter. It its need if any QueryFilterElement is SpEL and
+	 * needs the values from previous fields
 	 *
 	 * @return order of filters
 	 */
@@ -141,47 +149,49 @@ public @interface QFElement {
 
 	/**
 	 * If the filter is sortable, you can active Fetch Load automatically
-	 * 
+	 *
 	 * @return true if fetch is enabled
 	 */
 	boolean autoFetch() default true;
 
 	/**
-	 * Select the class of the element if it is only available on a nested Discriminator class.
+	 * Select the class of the element if it is only available on a nested
+	 * Discriminator class.
 	 * <p>
 	 * Example: <blockquote>
-	 * 
+	 *
 	 * <pre>
 	 * {@code @Entity }
 	 * {@code @Inheritance(strategy = InheritanceType.JOINED)}
 	 * public class ParentEntity {
 	 *     // Base data
 	 * }
-	 * 
+	 *
 	 * {@code @Entity }
 	 * public class SubclassAEntity extends ParentEntity {
 	 *     // Subclass A data
 	 *     private String subClassField;
 	 * }
-	 * 
+	 *
 	 * {@code @QFDefinitionClass(ParentEntity.class)}
 	 * public class FilterParentEntityDef {
 	 *    {@code @QFElement(value = "subClassField", subClassMapping = SubclassAEntity.class)}
 	 *    private String subClassField;
 	 * {@code}}
 	 * </pre>
-	 * 
+	 *
 	 * </blockquote>
-	 * 
+	 *
 	 * @return subClassMapping
 	 */
 	Class<?> subClassMapping() default Void.class;
 
 	/**
-	 * Select the path of the subclass level if it is only available on a nested Discriminator class.
+	 * Select the path of the subclass level if it is only available on a nested
+	 * Discriminator class.
 	 * <p>
 	 * Need to be used with {@linkplain #subClassMapping()}
-	 * 
+	 *
 	 * @return path to apply subclass scanning
 	 */
 	String subClassMappingPath() default "";

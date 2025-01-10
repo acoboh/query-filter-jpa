@@ -12,7 +12,6 @@ import io.github.acoboh.query.filter.jpa.processor.QFParamType;
  * Query filter parameter
  *
  * @author Adrián Cobo
- * 
  */
 @Retention(RUNTIME)
 @Target(PARAMETER)
@@ -20,14 +19,14 @@ public @interface QFParam {
 
 	/**
 	 * Filter class
-	 * 
+	 *
 	 * @return filter class
 	 */
 	Class<?> value();
 
 	/**
 	 * Standard of filtering
-	 * 
+	 *
 	 * @return Standard of filtering
 	 */
 	QFParamType type() default QFParamType.RHS_COLON;

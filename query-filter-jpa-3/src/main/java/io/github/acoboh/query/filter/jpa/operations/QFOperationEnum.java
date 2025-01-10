@@ -21,7 +21,6 @@ import jakarta.persistence.criteria.Predicate;
  * Enumerated with all the operations
  *
  * @author Adrián Cobo
- * 
  */
 public enum QFOperationEnum implements QFPredicateResolutor {
 
@@ -62,7 +61,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 	 */
 	GREATER_THAN("gt", true, false, ArrayFunction.GREATER_THAN) {
 		@Override
-		@SuppressWarnings({ "unchecked", "rawtypes" })
+		@SuppressWarnings({"unchecked", "rawtypes"})
 		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
 				MultiValueMap<String, Object> mlContext) {
 			if (match.getDefinition().isArrayTyped()) {
@@ -78,7 +77,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 	 * Greater or equal than
 	 */
 	GREATER_EQUAL_THAN("gte", true, false, ArrayFunction.GREATER_EQUAL_THAN) {
-		@SuppressWarnings({ "unchecked", "rawtypes" })
+		@SuppressWarnings({"unchecked", "rawtypes"})
 		@Override
 		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
 				MultiValueMap<String, Object> mlContext) {
@@ -95,7 +94,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 	 * Less than operation
 	 */
 	LESS_THAN("lt", true, false, ArrayFunction.LESS_THAN) {
-		@SuppressWarnings({ "unchecked", "rawtypes" })
+		@SuppressWarnings({"unchecked", "rawtypes"})
 		@Override
 		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
 				MultiValueMap<String, Object> mlContext) {
@@ -112,7 +111,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 	 * Less or equal than
 	 */
 	LESS_EQUAL_THAN("lte", true, false, ArrayFunction.LESS_EQUAL_THAN) {
-		@SuppressWarnings({ "unchecked", "rawtypes" })
+		@SuppressWarnings({"unchecked", "rawtypes"})
 		@Override
 		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
 				MultiValueMap<String, Object> mlContext) {
@@ -310,9 +309,11 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 	/**
 	 * Find operation from the parameter value
 	 *
-	 * @param value parameter value
+	 * @param value
+	 *            parameter value
 	 * @return operation found
-	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFOperationNotFoundException if the operation is not found
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFOperationNotFoundException
+	 *             if the operation is not found
 	 */
 	public static QFOperationEnum fromValue(String value) throws QFOperationNotFoundException {
 		QFOperationEnum constant = CONSTANTS.get(value);
@@ -325,8 +326,10 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 	/**
 	 * Get allowed operations of any class
 	 *
-	 * @param clazz        class to check
-	 * @param isArrayTyped if the field is array typed
+	 * @param clazz
+	 *            class to check
+	 * @param isArrayTyped
+	 *            if the field is array typed
 	 * @return set of operations
 	 */
 	public static Set<QFOperationEnum> getOperationsOfClass(Class<?> clazz, boolean isArrayTyped) {
@@ -344,18 +347,18 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 			}
 
 			switch (op) {
-			case GREATER_THAN, GREATER_EQUAL_THAN, LESS_THAN, LESS_EQUAL_THAN:
-				if (Comparable.class.isAssignableFrom(clazz) || clazz.isPrimitive()) {
+				case GREATER_THAN, GREATER_EQUAL_THAN, LESS_THAN, LESS_EQUAL_THAN :
+					if (Comparable.class.isAssignableFrom(clazz) || clazz.isPrimitive()) {
+						ret.add(op);
+					}
+					break;
+				case ENDS_WITH, STARTS_WITH, LIKE :
+					if (String.class.isAssignableFrom(clazz)) {
+						ret.add(op);
+					}
+					break;
+				default :
 					ret.add(op);
-				}
-				break;
-			case ENDS_WITH, STARTS_WITH, LIKE:
-				if (String.class.isAssignableFrom(clazz)) {
-					ret.add(op);
-				}
-				break;
-			default:
-				ret.add(op);
 			}
 
 		}
@@ -364,7 +367,9 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String getOperation() {
 		return value;

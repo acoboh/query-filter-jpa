@@ -2,7 +2,7 @@ package io.github.acoboh.query.filter.jpa.processor.definitions;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import io.github.acoboh.query.filter.jpa.annotations.QFBlockParsing;
@@ -34,7 +34,7 @@ public class QFDefinitionSortable extends QFAbstractDefinition implements IDefin
 
 		autoFetch = sortableAnnotation.autoFetch();
 
-		this.fullPath = Arrays.asList(sortableAnnotation.value());
+		this.fullPath = Collections.singletonList(sortableAnnotation.value());
 	}
 
 	@Override

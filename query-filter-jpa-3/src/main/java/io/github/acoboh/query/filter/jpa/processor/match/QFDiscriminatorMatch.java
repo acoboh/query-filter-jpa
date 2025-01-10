@@ -26,7 +26,6 @@ import jakarta.persistence.criteria.Root;
  * Class with info about the discriminator matching for filtering
  *
  * @author Adrián Cobo
- * 
  */
 public class QFDiscriminatorMatch implements QFSpecificationPart {
 
@@ -47,10 +46,14 @@ public class QFDiscriminatorMatch implements QFSpecificationPart {
 	/**
 	 * Default constructor
 	 *
-	 * @param values     list of values
-	 * @param operation  operation to apply
-	 * @param definition definition of the field
-	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFDiscriminatorNotFoundException if any discriminator exception occurs
+	 * @param values
+	 *            list of values
+	 * @param operation
+	 *            operation to apply
+	 * @param definition
+	 *            definition of the field
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFDiscriminatorNotFoundException
+	 *             if any discriminator exception occurs
 	 */
 	public QFDiscriminatorMatch(List<String> values, QFOperationDiscriminatorEnum operation,
 			QFDefinitionDiscriminator definition) throws QFDiscriminatorNotFoundException {

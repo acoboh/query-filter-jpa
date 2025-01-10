@@ -20,10 +20,10 @@ import io.github.acoboh.query.filter.jpa.properties.AdvisorProperties;
 import io.github.acoboh.query.filter.jpa.properties.QueryFilterProperties;
 
 /**
- * Class with {@linkplain ControllerAdvice} annotation for multi-language exception support
+ * Class with {@linkplain ControllerAdvice} annotation for multi-language
+ * exception support
  *
  * @author Adrián Cobo
- * 
  */
 @ControllerAdvice
 @ConditionalOnProperty(name = "query-filter.advisor.enabled", havingValue = "true", matchIfMissing = true)
@@ -34,7 +34,8 @@ public class QFExceptionAdvisor {
 	/**
 	 * Default constructor
 	 *
-	 * @param properties query filter properties
+	 * @param properties
+	 *            query filter properties
 	 */
 	protected QFExceptionAdvisor(QueryFilterProperties properties) {
 		AdvisorProperties props = properties.getAdvisor();
@@ -48,8 +49,10 @@ public class QFExceptionAdvisor {
 	/**
 	 * Handler for all {@linkplain QueryFilterException} exceptions
 	 *
-	 * @param ex      exception throw
-	 * @param request original {@linkplain HttpServletRequest} request
+	 * @param ex
+	 *            exception throw
+	 * @param request
+	 *            original {@linkplain HttpServletRequest} request
 	 * @return new response
 	 */
 	@ExceptionHandler(QueryFilterException.class)

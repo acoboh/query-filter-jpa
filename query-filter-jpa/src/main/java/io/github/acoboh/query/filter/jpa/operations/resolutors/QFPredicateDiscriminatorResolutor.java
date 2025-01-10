@@ -15,11 +15,15 @@ public interface QFPredicateDiscriminatorResolutor {
 
 	/**
 	 * Generate predicate of discriminator elements
-	 * 
-	 * @param expression expression of criteria
-	 * @param cb         criteria builder
-	 * @param match      element matched
-	 * @param mlContext  context
+	 *
+	 * @param expression
+	 *            expression of criteria
+	 * @param cb
+	 *            criteria builder
+	 * @param match
+	 *            element matched
+	 * @param mlContext
+	 *            context
 	 * @return predicate generated
 	 */
 	Predicate generateDiscriminatorPredicate(Expression<Class<?>> expression, CriteriaBuilder cb,

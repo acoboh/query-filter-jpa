@@ -17,9 +17,8 @@ import jakarta.persistence.Table;
 
 /**
  * Topic entity model
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 @Entity(name = "Topic")
 @Table(name = "topic")
@@ -46,7 +45,7 @@ public class Topic {
 
 	/**
 	 * Get title
-	 * 
+	 *
 	 * @return title
 	 */
 	public String getTitle() {
@@ -55,8 +54,9 @@ public class Topic {
 
 	/**
 	 * Set new title
-	 * 
-	 * @param title new title
+	 *
+	 * @param title
+	 *            new title
 	 */
 	public void setTitle(String title) {
 		this.title = title;
@@ -64,7 +64,7 @@ public class Topic {
 
 	/**
 	 * Get owner
-	 * 
+	 *
 	 * @return owner
 	 */
 	public String getOwner() {
@@ -73,8 +73,9 @@ public class Topic {
 
 	/**
 	 * Set new owner
-	 * 
-	 * @param owner new owner
+	 *
+	 * @param owner
+	 *            new owner
 	 */
 	public void setOwner(String owner) {
 		this.owner = owner;
@@ -82,7 +83,7 @@ public class Topic {
 
 	/**
 	 * Get ID
-	 * 
+	 *
 	 * @return ID
 	 */
 	public Long getId() {
@@ -91,7 +92,7 @@ public class Topic {
 
 	/**
 	 * Get created date
-	 * 
+	 *
 	 * @return created date
 	 */
 	public Date getCreated() {

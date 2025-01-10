@@ -37,7 +37,7 @@ public abstract class ParentEntity {
 
 	/**
 	 * Get the id
-	 * 
+	 *
 	 * @return the id
 	 */
 	public String getId() {
@@ -46,7 +46,7 @@ public abstract class ParentEntity {
 
 	/**
 	 * Set the id
-	 * 
+	 *
 	 * @param id
 	 */
 	public void setId(String id) {
@@ -55,7 +55,7 @@ public abstract class ParentEntity {
 
 	/**
 	 * Get the type
-	 * 
+	 *
 	 * @return the type
 	 */
 	public TypeEnum getType() {
@@ -64,7 +64,7 @@ public abstract class ParentEntity {
 
 	/**
 	 * Set the type
-	 * 
+	 *
 	 * @param type
 	 */
 	public void setType(TypeEnum type) {
@@ -73,7 +73,7 @@ public abstract class ParentEntity {
 
 	/**
 	 * Get the active
-	 * 
+	 *
 	 * @return the active
 	 */
 	public boolean isActive() {
@@ -82,7 +82,7 @@ public abstract class ParentEntity {
 
 	/**
 	 * Set the active
-	 * 
+	 *
 	 * @param active
 	 */
 	public void setActive(boolean active) {

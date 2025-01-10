@@ -6,9 +6,8 @@ import io.github.acoboh.query.filter.jpa.model.subquery.UserModel;
 
 /**
  * Basic example with subquery on query filter definition
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 @QFDefinitionClass(UserModel.class)
 public class UserModelFilterDef {

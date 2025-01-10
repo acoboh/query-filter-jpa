@@ -139,7 +139,8 @@ class DiscriminatorJoinTest {
 	@Order(3)
 	void filterBySubclassAField() {
 
-		// On Hibernate 6, the filter will apply a Left Join on the subclassA table and all data from SubclassB will be returned matching
+		// On Hibernate 6, the filter will apply a Left Join on the subclassA table and
+		// all data from SubclassB will be returned matching
 		// the criteria query
 
 		QueryFilter<ParentEntity> qf = queryFilterProcessor.newQueryFilter("subClassAField=eq:Subclass A field",
@@ -165,7 +166,8 @@ class DiscriminatorJoinTest {
 
 		qf = queryFilterProcessor.newQueryFilter("sort=-subClassAField", QFParamType.RHS_COLON);
 
-		// On Hibernate 6, the sort will only do a Left Join on the subclassA table and all data from SubclassB will be returned
+		// On Hibernate 6, the sort will only do a Left Join on the subclassA table and
+		// all data from SubclassB will be returned
 		list = repository.findAll(qf);
 
 		// Nulls are returned first

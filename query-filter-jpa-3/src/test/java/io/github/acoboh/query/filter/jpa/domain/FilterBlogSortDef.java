@@ -10,9 +10,8 @@ import io.github.acoboh.query.filter.jpa.model.PostBlog;
 
 /**
  * Basic example of default sorting
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 @QFDefinitionClass(value = PostBlog.class, defaultSort = @QFDefaultSort("author"))
 public class FilterBlogSortDef {

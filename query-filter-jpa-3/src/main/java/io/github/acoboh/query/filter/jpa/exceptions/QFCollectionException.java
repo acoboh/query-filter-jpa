@@ -1,5 +1,7 @@
 package io.github.acoboh.query.filter.jpa.exceptions;
 
+import java.io.Serial;
+
 import org.springframework.http.HttpStatus;
 
 /**
@@ -7,6 +9,7 @@ import org.springframework.http.HttpStatus;
  */
 public class QFCollectionException extends QueryFilterException {
 
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	private static final String MESSAGE = "The field '{}' can not be used as a collection. Reason {}";
@@ -16,14 +19,16 @@ public class QFCollectionException extends QueryFilterException {
 	private final transient Object[] arguments;
 
 	/**
-	 * @param field  field
-	 * @param reason reason
+	 * @param field
+	 *            field
+	 * @param reason
+	 *            reason
 	 */
 	public QFCollectionException(String field, String reason) {
 		super(MESSAGE, reason);
 		this.field = field;
 		this.reason = reason;
-		arguments = new Object[] { field };
+		arguments = new Object[]{field};
 	}
 
 	/**

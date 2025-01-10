@@ -13,9 +13,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Auto-configuration class to instantiate SpelResolverContext beans
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 @Configuration
 public class SpelResolverBeanConfig {

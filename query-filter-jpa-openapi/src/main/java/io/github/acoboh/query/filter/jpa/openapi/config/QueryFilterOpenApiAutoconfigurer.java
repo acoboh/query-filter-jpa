@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Import;
  * Auto-Configuration class for OpenAPI standard
  *
  * @author Adrián Cobo
- * 
  */
 @Configuration
 @Import(OpenApiCustomiserImpl.class)

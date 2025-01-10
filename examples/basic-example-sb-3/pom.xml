@@ -33,7 +33,7 @@
 		<hypersistance-utils.version>3.8.3</hypersistance-utils.version>
 
 		<!-- Query Filter Versions -->
-		<query-filter.version>0.3.2-SNAPSHOT</query-filter.version>
+		<query-filter.version>0.4.0-SNAPSHOT</query-filter.version>
 
 		<!-- Mapstruct -->
 		<mapstruct.version>1.6.3</mapstruct.version>

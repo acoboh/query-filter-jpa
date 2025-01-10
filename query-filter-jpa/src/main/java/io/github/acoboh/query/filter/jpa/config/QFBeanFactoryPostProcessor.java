@@ -3,10 +3,9 @@ package io.github.acoboh.query.filter.jpa.config;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -41,7 +40,6 @@ import io.github.acoboh.query.filter.jpa.processor.QFProcessor;
  * Query filter bean factory post processor for QueryFilter custom beans
  *
  * @author Adrián Cobo
- * 
  */
 @Configuration
 public class QFBeanFactoryPostProcessor implements ApplicationContextAware, BeanFactoryPostProcessor, Ordered {
@@ -50,7 +48,9 @@ public class QFBeanFactoryPostProcessor implements ApplicationContextAware, Bean
 
 	private ApplicationContext applicationContext;
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		Assert.notNull(applicationContext, "ApplicationContext cannot be null");
@@ -128,7 +128,9 @@ public class QFBeanFactoryPostProcessor implements ApplicationContextAware, Bean
 
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
 		Assert.notNull(beanFactory, "beanFactory cannot be null");
@@ -158,18 +160,15 @@ public class QFBeanFactoryPostProcessor implements ApplicationContextAware, Bean
 		if (packagesToAnalyze.isEmpty()) {
 			LOGGER.debug("Trying get SpringBootApplication beans to search for QueryFilter classes...");
 			packagesToAnalyze = getBeansWithAnnotation(SpringBootApplication.class, false,
-					(scan, instance) -> Arrays.asList(instance.getClass().toString()));
+					(scan, instance) -> Collections.singletonList(instance.getClass().toString()));
 
 		}
 
 		Set<Class<?>> classSet = getClassAnnotated(packagesToAnalyze, QFDefinitionClass.class);
 
-		Map<Class<?>, QFProcessor<?, ?>> mapProcessors = new HashMap<>();
-
 		for (Class<?> cl : classSet) {
 			try {
-				QFProcessor<?, ?> qfp = registerQueryFilterClass(cl, beanFactory);
-				mapProcessors.put(cl, qfp);
+				registerQueryFilterClass(cl, beanFactory);
 			} catch (QueryFilterDefinitionException e) {
 				throw new BeanCreationException("Error creating bean query filter for class " + cl.getName(), e);
 			}
@@ -210,7 +209,9 @@ public class QFBeanFactoryPostProcessor implements ApplicationContextAware, Bean
 
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int getOrder() {
 		return 0;

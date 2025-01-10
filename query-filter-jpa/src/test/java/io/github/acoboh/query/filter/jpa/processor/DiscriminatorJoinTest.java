@@ -139,7 +139,8 @@ class DiscriminatorJoinTest {
 	@Order(3)
 	void filterBySubclassAField() {
 
-		// On Hibernate 6, the filter will apply a Inner Join on the subclassAEntity table and only data from SubclassA will be returned
+		// On Hibernate 6, the filter will apply a Inner Join on the subclassAEntity
+		// table and only data from SubclassA will be returned
 		// matching the filter
 
 		QueryFilter<ParentEntity> qf = queryFilterProcessor.newQueryFilter("subClassAField=eq:Subclass A field",
@@ -168,7 +169,8 @@ class DiscriminatorJoinTest {
 		list = repository.findAll(qf);
 		assertThat(list).hasSize(2).containsExactly(SUBCLASS_A_EXAMPLE_2, SUBCLASS_A_EXAMPLE);
 
-		qf = queryFilterProcessor.newQueryFilter("sort=-subClassAField&subClassAField=null:true", QFParamType.RHS_COLON);
+		qf = queryFilterProcessor.newQueryFilter("sort=-subClassAField&subClassAField=null:true",
+				QFParamType.RHS_COLON);
 
 		list = repository.findAll(qf);
 		assertThat(list).isEmpty();

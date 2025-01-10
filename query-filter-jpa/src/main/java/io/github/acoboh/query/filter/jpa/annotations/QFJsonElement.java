@@ -12,29 +12,31 @@ import java.lang.annotation.Target;
  * Special query filter element used on JSON elements
  *
  * @author Adrián Cobo
- * 
  */
 @Documented
 @Retention(RUNTIME)
-@Target({ FIELD, ANNOTATION_TYPE })
+@Target({FIELD, ANNOTATION_TYPE})
 public @interface QFJsonElement {
 
 	/**
-	 * Path to check the input part. Is the full level access until the variable you want to filter
+	 * Path to check the input part. Is the full level access until the variable you
+	 * want to filter
 	 *
 	 * @return value
 	 */
 	String value();
 
 	/**
-	 * Name to use in the input filter. If it is not specified, it will be used the name of the variable associated
+	 * Name to use in the input filter. If it is not specified, it will be used the
+	 * name of the variable associated
 	 *
 	 * @return name
 	 */
 	String name() default "";
 
 	/**
-	 * If True, only case-sensitive string will be match. Otherwise, all strings will match.
+	 * If True, only case-sensitive string will be match. Otherwise, all strings
+	 * will match.
 	 *
 	 * <p>
 	 * Example:

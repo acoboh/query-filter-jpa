@@ -5,9 +5,8 @@ import org.hibernate.boot.model.FunctionContributor;
 
 /**
  * Function contributor implementation
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 public class FunctionContributorImpl implements FunctionContributor {
 

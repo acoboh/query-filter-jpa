@@ -66,7 +66,7 @@ class FieldClassProcessor {
 			} else {
 				levelsSubClass = subClassMappingPath.split("\\.");
 			}
-			
+
 		}
 
 		Class<?> levelClass = rootClass;

@@ -24,9 +24,8 @@ import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
 
 /**
  * JSON tests
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 @SpringJUnitWebConfig(SpringIntegrationTestBase.Config.class)
 @ExtendWith(SpringExtension.class)

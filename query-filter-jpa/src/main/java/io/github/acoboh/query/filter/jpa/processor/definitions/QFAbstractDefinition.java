@@ -100,12 +100,16 @@ public abstract class QFAbstractDefinition {
 
 	/**
 	 * Create a new base definition based on annotations of the field
-	 * 
-	 * @param filterField filter field
-	 * @param filterClass filter class
-	 * @param entityClass entity class
+	 *
+	 * @param filterField
+	 *            filter field
+	 * @param filterClass
+	 *            filter class
+	 * @param entityClass
+	 *            entity class
 	 * @return abstract definition
-	 * @throws QueryFilterDefinitionException if any error happens creating the definition
+	 * @throws QueryFilterDefinitionException
+	 *             if any error happens creating the definition
 	 */
 	public static QFAbstractDefinition buildDefinition(Field filterField, Class<?> filterClass, Class<?> entityClass)
 			throws QueryFilterDefinitionException {

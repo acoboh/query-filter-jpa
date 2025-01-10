@@ -7,9 +7,8 @@ import io.github.acoboh.query.filter.jpa.model.PostBlog;
 
 /**
  * Example for predicates on query filter definition
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 @QFDefinitionClass(PostBlog.class)
 @QFPredicate(name = FilterBlogPredicatesDef.OR_LIKES, expression = "likes OR commentLikes")

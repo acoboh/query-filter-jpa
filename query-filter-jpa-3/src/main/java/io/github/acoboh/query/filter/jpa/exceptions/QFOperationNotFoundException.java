@@ -1,15 +1,17 @@
 package io.github.acoboh.query.filter.jpa.exceptions;
 
+import java.io.Serial;
+
 import org.springframework.http.HttpStatus;
 
 /**
  * Exception when the operation is not found
  *
  * @author Adrián Cobo
- * 
  */
 public class QFOperationNotFoundException extends QueryFilterException {
 
+	@Serial
 	private static final long serialVersionUID = 1L;
 	private static final String MESSAGE = "Operation {} is not found";
 
@@ -20,12 +22,13 @@ public class QFOperationNotFoundException extends QueryFilterException {
 	/**
 	 * Default constructor
 	 *
-	 * @param operation operation
+	 * @param operation
+	 *            operation
 	 */
 	public QFOperationNotFoundException(String operation) {
 		super(MESSAGE, operation);
 		this.operation = operation;
-		this.arguments = new Object[] { operation };
+		this.arguments = new Object[]{operation};
 	}
 
 	/**
@@ -37,19 +40,25 @@ public class QFOperationNotFoundException extends QueryFilterException {
 		return operation;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public HttpStatus getHttpStatus() {
 		return HttpStatus.BAD_REQUEST;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object[] getArguments() {
 		return arguments;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String getMessageCode() {
 		return "qf.exceptions.operationNotFound";

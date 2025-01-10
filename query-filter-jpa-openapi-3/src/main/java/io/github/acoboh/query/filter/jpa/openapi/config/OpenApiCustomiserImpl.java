@@ -45,7 +45,6 @@ import io.swagger.v3.oas.models.media.Schema;
  * Class used to customize the OpenAPI definition with filter elements
  *
  * @author Adrián Cobo
- * 
  */
 @Component
 class OpenApiCustomiserImpl implements OpenApiCustomizer {
@@ -57,13 +56,16 @@ class OpenApiCustomiserImpl implements OpenApiCustomizer {
 	/**
 	 * Default constructor
 	 *
-	 * @param endpoints endpoints
+	 * @param endpoints
+	 *            endpoints
 	 */
 	OpenApiCustomiserImpl(ApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void customise(OpenAPI openApi) {
 
@@ -222,15 +224,15 @@ class OpenApiCustomiserImpl implements OpenApiCustomizer {
 
 		return switch (method) {
 
-		case DELETE -> item.getDelete();
-		case HEAD -> item.getHead();
-		case OPTIONS -> item.getOptions();
-		case PATCH -> item.getPatch();
-		case POST -> item.getPost();
-		case PUT -> item.getPut();
-		case TRACE -> item.getTrace();
-		case GET -> item.getGet();
-		default -> throw new IllegalArgumentException("Method not supported" + method);
+			case DELETE -> item.getDelete();
+			case HEAD -> item.getHead();
+			case OPTIONS -> item.getOptions();
+			case PATCH -> item.getPatch();
+			case POST -> item.getPost();
+			case PUT -> item.getPut();
+			case TRACE -> item.getTrace();
+			case GET -> item.getGet();
+			default -> throw new IllegalArgumentException("Method not supported" + method);
 		};
 
 	}

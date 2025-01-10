@@ -11,9 +11,11 @@ public class QFJsonException extends QueryFilterDefinitionException {
 
 	/**
 	 * Custom message exception
-	 * 
-	 * @param message message
-	 * @param args    args of message
+	 *
+	 * @param message
+	 *            message
+	 * @param args
+	 *            args of message
 	 */
 	public QFJsonException(String message, Object... args) {
 		super(message, args);

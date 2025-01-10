@@ -7,9 +7,8 @@ import jakarta.persistence.Entity;
 
 /**
  * Post entity model
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 @Entity(name = "Post")
 @DiscriminatorValue("1")
@@ -26,7 +25,7 @@ public class Post extends Topic {
 
 	/**
 	 * Get content
-	 * 
+	 *
 	 * @return content
 	 */
 	public String getContent() {
@@ -35,8 +34,9 @@ public class Post extends Topic {
 
 	/**
 	 * Set new content
-	 * 
-	 * @param content content
+	 *
+	 * @param content
+	 *            content
 	 */
 	public void setContent(String content) {
 		this.content = content;

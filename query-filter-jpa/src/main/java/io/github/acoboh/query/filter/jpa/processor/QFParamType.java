@@ -6,7 +6,6 @@ import java.util.regex.Pattern;
  * Enumeration for all parsing standards
  *
  * @author Adrián Cobo
- * 
  */
 public enum QFParamType {
 
@@ -18,7 +17,6 @@ public enum QFParamType {
 	 * <code>
 	 * authorName=eq:Adrian
 	 * </code>
-	 * 
 	 */
 	RHS_COLON("(([^&=]+)=([a-zA-Z]+):((?:[^&]|&[^a-zA-Z0-9])*[^&]*))|(sort=([^&]+))", // Pattern Regex
 			"RHS Colon"),
@@ -31,10 +29,8 @@ public enum QFParamType {
 	 * <code>
 	 * authorName[eq]=Adrian
 	 * </code>
-	 * 
 	 */
-	LHS_BRACKETS(
-			"(([^&=]+)\\[([a-zA-Z]+)\\]=((?:[^&]|&[^a-zA-Z0-9])*[^&]*))|(sort=([^&]+))", // Pattern Regex
+	LHS_BRACKETS("(([^&=]+)\\[([a-zA-Z]+)\\]=((?:[^&]|&[^a-zA-Z0-9])*[^&]*))|(sort=([^&]+))", // Pattern Regex
 			"LHS Brackets"); // Name
 
 	private final Pattern pattern;

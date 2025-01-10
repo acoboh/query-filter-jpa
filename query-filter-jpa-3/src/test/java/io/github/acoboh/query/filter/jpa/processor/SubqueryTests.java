@@ -24,9 +24,8 @@ import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
 
 /**
  * Subquery tests
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 @SpringJUnitWebConfig(SpringIntegrationTestBase.Config.class)
 @ExtendWith(SpringExtension.class)
@@ -116,7 +115,8 @@ class SubqueryTests {
 		List<UserModel> list = repository.findAll(qf);
 		assertThat(list).hasSize(4);
 
-		// In this case, the role name is filtered in one sub-query, and only users who do not have a role named ROLE1 are returned
+		// In this case, the role name is filtered in one sub-query, and only users who
+		// do not have a role named ROLE1 are returned
 		qf = queryFilterProcessor.newQueryFilter("role=ne:ROLE1", QFParamType.RHS_COLON);
 		list = repository.findAll(qf);
 		assertThat(list).hasSize(2).containsExactlyInAnyOrder(USER2, USER4);

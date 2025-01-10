@@ -9,9 +9,8 @@ import io.github.acoboh.query.filter.jpa.model.PostBlog;
 
 /**
  * Post Blog repository
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 public interface PostBlogRepository extends JpaSpecificationExecutor<PostBlog>, JpaRepository<PostBlog, UUID> {
 

@@ -31,9 +31,8 @@ import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
 
 /**
  * SpEL tests
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 @SpringJUnitWebConfig(SpringIntegrationTestBase.Config.class)
 @ExtendWith(SpringExtension.class)
@@ -50,8 +49,18 @@ class SpELTest {
 		POST_EXAMPLE.setText("Text");
 		POST_EXAMPLE.setAvgNote(2.5d);
 		POST_EXAMPLE.setLikes(1);
-		POST_EXAMPLE.setCreateDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)); // Truncated to avoid rounding issues with Java > 8 and BBDD
-		POST_EXAMPLE.setLastTimestamp(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS))); // Truncated to avoid rounding issues with Java > 8 and BBDD
+		POST_EXAMPLE.setCreateDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)); // Truncated to avoid rounding
+																						// issues with Java > 8 and BBDD
+		POST_EXAMPLE.setLastTimestamp(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS))); // Truncated
+																												// to
+																												// avoid
+																												// rounding
+																												// issues
+																												// with
+																												// Java
+																												// > 8
+																												// and
+																												// BBDD
 		POST_EXAMPLE.setPublished(true);
 		POST_EXAMPLE.setPostType(PostBlog.PostType.TEXT);
 
@@ -81,8 +90,19 @@ class SpELTest {
 		POST_EXAMPLE_2.setText("Text 2");
 		POST_EXAMPLE_2.setAvgNote(0.5d);
 		POST_EXAMPLE_2.setLikes(2);
-		POST_EXAMPLE_2.setCreateDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)); // Truncated to avoid rounding issues with Java > 8 and BBDD
-		POST_EXAMPLE_2.setLastTimestamp(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS))); // Truncated to avoid rounding issues with Java > 8 and BBDD
+		POST_EXAMPLE_2.setCreateDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)); // Truncated to avoid rounding
+																							// issues with Java > 8 and
+																							// BBDD
+		POST_EXAMPLE_2.setLastTimestamp(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS))); // Truncated
+																												// to
+																												// avoid
+																												// rounding
+																												// issues
+																												// with
+																												// Java
+																												// > 8
+																												// and
+																												// BBDD
 		POST_EXAMPLE_2.setPublished(false);
 		POST_EXAMPLE_2.setPostType(PostBlog.PostType.VIDEO);
 
@@ -162,7 +182,8 @@ class SpELTest {
 
 		List<PostBlog> blogList = repository.findAll(qf);
 
-		// Execute likes IN (0,1,2) and comments equal to (100) [because (0 + 1) * 100 = 100]
+		// Execute likes IN (0,1,2) and comments equal to (100) [because (0 + 1) * 100 =
+		// 100]
 		// Only returns the first blog
 		assertThat(blogList).hasSize(1).containsExactlyInAnyOrder(POST_EXAMPLE);
 

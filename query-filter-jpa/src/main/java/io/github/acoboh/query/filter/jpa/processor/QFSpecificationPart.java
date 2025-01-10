@@ -21,26 +21,35 @@ public interface QFSpecificationPart {
 
 	/**
 	 * Process the specification part
-	 * 
-	 * @param <E>             Entity class
-	 * @param root            Root
-	 * @param query           Query
-	 * @param criteriaBuilder Criteria builder
-	 * @param predicatesMap   Map of predicates
-	 * @param pathsMap        Map of paths
-	 * @param mlmap           Multi-value map for SpEL
-	 * @param spelResolver    Spel Resolver class
-	 * @param entityClass     Entity class
+	 *
+	 * @param <E>
+	 *            Entity class
+	 * @param root
+	 *            Root
+	 * @param query
+	 *            Query
+	 * @param criteriaBuilder
+	 *            Criteria builder
+	 * @param predicatesMap
+	 *            Map of predicates
+	 * @param pathsMap
+	 *            Map of paths
+	 * @param mlmap
+	 *            Multi-value map for SpEL
+	 * @param spelResolver
+	 *            Spel Resolver class
+	 * @param entityClass
+	 *            Entity class
 	 */
-	public <E> void processPart(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder,
+	<E> void processPart(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder,
 			Map<String, List<Predicate>> predicatesMap, Map<String, Path<?>> pathsMap,
 			MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver, Class<E> entityClass);
 
 	/**
 	 * Get definition of the filter field
-	 * 
+	 *
 	 * @return definition
 	 */
-	public QFAbstractDefinition getDefinition();
+	QFAbstractDefinition getDefinition();
 
 }

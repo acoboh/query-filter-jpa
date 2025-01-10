@@ -13,9 +13,8 @@ import org.springframework.security.access.expression.SecurityExpressionHandler;
 
 /**
  * Auto-configuration class to instantiate SpelResolverContext beans
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 @Configuration
 public class SpelResolverBeanConfig {

@@ -5,7 +5,6 @@ package io.github.acoboh.query.filter.jpa.exceptions.definition;
  * {@link io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass}
  *
  * @author Adrián Cobo
- * 
  */
 public class QFElementException extends QueryFilterDefinitionException {
 
@@ -15,8 +14,10 @@ public class QFElementException extends QueryFilterDefinitionException {
 	/**
 	 * Default constructor
 	 *
-	 * @param field field
-	 * @param clazz class
+	 * @param field
+	 *            field
+	 * @param clazz
+	 *            class
 	 */
 	public QFElementException(String field, Class<?> clazz) {
 		super(MESSAGE, field, clazz);

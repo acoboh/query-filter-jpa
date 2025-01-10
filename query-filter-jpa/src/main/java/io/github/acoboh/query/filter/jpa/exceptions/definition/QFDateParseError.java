@@ -6,7 +6,6 @@ import java.time.format.DateTimeParseException;
  * Exception throw when any date parsing error occurs
  *
  * @author Adrián Cobo
- * 
  */
 public class QFDateParseError extends QueryFilterDefinitionException {
 
@@ -20,9 +19,12 @@ public class QFDateParseError extends QueryFilterDefinitionException {
 	/**
 	 * Default constructor
 	 *
-	 * @param format    format applied on the date
-	 * @param dateClass date class
-	 * @param e         original exception thrown
+	 * @param format
+	 *            format applied on the date
+	 * @param dateClass
+	 *            date class
+	 * @param e
+	 *            original exception thrown
 	 */
 	public QFDateParseError(String format, Class<?> dateClass, DateTimeParseException e) {
 		super(MESSAGE, e, format, dateClass);

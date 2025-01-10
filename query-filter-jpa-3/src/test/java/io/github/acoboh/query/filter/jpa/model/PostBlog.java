@@ -1,6 +1,7 @@
 package io.github.acoboh.query.filter.jpa.model;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Objects;
@@ -21,18 +22,16 @@ import jakarta.persistence.OneToMany;
 
 /**
  * Post Blog entity model
- * 
- * @author acobo
  *
+ * @author acobo
  */
 @Entity
 public class PostBlog {
 
 	/**
 	 * Post Type enumeration
-	 * 
-	 * @author Adrián Cobo
 	 *
+	 * @author Adrián Cobo
 	 */
 	public enum PostType {
 		/**
@@ -59,6 +58,8 @@ public class PostBlog {
 	private LocalDateTime createDate;
 
 	private Timestamp lastTimestamp;
+
+	private Instant instant;
 
 	private boolean published;
 
@@ -96,14 +97,14 @@ public class PostBlog {
 		return Objects.equals(author, other.author)
 				&& Double.doubleToLongBits(avgNote) == Double.doubleToLongBits(other.avgNote)
 				&& createDate.equals(other.createDate) && lastTimestamp.equals(other.lastTimestamp)
-				&& likes == other.likes && postType == other.postType && published == other.published
-				&& Objects.equals(text, other.text) && Objects.equals(uuid, other.uuid)
+				&& Objects.equals(instant, other.instant) && likes == other.likes && postType == other.postType
+				&& published == other.published && Objects.equals(text, other.text) && Objects.equals(uuid, other.uuid)
 				&& Arrays.equals(tags, other.tags);
 	}
 
 	/**
 	 * Get UUID
-	 * 
+	 *
 	 * @return UUID
 	 */
 	public UUID getUuid() {
@@ -112,8 +113,9 @@ public class PostBlog {
 
 	/**
 	 * Set new uuid
-	 * 
-	 * @param uuid new uuid
+	 *
+	 * @param uuid
+	 *            new uuid
 	 */
 	public void setUuid(UUID uuid) {
 		this.uuid = uuid;
@@ -121,7 +123,7 @@ public class PostBlog {
 
 	/**
 	 * Get author
-	 * 
+	 *
 	 * @return author
 	 */
 	public String getAuthor() {
@@ -130,8 +132,9 @@ public class PostBlog {
 
 	/**
 	 * Set new author
-	 * 
-	 * @param author new author
+	 *
+	 * @param author
+	 *            new author
 	 */
 	public void setAuthor(String author) {
 		this.author = author;
@@ -139,7 +142,7 @@ public class PostBlog {
 
 	/**
 	 * Get text
-	 * 
+	 *
 	 * @return text
 	 */
 	public String getText() {
@@ -148,8 +151,9 @@ public class PostBlog {
 
 	/**
 	 * Set new text
-	 * 
-	 * @param text new text
+	 *
+	 * @param text
+	 *            new text
 	 */
 	public void setText(String text) {
 		this.text = text;
@@ -157,7 +161,7 @@ public class PostBlog {
 
 	/**
 	 * Get average note
-	 * 
+	 *
 	 * @return average note
 	 */
 	public double getAvgNote() {
@@ -166,8 +170,9 @@ public class PostBlog {
 
 	/**
 	 * Set new average note
-	 * 
-	 * @param avgNote average note
+	 *
+	 * @param avgNote
+	 *            average note
 	 */
 	public void setAvgNote(double avgNote) {
 		this.avgNote = avgNote;
@@ -175,7 +180,7 @@ public class PostBlog {
 
 	/**
 	 * Get likes
-	 * 
+	 *
 	 * @return likes
 	 */
 	public int getLikes() {
@@ -184,8 +189,9 @@ public class PostBlog {
 
 	/**
 	 * Set likes
-	 * 
-	 * @param likes new likes
+	 *
+	 * @param likes
+	 *            new likes
 	 */
 	public void setLikes(int likes) {
 		this.likes = likes;
@@ -193,7 +199,7 @@ public class PostBlog {
 
 	/**
 	 * Get create date
-	 * 
+	 *
 	 * @return create date
 	 */
 	public LocalDateTime getCreateDate() {
@@ -202,8 +208,9 @@ public class PostBlog {
 
 	/**
 	 * Set new create date
-	 * 
-	 * @param createDate new create date
+	 *
+	 * @param createDate
+	 *            new create date
 	 */
 	public void setCreateDate(LocalDateTime createDate) {
 		this.createDate = createDate;
@@ -211,7 +218,7 @@ public class PostBlog {
 
 	/**
 	 * Get last timestamp
-	 * 
+	 *
 	 * @return last timestamp
 	 */
 	public Timestamp getLastTimestamp() {
@@ -220,16 +227,36 @@ public class PostBlog {
 
 	/**
 	 * Set new last timestamp
-	 * 
-	 * @param lastTimestamp new last timestamp
+	 *
+	 * @param lastTimestamp
+	 *            new last timestamp
 	 */
 	public void setLastTimestamp(Timestamp lastTimestamp) {
 		this.lastTimestamp = lastTimestamp;
 	}
 
 	/**
+	 * Get instant
+	 *
+	 * @return instant
+	 */
+	public Instant getInstant() {
+		return instant;
+	}
+
+	/**
+	 * Set new instant
+	 *
+	 * @param instant
+	 *            new instant
+	 */
+	public void setInstant(Instant instant) {
+		this.instant = instant;
+	}
+
+	/**
 	 * Get if is published
-	 * 
+	 *
 	 * @return published
 	 */
 	public boolean isPublished() {
@@ -238,8 +265,9 @@ public class PostBlog {
 
 	/**
 	 * Set published
-	 * 
-	 * @param published new status
+	 *
+	 * @param published
+	 *            new status
 	 */
 	public void setPublished(boolean published) {
 		this.published = published;
@@ -247,7 +275,7 @@ public class PostBlog {
 
 	/**
 	 * Get post type
-	 * 
+	 *
 	 * @return post type
 	 */
 	public PostType getPostType() {
@@ -256,8 +284,9 @@ public class PostBlog {
 
 	/**
 	 * Set new post type
-	 * 
-	 * @param postType new post type
+	 *
+	 * @param postType
+	 *            new post type
 	 */
 	public void setPostType(PostType postType) {
 		this.postType = postType;
@@ -265,7 +294,7 @@ public class PostBlog {
 
 	/**
 	 * Get comments
-	 * 
+	 *
 	 * @return comments
 	 */
 	public Set<Comments> getComments() {
@@ -274,8 +303,9 @@ public class PostBlog {
 
 	/**
 	 * Set new comments
-	 * 
-	 * @param comments new comments
+	 *
+	 * @param comments
+	 *            new comments
 	 */
 	public void setComments(Set<Comments> comments) {
 		this.comments = comments;
@@ -283,7 +313,7 @@ public class PostBlog {
 
 	/**
 	 * Get tags
-	 * 
+	 *
 	 * @return tags
 	 */
 	public String[] getTags() {
@@ -292,8 +322,9 @@ public class PostBlog {
 
 	/**
 	 * Set new tags
-	 * 
-	 * @param tags new tags
+	 *
+	 * @param tags
+	 *            new tags
 	 */
 	public void setTags(String[] tags) {
 		this.tags = tags;

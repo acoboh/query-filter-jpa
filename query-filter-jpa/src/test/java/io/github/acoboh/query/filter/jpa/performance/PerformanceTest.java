@@ -12,13 +12,13 @@ class PerformanceTest {
 
 	private static final Logger logger = LoggerFactory.getLogger(PerformanceTest.class);
 
-	private static final String[] QUERIES = { "campo1[eq]=valor1", "campo1[eq]=valor1&campo2[gt]=valor2",
+	private static final String[] QUERIES = {"campo1[eq]=valor1", "campo1[eq]=valor1&campo2[gt]=valor2",
 			"campo1[eq]=valor1&sort=+campo2", "sort=+campo1,-campo2,+campo3",
 			"campo1[eq]=marcos & comp&campo2[ne]=valor2", "campo1[eq]=valor con espacios y caracteres !@#",
 			"campo1[eq]=valor1&campo2[lt]=valor2&campo3[gte]=valor3&sort=+campo4,-campo5", "campo1[eq]=",
 			"campo1[eq]=valor\\&escapado&campo2[eq]=valor\\,escapado",
 			"campoLargoConNombreExtenso[operationLarga]=valorExtensoconContenidoVariado&campo2[ne]=v&sort=-campoLargo",
-			"campo1[operation]=marcos & comp&campo2[operation]=valor&sort=+campo1,-campo2&campo3[operation]=example & string" };
+			"campo1[operation]=marcos & comp&campo2[operation]=valor&sort=+campo1,-campo2&campo3[operation]=example & string"};
 
 	private static final int ITERATIONS = 100000;
 

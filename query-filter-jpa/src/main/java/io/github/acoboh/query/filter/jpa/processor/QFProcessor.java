@@ -33,12 +33,14 @@ import io.github.acoboh.query.filter.jpa.processor.match.QFElementMatch;
 /**
  * Class to process all query filters.
  * <p>
- * It allows the user to create a new instance of {@linkplain QueryFilter} for using as {@linkplain Specification}
+ * It allows the user to create a new instance of {@linkplain QueryFilter} for
+ * using as {@linkplain Specification}
  *
+ * @param <F>
+ *            Filter definition class
+ * @param <E>
+ *            Entity model class
  * @author Adrián Cobo
- * @param <F> Filter definition class
- * @param <E> Entity model class
- * 
  */
 public class QFProcessor<F, E> {
 
@@ -65,10 +67,14 @@ public class QFProcessor<F, E> {
 	/**
 	 * Default constructor
 	 *
-	 * @param filterClass filter class
-	 * @param entityClass entity class
-	 * @param appContext  application context for spel expressions
-	 * @throws io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException if any exception on parsing
+	 * @param filterClass
+	 *            filter class
+	 * @param entityClass
+	 *            entity class
+	 * @param appContext
+	 *            application context for spel expressions
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException
+	 *             if any exception on parsing
 	 */
 	public QFProcessor(Class<F> filterClass, Class<E> entityClass, ApplicationContext appContext)
 			throws QueryFilterDefinitionException {
@@ -202,10 +208,13 @@ public class QFProcessor<F, E> {
 	/**
 	 * Create a new {@linkplain QueryFilter} instance
 	 *
-	 * @param input string filter
-	 * @param type  standard type
+	 * @param input
+	 *            string filter
+	 * @param type
+	 *            standard type
 	 * @return new {@linkplain QueryFilter} instance
-	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QueryFilterException if any parsing exception occurs
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QueryFilterException
+	 *             if any parsing exception occurs
 	 */
 	public QueryFilter<E> newQueryFilter(String input, QFParamType type) throws QueryFilterException {
 		return new QueryFilter<>(input, type, this);
@@ -240,7 +249,7 @@ public class QFProcessor<F, E> {
 
 	/**
 	 * Get definition class annotation
-	 * 
+	 *
 	 * @return definition class annotation
 	 */
 	protected QFDefinitionClass getDefinitionClassAnnotation() {
@@ -249,7 +258,7 @@ public class QFProcessor<F, E> {
 
 	/**
 	 * Get default matches of the processor
-	 * 
+	 *
 	 * @return default matches
 	 */
 	protected List<QFElementMatch> getDefaultMatches() {
@@ -258,7 +267,7 @@ public class QFProcessor<F, E> {
 
 	/**
 	 * Get default sorting operations
-	 * 
+	 *
 	 * @return default sorting operations
 	 */
 	protected List<Pair<IDefinitionSortable, Direction>> getDefaultSorting() {
@@ -267,7 +276,7 @@ public class QFProcessor<F, E> {
 
 	/**
 	 * Get application context
-	 * 
+	 *
 	 * @return application context
 	 */
 	protected ApplicationContext getApplicationContext() {
@@ -276,7 +285,7 @@ public class QFProcessor<F, E> {
 
 	/**
 	 * Get predicate map
-	 * 
+	 *
 	 * @return predicate map
 	 */
 	protected Map<String, PredicateProcessorResolutor> getPredicateMap() {
@@ -285,7 +294,7 @@ public class QFProcessor<F, E> {
 
 	/**
 	 * Get default predicate
-	 * 
+	 *
 	 * @return default predicate
 	 */
 	protected String getDefaultPredicate() {

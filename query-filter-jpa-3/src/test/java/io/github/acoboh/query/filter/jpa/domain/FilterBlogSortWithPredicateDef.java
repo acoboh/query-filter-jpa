@@ -10,9 +10,8 @@ import io.github.acoboh.query.filter.jpa.model.PostBlog;
 
 /**
  * Basic example of default sorting with a predicate
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 @QFDefinitionClass(value = PostBlog.class, defaultPredicate = "default-predicate")
 @QFPredicate(expression = "author OR likes", name = "default-predicate")

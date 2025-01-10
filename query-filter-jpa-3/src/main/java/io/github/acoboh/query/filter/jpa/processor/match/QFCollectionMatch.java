@@ -20,9 +20,7 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 
 /**
- * 
  * @author Adrián Cobo
- *
  */
 public class QFCollectionMatch implements QFSpecificationPart {
 
@@ -34,10 +32,13 @@ public class QFCollectionMatch implements QFSpecificationPart {
 
 	/**
 	 * Default constructor
-	 * 
-	 * @param definition definition of element
-	 * @param operation  operation of the element
-	 * @param value      value of the element operation
+	 *
+	 * @param definition
+	 *            definition of element
+	 * @param operation
+	 *            operation of the element
+	 * @param value
+	 *            value of the element operation
 	 */
 	public QFCollectionMatch(QFDefinitionCollection definition, QFCollectionOperationEnum operation, int value) {
 		super();
@@ -49,7 +50,7 @@ public class QFCollectionMatch implements QFSpecificationPart {
 
 	/**
 	 * Get collection operation
-	 * 
+	 *
 	 * @return collection operation
 	 */
 	public QFCollectionOperationEnum getOperation() {
@@ -58,7 +59,7 @@ public class QFCollectionMatch implements QFSpecificationPart {
 
 	/**
 	 * Get value of the collection operation
-	 * 
+	 *
 	 * @return value
 	 */
 	public int getValue() {
@@ -67,7 +68,7 @@ public class QFCollectionMatch implements QFSpecificationPart {
 
 	/**
 	 * Get element definition
-	 * 
+	 *
 	 * @return element definition
 	 */
 	public QFDefinitionCollection getDefinition() {

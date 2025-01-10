@@ -16,14 +16,16 @@ public class QFCollectionException extends QueryFilterException {
 	private final transient Object[] arguments;
 
 	/**
-	 * @param field  field
-	 * @param reason reason
+	 * @param field
+	 *            field
+	 * @param reason
+	 *            reason
 	 */
 	public QFCollectionException(String field, String reason) {
 		super(MESSAGE, reason);
 		this.field = field;
 		this.reason = reason;
-		arguments = new Object[] { field };
+		arguments = new Object[]{field};
 	}
 
 	/**

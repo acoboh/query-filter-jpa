@@ -7,9 +7,8 @@ import io.github.acoboh.query.filter.jpa.model.jsondata.ModelJson;
 
 /**
  * Model JSON repository
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 public interface ModelJsonRepository extends JpaSpecificationExecutor<ModelJson>, JpaRepository<ModelJson, Long> {
 

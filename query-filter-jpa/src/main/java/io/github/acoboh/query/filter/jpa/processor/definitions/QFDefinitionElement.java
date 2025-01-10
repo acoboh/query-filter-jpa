@@ -156,15 +156,15 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 		DateTimeFormatter formatter = DateUtils.getFormatter(dateAnnotation);
 		String value = formatter.format(now);
 
-		for (int i = 0; i < finalClasses.size(); i++) {
+		for (Class<?> finalClass : finalClasses) {
 			try {
-				Object parsed = DateUtils.parseDate(formatter, value, finalClasses.get(i), dateAnnotation);
+				Object parsed = DateUtils.parseDate(formatter, value, finalClass, dateAnnotation);
 				if (parsed == null) {
-					throw new QFDateClassNotSupported(finalClasses.get(i), getFilterName());
+					throw new QFDateClassNotSupported(finalClass, getFilterName());
 				}
 
 			} catch (DateTimeParseException e) {
-				throw new QFDateParseError(dateAnnotation.timeFormat(), finalClasses.get(i), e);
+				throw new QFDateParseError(dateAnnotation.timeFormat(), finalClass, e);
 			}
 		}
 
@@ -228,8 +228,9 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 
 	/**
 	 * Get if path must be auto-fetched
-	 * 
-	 * @param pathIndex index of the path
+	 *
+	 * @param pathIndex
+	 *            index of the path
 	 * @return true if path must be auto-fetched
 	 */
 	public boolean isAutoFetch(int pathIndex) {
@@ -292,7 +293,7 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 
 	/**
 	 * Get the first final class of the definition element
-	 * 
+	 *
 	 * @return first final class located
 	 */
 	public Class<?> getFirstFinalClass() {

@@ -12,9 +12,8 @@ import javax.persistence.ManyToMany;
 
 /**
  * Role entity model
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 @Entity
 public class RoleModel {
@@ -31,7 +30,7 @@ public class RoleModel {
 
 	/**
 	 * Get ID
-	 * 
+	 *
 	 * @return ID
 	 */
 	public Long getId() {
@@ -40,7 +39,7 @@ public class RoleModel {
 
 	/**
 	 * Get list of users
-	 * 
+	 *
 	 * @return list of users
 	 */
 	public List<UserModel> getUsers() {
@@ -49,7 +48,7 @@ public class RoleModel {
 
 	/**
 	 * Get role name
-	 * 
+	 *
 	 * @return name
 	 */
 	public String getName() {
@@ -58,8 +57,9 @@ public class RoleModel {
 
 	/**
 	 * Set new name
-	 * 
-	 * @param name new name
+	 *
+	 * @param name
+	 *            new name
 	 */
 	public void setName(String name) {
 		this.name = name;

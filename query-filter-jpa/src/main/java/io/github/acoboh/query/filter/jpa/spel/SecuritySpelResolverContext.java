@@ -22,7 +22,6 @@ import org.springframework.util.CollectionUtils;
  * SPEL Context resolver bean
  *
  * @author Adrián Cobo
- * 
  */
 class SecuritySpelResolverContext extends SpelResolverContext {
 
@@ -33,9 +32,12 @@ class SecuritySpelResolverContext extends SpelResolverContext {
 	/**
 	 * Default constructor
 	 *
-	 * @param securityExpressionHandlers security expression handlers
-	 * @param request                    actual request
-	 * @param response                   actual response
+	 * @param securityExpressionHandlers
+	 *            security expression handlers
+	 * @param request
+	 *            actual request
+	 * @param response
+	 *            actual response
 	 */
 	protected SecuritySpelResolverContext(List<SecurityExpressionHandler<?>> securityExpressionHandlers,
 			HttpServletRequest request, HttpServletResponse response) {

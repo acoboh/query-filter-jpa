@@ -9,6 +9,8 @@ import io.github.acoboh.query.filter.jpa.model.discriminators.joined.RelatedPare
  * Related parent entity repository
  */
 public interface RelatedParentEntityRepository
-		extends JpaSpecificationExecutor<RelatedParent>, JpaRepository<RelatedParent, String> {
+		extends
+			JpaSpecificationExecutor<RelatedParent>,
+			JpaRepository<RelatedParent, String> {
 
 }

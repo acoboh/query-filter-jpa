@@ -29,10 +29,13 @@ class QfArraySQLFunction extends AbstractSqmSelfRenderingFunctionDescriptor {
 	 * <p>
 	 * Constructor for QfArraySQLFunction.
 	 * </p>
-	 * 
-	 * @param name              Name of the function
-	 * @param operator          used on SQL queries
-	 * @param typeConfiguration Type configuration for resolving basic type registry
+	 *
+	 * @param name
+	 *            Name of the function
+	 * @param operator
+	 *            used on SQL queries
+	 * @param typeConfiguration
+	 *            Type configuration for resolving basic type registry
 	 */
 	public QfArraySQLFunction(String name, String operator, TypeConfiguration typeConfiguration) {
 		super(name,
@@ -44,11 +47,11 @@ class QfArraySQLFunction extends AbstractSqmSelfRenderingFunctionDescriptor {
 		this.operator = operator;
 	}
 
-	private String operator;
+	private final String operator;
 
 	/**
 	 * Get the operator used on SQL queries
-	 * 
+	 *
 	 * @return operator
 	 */
 	public String getOperator() {

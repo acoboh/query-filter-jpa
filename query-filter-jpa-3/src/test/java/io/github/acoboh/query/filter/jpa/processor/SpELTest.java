@@ -31,9 +31,8 @@ import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
 
 /**
  * SpEL tests
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 @SpringJUnitWebConfig(SpringIntegrationTestBase.Config.class)
 @ExtendWith(SpringExtension.class)
@@ -162,7 +161,8 @@ class SpELTest {
 
 		List<PostBlog> blogList = repository.findAll(qf);
 
-		// Execute likes IN (0,1,2) and comments equal to (100) [because (0 + 1) * 100 = 100]
+		// Execute likes IN (0,1,2) and comments equal to (100) [because (0 + 1) * 100 =
+		// 100]
 		// Only returns the first blog
 		assertThat(blogList).hasSize(1).containsExactlyInAnyOrder(POST_EXAMPLE);
 

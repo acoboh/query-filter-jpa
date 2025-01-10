@@ -7,9 +7,8 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests for array SQL functions
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 class QfArraySQLFunctionTest {
 

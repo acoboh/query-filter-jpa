@@ -16,9 +16,8 @@ import io.hypersistence.utils.hibernate.type.json.JsonType;
 
 /**
  * Entity with JSON data types
- * 
- * @author Adrián Cobo
  *
+ * @author Adrián Cobo
  */
 @Entity
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
@@ -44,9 +43,11 @@ public class ModelJson {
 
 	/**
 	 * Default constructor
-	 * 
-	 * @param descriptor descriptor
-	 * @param jsonbData  json data
+	 *
+	 * @param descriptor
+	 *            descriptor
+	 * @param jsonbData
+	 *            json data
 	 */
 	public ModelJson(String descriptor, Map<String, String> jsonbData) {
 		this.jsonbData = jsonbData;
@@ -54,7 +55,7 @@ public class ModelJson {
 
 	/**
 	 * Get ID
-	 * 
+	 *
 	 * @return ID
 	 */
 	public Long getId() {
@@ -63,7 +64,7 @@ public class ModelJson {
 
 	/**
 	 * Get descriptor
-	 * 
+	 *
 	 * @return descriptor
 	 */
 	public String getDescriptor() {
@@ -72,7 +73,7 @@ public class ModelJson {
 
 	/**
 	 * Get JSON data
-	 * 
+	 *
 	 * @return JSON data
 	 */
 	public Map<String, String> getJsonbData() {

@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>io.github.acoboh</groupId>
 		<artifactId>query-filter-jpa-parent</artifactId>
-		<version>0.3.2-SNAPSHOT</version>
+		<version>0.4.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -26,10 +26,10 @@
 		<maven.compiler.testTarget>${jdk-test.version}</maven.compiler.testTarget>
 
 		<!-- Spring dependencies -->
-		<spring.version>6.1.14</spring.version>
+		<spring.version>6.2.1</spring.version>
 
 		<!--OpenAPI dependencies -->
-		<openapi.version>2.6.0</openapi.version>
+		<openapi.version>2.8.1</openapi.version>
 
 	</properties>
 

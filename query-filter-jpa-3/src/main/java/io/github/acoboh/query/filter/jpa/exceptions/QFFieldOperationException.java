@@ -4,6 +4,8 @@ import org.springframework.http.HttpStatus;
 
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 
+import java.io.Serial;
+
 /**
  * Exception thrown when the operation is not allowed on a field
  *
@@ -12,7 +14,8 @@ import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
  */
 public class QFFieldOperationException extends QueryFilterException {
 
-	private static final long serialVersionUID = 1L;
+	@Serial
+    private static final long serialVersionUID = 1L;
 
 	private static final String MESSAGE = "Operation {} is not valid for field '{}' ";
 

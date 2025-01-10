@@ -21,7 +21,7 @@ public class QFDefinitionDiscriminator extends QFAbstractDefinition {
 	private final List<QFPath> paths;
 	private final Class<?> finalClass;
 
-	private Map<String, Class<?>> discriminatorMap = new HashMap<>();
+	private final Map<String, Class<?>> discriminatorMap = new HashMap<>();
 
 	QFDefinitionDiscriminator(Field filterField, Class<?> filterClass, Class<?> entityClass,
 			QFBlockParsing blockParsing, QFDiscriminator discriminatorAnnotation)

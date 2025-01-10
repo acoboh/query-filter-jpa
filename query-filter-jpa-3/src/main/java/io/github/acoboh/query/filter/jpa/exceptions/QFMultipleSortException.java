@@ -2,6 +2,8 @@ package io.github.acoboh.query.filter.jpa.exceptions;
 
 import org.springframework.http.HttpStatus;
 
+import java.io.Serial;
+
 /**
  * Exception thrown when multiple sorting options are present on the same field
  *
@@ -10,7 +12,8 @@ import org.springframework.http.HttpStatus;
  */
 public class QFMultipleSortException extends QueryFilterException {
 
-	private static final long serialVersionUID = 1L;
+	@Serial
+    private static final long serialVersionUID = 1L;
 	private static final String MESSAGE = "Multiple query filter sorting properties for the same field '{}'";
 
 	private final String field;

@@ -1,5 +1,6 @@
 package io.github.acoboh.query.filter.jpa.exceptions;
 
+import java.io.Serial;
 import java.time.format.DateTimeParseException;
 
 import org.springframework.http.HttpStatus;
@@ -12,7 +13,8 @@ import org.springframework.http.HttpStatus;
  */
 public class QFDateParsingException extends QueryFilterException {
 
-	private static final long serialVersionUID = 1L;
+	@Serial
+    private static final long serialVersionUID = 1L;
 
 	private static final String MESSAGE = "The field '{}' can not be parsed with value '{}'. Check format '{}'";
 

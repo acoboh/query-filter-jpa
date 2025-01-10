@@ -1,5 +1,7 @@
 package io.github.acoboh.query.filter.jpa.exceptions.definition;
 
+import java.io.Serial;
+
 /**
  * Exception thrown when the date class is not supported
  *
@@ -8,7 +10,8 @@ package io.github.acoboh.query.filter.jpa.exceptions.definition;
  */
 public class QFDateClassNotSupported extends QueryFilterDefinitionException {
 
-	private static final long serialVersionUID = 1L;
+	@Serial
+    private static final long serialVersionUID = 1L;
 	private static final String MESSAGE = "Class '{}' is not supported as date on field '{}'";
 
 	private final Class<?> clazz;

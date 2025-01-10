@@ -1,5 +1,7 @@
 package io.github.acoboh.query.filter.jpa.exceptions.definition;
 
+import java.io.Serial;
+
 /**
  * Exception thrown when no {@link io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass} annotation is present
  *
@@ -8,7 +10,8 @@ package io.github.acoboh.query.filter.jpa.exceptions.definition;
  */
 public class QFClassException extends QueryFilterDefinitionException {
 
-	private static final long serialVersionUID = 1L;
+	@Serial
+    private static final long serialVersionUID = 1L;
 	private static final String MESSAGE = "Annotation {} is not present in {}";
 	private static final String CLASS = "Unexpected class {} in annotation on class {}. Expected {}";
 

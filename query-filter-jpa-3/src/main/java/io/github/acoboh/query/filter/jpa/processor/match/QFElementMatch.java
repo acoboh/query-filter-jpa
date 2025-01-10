@@ -55,7 +55,7 @@ public class QFElementMatch implements QFSpecificationPart {
 	private List<String> processedValues;
 	private List<List<Object>> parsedValues;
 
-	private DateTimeFormatter formatter;
+	private final DateTimeFormatter formatter;
 
 	private boolean initialized = false;
 

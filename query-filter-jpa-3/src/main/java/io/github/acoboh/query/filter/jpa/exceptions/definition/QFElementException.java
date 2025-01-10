@@ -1,5 +1,7 @@
 package io.github.acoboh.query.filter.jpa.exceptions.definition;
 
+import java.io.Serial;
+
 /**
  * Exception when the field has not presented the annotation
  * {@link io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass}
@@ -9,7 +11,8 @@ package io.github.acoboh.query.filter.jpa.exceptions.definition;
  */
 public class QFElementException extends QueryFilterDefinitionException {
 
-	private static final long serialVersionUID = 1L;
+	@Serial
+    private static final long serialVersionUID = 1L;
 	private static final String MESSAGE = "The field '{}' is not present on the class '{}'";
 
 	/**

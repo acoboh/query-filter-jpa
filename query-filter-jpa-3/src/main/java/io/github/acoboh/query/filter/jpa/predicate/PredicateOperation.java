@@ -22,7 +22,7 @@ public enum PredicateOperation {
 	AND("AND") {
 		@Override
 		public Predicate getPredicate(CriteriaBuilder cb, List<Predicate> predicates) {
-			return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+			return cb.and(predicates.toArray(new Predicate[0]));
 		}
 	},
 
@@ -32,7 +32,7 @@ public enum PredicateOperation {
 	OR("OR") {
 		@Override
 		public Predicate getPredicate(CriteriaBuilder cb, List<Predicate> predicates) {
-			return cb.or(predicates.toArray(new Predicate[predicates.size()]));
+			return cb.or(predicates.toArray(new Predicate[0]));
 		}
 	};
 

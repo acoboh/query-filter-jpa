@@ -63,7 +63,7 @@ public @interface QFDefinitionClass {
 	 * @author Adrián Cobo
 	 *
 	 */
-	public @interface QFDefaultSort {
+    @interface QFDefaultSort {
 
 		/**
 		 * Name of the property to be sorted

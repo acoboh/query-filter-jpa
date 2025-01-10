@@ -4,6 +4,8 @@ import org.springframework.http.HttpStatus;
 
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 
+import java.io.Serial;
+
 /**
  * Exception when operation is not allowed on SQL database
  *
@@ -12,7 +14,8 @@ import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
  */
 public class QFUnsopportedSQLException extends QueryFilterException {
 
-	private static final long serialVersionUID = 1L;
+	@Serial
+    private static final long serialVersionUID = 1L;
 	private static final String MESSAGE = "The operation {} is unsupported";
 
 	private final transient Object[] args;

@@ -2,6 +2,8 @@ package io.github.acoboh.query.filter.jpa.exceptions;
 
 import org.springframework.http.HttpStatus;
 
+import java.io.Serial;
+
 /**
  * Default Exception for QueryFilter
  *
@@ -12,7 +14,8 @@ public class QFParseException extends QueryFilterException {
 
 	private static final String MESSAGE = "Field '{}' can not be parse to QueryFilter from '{}'";
 
-	private static final long serialVersionUID = 1L;
+	@Serial
+    private static final long serialVersionUID = 1L;
 
 	private final String input;
 

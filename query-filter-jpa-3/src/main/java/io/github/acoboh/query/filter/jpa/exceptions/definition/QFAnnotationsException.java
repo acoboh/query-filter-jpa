@@ -1,5 +1,6 @@
 package io.github.acoboh.query.filter.jpa.exceptions.definition;
 
+import java.io.Serial;
 import java.lang.reflect.Field;
 
 /**
@@ -10,6 +11,7 @@ import java.lang.reflect.Field;
  */
 public class QFAnnotationsException extends QueryFilterDefinitionException {
 
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	/**

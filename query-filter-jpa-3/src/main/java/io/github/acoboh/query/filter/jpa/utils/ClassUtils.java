@@ -54,8 +54,7 @@ public class ClassUtils {
 	 * 
 	 * @param field Field to check
 	 * @return Class of the list
-	 * @throws QFTypeException
-	 */
+     */
 	public static Class<?> getClassOfList(Field field) throws QFTypeException {
 
 		Type type = field.getGenericType();

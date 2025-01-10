@@ -39,7 +39,7 @@ public @interface QFDate {
 	/**
 	 * Default parts of date for default formating
 	 * 
-	 * @return list of date parts
+	 * @return array of date parts
 	 */
 	QFDateDefault[] parseDefaulting() default {};
 
@@ -53,7 +53,7 @@ public @interface QFDate {
 	 * @author Adrián Cobo
 	 *
 	 */
-	public @interface QFDateDefault {
+    @interface QFDateDefault {
 
 		/**
 		 * Chrono field

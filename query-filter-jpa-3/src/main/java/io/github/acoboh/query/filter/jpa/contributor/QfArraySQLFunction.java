@@ -44,7 +44,7 @@ class QfArraySQLFunction extends AbstractSqmSelfRenderingFunctionDescriptor {
 		this.operator = operator;
 	}
 
-	private String operator;
+	private final String operator;
 
 	/**
 	 * Get the operator used on SQL queries

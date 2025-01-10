@@ -73,7 +73,7 @@ public class DateUtils {
 			return LocalDate.parse(value, formatter);
 		} else if (ZonedDateTime.class.isAssignableFrom(finalClass)) {
 			return ZonedDateTime.parse(value, formatter);
-		} else if (Date.class.isAssignableFrom(finalClass) || java.sql.Date.class.isAssignableFrom(finalClass)) {
+		} else if (Date.class.isAssignableFrom(finalClass)) {
 			LocalDate ld = LocalDate.parse(value, formatter);
 			return Date.valueOf(ld);
 		} else if (java.util.Date.class.isAssignableFrom(finalClass)) {

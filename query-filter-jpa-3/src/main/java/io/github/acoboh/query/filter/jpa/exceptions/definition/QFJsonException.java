@@ -1,5 +1,7 @@
 package io.github.acoboh.query.filter.jpa.exceptions.definition;
 
+import java.io.Serial;
+
 /**
  * Exception thrown when any error about JSON element definition happens
  *
@@ -7,7 +9,8 @@ package io.github.acoboh.query.filter.jpa.exceptions.definition;
  */
 public class QFJsonException extends QueryFilterDefinitionException {
 
-	private static final long serialVersionUID = 1L;
+	@Serial
+    private static final long serialVersionUID = 1L;
 
 	/**
 	 * Custom message exception

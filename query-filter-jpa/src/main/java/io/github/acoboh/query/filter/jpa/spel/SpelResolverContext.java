@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.PropertyValue;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
@@ -90,7 +91,7 @@ public abstract class SpelResolverContext {
 
 		ServletRequestParameterPropertyValues properties = new ServletRequestParameterPropertyValues(request);
 		Map<String, Object> requestParams = properties.getPropertyValueList().stream()
-				.collect(Collectors.toMap(e -> e.getName(), e -> e.getValue()));
+				.collect(Collectors.toMap(PropertyValue::getName, PropertyValue::getValue));
 
 		context.setVariable("_parameters", requestParams);
 	}

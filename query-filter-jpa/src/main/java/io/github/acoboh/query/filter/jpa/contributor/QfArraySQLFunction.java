@@ -28,7 +28,7 @@ class QfArraySQLFunction implements SQLFunction {
 		this.operator = operator;
 	}
 
-	private String operator;
+	private final String operator;
 
 	/**
 	 * Get the operator used on SQL queries
@@ -59,7 +59,7 @@ class QfArraySQLFunction implements SQLFunction {
 
 	/** {@inheritDoc} */
 	@Override
-	public String render(Type firstArgumentType, @SuppressWarnings("rawtypes") List arguments,
+	public String render(Type firstArgumentType, List arguments,
 			SessionFactoryImplementor factory) throws QueryException {
 
 		if (arguments.size() < 2) {

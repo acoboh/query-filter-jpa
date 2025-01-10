@@ -1,5 +1,7 @@
 package io.github.acoboh.query.filter.jpa.exceptions.definition;
 
+import java.io.Serial;
+
 /**
  * Exception throw when the field is missing on any class
  *
@@ -8,7 +10,8 @@ package io.github.acoboh.query.filter.jpa.exceptions.definition;
  */
 public class QFMissingFieldException extends QueryFilterDefinitionException {
 
-	private static final long serialVersionUID = 1L;
+	@Serial
+    private static final long serialVersionUID = 1L;
 	private static final String MESSAGE = "The field '{}' is missing in the class '{}'";
 
 	private final String field;

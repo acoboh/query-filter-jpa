@@ -2,6 +2,8 @@ package io.github.acoboh.query.filter.jpa.exceptions;
 
 import org.springframework.http.HttpStatus;
 
+import java.io.Serial;
+
 /**
  * Exception thrown when the field is marked as blocked and the user is trying to filter from string filters
  *
@@ -10,6 +12,7 @@ import org.springframework.http.HttpStatus;
  */
 public class QFBlockException extends QueryFilterException {
 
+	@Serial
 	private static final long serialVersionUID = 1L;
 	private static final String MESSAGE = "Field '{}' is blocked from parsing. Operation not allowed";
 

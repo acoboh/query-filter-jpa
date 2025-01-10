@@ -2,6 +2,8 @@ package io.github.acoboh.query.filter.jpa.exceptions.definition;
 
 import org.slf4j.helpers.MessageFormatter;
 
+import java.io.Serial;
+
 /**
  * Base exception class of all query filter definition exceptions
  *
@@ -10,7 +12,8 @@ import org.slf4j.helpers.MessageFormatter;
  */
 public class QueryFilterDefinitionException extends Exception {
 
-	private static final long serialVersionUID = 1L;
+	@Serial
+    private static final long serialVersionUID = 1L;
 
 	/**
 	 * Default constructors

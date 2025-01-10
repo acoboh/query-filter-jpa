@@ -2,12 +2,15 @@ package io.github.acoboh.query.filter.jpa.exceptions;
 
 import org.springframework.http.HttpStatus;
 
+import java.io.Serial;
+
 /**
  * Exception thrown if the field can not be used as a collection
  */
 public class QFCollectionException extends QueryFilterException {
 
-	private static final long serialVersionUID = 1L;
+	@Serial
+    private static final long serialVersionUID = 1L;
 
 	private static final String MESSAGE = "The field '{}' can not be used as a collection. Reason {}";
 

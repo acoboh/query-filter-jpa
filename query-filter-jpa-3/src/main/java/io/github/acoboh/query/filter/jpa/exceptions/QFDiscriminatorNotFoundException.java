@@ -2,6 +2,8 @@ package io.github.acoboh.query.filter.jpa.exceptions;
 
 import org.springframework.http.HttpStatus;
 
+import java.io.Serial;
+
 /**
  * Exception throw the selected discriminator value is not present
  *
@@ -10,7 +12,8 @@ import org.springframework.http.HttpStatus;
  */
 public class QFDiscriminatorNotFoundException extends QueryFilterException {
 
-	private static final long serialVersionUID = 1L;
+	@Serial
+    private static final long serialVersionUID = 1L;
 
 	private static final String DISCRIMINATOR_NOT_FOUND = "No discriminator class found for value {} on field {}";
 

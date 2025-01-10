@@ -2,6 +2,8 @@ package io.github.acoboh.query.filter.jpa.exceptions;
 
 import org.springframework.http.HttpStatus;
 
+import java.io.Serial;
+
 /**
  * <p>
  * QFJsonParseException class.
@@ -12,7 +14,8 @@ import org.springframework.http.HttpStatus;
  */
 public class QFJsonParseException extends QueryFilterException {
 
-	private static final long serialVersionUID = 1L;
+	@Serial
+    private static final long serialVersionUID = 1L;
 
 	private final String field;
 	private final transient Object[] arguments;

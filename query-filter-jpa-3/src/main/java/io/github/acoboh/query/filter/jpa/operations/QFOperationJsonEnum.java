@@ -22,7 +22,7 @@ public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
 		@Override
 		public Predicate generateJsonPredicate(Path<?> path, CriteriaBuilder cb, QFJsonElementMatch match) {
 
-			Predicate[] predicates = new Predicate[match.getMapValues().entrySet().size()];
+			Predicate[] predicates = new Predicate[match.getMapValues().size()];
 
 			int i = 0;
 			for (Map.Entry<String, String> nodeEntry : match.getMapValues().entrySet()) {
@@ -40,7 +40,7 @@ public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
 	NOT_EQUAL("ne") {
 		@Override
 		public Predicate generateJsonPredicate(Path<?> path, CriteriaBuilder cb, QFJsonElementMatch match) {
-			Predicate[] predicates = new Predicate[match.getMapValues().entrySet().size()];
+			Predicate[] predicates = new Predicate[match.getMapValues().size()];
 
 			int i = 0;
 			for (Map.Entry<String, String> nodeEntry : match.getMapValues().entrySet()) {
@@ -59,7 +59,7 @@ public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
 	LIKE("like") {
 		@Override
 		public Predicate generateJsonPredicate(Path<?> path, CriteriaBuilder cb, QFJsonElementMatch match) {
-			Predicate[] predicates = new Predicate[match.getMapValues().entrySet().size()];
+			Predicate[] predicates = new Predicate[match.getMapValues().size()];
 			int i = 0;
 
 			for (Map.Entry<String, String> nodeEntry : match.getMapValues().entrySet()) {
@@ -78,7 +78,7 @@ public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
 	STARTS_WITH("starts") {
 		@Override
 		public Predicate generateJsonPredicate(Path<?> path, CriteriaBuilder cb, QFJsonElementMatch match) {
-			Predicate[] predicates = new Predicate[match.getMapValues().entrySet().size()];
+			Predicate[] predicates = new Predicate[match.getMapValues().size()];
 
 			int i = 0;
 
@@ -97,7 +97,7 @@ public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
 	ENDS_WITH("ends") {
 		@Override
 		public Predicate generateJsonPredicate(Path<?> path, CriteriaBuilder cb, QFJsonElementMatch match) {
-			Predicate[] predicates = new Predicate[match.getMapValues().entrySet().size()];
+			Predicate[] predicates = new Predicate[match.getMapValues().size()];
 
 			int i = 0;
 			for (Map.Entry<String, String> nodeEntry : match.getMapValues().entrySet()) {

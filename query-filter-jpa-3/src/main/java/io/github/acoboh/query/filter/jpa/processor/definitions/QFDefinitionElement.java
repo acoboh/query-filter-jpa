@@ -146,17 +146,17 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 		DateTimeFormatter formatter = DateUtils.getFormatter(dateAnnotation);
 		String value = formatter.format(now);
 
-		for (int i = 0; i < finalClasses.size(); i++) {
-			try {
-				Object parsed = DateUtils.parseDate(formatter, value, finalClasses.get(i), dateAnnotation);
-				if (parsed == null) {
-					throw new QFDateClassNotSupported(finalClasses.get(i), getFilterName());
-				}
+        for (Class<?> finalClass : finalClasses) {
+            try {
+                Object parsed = DateUtils.parseDate(formatter, value, finalClass, dateAnnotation);
+                if (parsed == null) {
+                    throw new QFDateClassNotSupported(finalClass, getFilterName());
+                }
 
-			} catch (DateTimeParseException e) {
-				throw new QFDateParseError(dateAnnotation.timeFormat(), finalClasses.get(i), e);
-			}
-		}
+            } catch (DateTimeParseException e) {
+                throw new QFDateParseError(dateAnnotation.timeFormat(), finalClass, e);
+            }
+        }
 
 		return formatter;
 

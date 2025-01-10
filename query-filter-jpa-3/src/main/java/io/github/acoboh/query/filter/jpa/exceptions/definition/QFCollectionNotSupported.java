@@ -2,12 +2,15 @@ package io.github.acoboh.query.filter.jpa.exceptions.definition;
 
 import io.github.acoboh.query.filter.jpa.processor.QFPath.QFElementDefType;
 
+import java.io.Serial;
+
 /**
  * Exception thrown if the element can not be filter collection type
  */
 public class QFCollectionNotSupported extends QueryFilterDefinitionException {
 
-	private static final long serialVersionUID = 1L;
+	@Serial
+    private static final long serialVersionUID = 1L;
 	private static final String MESSAGE = "The filter {} on class {} is not allowed to be annotated with @QFCollectionElement. The field type is {} and must be SET or LIST";
 
 	private final String filterName;

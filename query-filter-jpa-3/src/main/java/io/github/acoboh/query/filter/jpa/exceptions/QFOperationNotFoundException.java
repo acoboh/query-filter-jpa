@@ -2,6 +2,8 @@ package io.github.acoboh.query.filter.jpa.exceptions;
 
 import org.springframework.http.HttpStatus;
 
+import java.io.Serial;
+
 /**
  * Exception when the operation is not found
  *
@@ -10,7 +12,8 @@ import org.springframework.http.HttpStatus;
  */
 public class QFOperationNotFoundException extends QueryFilterException {
 
-	private static final long serialVersionUID = 1L;
+	@Serial
+    private static final long serialVersionUID = 1L;
 	private static final String MESSAGE = "Operation {} is not found";
 
 	private final String operation;

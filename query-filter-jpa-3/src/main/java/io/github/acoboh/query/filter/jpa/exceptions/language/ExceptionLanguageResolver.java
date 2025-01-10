@@ -15,20 +15,20 @@ public interface ExceptionLanguageResolver {
 	 *
 	 * @return HttpStatus
 	 */
-	public HttpStatus getHttpStatus();
+    HttpStatus getHttpStatus();
 
 	/**
 	 * List of arguments to be resolved on the message code
 	 *
-	 * @return list of arguments
+	 * @return array of arguments
 	 */
-	public Object[] getArguments();
+    Object[] getArguments();
 
 	/**
 	 * Message code of the multi-language properties
 	 *
 	 * @return message code
 	 */
-	public String getMessageCode();
+    String getMessageCode();
 
 }

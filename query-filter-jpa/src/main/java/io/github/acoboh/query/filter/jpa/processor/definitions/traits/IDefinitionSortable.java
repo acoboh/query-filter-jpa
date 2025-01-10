@@ -14,7 +14,7 @@ public interface IDefinitionSortable {
 	 * 
 	 * @return sort paths
 	 */
-	public List<List<QFPath>> getPaths();
+    List<List<QFPath>> getPaths();
 
 	/**
 	 * Return true if auto fetch is enabled
@@ -23,27 +23,27 @@ public interface IDefinitionSortable {
 	 * 
 	 * @return true if enabled, false otherwise
 	 */
-	public boolean isAutoFetch(int index);
+    boolean isAutoFetch(int index);
 
 	/**
 	 * Get filter name
 	 * 
 	 * @return filter name
 	 */
-	public String getFilterName();
+    String getFilterName();
 
 	/**
 	 * Get if the field is sortable
 	 * 
 	 * @return true if sortable, false otherwise
 	 */
-	public boolean isSortable();
+    boolean isSortable();
 
 	/**
 	 * Get full path field
 	 * 
 	 * @return full path field
 	 */
-	public List<String> getPathField();
+    List<String> getPathField();
 
 }

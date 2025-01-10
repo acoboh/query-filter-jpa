@@ -111,7 +111,7 @@ class PredicateLevel {
 	/**
 	 * Get the filtered fields
 	 *
-	 * @return List of filtered field
+	 * @return set of filtered field
 	 */
 	public Set<String> getFilteredFields() {
 		if (fieldsSet == null) { // Cache fields

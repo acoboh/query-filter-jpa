@@ -2,6 +2,8 @@ package io.github.acoboh.query.filter.jpa.exceptions;
 
 import org.springframework.http.HttpStatus;
 
+import java.io.Serial;
+
 /**
  * Exception if the field is not found on the filter
  *
@@ -10,7 +12,8 @@ import org.springframework.http.HttpStatus;
  */
 public class QFFieldNotFoundException extends QueryFilterException {
 
-	private static final long serialVersionUID = 1L;
+	@Serial
+    private static final long serialVersionUID = 1L;
 
 	private static final String MESSAGE = "Field {} not found";
 

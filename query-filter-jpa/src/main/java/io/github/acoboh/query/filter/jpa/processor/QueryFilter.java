@@ -197,7 +197,7 @@ public class QueryFilter<E> implements Specification<E> {
 					(QFDefinitionJson) def);
 		} else if (def instanceof QFDefinitionCollection) {
 			qfSpecificationPart = new QFCollectionMatch((QFDefinitionCollection) def,
-					QFCollectionOperationEnum.fromValue(op), Integer.valueOf(value));
+					QFCollectionOperationEnum.fromValue(op), Integer.parseInt(value));
 		} else {
 			throw new QFNotValuable(field);
 		}

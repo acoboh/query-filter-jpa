@@ -1,5 +1,7 @@
 package io.github.acoboh.query.filter.jpa.exceptions.definition;
 
+import java.io.Serial;
+
 /**
  * Exception throw for all the discriminator exceptions
  *
@@ -8,7 +10,8 @@ package io.github.acoboh.query.filter.jpa.exceptions.definition;
  */
 public class QFDiscriminatorException extends QueryFilterDefinitionException {
 
-	private static final long serialVersionUID = 1L;
+	@Serial
+    private static final long serialVersionUID = 1L;
 
 	/**
 	 * Default constructor

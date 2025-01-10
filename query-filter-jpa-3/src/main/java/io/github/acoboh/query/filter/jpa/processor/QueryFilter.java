@@ -1,5 +1,6 @@
 package io.github.acoboh.query.filter.jpa.processor;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -73,6 +74,7 @@ public class QueryFilter<E> implements Specification<E> {
 	private static final String OPERATION_NOT_NULL_MESSAGE = "operation cannot be null";
 	private static final String VALUES_NOT_NULL_MESSAGE = "values cannot be null";
 
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	private static final Pattern REGEX_PATTERN = Pattern.compile("([+-])([a-zA-Z0-9]+)");
@@ -198,7 +200,7 @@ public class QueryFilter<E> implements Specification<E> {
 
 		} else if (def instanceof QFDefinitionCollection qdef) {
 			qfSpecificationPart = new QFCollectionMatch(qdef, QFCollectionOperationEnum.fromValue(op),
-					Integer.valueOf(value));
+					Integer.parseInt(value));
 		} else {
 			throw new QFNotValuable(field);
 		}
@@ -239,7 +241,7 @@ public class QueryFilter<E> implements Specification<E> {
 				dir = Direction.ASC;
 			}
 
-			Pair<IDefinitionSortable, Direction> pair = Pair.of((IDefinitionSortable) def, dir);
+			Pair<IDefinitionSortable, Direction> pair = Pair.of(idef, dir);
 			this.sortDefinitionList.add(pair);
 			this.defaultSortEnabled = false;
 
@@ -414,7 +416,7 @@ public class QueryFilter<E> implements Specification<E> {
 			throw new QFMultipleSortException(field);
 		}
 
-		Pair<IDefinitionSortable, Direction> pair = Pair.of((IDefinitionSortable) def, direction);
+		Pair<IDefinitionSortable, Direction> pair = Pair.of(idef, direction);
 		this.sortDefinitionList.add(pair);
 		this.defaultSortEnabled = false;
 
@@ -830,7 +832,7 @@ public class QueryFilter<E> implements Specification<E> {
 	private Predicate parseFinalPredicate(CriteriaBuilder cb, Map<String, List<Predicate>> predicatesMap) {
 
 		Map<String, Predicate> simplifiedPredicate = predicatesMap.entrySet().stream().collect(
-				Collectors.toMap(Entry::getKey, e -> cb.and(e.getValue().toArray(new Predicate[e.getValue().size()]))));
+				Collectors.toMap(Entry::getKey, e -> cb.and(e.getValue().toArray(new Predicate[0]))));
 
 		Predicate toRet;
 
@@ -838,7 +840,7 @@ public class QueryFilter<E> implements Specification<E> {
 
 		if (localPredicate == null) {
 			Predicate finalPredicate = cb
-					.and(simplifiedPredicate.values().toArray(new Predicate[simplifiedPredicate.values().size()]));
+					.and(simplifiedPredicate.values().toArray(new Predicate[0]));
 			toRet = finalPredicate;
 		} else {
 			toRet = localPredicate.resolvePredicate(cb, simplifiedPredicate);

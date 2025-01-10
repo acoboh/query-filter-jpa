@@ -4,6 +4,8 @@ import org.slf4j.helpers.MessageFormatter;
 
 import io.github.acoboh.query.filter.jpa.exceptions.language.ExceptionLanguageResolver;
 
+import java.io.Serial;
+
 /**
  * Just to catch a single exception on QueryFilter
  *
@@ -12,7 +14,8 @@ import io.github.acoboh.query.filter.jpa.exceptions.language.ExceptionLanguageRe
  */
 public abstract class QueryFilterException extends RuntimeException implements ExceptionLanguageResolver {
 
-	private static final long serialVersionUID = 1L;
+	@Serial
+    private static final long serialVersionUID = 1L;
 
 	/**
 	 * Default constructor

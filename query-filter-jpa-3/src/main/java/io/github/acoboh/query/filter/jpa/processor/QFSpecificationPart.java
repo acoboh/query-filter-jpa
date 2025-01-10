@@ -31,15 +31,15 @@ public interface QFSpecificationPart {
 	 * @param spelResolver    Spel Resolver class
 	 * @param entityClass     Entity class
 	 */
-	public <E> void processPart(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder,
-			Map<String, List<Predicate>> predicatesMap, Map<String, Path<?>> pathsMap,
-			MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver, Class<E> entityClass);
+    <E> void processPart(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder,
+                         Map<String, List<Predicate>> predicatesMap, Map<String, Path<?>> pathsMap,
+                         MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver, Class<E> entityClass);
 
 	/**
 	 * Get definition of the filter field
 	 * 
 	 * @return definition
 	 */
-	public QFAbstractDefinition getDefinition();
+    QFAbstractDefinition getDefinition();
 
 }

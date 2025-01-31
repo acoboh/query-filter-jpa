@@ -78,7 +78,7 @@ public class PostController {
 ## 🎯 How to Use Query Filters
 ### ✅ RHS Colon Syntax (`field=operation:value`)
 ```url
-/posts?author=eq:john&likes=gte:10&sort=-createDate
+/posts?filter=author=eq:john&likes=gte:10&sort=-createDate
 ```
 _Equivalent SQL:_
 ```sql

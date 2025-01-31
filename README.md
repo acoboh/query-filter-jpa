@@ -6,9 +6,9 @@
 [![Maven Publish](https://github.com/acoboh/query-filter-jpa/actions/workflows/maven-publish.yml/badge.svg)](https://github.com/acoboh/query-filter-jpa/actions/workflows/maven-publish.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=acoboh_query-filter-jpa&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=acoboh_query-filter-jpa)
 
-## Introduction
+### 🔹 The simplest way to filter JPA queries in Spring Boot!
 
-The QueryFilterJPA Library adds the possibility of creating custom filters with RHS Colon and LHS Brackets with Spring JPA easily. This library is useful for allowing the user to obtain data according to their requirements in an easy way for the programmer. With just a few small configuration classes, users will have the ability to create filters with infinite possibilities.
+**QueryFilterJPA** lets you create powerful, dynamic filters with minimal setup. Define filterable fields, integrate with OpenAPI, and use intuitive query syntax—all without writing complex specifications.
 
 ## ✨ Features
 ✅ **Easy-to-use annotations** for defining filters in your entities.  

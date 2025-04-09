@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>io.github.acoboh</groupId>
 		<artifactId>query-filter-jpa-parent</artifactId>
-		<version>0.4.0</version>
+		<version>0.5.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -26,13 +26,13 @@
 		<maven.compiler.testTarget>${jdk-test.version}</maven.compiler.testTarget>
 
 		<!-- Spring dependencies -->
-		<spring-boot.version>3.4.1</spring-boot.version>
+		<spring-boot.version>3.4.4</spring-boot.version>
 
 		<!-- Reflections -->
 		<reflections.version>0.10.2</reflections.version>
 
 		<!-- Hypersistance tests -->
-		<hypersistance.version>3.9.0</hypersistance.version>
+		<hypersistance.version>3.9.4</hypersistance.version>
 
 	</properties>
 

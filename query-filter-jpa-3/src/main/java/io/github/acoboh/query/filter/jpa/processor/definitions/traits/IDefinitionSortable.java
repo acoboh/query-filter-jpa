@@ -3,7 +3,6 @@ package io.github.acoboh.query.filter.jpa.processor.definitions.traits;
 import java.util.List;
 
 import io.github.acoboh.query.filter.jpa.processor.QFAttribute;
-import io.github.acoboh.query.filter.jpa.processor.QFPath;
 
 /**
  * Sortable interface

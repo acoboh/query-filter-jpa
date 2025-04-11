@@ -122,57 +122,6 @@ public class QueryUtils {
 
 	}
 
-	private static Path<?> getJoinObject(Root<?> root, List<QFPath> paths, Map<String, Path<?>> pathsMap,
-			boolean tryFetch, CriteriaBuilder cb) {
-
-		From<?, ?> join = root;
-
-		StringBuilder base = new StringBuilder();
-		String prefix = "";
-
-		for (int i = 0; i < paths.size(); i++) {
-
-			base.append(prefix).append(paths.get(i).getPathName());
-			prefix = ".";
-
-			Path<?> pathRet = pathsMap.get(base.toString());
-			if (pathRet != null) {
-				join = (From<?, ?>) pathRet;
-				continue;
-			}
-
-			Class<?> asTreat = paths.get(i).getTreatClass();
-
-			if (asTreat != null && !Void.class.equals(asTreat)) {
-				join = getTreatCast(join, asTreat, cb);
-			}
-
-			if (i + 1 == paths.size() && paths.get(i).isFinal()) { // if last element and final
-				return join.get(paths.get(i).getPath());
-			}
-
-			QFPath elem = paths.get(i);
-
-			if (tryFetch) {
-				join = (From<?, ?>) join.fetch(elem.getPath());
-			} else {
-				join = switch (elem.getType()) {
-					case LIST -> join.joinList(elem.getPath());
-					case SET -> join.joinSet(elem.getPath());
-					case PROPERTY, ENUM -> join.join(elem.getPath());
-				};
-			}
-
-			// Add to pathsMap
-
-			pathsMap.put(base.toString(), join);
-
-		}
-
-		return join;
-
-	}
-
 	/**
 	 * Parse orders with the criteria builder
 	 *

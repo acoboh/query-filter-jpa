@@ -5,11 +5,8 @@ import java.util.List;
 
 import io.github.acoboh.query.filter.jpa.annotations.QFBlockParsing;
 import io.github.acoboh.query.filter.jpa.annotations.QFJsonElement;
-import io.github.acoboh.query.filter.jpa.exceptions.definition.QFJsonException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 import io.github.acoboh.query.filter.jpa.processor.QFAttribute;
-import io.github.acoboh.query.filter.jpa.processor.QFPath;
-import jakarta.persistence.Column;
 import jakarta.persistence.metamodel.Metamodel;
 
 /**
@@ -37,18 +34,20 @@ public class QFDefinitionJson extends QFAbstractDefinition {
 
 		var last = attributes.get(attributes.size() - 1);
 		// TODO Fix
-//		if (!last.getField().isAnnotationPresent(Column.class)) {
-//			throw new QFJsonException("@Column annotation not found on the json element field {}", last.getField());
-//		}
+		// if (!last.getField().isAnnotationPresent(Column.class)) {
+		// throw new QFJsonException("@Column annotation not found on the json element
+		// field {}", last.getField());
+		// }
 
-//		Column column = last.getField().getAnnotation(Column.class);
-//		if (!column.columnDefinition().toLowerCase().startsWith("jsonb")) {
-//			throw new QFJsonException(
-//					"QFJsonElement annotations are only supported on colums of type 'jsonb'. Actual type is {}",
-//					column.columnDefinition());
-//		}
+		// Column column = last.getField().getAnnotation(Column.class);
+		// if (!column.columnDefinition().toLowerCase().startsWith("jsonb")) {
+		// throw new QFJsonException(
+		// "QFJsonElement annotations are only supported on colums of type 'jsonb'.
+		// Actual type is {}",
+		// column.columnDefinition());
+		// }
 
-//		last.setFinal(true);
+		// last.setFinal(true);
 
 	}
 

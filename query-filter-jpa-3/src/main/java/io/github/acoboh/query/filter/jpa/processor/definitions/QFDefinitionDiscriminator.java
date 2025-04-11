@@ -11,7 +11,6 @@ import io.github.acoboh.query.filter.jpa.annotations.QFDiscriminator;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFDiscriminatorException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 import io.github.acoboh.query.filter.jpa.processor.QFAttribute;
-import io.github.acoboh.query.filter.jpa.processor.QFPath;
 import jakarta.persistence.metamodel.Metamodel;
 
 /**

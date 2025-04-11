@@ -2,8 +2,6 @@ package io.github.acoboh.query.filter.jpa.exceptions.definition;
 
 import java.io.Serial;
 
-import io.github.acoboh.query.filter.jpa.processor.QFPath.QFElementDefType;
-
 /**
  * Exception thrown if the element can not be filter collection type
  */

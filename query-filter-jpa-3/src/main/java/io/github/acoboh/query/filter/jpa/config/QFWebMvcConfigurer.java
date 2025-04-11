@@ -5,6 +5,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -20,6 +21,7 @@ import io.github.acoboh.query.filter.jpa.processor.QFProcessor;
  */
 @Configuration
 @EnableWebMvc
+@DependsOn("entityManagerFactory")
 public class QFWebMvcConfigurer implements WebMvcConfigurer {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(QFWebMvcConfigurer.class);
@@ -38,4 +40,5 @@ public class QFWebMvcConfigurer implements WebMvcConfigurer {
 		LOGGER.info("Using QueryFilterWebMvcConfigurer. Registering custom formatters");
 		registry.addConverter(new QFCustomConverter(processors));
 	}
+
 }

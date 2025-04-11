@@ -15,7 +15,7 @@ public class QFCollectionNotSupported extends QueryFilterDefinitionException {
 
 	private final String filterName;
 	private final Class<?> filterClass;
-	private final QFElementDefType actualType;
+	private final Class<?> actualType;
 
 	/**
 	 * Default constructor
@@ -27,7 +27,7 @@ public class QFCollectionNotSupported extends QueryFilterDefinitionException {
 	 * @param type
 	 *            element type
 	 */
-	public QFCollectionNotSupported(String filterName, Class<?> filterClass, QFElementDefType type) {
+	public QFCollectionNotSupported(String filterName, Class<?> filterClass, Class<?> type) {
 		super(MESSAGE, filterName, filterClass, type);
 		this.filterName = filterName;
 		this.filterClass = filterClass;
@@ -51,7 +51,7 @@ public class QFCollectionNotSupported extends QueryFilterDefinitionException {
 	/**
 	 * @return actual type
 	 */
-	public QFElementDefType getActualType() {
+	public Class<?> getActualType() {
 		return actualType;
 	}
 

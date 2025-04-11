@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import io.github.acoboh.query.filter.jpa.processor.QFAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.MultiValueMap;
@@ -46,7 +47,7 @@ public class QFElementMatch implements QFSpecificationPart {
 
 	private final List<String> originalValues;
 
-	private final List<List<QFPath>> paths;
+	private final List<List<QFAttribute>> paths;
 
 	private final QFOperationEnum operation;
 	private final List<Class<?>> matchClasses;
@@ -125,10 +126,10 @@ public class QFElementMatch implements QFSpecificationPart {
 		}
 
 		parsedValues = new ArrayList<>(paths.size());
-		for (List<QFPath> path : paths) {
+		for (var path : paths) {
 
-			QFPath lastPath = path.get(path.size() - 1);
-			Class<?> finalClass = lastPath.getFieldClass();
+			QFAttribute lastPath = path.get(path.size() - 1);
+			Class<?> finalClass = lastPath.getAttribute().getJavaType();
 
 			// Check operation
 			checkOperation(finalClass);
@@ -136,7 +137,7 @@ public class QFElementMatch implements QFSpecificationPart {
 			matchClasses.add(finalClass);
 
 			// Check is an enumeration
-			boolean isEnum = lastPath.getType() == QFPath.QFElementDefType.ENUM;
+			Boolean isEnum = lastPath.isEnum();
 			isEnumList.add(isEnum);
 
 			List<Object> parsedPathValue = new ArrayList<>(processedValues.size());
@@ -204,7 +205,7 @@ public class QFElementMatch implements QFSpecificationPart {
 	 *
 	 * @return list of nested paths
 	 */
-	public List<List<QFPath>> getPaths() {
+	public List<List<QFAttribute>> getPaths() {
 		return paths;
 	}
 
@@ -465,7 +466,7 @@ public class QFElementMatch implements QFSpecificationPart {
 
 		List<Predicate> predicates = new ArrayList<>();
 
-		for (List<QFPath> path : paths) {
+		for (var path : paths) {
 			predicates.add(operation.generatePredicate(
 					QueryUtils.getObject(root, path, pathsMap, false, false, criteriaBuilder), criteriaBuilder, this,
 					index, mlmap));
@@ -489,7 +490,7 @@ public class QFElementMatch implements QFSpecificationPart {
 		}
 
 		int index = 0;
-		for (List<QFPath> path : paths) {
+		for (var path : paths) {
 
 			Subquery<E> subquery = query.subquery(entityClass);
 			Root<E> newRoot = subquery.from(entityClass);

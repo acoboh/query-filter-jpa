@@ -17,6 +17,7 @@ import io.github.acoboh.query.filter.jpa.annotations.QFJsonElement;
 import io.github.acoboh.query.filter.jpa.annotations.QFSortable;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFAnnotationsException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
+import jakarta.persistence.metamodel.Metamodel;
 
 /**
  * Abstract class for base definition
@@ -111,8 +112,8 @@ public abstract class QFAbstractDefinition {
 	 * @throws QueryFilterDefinitionException
 	 *             if any error happens creating the definition
 	 */
-	public static QFAbstractDefinition buildDefinition(Field filterField, Class<?> filterClass, Class<?> entityClass)
-			throws QueryFilterDefinitionException {
+	public static QFAbstractDefinition buildDefinition(Field filterField, Class<?> filterClass, Class<?> entityClass,
+			Metamodel metamodel) throws QueryFilterDefinitionException {
 
 		boolean isQFElement = filterField.isAnnotationPresent(QFElement.class)
 				|| filterField.isAnnotationPresent(QFElements.class);
@@ -142,28 +143,29 @@ public abstract class QFAbstractDefinition {
 			QFDate dateAnnotation = filterField.getAnnotation(QFDate.class);
 
 			return new QFDefinitionElement(filterField, filterClass, entityClass, blockParsing, elementsAnnotation,
-					elementAnnotations, dateAnnotation);
+					elementAnnotations, dateAnnotation, metamodel);
 
 		} else if (isQFJson) {
 			// Create json definition
 			QFJsonElement jsonAnnotation = filterField.getAnnotation(QFJsonElement.class);
-			return new QFDefinitionJson(filterField, filterClass, entityClass, blockParsing, jsonAnnotation);
+			return new QFDefinitionJson(filterField, filterClass, entityClass, blockParsing, jsonAnnotation, metamodel);
 
 		} else if (isQFDiscriminator) {
 			// Create discriminator definition
 			QFDiscriminator discriminatorAnnotation = filterField.getAnnotation(QFDiscriminator.class);
 			return new QFDefinitionDiscriminator(filterField, filterClass, entityClass, blockParsing,
-					discriminatorAnnotation);
+					discriminatorAnnotation, metamodel);
 
 		} else if (isQFCollection) {
 			// Create collection definition
 			QFCollectionElement collectionAnnotation = filterField.getAnnotation(QFCollectionElement.class);
-			return new QFDefinitionCollection(filterField, filterClass, entityClass, blockParsing,
-					collectionAnnotation);
+			return new QFDefinitionCollection(filterField, filterClass, entityClass, blockParsing, collectionAnnotation,
+					metamodel);
 
 		} else if (isQFSortable) {
 			QFSortable sortableAnnotation = filterField.getAnnotation(QFSortable.class);
-			return new QFDefinitionSortable(filterField, filterClass, entityClass, blockParsing, sortableAnnotation);
+			return new QFDefinitionSortable(filterField, filterClass, entityClass, blockParsing, sortableAnnotation,
+					metamodel);
 		}
 
 		return null;

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import io.github.acoboh.query.filter.jpa.processor.QFAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.MultiValueMap;
@@ -41,7 +42,7 @@ public class QFDiscriminatorMatch implements QFSpecificationPart {
 	private final Class<?> entityClass;
 
 	private final boolean isRoot;
-	private List<QFPath> path;
+	private List<QFAttribute> path;
 
 	/**
 	 * Default constructor
@@ -79,7 +80,7 @@ public class QFDiscriminatorMatch implements QFSpecificationPart {
 			if (path.isEmpty()) {
 				LOGGER.error("Error. Unexpected empty path for discriminator match {}", definition.getFilterName());
 			}
-			entityClass = path.get(path.size() - 1).getFieldClass();
+			entityClass = definition.getFinalClass();
 			isRoot = false;
 
 		} else {
@@ -139,7 +140,7 @@ public class QFDiscriminatorMatch implements QFSpecificationPart {
 	 *
 	 * @return paths for nested levels
 	 */
-	public List<QFPath> getPath() {
+	public List<QFAttribute> getPath() {
 		return path;
 	}
 

@@ -10,7 +10,7 @@ import org.springframework.util.MultiValueMap;
 
 import io.github.acoboh.query.filter.jpa.exceptions.QFDiscriminatorNotFoundException;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationDiscriminatorEnum;
-import io.github.acoboh.query.filter.jpa.processor.QFPath;
+import io.github.acoboh.query.filter.jpa.processor.QFAttribute;
 import io.github.acoboh.query.filter.jpa.processor.QFSpecificationPart;
 import io.github.acoboh.query.filter.jpa.processor.QueryUtils;
 import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionDiscriminator;
@@ -41,7 +41,7 @@ public class QFDiscriminatorMatch implements QFSpecificationPart {
 	private final Class<?> entityClass;
 
 	private final boolean isRoot;
-	private List<QFPath> path;
+	private List<QFAttribute> path;
 
 	/**
 	 * Default constructor
@@ -79,7 +79,7 @@ public class QFDiscriminatorMatch implements QFSpecificationPart {
 			if (path.isEmpty()) {
 				LOGGER.error("Error. Unexpected empty path for discriminator match {}", definition.getFilterName());
 			}
-			entityClass = path.get(path.size() - 1).getFieldClass();
+			entityClass = definition.getFinalClass();
 			isRoot = false;
 
 		} else {
@@ -139,7 +139,7 @@ public class QFDiscriminatorMatch implements QFSpecificationPart {
 	 *
 	 * @return paths for nested levels
 	 */
-	public List<QFPath> getPath() {
+	public List<QFAttribute> getPath() {
 		return path;
 	}
 

@@ -28,6 +28,8 @@ import io.github.acoboh.query.filter.jpa.processor.definitions.QFAbstractDefinit
 import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionElement;
 import io.github.acoboh.query.filter.jpa.processor.definitions.traits.IDefinitionSortable;
 import io.github.acoboh.query.filter.jpa.processor.match.QFElementMatch;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.metamodel.Metamodel;
 
 /**
  * Class to process all query filters.
@@ -61,7 +63,6 @@ public class QFProcessor<F, E> {
 
 	private Map<String, PredicateProcessorResolutor> predicateMap;
 	private String predicateName;
-	private PredicateProcessorResolutor defaultPredicate;
 
 	public QFProcessor(Class<F> filterClass, Class<E> entityClass, ApplicationContextAwareSupport appContext)
 			throws QueryFilterDefinitionException {
@@ -96,7 +97,9 @@ public class QFProcessor<F, E> {
 			throw new QFClassException(queryFilterClass.value(), filterClass, entityClass);
 		}
 
-		this.definitionMap = getDefinition(filterClass, queryFilterClass);
+		var metamodel = appContext.getBean(EntityManager.class).getMetamodel();
+
+		this.definitionMap = getDefinition(filterClass, queryFilterClass, metamodel);
 		this.defaultMatches = defaultMatches(definitionMap);
 		this.defaultSorting = getDefaultSorting(queryFilterClass, definitionMap, filterClass);
 
@@ -108,7 +111,7 @@ public class QFProcessor<F, E> {
 			predicateMap = resolvePredicates(predicatesAnnotations, definitionMap);
 			predicateName = queryFilterClass.defaultPredicate();
 			if (!predicateName.isEmpty()) {
-				defaultPredicate = predicateMap.get(predicateName);
+				PredicateProcessorResolutor defaultPredicate = predicateMap.get(predicateName);
 				if (defaultPredicate == null) {
 					throw new IllegalStateException("Unable to found default predicate");
 				}
@@ -117,13 +120,13 @@ public class QFProcessor<F, E> {
 	}
 
 	private static Map<String, QFAbstractDefinition> getDefinition(Class<?> filterClass,
-			QFDefinitionClass queryFilterClass) throws QueryFilterDefinitionException {
+			QFDefinitionClass queryFilterClass, Metamodel metamodel) throws QueryFilterDefinitionException {
 
 		Map<String, QFAbstractDefinition> map = new HashMap<>();
 
 		for (Field field : getAllFieldsFromClassAndSuperClass(filterClass)) {
 
-			var qfd = QFAbstractDefinition.buildDefinition(field, filterClass, queryFilterClass.value());
+			var qfd = QFAbstractDefinition.buildDefinition(field, filterClass, queryFilterClass.value(), metamodel);
 			if (qfd == null) {
 				continue;
 			}

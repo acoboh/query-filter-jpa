@@ -10,7 +10,8 @@ import io.github.acoboh.query.filter.jpa.annotations.QFBlockParsing;
 import io.github.acoboh.query.filter.jpa.annotations.QFDiscriminator;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFDiscriminatorException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
-import io.github.acoboh.query.filter.jpa.processor.QFPath;
+import io.github.acoboh.query.filter.jpa.processor.QFAttribute;
+import jakarta.persistence.metamodel.Metamodel;
 
 /**
  * Definition for discriminator classes
@@ -18,13 +19,13 @@ import io.github.acoboh.query.filter.jpa.processor.QFPath;
 public class QFDefinitionDiscriminator extends QFAbstractDefinition {
 
 	private final QFDiscriminator discriminatorAnnotation;
-	private final List<QFPath> paths;
+	private final List<QFAttribute> attributes;
 	private final Class<?> finalClass;
 
 	private final Map<String, Class<?>> discriminatorMap = new HashMap<>();
 
 	QFDefinitionDiscriminator(Field filterField, Class<?> filterClass, Class<?> entityClass,
-			QFBlockParsing blockParsing, QFDiscriminator discriminatorAnnotation)
+			QFBlockParsing blockParsing, QFDiscriminator discriminatorAnnotation, Metamodel metamodel)
 			throws QueryFilterDefinitionException {
 		super(filterField, filterClass, entityClass, blockParsing);
 
@@ -32,11 +33,11 @@ public class QFDefinitionDiscriminator extends QFAbstractDefinition {
 
 		if (!discriminatorAnnotation.path().isEmpty()) {
 			var fieldClassProcessor = new FieldClassProcessor(entityClass, discriminatorAnnotation.path(), false, null,
-					null);
-			this.paths = fieldClassProcessor.getPaths();
+					null, metamodel);
+			this.attributes = fieldClassProcessor.getAttributes();
 			this.finalClass = fieldClassProcessor.getFinalClass();
 		} else {
-			this.paths = Collections.emptyList();
+			this.attributes = Collections.emptyList();
 			this.finalClass = entityClass;
 		}
 
@@ -73,8 +74,8 @@ public class QFDefinitionDiscriminator extends QFAbstractDefinition {
 	 *
 	 * @return paths
 	 */
-	public List<QFPath> getPaths() {
-		return paths;
+	public List<QFAttribute> getPaths() {
+		return attributes;
 	}
 
 	/**

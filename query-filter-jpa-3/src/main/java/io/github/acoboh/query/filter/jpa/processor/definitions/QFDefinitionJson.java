@@ -5,10 +5,9 @@ import java.util.List;
 
 import io.github.acoboh.query.filter.jpa.annotations.QFBlockParsing;
 import io.github.acoboh.query.filter.jpa.annotations.QFJsonElement;
-import io.github.acoboh.query.filter.jpa.exceptions.definition.QFJsonException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
-import io.github.acoboh.query.filter.jpa.processor.QFPath;
-import jakarta.persistence.Column;
+import io.github.acoboh.query.filter.jpa.processor.QFAttribute;
+import jakarta.persistence.metamodel.Metamodel;
 
 /**
  * Definition for JSON filter fields
@@ -16,10 +15,10 @@ import jakarta.persistence.Column;
 public class QFDefinitionJson extends QFAbstractDefinition {
 
 	private final QFJsonElement jsonAnnotation;
-	private final List<QFPath> paths;
+	private final List<QFAttribute> attributes;
 
 	QFDefinitionJson(Field filterField, Class<?> filterClass, Class<?> entityClass, QFBlockParsing blockParsing,
-			QFJsonElement jsonAnnotation) throws QueryFilterDefinitionException {
+			QFJsonElement jsonAnnotation, Metamodel metamodel) throws QueryFilterDefinitionException {
 		super(filterField, filterClass, entityClass, blockParsing);
 		this.jsonAnnotation = jsonAnnotation;
 
@@ -28,23 +27,27 @@ public class QFDefinitionJson extends QFAbstractDefinition {
 			super.filterName = jsonAnnotation.name();
 		}
 
-		var fieldClassProcessor = new FieldClassProcessor(entityClass, jsonAnnotation.value(), false, null, null);
+		var fieldClassProcessor = new FieldClassProcessor(entityClass, jsonAnnotation.value(), false, null, null,
+				metamodel);
 
-		this.paths = fieldClassProcessor.getPaths();
+		this.attributes = fieldClassProcessor.getAttributes();
 
-		QFPath last = paths.get(paths.size() - 1);
-		if (!last.getField().isAnnotationPresent(Column.class)) {
-			throw new QFJsonException("@Column annotation not found on the json element field {}", last.getField());
-		}
+		var last = attributes.get(attributes.size() - 1);
+		// TODO Fix
+		// if (!last.getField().isAnnotationPresent(Column.class)) {
+		// throw new QFJsonException("@Column annotation not found on the json element
+		// field {}", last.getField());
+		// }
 
-		Column column = last.getField().getAnnotation(Column.class);
-		if (!column.columnDefinition().toLowerCase().startsWith("jsonb")) {
-			throw new QFJsonException(
-					"QFJsonElement annotations are only supported on colums of type 'jsonb'. Actual type is {}",
-					column.columnDefinition());
-		}
+		// Column column = last.getField().getAnnotation(Column.class);
+		// if (!column.columnDefinition().toLowerCase().startsWith("jsonb")) {
+		// throw new QFJsonException(
+		// "QFJsonElement annotations are only supported on colums of type 'jsonb'.
+		// Actual type is {}",
+		// column.columnDefinition());
+		// }
 
-		last.setFinal(true);
+		// last.setFinal(true);
 
 	}
 
@@ -62,8 +65,8 @@ public class QFDefinitionJson extends QFAbstractDefinition {
 	 *
 	 * @return paths
 	 */
-	public List<QFPath> getPaths() {
-		return paths;
+	public List<QFAttribute> getAttributes() {
+		return attributes;
 	}
 
 }

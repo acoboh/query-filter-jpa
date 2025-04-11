@@ -2,7 +2,7 @@ package io.github.acoboh.query.filter.jpa.processor.definitions.traits;
 
 import java.util.List;
 
-import io.github.acoboh.query.filter.jpa.processor.QFPath;
+import io.github.acoboh.query.filter.jpa.processor.QFAttribute;
 
 /**
  * Sortable interface
@@ -14,7 +14,7 @@ public interface IDefinitionSortable {
 	 *
 	 * @return sort paths
 	 */
-	List<List<QFPath>> getPaths();
+	List<List<QFAttribute>> getPaths();
 
 	/**
 	 * Return true if auto fetch is enabled

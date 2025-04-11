@@ -8,13 +8,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import org.reflections.Reflections;
-import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.ConstructorArgumentValues;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
@@ -24,12 +24,16 @@ import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.annotation.AnnotatedElementUtils;
+import org.springframework.core.type.filter.AnnotationTypeFilter;
+import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
+import org.springframework.util.ClassUtils;
 
 import io.github.acoboh.query.filter.jpa.annotations.EnableQueryFilter;
 import io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass;
@@ -48,24 +52,26 @@ public class QFBeanFactoryPostProcessor implements ApplicationContextAware, Bean
 
 	private ApplicationContext applicationContext;
 
-	private ApplicationContextAwareSupport applicationContextAwareSupport;
-
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+	public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
 		Assert.notNull(applicationContext, "ApplicationContext cannot be null");
 		this.applicationContext = applicationContext;
-
-		applicationContextAwareSupport = applicationContext.getBean(ApplicationContextAwareSupport.class);
 	}
 
-	private static Set<Class<?>> getClassAnnotated(List<String> packages, Class<? extends Annotation> annotation) {
+	private Set<Class<?>> getClassAnnotatedWithQFDef(List<String> packages) {
 
 		Assert.notNull(packages, "packages must not be null");
 
 		Set<Class<?>> classSet = new HashSet<>();
+
+		ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
+		scanner.setResourceLoader(this.applicationContext);
+		scanner.addIncludeFilter(new AnnotationTypeFilter(QFDefinitionClass.class));
+
+		ClassLoader classLoader = applicationContext.getClassLoader();
 
 		for (String pack : packages) {
 			LOGGER.debug("Checking package with time annotated {}", pack);
@@ -74,34 +80,23 @@ public class QFBeanFactoryPostProcessor implements ApplicationContextAware, Bean
 				continue;
 			}
 
-			final String packRName = prefixPattern(pack);
-			final String packBIName = prefixPattern("BOOT-INF.classes." + pack);
+			for (BeanDefinition beanDefinition : scanner.findCandidateComponents(pack)) {
+				if (beanDefinition.getBeanClassName() == null) {
+					continue;
+				}
 
-			LOGGER.trace("Package regex {} and {}", packRName, packBIName);
-
-			Reflections reflect = new Reflections(new ConfigurationBuilder().forPackages(pack).filterInputsBy(p -> {
-				boolean matches = p.matches(packRName) || p.matches(packBIName);
-				LOGGER.trace("Pack {} matches {}", p, matches);
-				return matches;
-			}));
-
-			Set<Class<?>> classFound = reflect.getTypesAnnotatedWith(annotation);
-
-			if (LOGGER.isDebugEnabled()) {
-				classFound.forEach(e -> LOGGER.debug("Adding class {} with QueryFilterClass Annotation", e));
+				try {
+					Class<?> clazz = ClassUtils.forName(beanDefinition.getBeanClassName(), classLoader);
+					LOGGER.debug("Found class {} with @QFDefinitionClass annotation", clazz.getName());
+					classSet.add(clazz);
+				} catch (ClassNotFoundException e) {
+					LOGGER.error("Could not load class {}", beanDefinition.getBeanClassName(), e);
+				}
 			}
-
-			classSet.addAll(classFound);
 
 		}
 
 		return classSet;
-	}
-
-	private static String prefixPattern(String fqn) {
-		if (!fqn.endsWith("."))
-			fqn += ".";
-		return fqn.replace(".", "\\.").replace("$", "\\$") + ".*";
 	}
 
 	private <T extends Annotation> List<String> getBeansWithAnnotation(Class<T> annotation, boolean repeatable,
@@ -132,14 +127,17 @@ public class QFBeanFactoryPostProcessor implements ApplicationContextAware, Bean
 
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
-	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-		Assert.notNull(beanFactory, "beanFactory cannot be null");
+	public void postProcessBeanFactory(@NonNull ConfigurableListableBeanFactory beanFactory) throws BeansException {
+		Assert.isInstanceOf(ConfigurableBeanFactory.class, beanFactory, "BeanFactory must be ConfigurableBeanFactory");
 
-		LOGGER.info("Configure all query filter definition classes...");
+		DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) beanFactory;
+
+		LOGGER.debug("Processing all query filter definition classes...");
+		processMetamodel(defaultListableBeanFactory);
+	}
+
+	private void processMetamodel(DefaultListableBeanFactory beanFactory) {
 
 		List<String> packagesToAnalyze = getBeansWithAnnotation(EnableQueryFilter.class, false, (scan, instance) -> {
 			List<String> scanPackages = new ArrayList<>();
@@ -166,7 +164,7 @@ public class QFBeanFactoryPostProcessor implements ApplicationContextAware, Bean
 
 		}
 
-		Set<Class<?>> classSet = getClassAnnotated(packagesToAnalyze, QFDefinitionClass.class);
+		Set<Class<?>> classSet = getClassAnnotatedWithQFDef(packagesToAnalyze);
 
 		for (Class<?> cl : classSet) {
 			try {
@@ -189,32 +187,26 @@ public class QFBeanFactoryPostProcessor implements ApplicationContextAware, Bean
 			return;
 		}
 
-		ResolvableType resolvableType = ResolvableType.forClassWithGenerics(QFProcessor.class, cl,
-				annotationClass.value());
 		RootBeanDefinition beanDefinition = new RootBeanDefinition();
-		beanDefinition.setTargetType(resolvableType);
-		beanDefinition.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);
-		beanDefinition.setAutowireCandidate(true);
-
-		ConstructorArgumentValues constructorArgumentValues = new ConstructorArgumentValues();
-		constructorArgumentValues.addGenericArgumentValue(cl);
-		constructorArgumentValues.addGenericArgumentValue(annotationClass.value());
-		constructorArgumentValues.addGenericArgumentValue(new RuntimeBeanReference("applicationContextAwareSupport"));
-
-		beanDefinition.setConstructorArgumentValues(constructorArgumentValues);
 		beanDefinition.setBeanClass(QFProcessor.class);
 
-		DefaultListableBeanFactory bf = (DefaultListableBeanFactory) beanFactory;
+		// Create arguments constructor values
+		var args = new ConstructorArgumentValues();
+		args.addGenericArgumentValue(cl);
+		args.addGenericArgumentValue(annotationClass.value());
+		args.addGenericArgumentValue(new RuntimeBeanReference("applicationContextAwareSupport"));
 
-		try {
-			bf.registerBeanDefinition(beanName, beanDefinition);
-			QFProcessor<?, ?> ret = new QFProcessor<>(cl, annotationClass.value(), applicationContext);
-			bf.registerSingleton(beanName, ret);
-		} catch (QueryFilterDefinitionException e) {
-			LOGGER.error("Error registering bean query filter of class {} for entity class {}", cl,
-					annotationClass.value());
-			throw e;
-		}
+		// Bean definition
+		beanDefinition.setConstructorArgumentValues(args);
+
+		ResolvableType resolvableType = ResolvableType.forClassWithGenerics(QFProcessor.class, cl,
+				annotationClass.value());
+		beanDefinition.setTargetType(resolvableType);
+
+		beanDefinition.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);
+
+		DefaultListableBeanFactory bf = (DefaultListableBeanFactory) beanFactory;
+		bf.registerBeanDefinition(beanName, beanDefinition);
 
 	}
 
@@ -223,7 +215,7 @@ public class QFBeanFactoryPostProcessor implements ApplicationContextAware, Bean
 	 */
 	@Override
 	public int getOrder() {
-		return 0;
+		return Ordered.LOWEST_PRECEDENCE;
 	}
 
 	@FunctionalInterface

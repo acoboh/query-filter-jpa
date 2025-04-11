@@ -17,6 +17,11 @@ import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Root;
+import jakarta.persistence.metamodel.Attribute;
+import jakarta.persistence.metamodel.CollectionAttribute;
+import jakarta.persistence.metamodel.ListAttribute;
+import jakarta.persistence.metamodel.SetAttribute;
+import jakarta.persistence.metamodel.SingularAttribute;
 
 /**
  * Class with query utilities
@@ -46,44 +51,26 @@ public class QueryUtils {
 	 *            Criteria Builder
 	 * @return return the final path of the object
 	 */
-	public static Path<?> getObject(Root<?> root, List<QFPath> paths, Map<String, Path<?>> pathsMap,
+	@SuppressWarnings("unchecked")
+	public static Path<?> getObject(Root<?> root, List<QFAttribute> paths, Map<String, Path<?>> pathsMap,
 			boolean isCollection, boolean tryFetch, CriteriaBuilder cb) {
 		String fullPath = getFullPath(paths, isCollection);
 
-		Path<?> ret = pathsMap.get(fullPath);
-		if (ret != null) {
-			return ret;
+		if (pathsMap.containsKey(fullPath)) {
+			return pathsMap.get(fullPath);
 		}
-
-		if (paths.size() == 1 && paths.get(0).isFinal()) {
-
-			QFPath firstPath = paths.get(0);
-
-			if (firstPath.getTreatClass() != null) {
-				root = getTreatCast(root, firstPath.getTreatClass(), cb);
-			}
-
-			ret = root.get(paths.get(0).getPath());
-		} else {
-			ret = getJoinObject(root, paths, pathsMap, tryFetch, cb);
-		}
-
-		pathsMap.put(fullPath, ret);
-		return ret;
-
-	}
-
-	private static Path<?> getJoinObject(Root<?> root, List<QFPath> paths, Map<String, Path<?>> pathsMap,
-			boolean tryFetch, CriteriaBuilder cb) {
 
 		From<?, ?> join = root;
 
+		int index = -1;
+
 		StringBuilder base = new StringBuilder();
 		String prefix = "";
+		for (var path : paths) {
+			LOGGER.trace("Processing path {}", path);
+			index++;
 
-		for (int i = 0; i < paths.size(); i++) {
-
-			base.append(prefix).append(paths.get(i).getPathName());
+			base.append(prefix).append(path.getPathName());
 			prefix = ".";
 
 			Path<?> pathRet = pathsMap.get(base.toString());
@@ -92,35 +79,46 @@ public class QueryUtils {
 				continue;
 			}
 
-			Class<?> asTreat = paths.get(i).getTreatClass();
-
-			if (asTreat != null && !Void.class.equals(asTreat)) {
-				join = getTreatCast(join, asTreat, cb);
+			if (path.getTreatClass() != null) {
+				if (index == 0) {
+					root = getTreatCast(root, paths.get(0).getTreatClass(), cb);
+				} else {
+					join = getTreatCast(join, path.getTreatClass(), cb);
+				}
 			}
 
-			if (i + 1 == paths.size() && paths.get(i).isFinal()) { // if last element and final
-				return join.get(paths.get(i).getPath());
+			var att = path.getAttribute();
+			if ((att instanceof SingularAttribute<?, ?> singularAttribute) && (index + 1 == paths.size())) {
+				return join.get((SingularAttribute) singularAttribute);
 			}
 
-			QFPath elem = paths.get(i);
-
-			if (tryFetch) {
-				join = (From<?, ?>) join.fetch(elem.getPath());
-			} else {
-				join = switch (elem.getType()) {
-					case LIST -> join.joinList(elem.getPath());
-					case SET -> join.joinSet(elem.getPath());
-					case PROPERTY, ENUM -> join.join(elem.getPath());
-				};
-			}
-
-			// Add to pathsMap
+			join = getNextJoin(join, att, tryFetch);
 
 			pathsMap.put(base.toString(), join);
 
 		}
 
+		pathsMap.put(fullPath, join);
 		return join;
+
+	}
+
+	private static From<?, ?> getNextJoin(From<?, ?> join, Attribute<?, ?> att, boolean tryFetch) {
+		if (tryFetch) {
+			return (From<?, ?>) join.fetch(att.getName());
+		} else {
+			if (att instanceof SingularAttribute<?, ?> singular) {
+				return join.join((SingularAttribute) singular);
+			} else if (att instanceof CollectionAttribute<?, ?> collectionAtt) {
+				return join.join((CollectionAttribute) collectionAtt);
+			} else if (att instanceof ListAttribute<?, ?> listAtt) {
+				return join.join((ListAttribute) listAtt);
+			} else if (att instanceof SetAttribute<?, ?> setAtt) {
+				return join.join((SetAttribute) setAtt);
+			}
+		}
+
+		throw new IllegalArgumentException("Attribute " + att + " is not a singular or plural attribute");
 
 	}
 
@@ -144,7 +142,7 @@ public class QueryUtils {
 		for (Pair<IDefinitionSortable, Direction> pair : sortDefinitionList) {
 			LOGGER.trace("Adding sort operation for {}", pair);
 			int index = 0;
-			for (List<QFPath> paths : pair.getFirst().getPaths()) {
+			for (var paths : pair.getFirst().getPaths()) {
 				boolean autoFetch = pair.getFirst().isAutoFetch(index++);
 				LOGGER.trace("Autofetch is enabled on sort");
 				Path<?> path = getObject(root, paths, pathsMap, false, autoFetch, cb);
@@ -157,8 +155,8 @@ public class QueryUtils {
 		return orderList;
 	}
 
-	private static String getFullPath(List<QFPath> paths, boolean isCollection) {
-		String path = paths.stream().map(QFPath::getPathName).collect(Collectors.joining("."));
+	private static String getFullPath(List<QFAttribute> paths, boolean isCollection) {
+		String path = paths.stream().map(QFAttribute::getPathName).collect(Collectors.joining("."));
 		return isCollection ? path + ".*" : path;
 	}
 

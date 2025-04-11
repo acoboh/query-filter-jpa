@@ -22,9 +22,10 @@ import io.github.acoboh.query.filter.jpa.exceptions.definition.QFDateParseError;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFElementMultipleClassesException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 import io.github.acoboh.query.filter.jpa.predicate.PredicateOperation;
-import io.github.acoboh.query.filter.jpa.processor.QFPath;
+import io.github.acoboh.query.filter.jpa.processor.QFAttribute;
 import io.github.acoboh.query.filter.jpa.processor.definitions.traits.IDefinitionSortable;
 import io.github.acoboh.query.filter.jpa.utils.DateUtils;
+import jakarta.persistence.metamodel.Metamodel;
 
 /**
  * Basic definition for filter fields
@@ -40,7 +41,7 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 
 	private final DateTimeFormatter dateTimeFormatter;
 
-	private final List<List<QFPath>> paths;
+	private final List<List<QFAttribute>> paths;
 	private final List<Class<?>> finalClasses;
 	private final List<Boolean> autoFetchPaths;
 
@@ -57,7 +58,7 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 	private final int order;
 
 	QFDefinitionElement(Field filterField, Class<?> filterClass, Class<?> entityClass, QFBlockParsing blockedParsing,
-			QFElements elementsAnnotation, QFElement[] elementAnnotations, QFDate dateAnnotation)
+			QFElements elementsAnnotation, QFElement[] elementAnnotations, QFDate dateAnnotation, Metamodel metamodel)
 			throws QueryFilterDefinitionException {
 		super(filterField, filterClass, entityClass, blockedParsing);
 
@@ -83,7 +84,7 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 		}
 
 		// Initialize paths and classes
-		Pair<List<Class<?>>, List<List<QFPath>>> pairDef = setupPaths(elementAnnotations, entityClass);
+		Pair<List<Class<?>>, List<List<QFAttribute>>> pairDef = setupPaths(elementAnnotations, entityClass, metamodel);
 		this.paths = pairDef.getSecond();
 		this.finalClasses = pairDef.getFirst();
 
@@ -100,7 +101,7 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 		arrayTyped = Stream.of(elementAnnotations).allMatch(QFElement::arrayTyped);
 		spelExpression = Stream.of(elementAnnotations).allMatch(QFElement::isSpPELExpression);
 		blankIgnore = Stream.of(elementAnnotations).allMatch(QFElement::blankIgnore);
-		order = Stream.of(elementAnnotations).mapToInt(QFElement::order).max().getAsInt();
+		order = Stream.of(elementAnnotations).mapToInt(QFElement::order).max().orElseGet(() -> 0);
 		subQuery = Stream.of(elementAnnotations).allMatch(QFElement::subquery);
 
 		if (dateAnnotation != null) {
@@ -113,25 +114,25 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 		this.fullPath = Stream.of(elementAnnotations).map(QFElement::value).toList();
 	}
 
-	private static Pair<List<Class<?>>, List<List<QFPath>>> setupPaths(QFElement[] elementAnnotations,
-			Class<?> entityClass) throws QueryFilterDefinitionException {
+	private static Pair<List<Class<?>>, List<List<QFAttribute>>> setupPaths(QFElement[] elementAnnotations,
+			Class<?> entityClass, Metamodel metamodel) throws QueryFilterDefinitionException {
 		LOGGER.debug("Creating paths for all element annotation. Total {}", elementAnnotations.length);
 
 		List<Class<?>> finalClasses = new ArrayList<>();
-		List<List<QFPath>> paths = new ArrayList<>();
+		List<List<QFAttribute>> paths = new ArrayList<>();
 
 		for (QFElement elem : elementAnnotations) {
 			LOGGER.trace("Creating paths for element annotation {}", elem);
 			var fieldClassProcessor = new FieldClassProcessor(entityClass, elem.value(), true, elem.subClassMapping(),
-					elem.subClassMappingPath());
+					elem.subClassMappingPath(), metamodel);
 
-			List<QFPath> path = fieldClassProcessor.getPaths();
-			paths.add(path);
+			List<QFAttribute> attributes = fieldClassProcessor.getAttributes();
+			paths.add(attributes);
 
 			finalClasses.add(fieldClassProcessor.getFinalClass());
 		}
 
-		long distinct = paths.stream().map(e -> e.get(e.size() - 1)).map(QFPath::getFieldClass).distinct().count();
+		long distinct = finalClasses.stream().distinct().count();
 		if (distinct != 1) {
 			throw new QFElementMultipleClassesException();
 		}
@@ -163,7 +164,7 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 	}
 
 	@Override
-	public List<List<QFPath>> getPaths() {
+	public List<List<QFAttribute>> getPaths() {
 		return paths;
 	}
 

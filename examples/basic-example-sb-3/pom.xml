@@ -24,22 +24,22 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!-- Spring Boot-->
-		<spring-boot.version>3.3.5</spring-boot.version>
+		<spring-boot.version>3.4.4</spring-boot.version>
 
 		<!-- Springdoc for OpenAPI-->
-		<springdoc.version>2.6.0</springdoc.version>
+		<springdoc.version>2.8.6</springdoc.version>
 
 		<!-- Hypersistance utils -->
-		<hypersistance-utils.version>3.8.3</hypersistance-utils.version>
+		<hypersistance-utils.version>3.9.9</hypersistance-utils.version>
 
 		<!-- Query Filter Versions -->
-		<query-filter.version>0.4.0-SNAPSHOT</query-filter.version>
+		<query-filter.version>0.5.0-SNAPSHOT</query-filter.version>
 
 		<!-- Mapstruct -->
 		<mapstruct.version>1.6.3</mapstruct.version>
 
 		<!-- Spring Native -->
-		<native-build-tools-plugin.version>0.10.3</native-build-tools-plugin.version>
+		<native-build-tools-plugin.version>0.10.6</native-build-tools-plugin.version>
 
 	</properties>
 
@@ -130,7 +130,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.11.0</version>
+				<version>3.14.0</version>
 				<configuration>
 					<annotationProcessorPaths>
 						<path>

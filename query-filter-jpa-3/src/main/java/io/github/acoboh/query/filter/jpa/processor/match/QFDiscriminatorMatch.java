@@ -153,7 +153,8 @@ public class QFDiscriminatorMatch implements QFSpecificationPart {
 		if (isRoot) {
 			expression = root.type();
 		} else {
-			expression = QueryUtils.getObject(root, path, pathsMap, false, false, criteriaBuilder).type();
+			expression = QueryUtils
+					.getObject(root, path, definition.getJoinTypes(), pathsMap, false, false, criteriaBuilder).type();
 		}
 
 		predicatesMap.computeIfAbsent(definition.getFilterName(), t -> new ArrayList<>()).add(operation

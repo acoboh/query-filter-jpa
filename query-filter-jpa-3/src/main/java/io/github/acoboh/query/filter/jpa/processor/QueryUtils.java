@@ -14,6 +14,7 @@ import io.github.acoboh.query.filter.jpa.processor.definitions.traits.IDefinitio
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.From;
 import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Root;
@@ -52,8 +53,8 @@ public class QueryUtils {
 	 * @return return the final path of the object
 	 */
 	@SuppressWarnings("unchecked")
-	public static Path<?> getObject(Root<?> root, List<QFAttribute> paths, Map<String, Path<?>> pathsMap,
-			boolean isCollection, boolean tryFetch, CriteriaBuilder cb) {
+	public static Path<?> getObject(Root<?> root, List<QFAttribute> paths, List<JoinType> joinTypes,
+			Map<String, Path<?>> pathsMap, boolean isCollection, boolean tryFetch, CriteriaBuilder cb) {
 		String fullPath = getFullPath(paths, isCollection);
 
 		if (pathsMap.containsKey(fullPath)) {
@@ -70,7 +71,17 @@ public class QueryUtils {
 			LOGGER.trace("Processing path {}", path);
 			index++;
 
-			base.append(prefix).append(path.getPathName());
+			int jIndex = Math.min(index, joinTypes.size() - 1);
+			JoinType joinType;
+			if (jIndex < 0) {
+				LOGGER.trace("Join type not defined for path {}. Using default join type", path);
+				joinType = JoinType.INNER;
+			} else {
+				LOGGER.trace("Using join type {} for path {}", joinTypes.get(jIndex), path);
+				joinType = joinTypes.get(jIndex);
+			}
+
+			base.append(prefix).append(path.getPathName()).append("##").append(joinType);
 			prefix = ".";
 
 			Path<?> pathRet = pathsMap.get(base.toString());
@@ -92,7 +103,7 @@ public class QueryUtils {
 				return join.get((SingularAttribute) singularAttribute);
 			}
 
-			join = getNextJoin(join, att, tryFetch);
+			join = getNextJoin(join, att, tryFetch, joinType);
 
 			pathsMap.put(base.toString(), join);
 
@@ -103,18 +114,18 @@ public class QueryUtils {
 
 	}
 
-	private static From<?, ?> getNextJoin(From<?, ?> join, Attribute<?, ?> att, boolean tryFetch) {
+	private static From<?, ?> getNextJoin(From<?, ?> join, Attribute<?, ?> att, boolean tryFetch, JoinType joinType) {
 		if (tryFetch) {
-			return (From<?, ?>) join.fetch(att.getName());
+			return (From<?, ?>) join.fetch(att.getName(), joinType);
 		} else {
 			if (att instanceof SingularAttribute<?, ?> singular) {
-				return join.join((SingularAttribute) singular);
+				return join.join((SingularAttribute) singular, joinType);
 			} else if (att instanceof CollectionAttribute<?, ?> collectionAtt) {
-				return join.join((CollectionAttribute) collectionAtt);
+				return join.join((CollectionAttribute) collectionAtt, joinType);
 			} else if (att instanceof ListAttribute<?, ?> listAtt) {
-				return join.join((ListAttribute) listAtt);
+				return join.join((ListAttribute) listAtt, joinType);
 			} else if (att instanceof SetAttribute<?, ?> setAtt) {
-				return join.join((SetAttribute) setAtt);
+				return join.join((SetAttribute) setAtt, joinType);
 			}
 		}
 
@@ -143,11 +154,13 @@ public class QueryUtils {
 			LOGGER.trace("Adding sort operation for {}", pair);
 			int index = 0;
 			for (var paths : pair.getFirst().getPaths()) {
-				boolean autoFetch = pair.getFirst().isAutoFetch(index++);
+				boolean autoFetch = pair.getFirst().isAutoFetch(index);
 				LOGGER.trace("Autofetch is enabled on sort");
-				Path<?> path = getObject(root, paths, pathsMap, false, autoFetch, cb);
+				Path<?> path = getObject(root, paths, pair.getFirst().getJoinTypes(index), pathsMap, false, autoFetch,
+						cb);
 				Order order = pair.getSecond() == Direction.ASC ? cb.asc(path) : cb.desc(path);
 				orderList.add(order);
+				index++;
 			}
 
 		}

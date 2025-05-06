@@ -275,7 +275,7 @@ public class QFElementMatch implements QFSpecificationPart {
 	/**
 	 * Get if the matching element must be evaluated
 	 *
-	 * @return true if must to be evaluated
+	 * @return true if it must be evaluated
 	 */
 	public boolean needToEvaluate() {
 		if (!initialized) {
@@ -466,9 +466,8 @@ public class QFElementMatch implements QFSpecificationPart {
 		List<Predicate> predicates = new ArrayList<>();
 
 		for (var path : paths) {
-			predicates.add(operation.generatePredicate(
-					QueryUtils.getObject(root, path, pathsMap, false, false, criteriaBuilder), criteriaBuilder, this,
-					index, mlmap));
+			predicates.add(operation.generatePredicate(QueryUtils.getObject(root, path, definition.getJoinTypes(index),
+					pathsMap, false, false, criteriaBuilder), criteriaBuilder, this, index, mlmap));
 			index++;
 		}
 
@@ -496,7 +495,8 @@ public class QFElementMatch implements QFSpecificationPart {
 
 			subquery.select(newRoot);
 
-			Path<?> pathFinal = QueryUtils.getObject(newRoot, path, subSelecthMap, false, false, criteriaBuilder);
+			Path<?> pathFinal = QueryUtils.getObject(newRoot, path, definition.getJoinTypes(index), subSelecthMap,
+					false, false, criteriaBuilder);
 
 			QFOperationEnum op = operation;
 			if (op == QFOperationEnum.NOT_EQUAL) {

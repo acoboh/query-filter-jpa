@@ -170,9 +170,8 @@ public class QFJsonElementMatch implements QFSpecificationPart {
 			MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver, Class<E> entityClass) {
 
 		predicatesMap.computeIfAbsent(definition.getFilterName(), t -> new ArrayList<>())
-				.add(operation.generateJsonPredicate(
-						QueryUtils.getObject(root, definition.getAttributes(), pathsMap, true, false, criteriaBuilder),
-						criteriaBuilder, this));
+				.add(operation.generateJsonPredicate(QueryUtils.getObject(root, definition.getAttributes(),
+						definition.getJoinTypes(), pathsMap, true, false, criteriaBuilder), criteriaBuilder, this));
 
 	}
 

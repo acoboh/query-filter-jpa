@@ -25,6 +25,7 @@ import io.github.acoboh.query.filter.jpa.predicate.PredicateOperation;
 import io.github.acoboh.query.filter.jpa.processor.QFAttribute;
 import io.github.acoboh.query.filter.jpa.processor.definitions.traits.IDefinitionSortable;
 import io.github.acoboh.query.filter.jpa.utils.DateUtils;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.metamodel.Metamodel;
 
 /**
@@ -42,6 +43,7 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 	private final DateTimeFormatter dateTimeFormatter;
 
 	private final List<List<QFAttribute>> paths;
+	private final List<List<JoinType>> joinTypes;
 	private final List<Class<?>> finalClasses;
 	private final List<Boolean> autoFetchPaths;
 
@@ -103,6 +105,11 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 		blankIgnore = Stream.of(elementAnnotations).allMatch(QFElement::blankIgnore);
 		order = Stream.of(elementAnnotations).mapToInt(QFElement::order).max().orElseGet(() -> 0);
 		subQuery = Stream.of(elementAnnotations).allMatch(QFElement::subquery);
+		joinTypes = Stream.of(elementAnnotations).map(e -> List.of(e.joinTypes())).toList();
+
+		if (joinTypes.stream().anyMatch(List::isEmpty)) {
+			LOGGER.warn("Join types not defined. Will use default join type");
+		}
 
 		if (dateAnnotation != null) {
 			// Try type
@@ -279,6 +286,15 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 	 */
 	public Class<?> getFirstFinalClass() {
 		return finalClasses.get(0);
+	}
+
+	@Override
+	public List<JoinType> getJoinTypes(int index) {
+		if (index < 0 || index >= joinTypes.size()) {
+			LOGGER.warn("Index {} out of bounds. Using default join type", index);
+			return List.of(JoinType.INNER);
+		}
+		return joinTypes.get(index);
 	}
 
 	@Override

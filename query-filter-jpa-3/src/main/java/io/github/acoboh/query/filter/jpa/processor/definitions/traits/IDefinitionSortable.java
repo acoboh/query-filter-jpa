@@ -3,6 +3,7 @@ package io.github.acoboh.query.filter.jpa.processor.definitions.traits;
 import java.util.List;
 
 import io.github.acoboh.query.filter.jpa.processor.QFAttribute;
+import jakarta.persistence.criteria.JoinType;
 
 /**
  * Sortable interface
@@ -45,5 +46,14 @@ public interface IDefinitionSortable {
 	 * @return full path field
 	 */
 	List<String> getPathField();
+
+	/**
+	 * Get the join types
+	 *
+	 * @param index
+	 *            of path
+	 * @return join types
+	 */
+	List<JoinType> getJoinTypes(int index);
 
 }

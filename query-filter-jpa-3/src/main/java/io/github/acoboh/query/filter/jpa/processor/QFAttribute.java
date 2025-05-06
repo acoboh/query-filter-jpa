@@ -20,7 +20,7 @@ public class QFAttribute {
 		}
 
 		Class<?> javaType = attribute.getJavaType();
-		this.isEnum = (Boolean) (javaType.isEnum() || Enum.class.isAssignableFrom(javaType));
+		this.isEnum = (javaType.isEnum() || Enum.class.isAssignableFrom(javaType));
 	}
 
 	public Attribute<?, ?> getAttribute() {

@@ -6,11 +6,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.github.acoboh.query.filter.jpa.annotations.QFBlockParsing;
 import io.github.acoboh.query.filter.jpa.annotations.QFDiscriminator;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFDiscriminatorException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 import io.github.acoboh.query.filter.jpa.processor.QFAttribute;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.metamodel.Metamodel;
 
 /**
@@ -18,8 +22,11 @@ import jakarta.persistence.metamodel.Metamodel;
  */
 public class QFDefinitionDiscriminator extends QFAbstractDefinition {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(QFDefinitionDiscriminator.class);
+
 	private final QFDiscriminator discriminatorAnnotation;
 	private final List<QFAttribute> attributes;
+	private final List<JoinType> joinTypes;
 	private final Class<?> finalClass;
 
 	private final Map<String, Class<?>> discriminatorMap = new HashMap<>();
@@ -58,6 +65,13 @@ public class QFDefinitionDiscriminator extends QFAbstractDefinition {
 			discriminatorMap.put(value.name(), value.type());
 		}
 
+		if (discriminatorAnnotation.joinTypes().length == 0) {
+			LOGGER.warn("No join types defined for discriminator {}. Defaulting to INNER", filterName);
+			this.joinTypes = List.of(JoinType.INNER);
+		} else {
+			this.joinTypes = List.of(discriminatorAnnotation.joinTypes());
+		}
+
 	}
 
 	/**
@@ -94,6 +108,15 @@ public class QFDefinitionDiscriminator extends QFAbstractDefinition {
 	 */
 	public Map<String, Class<?>> getDiscriminatorMap() {
 		return discriminatorMap;
+	}
+
+	/**
+	 * Get the join types
+	 *
+	 * @return join types
+	 */
+	public List<JoinType> getJoinTypes() {
+		return joinTypes;
 	}
 
 }

@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.util.Pair;
+import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -855,7 +856,7 @@ public class QueryFilter<E> implements Specification<E> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Predicate toPredicate(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+	public Predicate toPredicate(@NonNull Root<E> root, CriteriaQuery<?> query, @NonNull CriteriaBuilder criteriaBuilder) {
 
 		Map<String, List<Predicate>> predicatesMap = new HashMap<>();
 		Map<String, Path<?>> pathsMap = new HashMap<>();

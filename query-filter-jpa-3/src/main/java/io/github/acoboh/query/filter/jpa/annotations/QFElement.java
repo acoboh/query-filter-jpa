@@ -10,6 +10,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
+import jakarta.persistence.criteria.JoinType;
 
 /**
  * Annotation used to define the query filter param filter.
@@ -195,5 +196,23 @@ public @interface QFElement {
 	 * @return path to apply subclass scanning
 	 */
 	String subClassMappingPath() default "";
+
+	/**
+	 * Select the join type to use on the query.
+	 * 
+	 * <p>
+	 * If you only specify one join type, it will be used for all joins.
+	 * <p>
+	 * If you specify multiple join types, and there are multiple joins, il will use
+	 * the first join type for the first until the latest is reached, and it will be
+	 * used for the rest.
+	 * <p>
+	 * Example: If you specify {@code JoinType.LEFT, JoinType.INNER}, the first join
+	 * will be a LEFT join, the second will be an INNER join, and all the rest will
+	 * be INNER joins.
+	 * 
+	 * @return join type to use
+	 */
+	JoinType[] joinTypes() default {JoinType.INNER};
 
 }

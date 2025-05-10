@@ -22,7 +22,7 @@ public class QueryFilterDefinitionException extends Exception {
 	 * @param args
 	 *            arguments
 	 */
-	protected QueryFilterDefinitionException(String message, Object... args) {
+	public QueryFilterDefinitionException(String message, Object... args) {
 		super(MessageFormatter.arrayFormat(message, args).getMessage());
 	}
 
@@ -36,7 +36,7 @@ public class QueryFilterDefinitionException extends Exception {
 	 * @param args
 	 *            arguments
 	 */
-	protected QueryFilterDefinitionException(String message, Throwable cause, Object... args) {
+	public QueryFilterDefinitionException(String message, Throwable cause, Object... args) {
 		super(MessageFormatter.arrayFormat(message, args).getMessage(), cause);
 	}
 

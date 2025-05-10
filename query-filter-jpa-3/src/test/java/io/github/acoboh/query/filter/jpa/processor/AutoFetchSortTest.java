@@ -51,18 +51,11 @@ class AutoFetchSortTest {
 		POST_EXAMPLE.setText("Text");
 		POST_EXAMPLE.setAvgNote(2.5d);
 		POST_EXAMPLE.setLikes(100);
-		POST_EXAMPLE.setCreateDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)); // Truncated to avoid rounding
-																						// issues with Java > 8 and BBDD
-		POST_EXAMPLE.setLastTimestamp(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS))); // Truncated
-																												// to
-																												// avoid
-																												// rounding
-																												// issues
-																												// with
-																												// Java
-																												// > 8
-																												// and
-																												// BBDD
+
+		// Truncated to avoid rounding issues with Java > 8 and BBDD
+		POST_EXAMPLE.setCreateDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));
+		POST_EXAMPLE.setLastTimestamp(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)));
+
 		POST_EXAMPLE.setPublished(true);
 		POST_EXAMPLE.setPostType(PostBlog.PostType.TEXT);
 
@@ -104,19 +97,11 @@ class AutoFetchSortTest {
 		POST_EXAMPLE_2.setText("Text 2");
 		POST_EXAMPLE_2.setAvgNote(0.5d);
 		POST_EXAMPLE_2.setLikes(0);
-		POST_EXAMPLE_2.setCreateDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)); // Truncated to avoid rounding
-																							// issues with Java > 8 and
-																							// BBDD
-		POST_EXAMPLE_2.setLastTimestamp(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS))); // Truncated
-																												// to
-																												// avoid
-																												// rounding
-																												// issues
-																												// with
-																												// Java
-																												// > 8
-																												// and
-																												// BBDD
+
+		// Truncated to avoid rounding issues with Java > 8 and BBDD
+		POST_EXAMPLE_2.setCreateDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));
+		POST_EXAMPLE_2.setLastTimestamp(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)));
+
 		POST_EXAMPLE_2.setPublished(false);
 		POST_EXAMPLE_2.setPostType(PostBlog.PostType.VIDEO);
 
@@ -131,7 +116,7 @@ class AutoFetchSortTest {
 
 		Comments comment4 = new Comments();
 		comment4.setId(4);
-		comment4.setAuthor("Author 3");
+		comment4.setAuthor(null);
 		comment4.setComment("Comment 4");
 		comment4.setLikes(4);
 		comment4.setPostBlog(POST_EXAMPLE_2);
@@ -219,7 +204,7 @@ class AutoFetchSortTest {
 
 		List<PostBlog> found = repository.findAll(qf);
 
-		assertThat(found).hasSize(2).containsExactly(POST_EXAMPLE, POST_EXAMPLE_2);
+		assertThat(found).hasSize(2).containsExactly(POST_EXAMPLE_2, POST_EXAMPLE);
 
 	}
 
@@ -310,6 +295,10 @@ class AutoFetchSortTest {
 
 		assertThat(qf.getSortFieldWithFullPath()).containsExactly(Pair.of("comments.extraData.id", Direction.ASC));
 
+		// find all
+		List<PostBlog> foundAll = repository.findAll(qf);
+		assertThat(foundAll).hasSize(2).containsExactly(POST_EXAMPLE, POST_EXAMPLE_2);
+
 		Page<PostBlog> found = repository.findAll(qf, PageRequest.of(0, 1));
 
 		assertThat(found).hasSize(1).containsExactly(POST_EXAMPLE);
@@ -324,6 +313,43 @@ class AutoFetchSortTest {
 		assertThat(found).hasSize(1).containsAnyOf(POST_EXAMPLE, POST_EXAMPLE_2);
 
 		assertThat(found.getTotalElements()).isEqualTo(2);
+
+	}
+
+	@Test
+	@DisplayName("7. Test sort with fetch inner on null columns")
+	@Order(7)
+	void testSortWithFetchInnerOnNull() {
+
+		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("sort=+commentAuthorElement",
+				QFParamType.RHS_COLON);
+
+		assertThat(qf).isNotNull();
+
+		assertThat(qf.isSorted()).isTrue();
+
+		assertThat(qf.isSortedBy("commentAuthorElement")).isTrue();
+
+		assertThat(qf.getSortFields()).containsExactly(Pair.of("commentAuthorElement", Direction.ASC));
+
+		assertThat(qf.getSortFieldWithFullPath()).containsExactly(Pair.of("comments.author", Direction.ASC));
+
+		var countQuery = repository.count(qf);
+		assertThat(countQuery).isEqualTo(2);
+
+		var page0 = repository.findAll(qf, PageRequest.of(0, 1));
+		assertThat(page0).hasSize(1).containsExactly(POST_EXAMPLE_2);
+		assertThat(page0.getTotalElements()).isEqualTo(2);
+		assertThat(page0.getTotalPages()).isEqualTo(2);
+		assertThat(page0.getNumber()).isEqualTo(0);
+		assertThat(page0.getSize()).isEqualTo(1);
+
+		var page1 = repository.findAll(qf, PageRequest.of(1, 1));
+		assertThat(page1).hasSize(1).containsExactly(POST_EXAMPLE);
+		assertThat(page1.getTotalElements()).isEqualTo(2);
+		assertThat(page1.getTotalPages()).isEqualTo(2);
+		assertThat(page1.getNumber()).isEqualTo(1);
+		assertThat(page1.getSize()).isEqualTo(1);
 
 	}
 

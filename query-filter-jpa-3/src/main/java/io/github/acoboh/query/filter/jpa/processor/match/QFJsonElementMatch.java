@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 
 import io.github.acoboh.query.filter.jpa.exceptions.QFJsonParseException;
+import io.github.acoboh.query.filter.jpa.exceptions.QFOperationNotAllowed;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationJsonEnum;
 import io.github.acoboh.query.filter.jpa.processor.QFSpecificationPart;
 import io.github.acoboh.query.filter.jpa.processor.QueryUtils;
@@ -65,6 +66,10 @@ public class QFJsonElementMatch implements QFSpecificationPart {
 	 */
 	public QFJsonElementMatch(String value, QFOperationJsonEnum operation, QFDefinitionJson definition)
 			throws QFJsonParseException {
+
+		if (!definition.isOperationAllowed(operation)) {
+			throw new QFOperationNotAllowed(definition.getFilterName(), operation.getOperation());
+		}
 
 		this.definition = definition;
 		this.operation = operation;
@@ -167,11 +172,13 @@ public class QFJsonElementMatch implements QFSpecificationPart {
 	@Override
 	public <E> void processPart(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder,
 			Map<String, List<Predicate>> predicatesMap, Map<String, Path<?>> pathsMap,
-			MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver, Class<E> entityClass) {
+			MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver, Class<E> entityClass,
+			boolean isCount) {
 
 		predicatesMap.computeIfAbsent(definition.getFilterName(), t -> new ArrayList<>())
 				.add(operation.generateJsonPredicate(QueryUtils.getObject(root, definition.getAttributes(),
-						definition.getJoinTypes(), pathsMap, true, false, criteriaBuilder), criteriaBuilder, this));
+						definition.getJoinTypes(), pathsMap, true, false, isCount, criteriaBuilder), criteriaBuilder,
+						this));
 
 	}
 

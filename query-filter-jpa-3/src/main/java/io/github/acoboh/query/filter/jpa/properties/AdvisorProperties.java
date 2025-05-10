@@ -22,6 +22,8 @@ public class AdvisorProperties {
 
 	private boolean messageSourceUseCodeAsDefaultMessage = true;
 
+	private boolean extendErrorMessage = false;
+
 	/**
 	 * Get if the advisor is enabled
 	 *
@@ -96,6 +98,25 @@ public class AdvisorProperties {
 	 */
 	public void setMessageSourceUseCodeAsDefaultMessage(boolean messageSourceUseCodeAsDefaultMessage) {
 		this.messageSourceUseCodeAsDefaultMessage = messageSourceUseCodeAsDefaultMessage;
+	}
+
+	/**
+	 * Get if the error message should be extended
+	 *
+	 * @return if the error message should be extended
+	 */
+	public boolean isExtendErrorMessage() {
+		return extendErrorMessage;
+	}
+
+	/**
+	 * Set if the error message should be extended
+	 *
+	 * @param extendErrorMessage
+	 *            if the error message should be extended
+	 */
+	public void setExtendErrorMessage(boolean extendErrorMessage) {
+		this.extendErrorMessage = extendErrorMessage;
 	}
 
 }

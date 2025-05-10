@@ -215,4 +215,17 @@ public @interface QFElement {
 	 */
 	JoinType[] joinTypes() default {JoinType.INNER};
 
+	/**
+	 * List of allowed operations for this element
+	 * <p>
+	 * If the allowed operations are not specified, all operations will be allowed.
+	 * <p>
+	 * If the field is annotated with {@link QFElements}, the allowed operations
+	 * will be applied to all elements defined in the {@link #value()} attribute and
+	 * the configuration of the {@link QFElement} will be ignored.
+	 *
+	 * @return array of allowed operations
+	 */
+	QFOperationEnum[] allowedOperations() default {};
+
 }

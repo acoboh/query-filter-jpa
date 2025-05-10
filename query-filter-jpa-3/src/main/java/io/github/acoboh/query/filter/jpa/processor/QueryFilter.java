@@ -849,14 +849,15 @@ public class QueryFilter<E> implements Specification<E> {
 	 */
 	public List<Order> getOrderAsCriteriaBuilder(Root<E> root, CriteriaBuilder criteriaBuilder) {
 		List<Pair<IDefinitionSortable, Direction>> sortList = defaultSortEnabled ? defaultSorting : sortDefinitionList;
-		return QueryUtils.parseOrders(sortList, criteriaBuilder, root, new HashMap<>());
+		return QueryUtils.parseOrders(sortList, criteriaBuilder, root, new HashMap<>(), false);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Predicate toPredicate(@NonNull Root<E> root, CriteriaQuery<?> query, @NonNull CriteriaBuilder criteriaBuilder) {
+	public Predicate toPredicate(@NonNull Root<E> root, CriteriaQuery<?> query,
+			@NonNull CriteriaBuilder criteriaBuilder) {
 
 		Map<String, List<Predicate>> predicatesMap = new HashMap<>();
 		Map<String, Path<?>> pathsMap = new HashMap<>();
@@ -864,20 +865,17 @@ public class QueryFilter<E> implements Specification<E> {
 		// Query distinct
 		query.distinct(distinct);
 
-		// Process sort
-		if (query.getResultType().equals(entityClass)) {
-			processSort(root, criteriaBuilder, query, pathsMap);
-		} else if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Final class is not the entity class so all sorts will be ignored. Final class {}",
-					query.getResultType());
-		}
+		boolean isCount = !query.getResultType().equals(this.entityClass);
+
+		processSort(root, criteriaBuilder, query, pathsMap, isCount);
 
 		List<QFSpecificationPart> sortedParts = specificationsWarp.getAllPartsSorted();
 
 		MultiValueMap<String, Object> mlmap = new LinkedMultiValueMap<>(sortedParts.size());
 
 		for (QFSpecificationPart part : sortedParts) {
-			part.processPart(root, query, criteriaBuilder, predicatesMap, pathsMap, mlmap, spelResolver, entityClass);
+			part.processPart(root, query, criteriaBuilder, predicatesMap, pathsMap, mlmap, spelResolver, entityClass,
+					isCount);
 		}
 
 		Predicate finalPredicate = parseFinalPredicate(criteriaBuilder, predicatesMap);
@@ -888,11 +886,11 @@ public class QueryFilter<E> implements Specification<E> {
 	}
 
 	private void processSort(Root<E> root, CriteriaBuilder criteriaBuilder, CriteriaQuery<?> query,
-			Map<String, Path<?>> pathsMap) {
+			Map<String, Path<?>> pathsMap, boolean isCount) {
 		var sortList = defaultSortEnabled ? defaultSorting : sortDefinitionList;
 		if (!sortList.isEmpty()) {
 			LOGGER.trace("Adding all sort operations");
-			query.orderBy(QueryUtils.parseOrders(sortList, criteriaBuilder, root, pathsMap));
+			query.orderBy(QueryUtils.parseOrders(sortList, criteriaBuilder, root, pathsMap, isCount));
 		}
 	}
 
@@ -906,13 +904,12 @@ public class QueryFilter<E> implements Specification<E> {
 		final PredicateProcessorResolutor localPredicate = predicate;
 
 		if (localPredicate == null) {
-			Predicate finalPredicate = cb.and(simplifiedPredicate.values().toArray(new Predicate[0]));
-			toRet = finalPredicate;
+			toRet = cb.and(simplifiedPredicate.values().toArray(new Predicate[0]));
 		} else {
 			toRet = localPredicate.resolvePredicate(cb, simplifiedPredicate);
 		}
 
-		if (toRet == null || (toRet.isCompoundSelection() && toRet.getExpressions().isEmpty())) {
+		if (toRet == null || toRet.getExpressions().isEmpty()) {
 			return null;
 		} else if (toRet.getExpressions().size() == 1) {
 			return (Predicate) toRet.getExpressions().get(0);

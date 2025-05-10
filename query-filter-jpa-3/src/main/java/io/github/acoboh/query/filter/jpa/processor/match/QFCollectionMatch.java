@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.util.MultiValueMap;
 
 import io.github.acoboh.query.filter.jpa.exceptions.QFCollectionException;
+import io.github.acoboh.query.filter.jpa.exceptions.QFOperationNotAllowed;
 import io.github.acoboh.query.filter.jpa.operations.QFCollectionOperationEnum;
 import io.github.acoboh.query.filter.jpa.processor.QFSpecificationPart;
 import io.github.acoboh.query.filter.jpa.processor.QueryUtils;
@@ -41,7 +42,11 @@ public class QFCollectionMatch implements QFSpecificationPart {
 	 *            value of the element operation
 	 */
 	public QFCollectionMatch(QFDefinitionCollection definition, QFCollectionOperationEnum operation, int value) {
-		super();
+
+		if (!definition.isOperationAllowed(operation)) {
+			throw new QFOperationNotAllowed(definition.getFilterName(), operation.getOperation());
+		}
+
 		this.definition = definition;
 		this.operation = operation;
 		this.value = value;
@@ -79,10 +84,11 @@ public class QFCollectionMatch implements QFSpecificationPart {
 	@Override
 	public <E> void processPart(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder,
 			Map<String, List<Predicate>> predicatesMap, Map<String, Path<?>> pathsMap,
-			MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver, Class<E> entityClass) {
+			MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver, Class<E> entityClass,
+			boolean isCount) {
 
 		Path<?> expressionPath = QueryUtils.getObject(root, definition.getPaths(), definition.getJoinTypes(), pathsMap,
-				true, false, criteriaBuilder);
+				true, false, isCount, criteriaBuilder);
 
 		Expression<? extends java.util.Collection<?>> expression;
 

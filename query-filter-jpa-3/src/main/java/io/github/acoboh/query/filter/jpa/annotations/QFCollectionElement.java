@@ -8,6 +8,7 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import io.github.acoboh.query.filter.jpa.operations.QFCollectionOperationEnum;
 import jakarta.persistence.criteria.JoinType;
 
 /**
@@ -97,4 +98,13 @@ public @interface QFCollectionElement {
 	 * @return join type to use
 	 */
 	JoinType[] joinTypes() default {JoinType.INNER};
+
+	/**
+	 * List of allowed operations for this element
+	 * <p>
+	 * If the allowed operations are not specified, all operations will be allowed.
+	 *
+	 * @return array of allowed operations
+	 */
+	QFCollectionOperationEnum[] allowedOperations() default {};
 }

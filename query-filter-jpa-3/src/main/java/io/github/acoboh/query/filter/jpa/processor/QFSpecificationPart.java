@@ -42,7 +42,8 @@ public interface QFSpecificationPart {
 	 */
 	<E> void processPart(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder,
 			Map<String, List<Predicate>> predicatesMap, Map<String, Path<?>> pathsMap,
-			MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver, Class<E> entityClass);
+			MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver, Class<E> entityClass,
+			boolean isCount);
 
 	/**
 	 * Get definition of the filter field

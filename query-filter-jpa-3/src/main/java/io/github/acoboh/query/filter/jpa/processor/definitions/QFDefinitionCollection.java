@@ -3,6 +3,7 @@ package io.github.acoboh.query.filter.jpa.processor.definitions;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import io.github.acoboh.query.filter.jpa.annotations.QFBlockParsing;
 import io.github.acoboh.query.filter.jpa.annotations.QFCollectionElement;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFCollectionNotSupported;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
+import io.github.acoboh.query.filter.jpa.operations.QFCollectionOperationEnum;
 import io.github.acoboh.query.filter.jpa.processor.QFAttribute;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.metamodel.Metamodel;
@@ -24,6 +26,7 @@ public class QFDefinitionCollection extends QFAbstractDefinition {
 
 	private final List<QFAttribute> attributes;
 	private final List<JoinType> joinTypes;
+	private final Set<QFCollectionOperationEnum> allowedOperations;
 
 	QFDefinitionCollection(Field filterField, Class<?> filterClass, Class<?> entityClass, QFBlockParsing blockParsing,
 			QFCollectionElement collectionElement, Metamodel metamodel) throws QueryFilterDefinitionException {
@@ -49,6 +52,7 @@ public class QFDefinitionCollection extends QFAbstractDefinition {
 			this.joinTypes = List.of(collectionElement.joinTypes());
 		}
 
+		allowedOperations = Set.of(collectionElement.allowedOperations());
 	}
 
 	/**
@@ -67,6 +71,17 @@ public class QFDefinitionCollection extends QFAbstractDefinition {
 	 */
 	public List<JoinType> getJoinTypes() {
 		return joinTypes;
+	}
+
+	public boolean isOperationAllowed(QFCollectionOperationEnum operation) {
+		return allowedOperations.isEmpty() || allowedOperations.contains(operation);
+	}
+
+	public Set<QFCollectionOperationEnum> getRealAllowedOperations() {
+		if (allowedOperations.isEmpty()) {
+			return Set.of(QFCollectionOperationEnum.values());
+		}
+		return allowedOperations;
 	}
 
 }

@@ -35,4 +35,6 @@ public class QueryFilterProperties {
 		this.advisor = advisor;
 	}
 
+
+
 }

@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.MultiValueMap;
 
 import io.github.acoboh.query.filter.jpa.exceptions.QFDiscriminatorNotFoundException;
+import io.github.acoboh.query.filter.jpa.exceptions.QFOperationNotAllowed;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationDiscriminatorEnum;
 import io.github.acoboh.query.filter.jpa.processor.QFAttribute;
 import io.github.acoboh.query.filter.jpa.processor.QFSpecificationPart;
@@ -57,6 +58,10 @@ public class QFDiscriminatorMatch implements QFSpecificationPart {
 	 */
 	public QFDiscriminatorMatch(List<String> values, QFOperationDiscriminatorEnum operation,
 			QFDefinitionDiscriminator definition) throws QFDiscriminatorNotFoundException {
+
+		if (!definition.isOperationAllowed(operation)) {
+			throw new QFOperationNotAllowed(definition.getFilterName(), operation.getOperation());
+		}
 
 		this.values = values;
 		this.definition = definition;
@@ -147,14 +152,16 @@ public class QFDiscriminatorMatch implements QFSpecificationPart {
 	@Override
 	public <E> void processPart(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder,
 			Map<String, List<Predicate>> predicatesMap, Map<String, Path<?>> pathsMap,
-			MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver, Class<E> entityClass) {
+			MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver, Class<E> entityClass,
+			boolean isCount) {
 
 		Expression<?> expression;
 		if (isRoot) {
 			expression = root.type();
 		} else {
 			expression = QueryUtils
-					.getObject(root, path, definition.getJoinTypes(), pathsMap, false, false, criteriaBuilder).type();
+					.getObject(root, path, definition.getJoinTypes(), pathsMap, false, false, isCount, criteriaBuilder)
+					.type();
 		}
 
 		predicatesMap.computeIfAbsent(definition.getFilterName(), t -> new ArrayList<>()).add(operation

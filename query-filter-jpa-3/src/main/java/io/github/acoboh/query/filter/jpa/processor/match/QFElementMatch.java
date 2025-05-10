@@ -18,6 +18,7 @@ import org.springframework.util.MultiValueMap;
 import io.github.acoboh.query.filter.jpa.exceptions.QFDateParsingException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFEnumException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFFieldOperationException;
+import io.github.acoboh.query.filter.jpa.exceptions.QFOperationNotAllowed;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 import io.github.acoboh.query.filter.jpa.processor.QFAttribute;
 import io.github.acoboh.query.filter.jpa.processor.QFSpecificationPart;
@@ -70,6 +71,10 @@ public class QFElementMatch implements QFSpecificationPart {
 	 *            field definition
 	 */
 	public QFElementMatch(List<String> values, QFOperationEnum operation, QFDefinitionElement definition) {
+
+		if (!definition.isOperationAllowed(operation)) {
+			throw new QFOperationNotAllowed(definition.getFilterName(), operation.getValue());
+		}
 
 		this.definition = definition;
 		this.originalValues = values;
@@ -440,21 +445,23 @@ public class QFElementMatch implements QFSpecificationPart {
 	@Override
 	public <E> void processPart(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder,
 			Map<String, List<Predicate>> predicatesMap, Map<String, Path<?>> pathsMap,
-			MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver, Class<E> entityClass) {
+			MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver, Class<E> entityClass,
+			boolean isCount) {
 
 		if (definition.isSubQuery()) {
 			LOGGER.trace("Element match is subquery");
-			processPartAsSubQuery(root, query, criteriaBuilder, predicatesMap, mlmap, spelResolver, entityClass);
+			processPartAsSubQuery(root, query, criteriaBuilder, predicatesMap, mlmap, spelResolver, entityClass,
+					isCount);
 		} else {
 			LOGGER.trace("Element match is basic");
-			processAsElement(root, criteriaBuilder, predicatesMap, pathsMap, mlmap, spelResolver);
+			processAsElement(root, criteriaBuilder, predicatesMap, pathsMap, mlmap, spelResolver, isCount);
 		}
 
 	}
 
 	private <E> void processAsElement(Root<E> root, CriteriaBuilder criteriaBuilder,
 			Map<String, List<Predicate>> predicatesMap, Map<String, Path<?>> pathsMap,
-			MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver) {
+			MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver, boolean isCount) {
 		initialize(spelResolver, mlmap);
 
 		if (!needToEvaluate()) {
@@ -467,7 +474,7 @@ public class QFElementMatch implements QFSpecificationPart {
 
 		for (var path : paths) {
 			predicates.add(operation.generatePredicate(QueryUtils.getObject(root, path, definition.getJoinTypes(index),
-					pathsMap, false, false, criteriaBuilder), criteriaBuilder, this, index, mlmap));
+					pathsMap, false, false, isCount, criteriaBuilder), criteriaBuilder, this, index, mlmap));
 			index++;
 		}
 
@@ -478,7 +485,7 @@ public class QFElementMatch implements QFSpecificationPart {
 
 	private <E> void processPartAsSubQuery(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder,
 			Map<String, List<Predicate>> predicatesMap, MultiValueMap<String, Object> mlmap,
-			SpelResolverContext spelResolver, Class<E> entityClass) {
+			SpelResolverContext spelResolver, Class<E> entityClass, boolean isCount) {
 		Map<String, Path<?>> subSelecthMap = new HashMap<>();
 
 		initialize(spelResolver, mlmap);
@@ -496,7 +503,7 @@ public class QFElementMatch implements QFSpecificationPart {
 			subquery.select(newRoot);
 
 			Path<?> pathFinal = QueryUtils.getObject(newRoot, path, definition.getJoinTypes(index), subSelecthMap,
-					false, false, criteriaBuilder);
+					false, false, isCount, criteriaBuilder);
 
 			QFOperationEnum op = operation;
 			if (op == QFOperationEnum.NOT_EQUAL) {

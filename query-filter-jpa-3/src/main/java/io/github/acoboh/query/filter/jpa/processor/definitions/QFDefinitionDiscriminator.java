@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,7 @@ import io.github.acoboh.query.filter.jpa.annotations.QFBlockParsing;
 import io.github.acoboh.query.filter.jpa.annotations.QFDiscriminator;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFDiscriminatorException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
+import io.github.acoboh.query.filter.jpa.operations.QFOperationDiscriminatorEnum;
 import io.github.acoboh.query.filter.jpa.processor.QFAttribute;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.metamodel.Metamodel;
@@ -28,6 +30,7 @@ public class QFDefinitionDiscriminator extends QFAbstractDefinition {
 	private final List<QFAttribute> attributes;
 	private final List<JoinType> joinTypes;
 	private final Class<?> finalClass;
+	private final Set<QFOperationDiscriminatorEnum> allowedOperations;
 
 	private final Map<String, Class<?>> discriminatorMap = new HashMap<>();
 
@@ -66,11 +69,13 @@ public class QFDefinitionDiscriminator extends QFAbstractDefinition {
 		}
 
 		if (discriminatorAnnotation.joinTypes().length == 0) {
-			LOGGER.warn("No join types defined for discriminator {}. Defaulting to INNER", filterName);
+			LOGGER.debug("No join types defined for discriminator {}. Defaulting to INNER", filterName);
 			this.joinTypes = List.of(JoinType.INNER);
 		} else {
 			this.joinTypes = List.of(discriminatorAnnotation.joinTypes());
 		}
+
+		allowedOperations = Set.of(discriminatorAnnotation.allowedOperations());
 
 	}
 
@@ -117,6 +122,17 @@ public class QFDefinitionDiscriminator extends QFAbstractDefinition {
 	 */
 	public List<JoinType> getJoinTypes() {
 		return joinTypes;
+	}
+
+	public boolean isOperationAllowed(QFOperationDiscriminatorEnum operation) {
+		return allowedOperations.isEmpty() || allowedOperations.contains(operation);
+	}
+
+	public Set<QFOperationDiscriminatorEnum> getRealAllowedOperations() {
+		if (allowedOperations.isEmpty()) {
+			return Set.of(QFOperationDiscriminatorEnum.values());
+		}
+		return allowedOperations;
 	}
 
 }

@@ -11,7 +11,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -180,8 +179,7 @@ class OpenApiCustomiserImpl implements OpenApiCustomizer {
 			builder.append("<p><b>").append(def.getFilterName()).append("</b>:");
 
 			if (def instanceof QFDefinitionElement defElement) {
-				Set<QFOperationEnum> qfOperations = QFOperationEnum
-						.getOperationsOfClass(defElement.getFirstFinalClass(), defElement.isArrayTyped());
+				Set<QFOperationEnum> qfOperations = defElement.getRealAllowedOperations();
 
 				if (!qfOperations.isEmpty()) {
 					builder.append(" Operations: [<i>");
@@ -198,7 +196,7 @@ class OpenApiCustomiserImpl implements OpenApiCustomizer {
 
 			if (def instanceof QFDefinitionDiscriminator qdefDiscriminator) {
 				builder.append(" Operations: [<i>");
-				String operationsAvailable = Stream.of(QFOperationDiscriminatorEnum.values())
+				String operationsAvailable = qdefDiscriminator.getRealAllowedOperations().stream()
 						.map(QFOperationDiscriminatorEnum::getOperation).collect(Collectors.joining(","));
 				builder.append(operationsAvailable).append("</i>]");
 
@@ -206,10 +204,10 @@ class OpenApiCustomiserImpl implements OpenApiCustomizer {
 				String values = Arrays.stream(qdefDiscriminator.getDiscriminatorAnnotation().value())
 						.map(QFDiscriminator.Value::name).collect(Collectors.joining(","));
 				builder.append(values).append("]");
-			} else if (def instanceof QFDefinitionJson) {
+			} else if (def instanceof QFDefinitionJson qdefJson) {
 				builder.append(" <i>(JSON element)</i> Operations: [<i>");
 
-				String operationsAvailable = Stream.of(QFOperationJsonEnum.values())
+				String operationsAvailable = qdefJson.getRealAllowedOperations().stream()
 						.map(QFOperationJsonEnum::getOperation).collect(Collectors.joining(","));
 				builder.append(operationsAvailable).append("</i>]");
 			}
@@ -223,7 +221,6 @@ class OpenApiCustomiserImpl implements OpenApiCustomizer {
 	private Operation getOperation(PathItem item, RequestMethod method) {
 
 		return switch (method) {
-
 			case DELETE -> item.getDelete();
 			case HEAD -> item.getHead();
 			case OPTIONS -> item.getOptions();

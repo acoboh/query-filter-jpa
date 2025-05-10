@@ -54,7 +54,8 @@ public class QueryUtils {
 	 */
 	@SuppressWarnings("unchecked")
 	public static Path<?> getObject(Root<?> root, List<QFAttribute> paths, List<JoinType> joinTypes,
-			Map<String, Path<?>> pathsMap, boolean isCollection, boolean tryFetch, CriteriaBuilder cb) {
+			Map<String, Path<?>> pathsMap, boolean isCollection, boolean tryFetch, boolean isCount,
+			CriteriaBuilder cb) {
 		String fullPath = getFullPath(paths, isCollection);
 
 		if (pathsMap.containsKey(fullPath)) {
@@ -103,7 +104,7 @@ public class QueryUtils {
 				return join.get((SingularAttribute) singularAttribute);
 			}
 
-			join = getNextJoin(join, att, tryFetch, joinType);
+			join = getNextJoin(join, att, tryFetch, isCount, joinType);
 
 			pathsMap.put(base.toString(), join);
 
@@ -114,8 +115,9 @@ public class QueryUtils {
 
 	}
 
-	private static From<?, ?> getNextJoin(From<?, ?> join, Attribute<?, ?> att, boolean tryFetch, JoinType joinType) {
-		if (tryFetch) {
+	private static From<?, ?> getNextJoin(From<?, ?> join, Attribute<?, ?> att, boolean tryFetch, boolean isCount,
+			JoinType joinType) {
+		if (tryFetch && !isCount) {
 			return (From<?, ?>) join.fetch(att.getName(), joinType);
 		} else {
 			if (att instanceof SingularAttribute<?, ?> singular) {
@@ -147,7 +149,7 @@ public class QueryUtils {
 	 * @return the final order list
 	 */
 	public static List<Order> parseOrders(List<Pair<IDefinitionSortable, Direction>> sortDefinitionList,
-			CriteriaBuilder cb, Root<?> root, Map<String, Path<?>> pathsMap) {
+			CriteriaBuilder cb, Root<?> root, Map<String, Path<?>> pathsMap, boolean isCount) {
 		ArrayList<Order> orderList = new ArrayList<>();
 
 		for (Pair<IDefinitionSortable, Direction> pair : sortDefinitionList) {
@@ -157,7 +159,7 @@ public class QueryUtils {
 				boolean autoFetch = pair.getFirst().isAutoFetch(index);
 				LOGGER.trace("Autofetch is enabled on sort");
 				Path<?> path = getObject(root, paths, pair.getFirst().getJoinTypes(index), pathsMap, false, autoFetch,
-						cb);
+						isCount, cb);
 				Order order = pair.getSecond() == Direction.ASC ? cb.asc(path) : cb.desc(path);
 				orderList.add(order);
 				index++;

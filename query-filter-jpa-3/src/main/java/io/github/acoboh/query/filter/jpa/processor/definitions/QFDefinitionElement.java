@@ -7,6 +7,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
@@ -21,6 +22,7 @@ import io.github.acoboh.query.filter.jpa.exceptions.definition.QFDateClassNotSup
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFDateParseError;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFElementMultipleClassesException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
+import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 import io.github.acoboh.query.filter.jpa.predicate.PredicateOperation;
 import io.github.acoboh.query.filter.jpa.processor.QFAttribute;
 import io.github.acoboh.query.filter.jpa.processor.definitions.traits.IDefinitionSortable;
@@ -44,6 +46,7 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 
 	private final List<List<QFAttribute>> paths;
 	private final List<List<JoinType>> joinTypes;
+	private final Set<QFOperationEnum> allowedOperations;
 	private final List<Class<?>> finalClasses;
 	private final List<Boolean> autoFetchPaths;
 
@@ -106,6 +109,37 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 		order = Stream.of(elementAnnotations).mapToInt(QFElement::order).max().orElseGet(() -> 0);
 		subQuery = Stream.of(elementAnnotations).allMatch(QFElement::subquery);
 		joinTypes = Stream.of(elementAnnotations).map(e -> List.of(e.joinTypes())).toList();
+
+		if (elementsAnnotation != null) {
+			allowedOperations = Set.of(elementsAnnotation.allowedOperations());
+		} else {
+			if (elementAnnotations.length == 1) {
+				allowedOperations = Set.of(elementAnnotations[0].allowedOperations());
+			} else {
+				if (Stream.of(elementAnnotations).anyMatch(e -> e.allowedOperations().length > 0)) {
+					LOGGER.error(
+							"If multiple element annotations are used, the allowed operations must be defined in the QFElements annotation");
+					throw new QueryFilterDefinitionException(
+							"Allowed operations must be defined in the QFElements annotation for multiple element annotations");
+				}
+
+				LOGGER.debug("Multiple element annotations found. Will use default allowed operations");
+				allowedOperations = Set.of();
+			}
+		}
+
+		if (!allowedOperations.isEmpty()) {
+			// Check if all operations are valid
+			for (var finalClazz : finalClasses) {
+				Set<QFOperationEnum> operations = QFOperationEnum.getOperationsOfClass(finalClazz, arrayTyped);
+				if (allowedOperations.stream().anyMatch(e -> !operations.contains(e))) {
+					LOGGER.error("Allowed operations {} not valid for class {}", allowedOperations, finalClazz);
+					throw new QueryFilterDefinitionException(
+							"Allowed operations " + allowedOperations + " not valid for class " + finalClazz
+									+ " on field " + getFilterName() + " of filter " + filterClass);
+				}
+			}
+		}
 
 		if (joinTypes.stream().anyMatch(List::isEmpty)) {
 			LOGGER.warn("Join types not defined. Will use default join type");
@@ -300,6 +334,17 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 	@Override
 	public List<String> getPathField() {
 		return fullPath;
+	}
+
+	public boolean isOperationAllowed(QFOperationEnum operation) {
+		return allowedOperations.isEmpty() || allowedOperations.contains(operation);
+	}
+
+	public Set<QFOperationEnum> getRealAllowedOperations() {
+		if (allowedOperations.isEmpty()) {
+			return QFOperationEnum.getOperationsOfClass(finalClasses.get(0), arrayTyped);
+		}
+		return allowedOperations;
 	}
 
 }

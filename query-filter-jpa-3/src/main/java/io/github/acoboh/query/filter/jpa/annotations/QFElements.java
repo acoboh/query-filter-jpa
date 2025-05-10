@@ -8,6 +8,7 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 import io.github.acoboh.query.filter.jpa.predicate.PredicateOperation;
 
 /**
@@ -33,4 +34,18 @@ public @interface QFElements {
 	 * @return operation selected
 	 */
 	PredicateOperation operation() default PredicateOperation.AND;
+
+	/**
+	 * List of allowed operations for this element
+	 * <p>
+	 * If the allowed operations are not specified, all operations will be allowed.
+	 * 
+	 * <p>
+	 * When using this annotation, the allowed operations will be applied to all
+	 * elements defined in the {@link #value()} attribute and the configuration of
+	 * the {@link QFElement} will be ignored.
+	 *
+	 * @return array of allowed operations
+	 */
+	QFOperationEnum[] allowedOperations() default {};
 }

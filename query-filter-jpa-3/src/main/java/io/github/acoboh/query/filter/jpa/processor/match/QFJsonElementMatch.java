@@ -19,16 +19,15 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 
 import io.github.acoboh.query.filter.jpa.exceptions.QFJsonParseException;
+import io.github.acoboh.query.filter.jpa.exceptions.QFOperationNotAllowed;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationJsonEnum;
 import io.github.acoboh.query.filter.jpa.processor.QFSpecificationPart;
+import io.github.acoboh.query.filter.jpa.processor.QueryInfo;
 import io.github.acoboh.query.filter.jpa.processor.QueryUtils;
 import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionJson;
 import io.github.acoboh.query.filter.jpa.spel.SpelResolverContext;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 
 /**
  * Class with JSON element matching definition
@@ -65,6 +64,10 @@ public class QFJsonElementMatch implements QFSpecificationPart {
 	 */
 	public QFJsonElementMatch(String value, QFOperationJsonEnum operation, QFDefinitionJson definition)
 			throws QFJsonParseException {
+
+		if (!definition.isOperationAllowed(operation)) {
+			throw new QFOperationNotAllowed(definition.getFilterName(), operation.getOperation());
+		}
 
 		this.definition = definition;
 		this.operation = operation;
@@ -165,13 +168,13 @@ public class QFJsonElementMatch implements QFSpecificationPart {
 	}
 
 	@Override
-	public <E> void processPart(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder,
-			Map<String, List<Predicate>> predicatesMap, Map<String, Path<?>> pathsMap,
-			MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver, Class<E> entityClass) {
+	public <E> void processPart(QueryInfo<E> queryInfo, Map<String, List<Predicate>> predicatesMap,
+			Map<String, Path<?>> pathsMap, MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver,
+			Class<E> entityClass) {
 
 		predicatesMap.computeIfAbsent(definition.getFilterName(), t -> new ArrayList<>())
-				.add(operation.generateJsonPredicate(QueryUtils.getObject(root, definition.getAttributes(),
-						definition.getJoinTypes(), pathsMap, true, false, criteriaBuilder), criteriaBuilder, this));
+				.add(operation.generateJsonPredicate(QueryUtils.getObject(queryInfo, definition.getAttributes(),
+						definition.getJoinTypes(), pathsMap, true, false), queryInfo.cb(), this));
 
 	}
 

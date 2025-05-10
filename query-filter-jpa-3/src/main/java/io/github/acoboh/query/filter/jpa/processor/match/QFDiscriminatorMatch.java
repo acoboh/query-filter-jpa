@@ -9,18 +9,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.MultiValueMap;
 
 import io.github.acoboh.query.filter.jpa.exceptions.QFDiscriminatorNotFoundException;
+import io.github.acoboh.query.filter.jpa.exceptions.QFOperationNotAllowed;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationDiscriminatorEnum;
 import io.github.acoboh.query.filter.jpa.processor.QFAttribute;
 import io.github.acoboh.query.filter.jpa.processor.QFSpecificationPart;
+import io.github.acoboh.query.filter.jpa.processor.QueryInfo;
 import io.github.acoboh.query.filter.jpa.processor.QueryUtils;
 import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionDiscriminator;
 import io.github.acoboh.query.filter.jpa.spel.SpelResolverContext;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 
 /**
  * Class with info about the discriminator matching for filtering
@@ -57,6 +56,10 @@ public class QFDiscriminatorMatch implements QFSpecificationPart {
 	 */
 	public QFDiscriminatorMatch(List<String> values, QFOperationDiscriminatorEnum operation,
 			QFDefinitionDiscriminator definition) throws QFDiscriminatorNotFoundException {
+
+		if (!definition.isOperationAllowed(operation)) {
+			throw new QFOperationNotAllowed(definition.getFilterName(), operation.getOperation());
+		}
 
 		this.values = values;
 		this.definition = definition;
@@ -145,20 +148,20 @@ public class QFDiscriminatorMatch implements QFSpecificationPart {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <E> void processPart(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder,
-			Map<String, List<Predicate>> predicatesMap, Map<String, Path<?>> pathsMap,
-			MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver, Class<E> entityClass) {
+	public <E> void processPart(QueryInfo<E> queryInfo, Map<String, List<Predicate>> predicatesMap,
+			Map<String, Path<?>> pathsMap, MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver,
+			Class<E> entityClass) {
 
 		Expression<?> expression;
 		if (isRoot) {
-			expression = root.type();
+			expression = queryInfo.root().type();
 		} else {
-			expression = QueryUtils
-					.getObject(root, path, definition.getJoinTypes(), pathsMap, false, false, criteriaBuilder).type();
+			expression = QueryUtils.getObject(queryInfo, path, definition.getJoinTypes(), pathsMap, false, false)
+					.type();
 		}
 
 		predicatesMap.computeIfAbsent(definition.getFilterName(), t -> new ArrayList<>()).add(operation
-				.generateDiscriminatorPredicate((Expression<Class<?>>) expression, criteriaBuilder, this, mlmap));
+				.generateDiscriminatorPredicate((Expression<Class<?>>) expression, queryInfo.cb(), this, mlmap));
 
 	}
 

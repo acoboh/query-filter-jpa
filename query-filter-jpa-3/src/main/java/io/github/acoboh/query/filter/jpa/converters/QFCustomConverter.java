@@ -10,6 +10,7 @@ import org.springframework.core.ResolvableType;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.converter.GenericConverter;
 import org.springframework.data.util.Pair;
+import org.springframework.lang.NonNull;
 
 import io.github.acoboh.query.filter.jpa.annotations.QFParam;
 import io.github.acoboh.query.filter.jpa.processor.QFProcessor;
@@ -62,7 +63,7 @@ public class QFCustomConverter implements GenericConverter {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Object convert(Object source, TypeDescriptor sourceType, TypeDescriptor targetType) {
+	public Object convert(Object source, @NonNull TypeDescriptor sourceType, @NonNull TypeDescriptor targetType) {
 
 		if (source.getClass() == QFProcessor.class) {
 			return source;

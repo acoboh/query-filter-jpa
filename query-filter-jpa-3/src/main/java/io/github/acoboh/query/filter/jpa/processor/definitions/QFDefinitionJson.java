@@ -2,6 +2,7 @@ package io.github.acoboh.query.filter.jpa.processor.definitions;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,7 @@ import io.github.acoboh.query.filter.jpa.annotations.QFBlockParsing;
 import io.github.acoboh.query.filter.jpa.annotations.QFJsonElement;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFJsonException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
+import io.github.acoboh.query.filter.jpa.operations.QFOperationJsonEnum;
 import io.github.acoboh.query.filter.jpa.processor.QFAttribute;
 import jakarta.persistence.Column;
 import jakarta.persistence.criteria.JoinType;
@@ -25,6 +27,7 @@ public class QFDefinitionJson extends QFAbstractDefinition {
 	private final QFJsonElement jsonAnnotation;
 	private final List<QFAttribute> attributes;
 	private final List<JoinType> joinTypes;
+	private final Set<QFOperationJsonEnum> allowedOperations;
 
 	QFDefinitionJson(Field filterField, Class<?> filterClass, Class<?> entityClass, QFBlockParsing blockParsing,
 			QFJsonElement jsonAnnotation, Metamodel metamodel) throws QueryFilterDefinitionException {
@@ -36,8 +39,7 @@ public class QFDefinitionJson extends QFAbstractDefinition {
 			super.filterName = jsonAnnotation.name();
 		}
 
-		var fieldClassProcessor = new FieldClassProcessor(entityClass, jsonAnnotation.value(), false, null, null,
-				metamodel);
+		var fieldClassProcessor = new FieldClassProcessor(entityClass, jsonAnnotation.value(), null, null, metamodel);
 
 		this.attributes = fieldClassProcessor.getAttributes();
 
@@ -54,6 +56,8 @@ public class QFDefinitionJson extends QFAbstractDefinition {
 		} else {
 			this.joinTypes = List.of(jsonAnnotation.joinTypes());
 		}
+
+		allowedOperations = Set.of(jsonAnnotation.allowedOperations());
 
 	}
 
@@ -98,6 +102,17 @@ public class QFDefinitionJson extends QFAbstractDefinition {
 	 */
 	public List<JoinType> getJoinTypes() {
 		return joinTypes;
+	}
+
+	public boolean isOperationAllowed(QFOperationJsonEnum operation) {
+		return allowedOperations.isEmpty() || allowedOperations.contains(operation);
+	}
+
+	public Set<QFOperationJsonEnum> getRealAllowedOperations() {
+		if (allowedOperations.isEmpty()) {
+			return Set.of(QFOperationJsonEnum.values());
+		}
+		return allowedOperations;
 	}
 
 }

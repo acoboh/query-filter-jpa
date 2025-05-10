@@ -96,9 +96,10 @@ public class PostBlog {
 		PostBlog other = (PostBlog) obj;
 		return Objects.equals(author, other.author)
 				&& Double.doubleToLongBits(avgNote) == Double.doubleToLongBits(other.avgNote)
-				&& createDate.equals(other.createDate) && lastTimestamp.equals(other.lastTimestamp)
-				&& Objects.equals(instant, other.instant) && likes == other.likes && postType == other.postType
-				&& published == other.published && Objects.equals(text, other.text) && Objects.equals(uuid, other.uuid)
+				&& Objects.equals(this.createDate, other.createDate)
+				&& Objects.equals(lastTimestamp, other.getLastTimestamp()) && Objects.equals(instant, other.instant)
+				&& likes == other.likes && postType == other.postType && published == other.published
+				&& Objects.equals(text, other.text) && Objects.equals(uuid, other.uuid)
 				&& Arrays.equals(tags, other.tags);
 	}
 

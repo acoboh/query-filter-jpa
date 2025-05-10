@@ -29,6 +29,7 @@ import jakarta.servlet.http.HttpServletRequest;
 public class QFExceptionAdvisor {
 
 	private final ResourceBundleMessageSource messageSource;
+	private final boolean extendErrorMessage;
 
 	/**
 	 * Default constructor
@@ -43,6 +44,8 @@ public class QFExceptionAdvisor {
 		messageSource.setBasename(props.getMessageSourceBaseName());
 		messageSource.setDefaultEncoding(props.getMessageSourceDefaultEncoding());
 		messageSource.setUseCodeAsDefaultMessage(props.isMessageSourceUseCodeAsDefaultMessage());
+
+		extendErrorMessage = props.isExtendErrorMessage();
 	}
 
 	/**
@@ -62,7 +65,7 @@ public class QFExceptionAdvisor {
 	private ResponseEntity<Object> handleAdvisorMessageResolver(ExceptionLanguageResolver resolver, Exception ex,
 			HttpServletRequest request) {
 		String message = message(resolver.getMessageCode(), resolver.getArguments());
-		return defaultErrorMessage(ex, request, resolver.getHttpStatus(), message, false);
+		return defaultErrorMessage(ex, request, resolver.getHttpStatus(), message, extendErrorMessage);
 	}
 
 	private ResponseEntity<Object> defaultErrorMessage(Exception e, HttpServletRequest request, HttpStatus status,

@@ -10,15 +10,13 @@ import io.github.acoboh.query.filter.jpa.exceptions.QFCollectionException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFOperationNotAllowed;
 import io.github.acoboh.query.filter.jpa.operations.QFCollectionOperationEnum;
 import io.github.acoboh.query.filter.jpa.processor.QFSpecificationPart;
+import io.github.acoboh.query.filter.jpa.processor.QueryInfo;
 import io.github.acoboh.query.filter.jpa.processor.QueryUtils;
 import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionCollection;
 import io.github.acoboh.query.filter.jpa.spel.SpelResolverContext;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 
 /**
  * @author Adrián Cobo
@@ -82,13 +80,12 @@ public class QFCollectionMatch implements QFSpecificationPart {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <E> void processPart(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder,
-			Map<String, List<Predicate>> predicatesMap, Map<String, Path<?>> pathsMap,
-			MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver, Class<E> entityClass,
-			boolean isCount) {
+	public <E> void processPart(QueryInfo<E> queryInfo, Map<String, List<Predicate>> predicatesMap,
+			Map<String, Path<?>> pathsMap, MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver,
+			Class<E> entityClass) {
 
-		Path<?> expressionPath = QueryUtils.getObject(root, definition.getPaths(), definition.getJoinTypes(), pathsMap,
-				true, false, isCount, criteriaBuilder);
+		Path<?> expressionPath = QueryUtils.getObject(queryInfo, definition.getPaths(), definition.getJoinTypes(),
+				pathsMap, true, false);
 
 		Expression<? extends java.util.Collection<?>> expression;
 
@@ -99,7 +96,7 @@ public class QFCollectionMatch implements QFSpecificationPart {
 		}
 
 		predicatesMap.computeIfAbsent(definition.getFilterName(), t -> new ArrayList<>())
-				.add(operation.generateCollectionPredicate(expression, criteriaBuilder, this, mlmap));
+				.add(operation.generateCollectionPredicate(expression, queryInfo.cb(), this, mlmap));
 
 	}
 

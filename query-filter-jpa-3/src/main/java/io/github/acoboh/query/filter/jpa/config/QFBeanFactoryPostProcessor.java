@@ -11,7 +11,6 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -37,7 +36,6 @@ import org.springframework.util.ClassUtils;
 
 import io.github.acoboh.query.filter.jpa.annotations.EnableQueryFilter;
 import io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass;
-import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 import io.github.acoboh.query.filter.jpa.processor.QFProcessor;
 
 /**
@@ -167,17 +165,12 @@ public class QFBeanFactoryPostProcessor implements ApplicationContextAware, Bean
 		Set<Class<?>> classSet = getClassAnnotatedWithQFDef(packagesToAnalyze);
 
 		for (Class<?> cl : classSet) {
-			try {
-				registerQueryFilterClass(cl, beanFactory);
-			} catch (QueryFilterDefinitionException e) {
-				throw new BeanCreationException("Error creating bean query filter for class " + cl.getName(), e);
-			}
+			registerQueryFilterClass(cl, beanFactory);
 		}
 
 	}
 
-	private void registerQueryFilterClass(Class<?> cl, ConfigurableListableBeanFactory beanFactory)
-			throws QueryFilterDefinitionException {
+	private void registerQueryFilterClass(Class<?> cl, ConfigurableListableBeanFactory beanFactory) {
 
 		String beanName = cl.getName() + "queryFilterBean";
 

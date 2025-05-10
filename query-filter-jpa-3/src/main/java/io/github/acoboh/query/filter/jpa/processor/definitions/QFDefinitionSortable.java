@@ -36,8 +36,8 @@ public class QFDefinitionSortable extends QFAbstractDefinition implements IDefin
 
 		attributes = new ArrayList<>(1); // Only one path
 
-		FieldClassProcessor fieldClassProcessor = new FieldClassProcessor(entityClass, sortableAnnotation.value(), true,
-				null, null, metamodel);
+		FieldClassProcessor fieldClassProcessor = new FieldClassProcessor(entityClass, sortableAnnotation.value(), null,
+				null, metamodel);
 		attributes.add(fieldClassProcessor.getAttributes());
 
 		autoFetch = sortableAnnotation.autoFetch();

@@ -100,8 +100,7 @@ public class PredicateProcessorResolutor {
 					LOGGER.trace("Using surrounding level as final filter");
 
 					toAdd.add(res);
-					Predicate surrounding = defaultOperation.getPredicate(criteriaBuilder, toAdd);
-					res = surrounding;
+					res = defaultOperation.getPredicate(criteriaBuilder, toAdd);
 
 				}
 

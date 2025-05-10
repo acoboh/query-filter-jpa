@@ -7,11 +7,8 @@ import org.springframework.util.MultiValueMap;
 
 import io.github.acoboh.query.filter.jpa.processor.definitions.QFAbstractDefinition;
 import io.github.acoboh.query.filter.jpa.spel.SpelResolverContext;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 
 /**
  * Interface to create all parts of the final specification
@@ -23,12 +20,6 @@ public interface QFSpecificationPart {
 	 *
 	 * @param <E>
 	 *            Entity class
-	 * @param root
-	 *            Root
-	 * @param query
-	 *            Query
-	 * @param criteriaBuilder
-	 *            Criteria builder
 	 * @param predicatesMap
 	 *            Map of predicates
 	 * @param pathsMap
@@ -40,10 +31,9 @@ public interface QFSpecificationPart {
 	 * @param entityClass
 	 *            Entity class
 	 */
-	<E> void processPart(Root<E> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder,
-			Map<String, List<Predicate>> predicatesMap, Map<String, Path<?>> pathsMap,
-			MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver, Class<E> entityClass,
-			boolean isCount);
+	<E> void processPart(QueryInfo<E> queryInfo, Map<String, List<Predicate>> predicatesMap,
+			Map<String, Path<?>> pathsMap, MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver,
+			Class<E> entityClass);
 
 	/**
 	 * Get definition of the filter field

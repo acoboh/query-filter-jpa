@@ -38,8 +38,6 @@ public class QueryUtils {
 	/**
 	 * Get the object join
 	 *
-	 * @param root
-	 *            root entity
 	 * @param paths
 	 *            paths to travel
 	 * @param pathsMap
@@ -48,19 +46,18 @@ public class QueryUtils {
 	 *            if the final join is part of a collection or object
 	 * @param tryFetch
 	 *            try to use fetch instead of join
-	 * @param cb
-	 *            Criteria Builder
 	 * @return return the final path of the object
 	 */
-	@SuppressWarnings("unchecked")
-	public static Path<?> getObject(Root<?> root, List<QFAttribute> paths, List<JoinType> joinTypes,
-			Map<String, Path<?>> pathsMap, boolean isCollection, boolean tryFetch, boolean isCount,
-			CriteriaBuilder cb) {
+	@SuppressWarnings({"unchecked", "rawtypes"})
+	public static Path<?> getObject(QueryInfo<?> queryInfo, List<QFAttribute> paths, List<JoinType> joinTypes,
+			Map<String, Path<?>> pathsMap, boolean isCollection, boolean tryFetch) {
 		String fullPath = getFullPath(paths, isCollection);
 
 		if (pathsMap.containsKey(fullPath)) {
 			return pathsMap.get(fullPath);
 		}
+
+		Root<?> root = queryInfo.root();
 
 		From<?, ?> join = root;
 
@@ -72,15 +69,7 @@ public class QueryUtils {
 			LOGGER.trace("Processing path {}", path);
 			index++;
 
-			int jIndex = Math.min(index, joinTypes.size() - 1);
-			JoinType joinType;
-			if (jIndex < 0) {
-				LOGGER.trace("Join type not defined for path {}. Using default join type", path);
-				joinType = JoinType.INNER;
-			} else {
-				LOGGER.trace("Using join type {} for path {}", joinTypes.get(jIndex), path);
-				joinType = joinTypes.get(jIndex);
-			}
+			JoinType joinType = getJoinType(joinTypes, path, index);
 
 			base.append(prefix).append(path.getPathName()).append("##").append(joinType);
 			prefix = ".";
@@ -93,9 +82,9 @@ public class QueryUtils {
 
 			if (path.getTreatClass() != null) {
 				if (index == 0) {
-					root = getTreatCast(root, paths.get(0).getTreatClass(), cb);
+					root = getTreatCast(root, paths.get(0).getTreatClass(), queryInfo.cb());
 				} else {
-					join = getTreatCast(join, path.getTreatClass(), cb);
+					join = getTreatCast(join, path.getTreatClass(), queryInfo.cb());
 				}
 			}
 
@@ -104,7 +93,7 @@ public class QueryUtils {
 				return join.get((SingularAttribute) singularAttribute);
 			}
 
-			join = getNextJoin(join, att, tryFetch, isCount, joinType);
+			join = getNextJoin(join, att, tryFetch, queryInfo.isCount(), joinType);
 
 			pathsMap.put(base.toString(), join);
 
@@ -115,6 +104,20 @@ public class QueryUtils {
 
 	}
 
+	private static JoinType getJoinType(List<JoinType> joinTypes, QFAttribute path, int index) {
+		int jIndex = Math.min(index, joinTypes.size() - 1);
+		JoinType joinType;
+		if (jIndex < 0) {
+			LOGGER.trace("Join type not defined for path {}. Using default join type", path);
+			joinType = JoinType.INNER;
+		} else {
+			LOGGER.trace("Using join type {} for path {}", joinTypes.get(jIndex), path);
+			joinType = joinTypes.get(jIndex);
+		}
+		return joinType;
+	}
+
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	private static From<?, ?> getNextJoin(From<?, ?> join, Attribute<?, ?> att, boolean tryFetch, boolean isCount,
 			JoinType joinType) {
 		if (tryFetch && !isCount) {
@@ -140,16 +143,12 @@ public class QueryUtils {
 	 *
 	 * @param sortDefinitionList
 	 *            list of sort definitions
-	 * @param cb
-	 *            criteria builder
-	 * @param root
-	 *            root entity
 	 * @param pathsMap
 	 *            older paths
 	 * @return the final order list
 	 */
-	public static List<Order> parseOrders(List<Pair<IDefinitionSortable, Direction>> sortDefinitionList,
-			CriteriaBuilder cb, Root<?> root, Map<String, Path<?>> pathsMap, boolean isCount) {
+	public static List<Order> parseOrders(QueryInfo<?> queryInfo,
+			List<Pair<IDefinitionSortable, Direction>> sortDefinitionList, Map<String, Path<?>> pathsMap) {
 		ArrayList<Order> orderList = new ArrayList<>();
 
 		for (Pair<IDefinitionSortable, Direction> pair : sortDefinitionList) {
@@ -158,9 +157,9 @@ public class QueryUtils {
 			for (var paths : pair.getFirst().getPaths()) {
 				boolean autoFetch = pair.getFirst().isAutoFetch(index);
 				LOGGER.trace("Autofetch is enabled on sort");
-				Path<?> path = getObject(root, paths, pair.getFirst().getJoinTypes(index), pathsMap, false, autoFetch,
-						isCount, cb);
-				Order order = pair.getSecond() == Direction.ASC ? cb.asc(path) : cb.desc(path);
+				Path<?> path = getObject(queryInfo, paths, pair.getFirst().getJoinTypes(index), pathsMap, false,
+						autoFetch);
+				Order order = pair.getSecond() == Direction.ASC ? queryInfo.cb().asc(path) : queryInfo.cb().desc(path);
 				orderList.add(order);
 				index++;
 			}

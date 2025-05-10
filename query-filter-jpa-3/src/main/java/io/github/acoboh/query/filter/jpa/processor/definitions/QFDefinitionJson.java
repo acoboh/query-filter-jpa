@@ -39,8 +39,7 @@ public class QFDefinitionJson extends QFAbstractDefinition {
 			super.filterName = jsonAnnotation.name();
 		}
 
-		var fieldClassProcessor = new FieldClassProcessor(entityClass, jsonAnnotation.value(), false, null, null,
-				metamodel);
+		var fieldClassProcessor = new FieldClassProcessor(entityClass, jsonAnnotation.value(), null, null, metamodel);
 
 		this.attributes = fieldClassProcessor.getAttributes();
 

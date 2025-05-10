@@ -47,7 +47,7 @@ class PredicateLevel {
 
 		if (parts.size() == 1) {
 			LOGGER.debug("Parts has size 1, must be simplified");
-			levelParts.add(parts.get(0).getPart());
+			levelParts.add(parts.get(0).part());
 
 			return;
 		}
@@ -58,10 +58,10 @@ class PredicateLevel {
 			LOGGER.trace("Parsing parts {}", part);
 
 			if (i % 2 == 1) {
-				LOGGER.trace("Parsing part as operator {}", part.getPart());
-				PredicateOperation operator = PredicateOperation.getOperator(part.getPart());
+				LOGGER.trace("Parsing part as operator {}", part.part());
+				PredicateOperation operator = PredicateOperation.getOperator(part.part());
 				if (operator == null) {
-					LOGGER.error("Unexpected part {}. Must be an operator", part.getPart());
+					LOGGER.error("Unexpected part {}. Must be an operator", part.part());
 					throw new IllegalStateException("Unexpected part. Must be an operator");
 				}
 
@@ -74,10 +74,10 @@ class PredicateLevel {
 					throw new IllegalStateException("Mixed operators on same level");
 				}
 			} else {
-				if (part.isNested()) {
+				if (part.nested()) {
 					LOGGER.trace("Parsing nested level as new predicate");
 
-					PredicateLevel nestedLevel = new PredicateLevel(part.getPart(), fullMap);
+					PredicateLevel nestedLevel = new PredicateLevel(part.part(), fullMap);
 					switch (nestedLevel.parts.size()) {
 						case 0 :
 							LOGGER.trace("Nested level is empty. Ignore them");
@@ -97,12 +97,12 @@ class PredicateLevel {
 
 				} else {
 
-					if (!fullMap.containsKey(part.getPart())) {
-						LOGGER.error("Error missing part {} on definition map", part.getPart());
+					if (!fullMap.containsKey(part.part())) {
+						LOGGER.error("Error missing part {} on definition map", part.part());
 						throw new IllegalStateException("Missing part on definition map");
 					}
 
-					levelParts.add(part.getPart());
+					levelParts.add(part.part());
 
 				}
 			}

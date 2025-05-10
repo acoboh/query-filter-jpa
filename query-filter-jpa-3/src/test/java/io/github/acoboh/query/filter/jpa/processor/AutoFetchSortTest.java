@@ -341,7 +341,7 @@ class AutoFetchSortTest {
 		assertThat(page0).hasSize(1).containsExactly(POST_EXAMPLE_2);
 		assertThat(page0.getTotalElements()).isEqualTo(2);
 		assertThat(page0.getTotalPages()).isEqualTo(2);
-		assertThat(page0.getNumber()).isEqualTo(0);
+		assertThat(page0.getNumber()).isZero();
 		assertThat(page0.getSize()).isEqualTo(1);
 
 		var page1 = repository.findAll(qf, PageRequest.of(1, 1));

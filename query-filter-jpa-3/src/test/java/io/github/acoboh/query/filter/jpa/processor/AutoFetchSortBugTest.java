@@ -30,7 +30,7 @@ import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class AutoFetchSortBugTest {
+class AutoFetchSortBugTest {
 
 	private static final PostBlog POST_BLOG = new PostBlog();
 	private static final Comments COMMENT = new Comments();

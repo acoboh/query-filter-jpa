@@ -27,7 +27,7 @@ import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class OperationAllowedTests {
+class OperationAllowedTests {
 
 	private static final Set<QFOperationEnum> ALLOWED_OPERATIONS = Set.of(QFOperationEnum.EQUAL,
 			QFOperationEnum.STARTS_WITH, QFOperationEnum.ENDS_WITH, QFOperationEnum.LIKE);
@@ -60,8 +60,9 @@ public class OperationAllowedTests {
 
 		for (QFOperationEnum op : QFOperationEnum.values()) {
 			if (!ALLOWED_OPERATIONS.contains(op)) {
+				String filter = "author=" + op.getValue() + ":a";
 				QFOperationNotAllowed ex = assertThrows(QFOperationNotAllowed.class,
-						() -> qfProcessor.newQueryFilter("author=" + op.getValue() + ":a", QFParamType.RHS_COLON));
+						() -> qfProcessor.newQueryFilter(filter, QFParamType.RHS_COLON));
 				assertThat(ex).isNotNull();
 				assertThat(ex.getMessage()).isNotNull();
 				assertThat(ex.getMessage())

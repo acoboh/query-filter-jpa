@@ -51,18 +51,10 @@ class CollectionTests {
 		POST_EXAMPLE.setText("Text");
 		POST_EXAMPLE.setAvgNote(2.5d);
 		POST_EXAMPLE.setLikes(1);
-		POST_EXAMPLE.setCreateDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)); // Truncated to avoid rounding
-																						// issues with Java > 8 and BBDD
-		POST_EXAMPLE.setLastTimestamp(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS))); // Truncated
-																												// to
-																												// avoid
-																												// rounding
-																												// issues
-																												// with
-																												// Java
-																												// > 8
-																												// and
-																												// BBDD
+
+		// Truncated to avoid rounding issues with Java > 8 and BBDD
+		POST_EXAMPLE.setCreateDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));
+		POST_EXAMPLE.setLastTimestamp(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)));
 		POST_EXAMPLE.setPublished(true);
 		POST_EXAMPLE.setPostType(PostBlog.PostType.TEXT);
 
@@ -84,19 +76,10 @@ class CollectionTests {
 		POST_EXAMPLE_2.setText("Text 2");
 		POST_EXAMPLE_2.setAvgNote(0.5d);
 		POST_EXAMPLE_2.setLikes(2);
-		POST_EXAMPLE_2.setCreateDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)); // Truncated to avoid rounding
-																							// issues with Java > 8 and
-																							// BBDD
-		POST_EXAMPLE_2.setLastTimestamp(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS))); // Truncated
-																												// to
-																												// avoid
-																												// rounding
-																												// issues
-																												// with
-																												// Java
-																												// > 8
-																												// and
-																												// BBDD
+
+		// Truncated to avoid rounding issues with Java > 8 and BBDD
+		POST_EXAMPLE_2.setCreateDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));
+		POST_EXAMPLE_2.setLastTimestamp(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)));
 		POST_EXAMPLE_2.setPublished(false);
 		POST_EXAMPLE_2.setPostType(PostBlog.PostType.VIDEO);
 
@@ -160,10 +143,31 @@ class CollectionTests {
 		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("", QFParamType.RHS_COLON);
 		qf.addNewField("commentsSize", QFCollectionOperationEnum.GREATER_THAN, 1);
 
+		var actualV = qf.getActualCollectionValue("commentsSize");
+		assertThat(actualV).isNotNull().isEqualTo(1);
+
+		var pairActual = qf.getFirstActualCollectionOperation("commentsSize");
+		assertThat(pairActual).isNotNull();
+		assertThat(pairActual.getFirst()).isEqualTo(QFCollectionOperationEnum.GREATER_THAN);
+		assertThat(pairActual.getSecond()).isEqualTo(1);
+
+		var listActual = qf.getActualCollectionOperation("commentsSize");
+		assertThat(listActual).isNotNull().hasSize(1);
+		assertThat(listActual.get(0).getFirst()).isEqualTo(QFCollectionOperationEnum.GREATER_THAN);
+		assertThat(listActual.get(0).getSecond()).isEqualTo(1);
+
+		var allData = qf.getAllFieldValues();
+		assertThat(allData).isNotNull().hasSize(1);
+		var data = allData.get(0);
+		assertThat(data.name()).isEqualTo("commentsSize");
+		assertThat(data.values()).containsExactly("1");
+		assertThat(data.operation()).isEqualTo(QFCollectionOperationEnum.GREATER_THAN.getOperation());
+
 		List<PostBlog> list = repository.findAll(qf);
 		assertThat(list).hasSize(1).containsExactly(POST_EXAMPLE_2);
 
 		qf.deleteField("commentsSize");
+		assertThat(qf.isFiltering("commentsSize")).isFalse();
 		list = repository.findAll(qf);
 		assertThat(list).hasSize(2).containsExactlyInAnyOrder(POST_EXAMPLE, POST_EXAMPLE_2);
 

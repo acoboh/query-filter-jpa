@@ -24,6 +24,7 @@ import io.github.acoboh.query.filter.jpa.exceptions.QFDiscriminatorNotFoundExcep
 import io.github.acoboh.query.filter.jpa.model.discriminators.Announcement;
 import io.github.acoboh.query.filter.jpa.model.discriminators.Post;
 import io.github.acoboh.query.filter.jpa.model.discriminators.Topic;
+import io.github.acoboh.query.filter.jpa.operations.QFOperationDiscriminatorEnum;
 import io.github.acoboh.query.filter.jpa.repositories.PostDiscriminatorRepository;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
 
@@ -157,6 +158,53 @@ class DiscriminatorTest {
 
 		List<Topic> list = repository.findAll(qf);
 		assertThat(list).isEmpty();
+
+	}
+
+	@Test
+	@DisplayName("7. Manual discriminator")
+	@Order(7)
+	void testManualDiscriminator() {
+
+		QueryFilter<Topic> qf = queryFilterProcessor.newQueryFilter(null, QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
+		assertThat(qf.getInitialInput()).isEmpty();
+
+		qf.addNewField("type", QFOperationDiscriminatorEnum.EQUAL, List.of("POST"));
+		assertThat(qf.getInitialInput()).isEmpty();
+
+		assertThat(qf.isFiltering("type")).isTrue();
+
+		List<String> actualV = qf.getActualValue("type");
+		assertThat(actualV).hasSize(1).containsExactly("POST");
+
+		var pair = qf.getFirstActualDiscriminatorOperation("type");
+		assertThat(pair).isNotNull();
+		assertThat(pair.getFirst()).isEqualTo(QFOperationDiscriminatorEnum.EQUAL);
+		assertThat(pair.getSecond()).containsExactly("POST");
+
+		var listActual = qf.getActualDiscriminatorOperation("type");
+		assertThat(listActual).isNotNull().hasSize(1);
+		var pair2 = listActual.get(0);
+		assertThat(pair2.getFirst()).isEqualTo(QFOperationDiscriminatorEnum.EQUAL);
+		assertThat(pair2.getSecond()).containsExactly("POST");
+
+		var fullList = qf.getAllFieldValues();
+		assertThat(fullList).isNotNull().hasSize(1);
+		var entry = fullList.get(0);
+		assertThat(entry.name()).isEqualTo("type");
+		assertThat(entry.values()).containsExactly("POST");
+		assertThat(entry.operation()).isEqualTo(QFOperationDiscriminatorEnum.EQUAL.getOperation());
+
+		List<Topic> list = repository.findAll(qf);
+		assertThat(list).hasSize(1).containsExactly(POST_EXAMPLE);
+
+		qf.deleteField("type");
+		assertThat(qf.isFiltering("type")).isFalse();
+		assertThat(qf.getActualValue("type")).isNull();
+
+		list = repository.findAll(qf);
+		assertThat(list).hasSize(2).containsExactlyInAnyOrder(POST_EXAMPLE, ANN_EXAMPLE);
 
 	}
 

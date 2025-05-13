@@ -42,4 +42,18 @@ public interface QFSpecificationPart {
 	 */
 	QFAbstractDefinition getDefinition();
 
+	/**
+	 * Get the field operation as string
+	 * 
+	 * @return operation as string
+	 */
+	String getOperationAsString();
+
+	/**
+	 * Get original values as string
+	 *
+	 * @return original values
+	 */
+	List<String> getOriginalValuesAsString();
+
 }

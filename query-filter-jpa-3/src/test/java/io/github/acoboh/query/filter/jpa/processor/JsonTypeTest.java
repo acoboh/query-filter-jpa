@@ -19,6 +19,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import io.github.acoboh.query.filter.jpa.domain.JsonFilterDef;
 import io.github.acoboh.query.filter.jpa.model.jsondata.ModelJson;
+import io.github.acoboh.query.filter.jpa.operations.QFOperationJsonEnum;
 import io.github.acoboh.query.filter.jpa.repositories.ModelJsonRepository;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
 
@@ -85,6 +86,26 @@ class JsonTypeTest {
 		QueryFilter<ModelJson> qf = queryFilterProcessor.newQueryFilter("jsonb=eq:{'bkey1':'value1'}",
 				QFParamType.RHS_COLON);
 		assertThat(qf).isNotNull();
+
+		var actual = qf.getActualJsonValue("jsonb");
+		assertThat(actual).isNotNull().hasSize(1).containsEntry("bkey1", "value1");
+
+		var pair = qf.getFirstActualJsonOperation("jsonb");
+		assertThat(pair).isNotNull();
+		assertThat(pair.getFirst()).isEqualTo(QFOperationJsonEnum.EQUAL);
+		assertThat(pair.getSecond()).hasSize(1).containsEntry("bkey1", "value1");
+
+		var listA = qf.getActualJsonOperation("jsonb");
+		assertThat(listA).isNotNull().hasSize(1);
+		assertThat(listA.get(0).getFirst()).isEqualTo(QFOperationJsonEnum.EQUAL);
+		assertThat(listA.get(0).getSecond()).hasSize(1).containsEntry("bkey1", "value1");
+
+		var allData = qf.getAllFieldValues();
+		assertThat(allData).isNotNull().hasSize(1);
+		var data = allData.get(0);
+		assertThat(data.name()).isEqualTo("jsonb");
+		assertThat(data.values()).containsExactly("{'bkey1':'value1'}");
+		assertThat(data.operation()).isEqualTo(QFOperationJsonEnum.EQUAL.getOperation());
 
 		List<ModelJson> list = repository.findAll(qf);
 		assertThat(list).hasSize(2).containsExactlyInAnyOrder(MODEL1, MODEL2);

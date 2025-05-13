@@ -45,6 +45,7 @@ public class QFJsonElementMatch implements QFSpecificationPart {
 	}
 
 	private final QFDefinitionJson definition;
+	private final String originalValue;
 
 	private final Map<String, String> mapValues;
 
@@ -70,6 +71,7 @@ public class QFJsonElementMatch implements QFSpecificationPart {
 		}
 
 		this.definition = definition;
+		this.originalValue = value;
 		this.operation = operation;
 
 		JsonNode valueNode;
@@ -84,23 +86,6 @@ public class QFJsonElementMatch implements QFSpecificationPart {
 		mapValues = new HashMap<>();
 		addKeys("", valueNode, mapValues, new ArrayList<>());
 
-	}
-
-	/**
-	 * Secondary constructor to bypass the JSON parsing options
-	 *
-	 * @param value
-	 *            map of values
-	 * @param operation
-	 *            operation
-	 * @param definition
-	 *            definition on json field
-	 */
-	public QFJsonElementMatch(Map<String, String> value, QFOperationJsonEnum operation, QFDefinitionJson definition) {
-		this.definition = definition;
-		this.operation = operation;
-
-		this.mapValues = value;
 	}
 
 	private static void addKeys(String currentPath, JsonNode jsonNode, Map<String, String> map, List<Integer> suffix) {
@@ -147,6 +132,21 @@ public class QFJsonElementMatch implements QFSpecificationPart {
 	 */
 	public QFDefinitionJson getDefinition() {
 		return definition;
+	}
+
+	@Override
+	public List<String> getOriginalValuesAsString() {
+		return List.of(originalValue);
+	}
+
+	/**
+	 * Get operation as string
+	 *
+	 * @return operation as string
+	 */
+	@Override
+	public String getOperationAsString() {
+		return operation.getOperation();
 	}
 
 	/**

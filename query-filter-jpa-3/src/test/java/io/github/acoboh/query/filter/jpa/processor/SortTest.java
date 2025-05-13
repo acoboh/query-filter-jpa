@@ -46,18 +46,11 @@ class SortTest {
 		POST_EXAMPLE.setText("Text");
 		POST_EXAMPLE.setAvgNote(2.5d);
 		POST_EXAMPLE.setLikes(0);
-		POST_EXAMPLE.setCreateDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)); // Truncated to avoid rounding
-																						// issues with Java > 8 and BBDD
-		POST_EXAMPLE.setLastTimestamp(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS))); // Truncated
-																												// to
-																												// avoid
-																												// rounding
-																												// issues
-																												// with
-																												// Java
-																												// > 8
-																												// and
-																												// BBDD
+
+		// Truncated to avoid rounding issues with Java > 8 and BBDD
+		POST_EXAMPLE.setCreateDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));
+		POST_EXAMPLE.setLastTimestamp(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)));
+
 		POST_EXAMPLE.setPublished(true);
 		POST_EXAMPLE.setPostType(PostBlog.PostType.TEXT);
 
@@ -66,19 +59,10 @@ class SortTest {
 		POST_EXAMPLE_2.setText("Text 2");
 		POST_EXAMPLE_2.setAvgNote(0.5d);
 		POST_EXAMPLE_2.setLikes(100);
-		POST_EXAMPLE_2.setCreateDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)); // Truncated to avoid rounding
-																							// issues with Java > 8 and
-																							// BBDD
-		POST_EXAMPLE_2.setLastTimestamp(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS))); // Truncated
-																												// to
-																												// avoid
-																												// rounding
-																												// issues
-																												// with
-																												// Java
-																												// > 8
-																												// and
-																												// BBDD
+
+		// Truncated to avoid rounding issues with Java > 8 and BBDD
+		POST_EXAMPLE_2.setCreateDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));
+		POST_EXAMPLE_2.setLastTimestamp(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)));
 		POST_EXAMPLE_2.setPublished(false);
 		POST_EXAMPLE_2.setPostType(PostBlog.PostType.VIDEO);
 	}
@@ -150,6 +134,16 @@ class SortTest {
 		var found = repository.findAll(qf);
 
 		assertThat(found).hasSize(2).containsExactlyInAnyOrder(POST_EXAMPLE, POST_EXAMPLE_2);
+
+		qf.setDefaultSortEnabled();
+		assertThat(qf.isSorted()).isTrue();
+		assertThat(qf.getSortFields()).containsExactly(Pair.of("author", Direction.ASC));
+		assertThat(qf.getSortFieldWithFullPath()).containsExactly(Pair.of("author", Direction.ASC));
+		assertThat(qf.isSortedBy("author")).isTrue();
+		assertThat(qf.isSortedBy("likes")).isFalse();
+
+		found = repository.findAll(qf);
+		assertThat(found).hasSize(2).containsExactly(POST_EXAMPLE, POST_EXAMPLE_2);
 
 	}
 

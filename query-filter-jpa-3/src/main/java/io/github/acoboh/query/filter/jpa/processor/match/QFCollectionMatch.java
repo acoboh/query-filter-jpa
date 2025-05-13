@@ -52,6 +52,26 @@ public class QFCollectionMatch implements QFSpecificationPart {
 	}
 
 	/**
+	 * Get original values as string
+	 *
+	 * @return original values
+	 */
+	@Override
+	public List<String> getOriginalValuesAsString() {
+		return List.of(String.valueOf(value));
+	}
+
+	/**
+	 * Get operation as string
+	 *
+	 * @return operation as string
+	 */
+	@Override
+	public String getOperationAsString() {
+		return operation.getOperation();
+	}
+
+	/**
 	 * Get collection operation
 	 *
 	 * @return collection operation

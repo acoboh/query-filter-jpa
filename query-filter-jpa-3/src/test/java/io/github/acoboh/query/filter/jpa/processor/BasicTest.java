@@ -119,6 +119,28 @@ class BasicTest {
 		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("author=like:auth", QFParamType.RHS_COLON);
 		assertThat(qf).isNotNull();
 
+		assertThat(qf.getInitialInput()).isEqualTo("author=like:auth");
+
+		assertThat(qf.isFiltering("author")).isTrue();
+		assertThat(qf.getActualValue("author")).containsExactly("auth");
+		var pairOp = qf.getFirstActualElementOperation("author");
+		assertThat(pairOp).isNotNull();
+		assertThat(pairOp.getFirst()).isEqualTo(QFOperationEnum.LIKE);
+		assertThat(pairOp.getSecond()).containsExactly("auth");
+
+		var fieldFields = qf.getActualElementOperation("author");
+		assertThat(fieldFields).hasSize(1);
+		var fieldField = fieldFields.get(0);
+		assertThat(fieldField.getFirst()).isEqualTo(QFOperationEnum.LIKE);
+		assertThat(fieldField.getSecond()).containsExactly("auth");
+
+		var allFields = qf.getAllFieldValues();
+		assertThat(allFields).hasSize(1);
+		var firstField = allFields.get(0);
+		assertThat(firstField.name()).isEqualTo("author");
+		assertThat(firstField.operation()).isEqualTo(QFOperationEnum.LIKE.getValue());
+		assertThat(firstField.values()).containsExactly("auth");
+
 		List<PostBlog> list = repository.findAll(qf);
 		assertThat(list).hasSize(1);
 

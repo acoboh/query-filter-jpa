@@ -186,8 +186,24 @@ public class QFElementMatch implements QFSpecificationPart {
 		return true;
 	}
 
+	/**
+	 * Get the original values as string
+	 * 
+	 * @return original values as string
+	 */
+	@Override
 	public List<String> getOriginalValuesAsString() {
 		return originalValues;
+	}
+
+	/**
+	 * Get the operation as string
+	 *
+	 * @return operation as string
+	 */
+	@Override
+	public String getOperationAsString() {
+		return operation.getValue();
 	}
 
 	/**
@@ -197,15 +213,6 @@ public class QFElementMatch implements QFSpecificationPart {
 	 */
 	public QFDefinitionElement getDefinition() {
 		return definition;
-	}
-
-	/**
-	 * List of original matching values
-	 *
-	 * @return original matching values
-	 */
-	public List<String> getOriginalValues() {
-		return originalValues;
 	}
 
 	/**

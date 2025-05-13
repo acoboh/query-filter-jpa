@@ -705,7 +705,7 @@ public class QueryFilter<E> implements Specification<E> {
 		if (qfSpec == null) {
 			return null;
 		} else if (qfSpec instanceof QFElementMatch qfEMatch) {
-			return qfEMatch.getOriginalValues();
+			return qfEMatch.getOriginalValuesAsString();
 		} else if (qfSpec instanceof QFDiscriminatorMatch qfDMatch) {
 			return qfDMatch.getValues();
 		}
@@ -783,7 +783,7 @@ public class QueryFilter<E> implements Specification<E> {
 	 * @throws QFFieldNotSupported
 	 *             if the field is not QFElement
 	 */
-	public @Nullable Pair<QFOperationEnum, List<String>> getFirstActualOperation(String field) {
+	public @Nullable Pair<QFOperationEnum, List<String>> getFirstActualElementOperation(String field) {
 		var def = getSafeFieldDefinition(field);
 
 		QFSpecificationPart qfSpec = specificationsWarp.getAllParts().stream()
@@ -792,13 +792,22 @@ public class QueryFilter<E> implements Specification<E> {
 		if (qfSpec == null) {
 			return null;
 		} else if (qfSpec instanceof QFElementMatch qfEMatch) {
-			return Pair.of(qfEMatch.getOperation(), qfEMatch.getOriginalValues());
+			return Pair.of(qfEMatch.getOperation(), qfEMatch.getOriginalValuesAsString());
 		}
 
 		throw new QFFieldNotSupported("Field is not type QFElement. The method can not be used", field);
 
 	}
 
+	/**
+	 * Get the actual operation of the field
+	 *
+	 * @param field
+	 *            field to check
+	 * @return operation and values of the field
+	 * @throws QFFieldNotFoundException
+	 *             if the field is not present
+	 */
 	public Pair<QFOperationJsonEnum, Map<String, String>> getFirstActualJsonOperation(String field) {
 		var def = getSafeFieldDefinition(field);
 
@@ -862,13 +871,14 @@ public class QueryFilter<E> implements Specification<E> {
 	 * @throws QFFieldNotFoundException
 	 *             if the field is not present
 	 */
-	public List<Pair<QFOperationEnum, List<String>>> getActualOperation(String field) {
+	public List<Pair<QFOperationEnum, List<String>>> getActualElementOperation(String field) {
 		var def = getSafeFieldDefinition(field);
 
 		return specificationsWarp.getAllParts().stream()
 				.filter(e -> e.getDefinition().getFilterName().equals(def.getFilterName())
 						&& e instanceof QFElementMatch)
-				.map(QFElementMatch.class::cast).map(e -> Pair.of(e.getOperation(), e.getOriginalValues())).toList();
+				.map(QFElementMatch.class::cast).map(e -> Pair.of(e.getOperation(), e.getOriginalValuesAsString()))
+				.toList();
 	}
 
 	/**
@@ -930,9 +940,9 @@ public class QueryFilter<E> implements Specification<E> {
 	 *
 	 * @return list of field values
 	 */
-	public List<Pair<String, List<String>>> getAllFieldValues() {
-		return specificationsWarp.getAllParts().stream()
-				.map(e -> Pair.of(e.getDefinition().getFilterName(), e.getOriginalValuesAsString())).toList();
+	public List<QFFieldInfo> getAllFieldValues() {
+		return specificationsWarp.getAllParts().stream().map(e -> new QFFieldInfo(e.getDefinition().getFilterName(),
+				e.getOperationAsString(), e.getOriginalValuesAsString())).toList();
 	}
 
 	/**

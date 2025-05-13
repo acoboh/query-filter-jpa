@@ -103,6 +103,16 @@ public class QFDiscriminatorMatch implements QFSpecificationPart {
 	}
 
 	/**
+	 * Get operation as string
+	 *
+	 * @return operation as string
+	 */
+	@Override
+	public String getOperationAsString() {
+		return operation.getOperation();
+	}
+
+	/**
 	 * Get matching classes
 	 *
 	 * @return matching classes

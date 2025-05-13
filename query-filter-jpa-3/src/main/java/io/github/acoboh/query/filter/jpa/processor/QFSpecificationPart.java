@@ -42,4 +42,6 @@ public interface QFSpecificationPart {
 	 */
 	QFAbstractDefinition getDefinition();
 
+	List<String> getOriginalValuesAsString();
+
 }

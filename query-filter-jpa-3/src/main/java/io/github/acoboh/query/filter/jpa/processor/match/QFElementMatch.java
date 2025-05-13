@@ -186,6 +186,10 @@ public class QFElementMatch implements QFSpecificationPart {
 		return true;
 	}
 
+	public List<String> getOriginalValuesAsString() {
+		return originalValues;
+	}
+
 	/**
 	 * Get field definition
 	 *

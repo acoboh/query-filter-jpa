@@ -28,6 +28,7 @@ import io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass;
 import io.github.acoboh.query.filter.jpa.exceptions.QFBlockException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFDiscriminatorNotFoundException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException;
+import io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotSupported;
 import io.github.acoboh.query.filter.jpa.exceptions.QFJsonParseException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFMultipleSortException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFNotSortableException;
@@ -82,7 +83,7 @@ public class QueryFilter<E> implements Specification<E> {
 
 	private final String initialInput;
 
-	private final QFSpecificationsWarp specificationsWarp;
+	private final transient QFSpecificationsWarp specificationsWarp;
 
 	private final transient @Nullable Map<String, PredicateProcessorResolutor> predicateMap;
 
@@ -159,32 +160,11 @@ public class QueryFilter<E> implements Specification<E> {
 		isConstructor = false;
 	}
 
-	/**
-	 * Get the entity class
-	 *
-	 * @return entity model class
-	 */
-	public Class<E> getEntityClass() {
-		return entityClass;
-	}
-
-	/**
-	 * Get the predicate definition class
-	 *
-	 * @return predicate definition class
-	 */
-	public Class<?> getPredicateClass() {
-		return predicateClass;
-	}
-
 	private void parseValuePart(String field, String op, String value)
 			throws QFParseException, QFFieldNotFoundException, QFOperationNotFoundException,
 			QFDiscriminatorNotFoundException, QFBlockException, QFJsonParseException, QFNotValuable {
 
-		QFAbstractDefinition def = definitionMap.get(field);
-		if (def == null) {
-			throw new QFFieldNotFoundException(field);
-		}
+		QFAbstractDefinition def = getSafeFieldDefinition(field);
 
 		if (def.isConstructorBlocked() && isConstructor) {
 			throw new QFBlockException(field);
@@ -223,10 +203,7 @@ public class QueryFilter<E> implements Specification<E> {
 			String order = matcher.group(1);
 			String fieldName = matcher.group(2);
 
-			QFAbstractDefinition def = definitionMap.get(fieldName);
-			if (def == null) {
-				throw new QFFieldNotFoundException(fieldName);
-			}
+			QFAbstractDefinition def = getSafeFieldDefinition(fieldName);
 
 			if (!(def instanceof IDefinitionSortable idef) || !idef.isSortable()) {
 				throw new QFNotSortableException(fieldName);
@@ -255,6 +232,15 @@ public class QueryFilter<E> implements Specification<E> {
 
 	}
 
+	@NonNull
+	private QFAbstractDefinition getSafeFieldDefinition(String fieldName) {
+		QFAbstractDefinition def = definitionMap.get(fieldName);
+		if (def == null) {
+			throw new QFFieldNotFoundException(fieldName);
+		}
+		return def;
+	}
+
 	/**
 	 * Get the input used on the constructor
 	 *
@@ -262,6 +248,24 @@ public class QueryFilter<E> implements Specification<E> {
 	 */
 	public String getInitialInput() {
 		return initialInput;
+	}
+
+	/**
+	 * Get the entity class
+	 *
+	 * @return entity model class
+	 */
+	public Class<E> getEntityClass() {
+		return entityClass;
+	}
+
+	/**
+	 * Get the predicate definition class
+	 *
+	 * @return predicate definition class
+	 */
+	public Class<?> getPredicateClass() {
+		return predicateClass;
 	}
 
 	/**
@@ -284,10 +288,7 @@ public class QueryFilter<E> implements Specification<E> {
 		Assert.notNull(operation, OPERATION_NOT_NULL_MESSAGE);
 		Assert.notNull(values, VALUES_NOT_NULL_MESSAGE);
 
-		QFAbstractDefinition def = definitionMap.get(field);
-		if (def == null) {
-			throw new QFFieldNotFoundException(field);
-		}
+		QFAbstractDefinition def = getSafeFieldDefinition(field);
 
 		if (!(def instanceof QFDefinitionElement)) {
 			throw new QFNotValuable(field);
@@ -317,10 +318,7 @@ public class QueryFilter<E> implements Specification<E> {
 		Assert.notNull(operation, OPERATION_NOT_NULL_MESSAGE);
 		Assert.notNull(classes, VALUES_NOT_NULL_MESSAGE);
 
-		QFAbstractDefinition def = definitionMap.get(field);
-		if (def == null) {
-			throw new QFFieldNotFoundException(field);
-		}
+		QFAbstractDefinition def = getSafeFieldDefinition(field);
 
 		if (!(def instanceof QFDefinitionDiscriminator)) {
 			throw new QFNotValuable(field);
@@ -345,10 +343,7 @@ public class QueryFilter<E> implements Specification<E> {
 		Assert.notNull(operation, OPERATION_NOT_NULL_MESSAGE);
 		Assert.notNull(value, VALUES_NOT_NULL_MESSAGE);
 
-		QFAbstractDefinition def = definitionMap.get(field);
-		if (def == null) {
-			throw new QFFieldNotFoundException(field);
-		}
+		QFAbstractDefinition def = getSafeFieldDefinition(field);
 
 		if (!(def instanceof QFDefinitionJson)) {
 			throw new QFNotValuable(field);
@@ -374,10 +369,7 @@ public class QueryFilter<E> implements Specification<E> {
 		Assert.notNull(field, FIELD_NOT_NULL_MESSAGE);
 		Assert.notNull(operation, OPERATION_NOT_NULL_MESSAGE);
 
-		QFAbstractDefinition def = definitionMap.get(field);
-		if (def == null) {
-			throw new QFFieldNotFoundException(field);
-		}
+		QFAbstractDefinition def = getSafeFieldDefinition(field);
 
 		if (!(def instanceof QFDefinitionCollection)) {
 			throw new QFNotValuable(field);
@@ -428,10 +420,7 @@ public class QueryFilter<E> implements Specification<E> {
 	public void addSortBy(String field, Direction direction)
 			throws QFFieldNotFoundException, QFNotSortableException, QFMultipleSortException {
 
-		QFAbstractDefinition def = definitionMap.get(field);
-		if (def == null) {
-			throw new QFFieldNotFoundException(field);
-		}
+		QFAbstractDefinition def = getSafeFieldDefinition(field);
 
 		if (!(def instanceof IDefinitionSortable idef) || !idef.isSortable()) {
 			throw new QFNotSortableException(field);
@@ -448,10 +437,39 @@ public class QueryFilter<E> implements Specification<E> {
 	}
 
 	/**
+	 * Remove the sort configuration for the field
+	 *
+	 * @param field
+	 *            Field name of sorting
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFNotSortableException
+	 *             not sortable
+	 */
+	public void deleteSortBy(String field) {
+		var def = getSafeFieldDefinition(field);
+
+		if (!(def instanceof IDefinitionSortable)) {
+			throw new QFNotSortableException(field);
+		}
+
+		var sortList = defaultSortEnabled ? defaultSorting : sortDefinitionList;
+		sortList.removeIf(e -> e.getFirst().getFilterName().equals(def.getFilterName()));
+	}
+
+	/**
 	 * Remove the actual sort configuration
 	 */
 	public void clearSort() {
 		this.defaultSortEnabled = false;
+		this.sortDefinitionList.clear();
+	}
+
+	/**
+	 * Set the default sort configuration
+	 * <p>
+	 * This will remove any custom sort configuration
+	 */
+	public void setDefaultSortEnabled() {
+		this.defaultSortEnabled = true;
 		this.sortDefinitionList.clear();
 	}
 
@@ -502,7 +520,7 @@ public class QueryFilter<E> implements Specification<E> {
 	 *
 	 * @param field
 	 *            field to check
-	 * @return true if is actually sorting, false otherwise
+	 * @return true if it is actually sorting, false otherwise
 	 */
 	public boolean isSortedBy(String field) {
 		var sortList = defaultSortEnabled ? defaultSorting : sortDefinitionList;
@@ -556,10 +574,7 @@ public class QueryFilter<E> implements Specification<E> {
 		Assert.notNull(operation, OPERATION_NOT_NULL_MESSAGE);
 		Assert.notNull(value, VALUES_NOT_NULL_MESSAGE);
 
-		QFAbstractDefinition def = definitionMap.get(field);
-		if (def == null) {
-			throw new QFFieldNotFoundException(field);
-		}
+		QFAbstractDefinition def = getSafeFieldDefinition(field);
 
 		if (!(def instanceof QFDefinitionElement)) {
 			throw new QFNotValuable(field);
@@ -592,10 +607,7 @@ public class QueryFilter<E> implements Specification<E> {
 		Assert.notNull(operation, OPERATION_NOT_NULL_MESSAGE);
 		Assert.notNull(value, "value cannot be null");
 
-		QFAbstractDefinition def = definitionMap.get(field);
-		if (def == null) {
-			throw new QFFieldNotFoundException(field);
-		}
+		QFAbstractDefinition def = getSafeFieldDefinition(field);
 
 		if (!(def instanceof QFDefinitionDiscriminator)) {
 			throw new QFNotValuable(field);
@@ -631,10 +643,7 @@ public class QueryFilter<E> implements Specification<E> {
 		Assert.notNull(operationJson, OPERATION_NOT_NULL_MESSAGE);
 		Assert.notNull(value, VALUES_NOT_NULL_MESSAGE);
 
-		QFAbstractDefinition def = definitionMap.get(field);
-		if (def == null) {
-			throw new QFFieldNotFoundException(field);
-		}
+		QFAbstractDefinition def = getSafeFieldDefinition(field);
 
 		if (!(def instanceof QFDefinitionJson)) {
 			throw new QFNotValuable(field);
@@ -666,10 +675,7 @@ public class QueryFilter<E> implements Specification<E> {
 		Assert.notNull(field, FIELD_NOT_NULL_MESSAGE);
 		Assert.notNull(operationCollection, OPERATION_NOT_NULL_MESSAGE);
 
-		QFAbstractDefinition def = definitionMap.get(field);
-		if (def == null) {
-			throw new QFFieldNotFoundException(field);
-		}
+		QFAbstractDefinition def = getSafeFieldDefinition(field);
 
 		if (!(def instanceof QFDefinitionCollection)) {
 			throw new QFNotValuable(field);
@@ -692,10 +698,7 @@ public class QueryFilter<E> implements Specification<E> {
 	 *             if the field is JSON type
 	 */
 	public @Nullable List<String> getActualValue(String field) throws QFFieldNotFoundException {
-		QFAbstractDefinition def = definitionMap.get(field);
-		if (def == null) {
-			throw new QFFieldNotFoundException(field);
-		}
+		getSafeFieldDefinition(field);
 
 		QFSpecificationPart qfSpec = specificationsWarp.getAllParts().stream()
 				.filter(e -> e.getDefinition().getFilterName().equals(field)).findFirst().orElse(null);
@@ -707,8 +710,8 @@ public class QueryFilter<E> implements Specification<E> {
 			return qfDMatch.getValues();
 		}
 
-		throw new UnsupportedOperationException(
-				"Unsupported get list values for non QFElementMatch or QFDiscriminatorMatch classes");
+		throw new QFFieldNotSupported(
+				"Unsupported get list values for non QFElementMatch or QFDiscriminatorMatch classes", field);
 
 	}
 
@@ -722,10 +725,7 @@ public class QueryFilter<E> implements Specification<E> {
 	 *             if the field is not found
 	 */
 	public @Nullable Map<String, String> getActualJsonValue(String field) throws QFFieldNotFoundException {
-		QFAbstractDefinition def = definitionMap.get(field);
-		if (def == null) {
-			throw new QFFieldNotFoundException(field);
-		}
+		QFAbstractDefinition def = getSafeFieldDefinition(field);
 
 		if (!(def instanceof QFDefinitionJson)) {
 			return null;
@@ -740,7 +740,7 @@ public class QueryFilter<E> implements Specification<E> {
 			return json.getMapValues();
 		}
 
-		throw new UnsupportedOperationException("Unsupported get map values of non QFJsonElementMatch classes");
+		throw new QFFieldNotSupported("Unsupported get map values of non QFJsonElementMatch classes", field);
 
 	}
 
@@ -754,10 +754,7 @@ public class QueryFilter<E> implements Specification<E> {
 	 *             if the field is not found
 	 */
 	public Integer getActualCollectionValue(String field) throws QFFieldNotFoundException {
-		QFAbstractDefinition def = definitionMap.get(field);
-		if (def == null) {
-			throw new QFFieldNotFoundException(field);
-		}
+		QFAbstractDefinition def = getSafeFieldDefinition(field);
 
 		if (!(def instanceof QFDefinitionCollection)) {
 			return null;
@@ -772,8 +769,170 @@ public class QueryFilter<E> implements Specification<E> {
 			return match.getValue();
 		}
 
-		throw new UnsupportedOperationException(
-				"Unsupported get actual collection value non QFCollectionMatch classes");
+		throw new QFFieldNotSupported("Unsupported get actual collection value non QFCollectionMatch classes", field);
+	}
+
+	/**
+	 * Get the actual operation of the field
+	 *
+	 * @param field
+	 *            field to check
+	 * @return operation and values of the field
+	 * @throws QFFieldNotFoundException
+	 *             if the field is not present
+	 * @throws QFFieldNotSupported
+	 *             if the field is not QFElement
+	 */
+	public @Nullable Pair<QFOperationEnum, List<String>> getFirstActualOperation(String field) {
+		var def = getSafeFieldDefinition(field);
+
+		QFSpecificationPart qfSpec = specificationsWarp.getAllParts().stream()
+				.filter(e -> e.getDefinition().getFilterName().equals(def.getFilterName())).findFirst().orElse(null);
+
+		if (qfSpec == null) {
+			return null;
+		} else if (qfSpec instanceof QFElementMatch qfEMatch) {
+			return Pair.of(qfEMatch.getOperation(), qfEMatch.getOriginalValues());
+		}
+
+		throw new QFFieldNotSupported("Field is not type QFElement. The method can not be used", field);
+
+	}
+
+	public Pair<QFOperationJsonEnum, Map<String, String>> getFirstActualJsonOperation(String field) {
+		var def = getSafeFieldDefinition(field);
+
+		QFSpecificationPart qfSpec = specificationsWarp.getAllParts().stream()
+				.filter(e -> e.getDefinition().getFilterName().equals(def.getFilterName())).findFirst().orElse(null);
+
+		if (qfSpec == null) {
+			return null;
+		} else if (qfSpec instanceof QFJsonElementMatch qfJMatch) {
+			return Pair.of(qfJMatch.getOperation(), qfJMatch.getMapValues());
+		}
+
+		throw new QFFieldNotSupported("Field is not type QFJsonElement. The method can not be used", field);
+	}
+
+	/**
+	 * Get the actual operation of the field
+	 *
+	 * @param field
+	 *            field to check
+	 * @return operation and values of the field
+	 * @throws QFFieldNotFoundException
+	 *             if the field is not present
+	 */
+	public Pair<QFOperationDiscriminatorEnum, List<String>> getFirstActualDiscriminatorOperation(String field) {
+		var def = getSafeFieldDefinition(field);
+
+		QFSpecificationPart qfSpec = specificationsWarp.getAllParts().stream()
+				.filter(e -> e.getDefinition().getFilterName().equals(def.getFilterName())).findFirst().orElse(null);
+
+		if (qfSpec == null) {
+			return null;
+		} else if (qfSpec instanceof QFDiscriminatorMatch qfDMatch) {
+			return Pair.of(qfDMatch.getOperation(), qfDMatch.getValues());
+		}
+
+		throw new QFFieldNotSupported("Field is not type QFDiscriminator. The method can not be used", field);
+	}
+
+	public Pair<QFCollectionOperationEnum, Integer> getFirstActualCollectionOperation(String field) {
+		var def = getSafeFieldDefinition(field);
+
+		QFSpecificationPart qfSpec = specificationsWarp.getAllParts().stream()
+				.filter(e -> e.getDefinition().getFilterName().equals(def.getFilterName())).findFirst().orElse(null);
+
+		if (qfSpec == null) {
+			return null;
+		} else if (qfSpec instanceof QFCollectionMatch qfCMatch) {
+			return Pair.of(qfCMatch.getOperation(), qfCMatch.getValue());
+		}
+
+		throw new QFFieldNotSupported("Field is not type QFCollection. The method can not be used", field);
+	}
+
+	/**
+	 * Get the actual operation of the field
+	 *
+	 * @param field
+	 *            field to check
+	 * @return operation and values of the field
+	 * @throws QFFieldNotFoundException
+	 *             if the field is not present
+	 */
+	public List<Pair<QFOperationEnum, List<String>>> getActualOperation(String field) {
+		var def = getSafeFieldDefinition(field);
+
+		return specificationsWarp.getAllParts().stream()
+				.filter(e -> e.getDefinition().getFilterName().equals(def.getFilterName())
+						&& e instanceof QFElementMatch)
+				.map(QFElementMatch.class::cast).map(e -> Pair.of(e.getOperation(), e.getOriginalValues())).toList();
+	}
+
+	/**
+	 * Get the actual operation of the field
+	 *
+	 * @param field
+	 *            field to check
+	 * @return operation and values of the field
+	 * @throws QFFieldNotFoundException
+	 *             if the field is not present
+	 */
+	public List<Pair<QFOperationJsonEnum, Map<String, String>>> getActualJsonOperation(String field) {
+		var def = getSafeFieldDefinition(field);
+
+		return specificationsWarp.getAllParts().stream()
+				.filter(e -> e.getDefinition().getFilterName().equals(def.getFilterName())
+						&& e instanceof QFJsonElementMatch)
+				.map(QFJsonElementMatch.class::cast).map(e -> Pair.of(e.getOperation(), e.getMapValues())).toList();
+	}
+
+	/**
+	 * Get the actual operation of the field
+	 *
+	 * @param field
+	 *            field to check
+	 * @return operation and values of the field
+	 * @throws QFFieldNotFoundException
+	 *             if the field is not present
+	 */
+	public List<Pair<QFOperationDiscriminatorEnum, List<String>>> getActualDiscriminatorOperation(String field) {
+		var def = getSafeFieldDefinition(field);
+
+		return specificationsWarp.getAllParts().stream()
+				.filter(e -> e.getDefinition().getFilterName().equals(def.getFilterName())
+						&& e instanceof QFDiscriminatorMatch)
+				.map(QFDiscriminatorMatch.class::cast).map(e -> Pair.of(e.getOperation(), e.getValues())).toList();
+	}
+
+	/**
+	 * Get the actual operation of the field
+	 *
+	 * @param field
+	 *            field to check
+	 * @return operation and values of the field
+	 * @throws QFFieldNotFoundException
+	 *             if the field is not present
+	 */
+	public List<Pair<QFCollectionOperationEnum, Integer>> getActualCollectionOperation(String field) {
+		var def = getSafeFieldDefinition(field);
+
+		return specificationsWarp.getAllParts().stream()
+				.filter(e -> e.getDefinition().getFilterName().equals(def.getFilterName())
+						&& e instanceof QFCollectionMatch)
+				.map(QFCollectionMatch.class::cast).map(e -> Pair.of(e.getOperation(), e.getValue())).toList();
+	}
+
+	/**
+	 * Get all the field values
+	 *
+	 * @return list of field values
+	 */
+	public List<Pair<String, List<String>>> getAllFieldValues() {
+		return specificationsWarp.getAllParts().stream()
+				.map(e -> Pair.of(e.getDefinition().getFilterName(), e.getOriginalValuesAsString())).toList();
 	}
 
 	/**
@@ -785,14 +944,8 @@ public class QueryFilter<E> implements Specification<E> {
 	 *             if the is not present
 	 */
 	public void deleteField(String field) throws QFFieldNotFoundException {
-
-		QFAbstractDefinition def = definitionMap.get(field);
-		if (def == null) {
-			throw new QFFieldNotFoundException(field);
-		}
-
-		specificationsWarp.deleteSpecificationField(field);
-
+		var def = getSafeFieldDefinition(field);
+		specificationsWarp.deleteSpecificationField(def.getFilterName());
 	}
 
 	/**
@@ -857,6 +1010,10 @@ public class QueryFilter<E> implements Specification<E> {
 	@Override
 	public Predicate toPredicate(@NonNull Root<E> root, CriteriaQuery<?> query,
 			@NonNull CriteriaBuilder criteriaBuilder) {
+
+		if (query == null) {
+			throw new IllegalArgumentException("Query cannot be null in QueryFilter predicates");
+		}
 
 		Map<String, List<Predicate>> predicatesMap = new HashMap<>();
 		Map<String, Path<?>> pathsMap = new HashMap<>();

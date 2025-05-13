@@ -93,6 +93,16 @@ public class QFDiscriminatorMatch implements QFSpecificationPart {
 	}
 
 	/**
+	 * Get the original values
+	 *
+	 * @return original values
+	 */
+	@Override
+	public List<String> getOriginalValuesAsString() {
+		return this.values;
+	}
+
+	/**
 	 * Get matching classes
 	 *
 	 * @return matching classes
@@ -144,6 +154,15 @@ public class QFDiscriminatorMatch implements QFSpecificationPart {
 	 */
 	public List<QFAttribute> getPath() {
 		return path;
+	}
+
+	/**
+	 * Get operation
+	 *
+	 * @return operation
+	 */
+	public QFOperationDiscriminatorEnum getOperation() {
+		return operation;
 	}
 
 	@SuppressWarnings("unchecked")

@@ -80,7 +80,7 @@ class QfArraySQLFunction extends AbstractSqmSelfRenderingFunctionDescriptor {
 			prefix = ", ";
 		}
 
-		sqlAppender.append("]) and true ");
+		sqlAppender.append("])");
 	}
 
 }

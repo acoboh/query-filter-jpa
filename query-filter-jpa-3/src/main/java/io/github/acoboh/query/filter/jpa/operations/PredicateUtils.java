@@ -63,13 +63,14 @@ class PredicateUtils {
 	}
 
 	public static Predicate defaultArrayPredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
-			ArrayFunction arrayFunction, MultiValueMap<String, Object> mlContext) {
+			ArrayFunction arrayFunction, MultiValueMap<String, Object> mlContext, boolean retValue) {
 
 		match.parsedValues(index).forEach(e -> mlContext.add(match.getDefinition().getFilterName(), e));
 
+
 		return cb.equal(
 				cb.function(arrayFunction.getName(), Boolean.class, joinExp(cb, path, match.parsedValues(index))),
-				true);
+				retValue);
 	}
 
 }

@@ -32,7 +32,8 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
 				MultiValueMap<String, Object> mlContext) {
 			if (match.getDefinition().isArrayTyped()) {
-				return PredicateUtils.defaultArrayPredicate(path, cb, match, index, this.getArrayFunction(), mlContext);
+				return PredicateUtils.defaultArrayPredicate(path, cb, match, index, this.getArrayFunction(), mlContext,
+						true);
 			}
 
 			mlContext.add(match.getDefinition().getFilterName(), match.getPrimaryParsedValue(index));
@@ -49,7 +50,8 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
 				MultiValueMap<String, Object> mlContext) {
 			if (match.getDefinition().isArrayTyped()) {
-				return PredicateUtils.defaultArrayPredicate(path, cb, match, index, getArrayFunction(), mlContext);
+				return PredicateUtils.defaultArrayPredicate(path, cb, match, index, getArrayFunction(), mlContext,
+						true);
 			}
 			mlContext.add(match.getDefinition().getFilterName(), match.getPrimaryParsedValue(index));
 			return cb.notEqual(path, match.getPrimaryParsedValue(index));
@@ -65,7 +67,8 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
 				MultiValueMap<String, Object> mlContext) {
 			if (match.getDefinition().isArrayTyped()) {
-				return PredicateUtils.defaultArrayPredicate(path, cb, match, index, getArrayFunction(), mlContext);
+				return PredicateUtils.defaultArrayPredicate(path, cb, match, index, getArrayFunction(), mlContext,
+						true);
 			}
 
 			mlContext.add(match.getDefinition().getFilterName(), match.getPrimaryParsedValue(index));
@@ -82,7 +85,8 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
 				MultiValueMap<String, Object> mlContext) {
 			if (match.getDefinition().isArrayTyped()) {
-				return PredicateUtils.defaultArrayPredicate(path, cb, match, index, getArrayFunction(), mlContext);
+				return PredicateUtils.defaultArrayPredicate(path, cb, match, index, getArrayFunction(), mlContext,
+						true);
 			}
 			mlContext.add(match.getDefinition().getFilterName(), match.getPrimaryParsedValue(index));
 
@@ -99,7 +103,8 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
 				MultiValueMap<String, Object> mlContext) {
 			if (match.getDefinition().isArrayTyped()) {
-				return PredicateUtils.defaultArrayPredicate(path, cb, match, index, getArrayFunction(), mlContext);
+				return PredicateUtils.defaultArrayPredicate(path, cb, match, index, getArrayFunction(), mlContext,
+						true);
 			}
 			mlContext.add(match.getDefinition().getFilterName(), match.getPrimaryParsedValue(index));
 
@@ -116,7 +121,8 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
 				MultiValueMap<String, Object> mlContext) {
 			if (match.getDefinition().isArrayTyped()) {
-				return PredicateUtils.defaultArrayPredicate(path, cb, match, index, getArrayFunction(), mlContext);
+				return PredicateUtils.defaultArrayPredicate(path, cb, match, index, getArrayFunction(), mlContext,
+						true);
 			}
 
 			mlContext.add(match.getDefinition().getFilterName(), match.getPrimaryParsedValue(index));
@@ -171,7 +177,8 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
 				MultiValueMap<String, Object> mlContext) {
 			if (match.getDefinition().isArrayTyped()) {
-				return PredicateUtils.defaultArrayPredicate(path, cb, match, index, getArrayFunction(), mlContext);
+				return PredicateUtils.defaultArrayPredicate(path, cb, match, index, getArrayFunction(), mlContext,
+						true);
 			}
 
 			In<Object> in = cb.in(path);
@@ -192,8 +199,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
 				MultiValueMap<String, Object> mlContext) {
 			if (match.getDefinition().isArrayTyped()) {
-				return cb.equal(
-						PredicateUtils.defaultArrayPredicate(path, cb, match, index, getArrayFunction(), mlContext),
+				return PredicateUtils.defaultArrayPredicate(path, cb, match, index, getArrayFunction(), mlContext,
 						false);
 			}
 
@@ -231,7 +237,8 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
 				MultiValueMap<String, Object> mlContext) {
 			if (match.getDefinition().isArrayTyped()) {
-				return PredicateUtils.defaultArrayPredicate(path, cb, match, index, getArrayFunction(), mlContext);
+				return PredicateUtils.defaultArrayPredicate(path, cb, match, index, getArrayFunction(), mlContext,
+						true);
 			}
 			throw new QFUnsopportedSQLException(this, match.getDefinition().getFilterName());
 		}
@@ -245,7 +252,8 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
 				MultiValueMap<String, Object> mlContext) {
 			if (match.getDefinition().isArrayTyped()) {
-				return PredicateUtils.defaultArrayPredicate(path, cb, match, index, getArrayFunction(), mlContext);
+				return PredicateUtils.defaultArrayPredicate(path, cb, match, index, getArrayFunction(), mlContext,
+						true);
 			}
 			throw new QFUnsopportedSQLException(this, match.getDefinition().getFilterName());
 		}

@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.Ordered;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -45,18 +46,9 @@ class ArrayTypedTests {
 		POST_EXAMPLE.setText("text");
 		POST_EXAMPLE.setAvgNote(2.5d);
 		POST_EXAMPLE.setLikes(100);
-		POST_EXAMPLE.setCreateDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)); // Truncated to avoid rounding
-																						// issues with Java > 8 and BBDD
-		POST_EXAMPLE.setLastTimestamp(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS))); // Truncated
-																												// to
-																												// avoid
-																												// rounding
-																												// issues
-																												// with
-																												// Java
-																												// > 8
-																												// and
-																												// BBDD
+		// Truncated to avoid rounding issues with Java > 8 and BBDD
+		POST_EXAMPLE.setCreateDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));
+		POST_EXAMPLE.setLastTimestamp(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)));
 		POST_EXAMPLE.setPublished(true);
 		POST_EXAMPLE.setPostType(PostBlog.PostType.TEXT);
 		POST_EXAMPLE.setTags(new String[]{"TAG1", "TAG2", "TAG3", "TAG4"});
@@ -66,19 +58,9 @@ class ArrayTypedTests {
 		POST_EXAMPLE_2.setText("text");
 		POST_EXAMPLE_2.setAvgNote(0.5d);
 		POST_EXAMPLE_2.setLikes(0);
-		POST_EXAMPLE_2.setCreateDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)); // Truncated to avoid rounding
-																							// issues with Java > 8 and
-																							// BBDD
-		POST_EXAMPLE_2.setLastTimestamp(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS))); // Truncated
-																												// to
-																												// avoid
-																												// rounding
-																												// issues
-																												// with
-																												// Java
-																												// > 8
-																												// and
-																												// BBDD
+		// Truncated to avoid rounding issues with Java > 8 and BBDD
+		POST_EXAMPLE_2.setCreateDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));
+		POST_EXAMPLE_2.setLastTimestamp(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)));
 		POST_EXAMPLE_2.setPublished(false);
 		POST_EXAMPLE_2.setPostType(PostBlog.PostType.VIDEO);
 		POST_EXAMPLE_2.setTags(new String[]{"TAG1", "TAG4", "TAG5"});
@@ -313,8 +295,32 @@ class ArrayTypedTests {
 	}
 
 	@Test
-	@DisplayName("10. Clear BBDD")
+	@DisplayName("10. Test NOT IN")
 	@Order(10)
+	void testNotIN() {
+		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("tags=nin:TAG1,TAG3", QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
+
+		List<PostBlog> list = repository.findAll(qf);
+		assertThat(list).hasSize(1).containsExactlyInAnyOrder(POST_EXAMPLE_2);
+
+		qf = queryFilterProcessor.newQueryFilter("tags=nin:TAG1,TAG4", QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
+
+		list = repository.findAll(qf);
+		assertThat(list).isEmpty();
+
+		qf = queryFilterProcessor.newQueryFilter("tags=nin:TAG5", QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
+
+		list = repository.findAll(qf);
+		assertThat(list).hasSize(1).containsExactlyInAnyOrder(POST_EXAMPLE);
+
+	}
+
+	@Test
+	@DisplayName("END. Clear BBDD")
+	@Order(Ordered.LOWEST_PRECEDENCE)
 	void clearBBDD() {
 		repository.deleteAll();
 		assertThat(repository.findAll()).isEmpty();

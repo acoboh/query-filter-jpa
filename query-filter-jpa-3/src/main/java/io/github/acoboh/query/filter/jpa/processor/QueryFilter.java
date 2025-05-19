@@ -528,6 +528,19 @@ public class QueryFilter<E> implements Specification<E> {
 	}
 
 	/**
+	 * Get if the filter is sorted by any of the selected fields
+	 * 
+	 * @param fields
+	 *            fields to check
+	 * @return true if it is actually sorting, false otherwise
+	 */
+	public boolean isSortedByAny(String... fields) {
+		Set<String> set = Sets.newHashSet(fields);
+		var sortList = defaultSortEnabled ? defaultSorting : sortDefinitionList;
+		return sortList.stream().anyMatch(e -> set.contains(e.getFirst().getFilterName()));
+	}
+
+	/**
 	 * Check if the field is currently used for filtering
 	 *
 	 * @param field

@@ -105,7 +105,7 @@ class FieldClassProcessor {
 		return attributes;
 	}
 
-	private String @Nullable [] getLevelSubClassIfAvailable() throws QFElementException {
+	private @Nullable String[] getLevelSubClassIfAvailable() throws QFElementException {
 		String[] levelsSubClass = null;
 
 		if (subclassMapping != null && !Void.class.equals(subclassMapping)) {

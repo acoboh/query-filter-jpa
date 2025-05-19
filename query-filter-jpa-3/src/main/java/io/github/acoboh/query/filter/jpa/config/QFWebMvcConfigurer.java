@@ -32,9 +32,7 @@ public class QFWebMvcConfigurer implements WebMvcConfigurer {
 		this.processors = processors;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void addFormatters(FormatterRegistry registry) {
 		LOGGER.info("Using QueryFilterWebMvcConfigurer. Registering custom formatters");

@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 
 /**
  * Exception thrown if the field can not be used as a collection
+ *
+ * @author Adrián Cobo
  */
 public class QFCollectionException extends QueryFilterException {
 
@@ -19,6 +21,10 @@ public class QFCollectionException extends QueryFilterException {
 	private final transient Object[] arguments;
 
 	/**
+	 * <p>
+	 * Constructor for QFCollectionException.
+	 * </p>
+	 *
 	 * @param field
 	 *            field
 	 * @param reason
@@ -32,6 +38,10 @@ public class QFCollectionException extends QueryFilterException {
 	}
 
 	/**
+	 * <p>
+	 * Getter for the field <code>field</code>.
+	 * </p>
+	 *
 	 * @return field
 	 */
 	public String getField() {
@@ -39,22 +49,29 @@ public class QFCollectionException extends QueryFilterException {
 	}
 
 	/**
+	 * <p>
+	 * Getter for the field <code>reason</code>.
+	 * </p>
+	 *
 	 * @return reason
 	 */
 	public String getReason() {
 		return reason;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public HttpStatus getHttpStatus() {
 		return HttpStatus.INTERNAL_SERVER_ERROR;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Object[] getArguments() {
 		return arguments;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getMessageCode() {
 		return "qf.exceptions.collection";

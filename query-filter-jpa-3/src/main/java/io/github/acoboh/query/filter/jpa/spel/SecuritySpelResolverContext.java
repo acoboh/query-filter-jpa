@@ -63,6 +63,7 @@ class SecuritySpelResolverContext extends SpelResolverContext {
 								+ securityExpressionHandlers.size()));
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public EvaluationContext getEvaluationContext() {
 		if (securityExpressionHandler == null) {
@@ -77,6 +78,7 @@ class SecuritySpelResolverContext extends SpelResolverContext {
 		return securityExpressionHandler.createEvaluationContext(authentication, filterInvocation);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ExpressionParser getExpressionParser() {
 		if (securityExpressionHandler == null) {

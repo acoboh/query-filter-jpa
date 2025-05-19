@@ -443,6 +443,7 @@ public class QueryFilter<E> implements Specification<E> {
 	 *            Field name of sorting
 	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFNotSortableException
 	 *             not sortable
+	 * @since 1.0.0
 	 */
 	public void deleteSortBy(String field) {
 		var def = getSafeFieldDefinition(field);
@@ -467,6 +468,8 @@ public class QueryFilter<E> implements Specification<E> {
 	 * Set the default sort configuration
 	 * <p>
 	 * This will remove any custom sort configuration
+	 *
+	 * @since 1.0.0
 	 */
 	public void setDefaultSortEnabled() {
 		this.defaultSortEnabled = true;
@@ -529,7 +532,7 @@ public class QueryFilter<E> implements Specification<E> {
 
 	/**
 	 * Get if the filter is sorted by any of the selected fields
-	 * 
+	 *
 	 * @param fields
 	 *            fields to check
 	 * @return true if it is actually sorting, false otherwise
@@ -677,9 +680,9 @@ public class QueryFilter<E> implements Specification<E> {
 	 *            operation
 	 * @param value
 	 *            value
-	 * @throws QFFieldNotFoundException
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException
 	 *             if the field is not present
-	 * @throws QFNotValuable
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFNotValuable
 	 *             if the field is not a valid collection filter field
 	 */
 	public void overrideField(String field, QFCollectionOperationEnum operationCollection, int value)
@@ -734,7 +737,7 @@ public class QueryFilter<E> implements Specification<E> {
 	 * @param field
 	 *            filter field
 	 * @return value of null if the field is not JSON type
-	 * @throws QFFieldNotFoundException
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException
 	 *             if the field is not found
 	 */
 	public @Nullable Map<String, String> getActualJsonValue(String field) throws QFFieldNotFoundException {
@@ -763,7 +766,7 @@ public class QueryFilter<E> implements Specification<E> {
 	 * @param field
 	 *            filter field name
 	 * @return the value of null if the field is not Collection type
-	 * @throws QFFieldNotFoundException
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException
 	 *             if the field is not found
 	 */
 	public Integer getActualCollectionValue(String field) throws QFFieldNotFoundException {
@@ -791,10 +794,7 @@ public class QueryFilter<E> implements Specification<E> {
 	 * @param field
 	 *            field to check
 	 * @return operation and values of the field
-	 * @throws QFFieldNotFoundException
-	 *             if the field is not present
-	 * @throws QFFieldNotSupported
-	 *             if the field is not QFElement
+	 * @since 1.0.0
 	 */
 	public @Nullable Pair<QFOperationEnum, List<String>> getFirstActualElementOperation(String field) {
 		var def = getSafeFieldDefinition(field);
@@ -818,8 +818,7 @@ public class QueryFilter<E> implements Specification<E> {
 	 * @param field
 	 *            field to check
 	 * @return operation and values of the field
-	 * @throws QFFieldNotFoundException
-	 *             if the field is not present
+	 * @since 1.0.0
 	 */
 	public Pair<QFOperationJsonEnum, Map<String, String>> getFirstActualJsonOperation(String field) {
 		var def = getSafeFieldDefinition(field);
@@ -842,8 +841,7 @@ public class QueryFilter<E> implements Specification<E> {
 	 * @param field
 	 *            field to check
 	 * @return operation and values of the field
-	 * @throws QFFieldNotFoundException
-	 *             if the field is not present
+	 * @since 1.0.0
 	 */
 	public Pair<QFOperationDiscriminatorEnum, List<String>> getFirstActualDiscriminatorOperation(String field) {
 		var def = getSafeFieldDefinition(field);
@@ -860,6 +858,14 @@ public class QueryFilter<E> implements Specification<E> {
 		throw new QFFieldNotSupported("Field is not type QFDiscriminator. The method can not be used", field);
 	}
 
+	/**
+	 * Get the first actual operation of the field
+	 *
+	 * @param field
+	 *            a {@link java.lang.String} object
+	 * @return a {@link org.springframework.data.util.Pair} object
+	 * @since 1.0.0
+	 */
 	public Pair<QFCollectionOperationEnum, Integer> getFirstActualCollectionOperation(String field) {
 		var def = getSafeFieldDefinition(field);
 
@@ -881,8 +887,7 @@ public class QueryFilter<E> implements Specification<E> {
 	 * @param field
 	 *            field to check
 	 * @return operation and values of the field
-	 * @throws QFFieldNotFoundException
-	 *             if the field is not present
+	 * @since 1.0.0
 	 */
 	public List<Pair<QFOperationEnum, List<String>>> getActualElementOperation(String field) {
 		var def = getSafeFieldDefinition(field);
@@ -900,8 +905,7 @@ public class QueryFilter<E> implements Specification<E> {
 	 * @param field
 	 *            field to check
 	 * @return operation and values of the field
-	 * @throws QFFieldNotFoundException
-	 *             if the field is not present
+	 * @since 1.0.0
 	 */
 	public List<Pair<QFOperationJsonEnum, Map<String, String>>> getActualJsonOperation(String field) {
 		var def = getSafeFieldDefinition(field);
@@ -918,8 +922,7 @@ public class QueryFilter<E> implements Specification<E> {
 	 * @param field
 	 *            field to check
 	 * @return operation and values of the field
-	 * @throws QFFieldNotFoundException
-	 *             if the field is not present
+	 * @since 1.0.0
 	 */
 	public List<Pair<QFOperationDiscriminatorEnum, List<String>>> getActualDiscriminatorOperation(String field) {
 		var def = getSafeFieldDefinition(field);
@@ -936,8 +939,7 @@ public class QueryFilter<E> implements Specification<E> {
 	 * @param field
 	 *            field to check
 	 * @return operation and values of the field
-	 * @throws QFFieldNotFoundException
-	 *             if the field is not present
+	 * @since 1.0.0
 	 */
 	public List<Pair<QFCollectionOperationEnum, Integer>> getActualCollectionOperation(String field) {
 		var def = getSafeFieldDefinition(field);
@@ -952,6 +954,7 @@ public class QueryFilter<E> implements Specification<E> {
 	 * Get all the field values
 	 *
 	 * @return list of field values
+	 * @since 1.0.0
 	 */
 	public List<QFFieldInfo> getAllFieldValues() {
 		return specificationsWarp.getAllParts().stream().map(e -> new QFFieldInfo(e.getDefinition().getFilterName(),
@@ -1027,9 +1030,7 @@ public class QueryFilter<E> implements Specification<E> {
 		return QueryUtils.parseOrders(queryInfo, sortList, new HashMap<>());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public Predicate toPredicate(@NonNull Root<E> root, CriteriaQuery<?> query,
 			@NonNull CriteriaBuilder criteriaBuilder) {
@@ -1097,9 +1098,7 @@ public class QueryFilter<E> implements Specification<E> {
 
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return initialInput;

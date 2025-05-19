@@ -27,11 +27,13 @@ class SpelResolverContextBasic extends SpelResolverContext {
 		super(request, response);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ExpressionParser getExpressionParser() {
 		return new SpelExpressionParser();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public EvaluationContext getEvaluationContext() {
 		return new StandardEvaluationContext();

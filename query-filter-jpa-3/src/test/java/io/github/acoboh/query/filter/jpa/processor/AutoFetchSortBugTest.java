@@ -111,7 +111,6 @@ class AutoFetchSortBugTest {
 
 		assertThat(qf.getSortFieldWithFullPath()).containsExactly(Pair.of("postBlog.author", Sort.Direction.ASC));
 
-
 		var countQuery = commentsRepository.count(qf);
 		assertThat(countQuery).isEqualTo(2);
 

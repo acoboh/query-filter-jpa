@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFElementException;
@@ -30,8 +31,8 @@ class FieldClassProcessor {
 	private final Class<?> subclassMapping;
 	private final String subClassMappingPath;
 
-	FieldClassProcessor(Class<?> rootClass, String pathField, Class<?> subclassMapping,
-			String subClassMappingPath, Metamodel metamodel) {
+	FieldClassProcessor(Class<?> rootClass, String pathField, Class<?> subclassMapping, String subClassMappingPath,
+			Metamodel metamodel) {
 		Assert.notNull(pathField, "Path field cannot be null");
 		this.rootClass = rootClass;
 		this.pathField = pathField;
@@ -40,6 +41,13 @@ class FieldClassProcessor {
 		this.metamodel = metamodel;
 	}
 
+	/**
+	 * Get the attributes of the path field
+	 *
+	 * @return list of attributes
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException
+	 *             if any.
+	 */
 	public List<QFAttribute> getAttributes() throws QueryFilterDefinitionException {
 
 		if (attributes != null) {
@@ -54,23 +62,7 @@ class FieldClassProcessor {
 		var entity = metamodel.entity(rootClass);
 
 		// Level subclass
-		String[] levelsSubClass = null;
-
-		if (subclassMapping != null && !Void.class.equals(subclassMapping)) {
-			LOGGER.trace("Processing subclass mapping {}", subclassMapping);
-			if (subClassMappingPath != null && !subClassMappingPath.isEmpty()
-					&& !pathField.startsWith(subClassMappingPath)) {
-				LOGGER.trace("Subclass mapping path '{}' not present in path field '{}'", subClassMappingPath,
-						pathField);
-				throw new QFElementException(pathField, subclassMapping);
-			}
-			if (subClassMappingPath == null || subClassMappingPath.isEmpty()) {
-				levelsSubClass = new String[0];
-			} else {
-				levelsSubClass = subClassMappingPath.split("\\.");
-			}
-
-		}
+		String[] levelsSubClass = getLevelSubClassIfAvailable();
 
 		Attribute<?, ?> prevAttribute = null;
 
@@ -103,8 +95,7 @@ class FieldClassProcessor {
 
 				attributes.add(new QFAttribute(prevAttribute, null));
 			} catch (Exception e) {
-				LOGGER.error("Error processing level {}. Exception", level, e);
-				throw e;
+				throw new QueryFilterDefinitionException("Error processing level {}. Exception", e, level);
 			}
 
 		}
@@ -112,6 +103,27 @@ class FieldClassProcessor {
 		finalClass = attributes.get(attributes.size() - 1).getAttribute().getJavaType();
 
 		return attributes;
+	}
+
+	private String @Nullable [] getLevelSubClassIfAvailable() throws QFElementException {
+		String[] levelsSubClass = null;
+
+		if (subclassMapping != null && !Void.class.equals(subclassMapping)) {
+			LOGGER.trace("Processing subclass mapping {}", subclassMapping);
+			if (subClassMappingPath != null && !subClassMappingPath.isEmpty()
+					&& !pathField.startsWith(subClassMappingPath)) {
+				LOGGER.trace("Subclass mapping path '{}' not present in path field '{}'", subClassMappingPath,
+						pathField);
+				throw new QFElementException(pathField, subclassMapping);
+			}
+			if (subClassMappingPath == null || subClassMappingPath.isEmpty()) {
+				levelsSubClass = new String[0];
+			} else {
+				levelsSubClass = subClassMappingPath.split("\\.");
+			}
+
+		}
+		return levelsSubClass;
 	}
 
 	private Attribute<?, ?> getAttribute(Attribute<?, ?> prevAttribute, String level) {

@@ -375,9 +375,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public String getOperation() {
 		return value;

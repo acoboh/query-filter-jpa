@@ -26,6 +26,8 @@ import jakarta.persistence.metamodel.SingularAttribute;
 
 /**
  * Class with query utilities
+ *
+ * @author Adrián Cobo
  */
 public class QueryUtils {
 
@@ -47,6 +49,10 @@ public class QueryUtils {
 	 * @param tryFetch
 	 *            try to use fetch instead of join
 	 * @return return the final path of the object
+	 * @param queryInfo
+	 *            info and data about the query
+	 * @param joinTypes
+	 *            a {@link java.util.List} object
 	 */
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	public static Path<?> getObject(QueryInfo<?> queryInfo, List<QFAttribute> paths, List<JoinType> joinTypes,
@@ -146,6 +152,8 @@ public class QueryUtils {
 	 * @param pathsMap
 	 *            older paths
 	 * @return the final order list
+	 * @param queryInfo
+	 *            info and data about the query
 	 */
 	public static List<Order> parseOrders(QueryInfo<?> queryInfo,
 			List<Pair<IDefinitionSortable, Direction>> sortDefinitionList, Map<String, Path<?>> pathsMap) {

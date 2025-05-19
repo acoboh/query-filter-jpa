@@ -186,21 +186,13 @@ public class QFElementMatch implements QFSpecificationPart {
 		return true;
 	}
 
-	/**
-	 * Get the original values as string
-	 * 
-	 * @return original values as string
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public List<String> getOriginalValuesAsString() {
 		return originalValues;
 	}
 
-	/**
-	 * Get the operation as string
-	 *
-	 * @return operation as string
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public String getOperationAsString() {
 		return operation.getValue();
@@ -459,6 +451,7 @@ public class QFElementMatch implements QFSpecificationPart {
 		return retList;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public <E> void processPart(QueryInfo<E> queryInfo, Map<String, List<Predicate>> predicatesMap,
 			Map<String, Path<?>> pathsMap, MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver,

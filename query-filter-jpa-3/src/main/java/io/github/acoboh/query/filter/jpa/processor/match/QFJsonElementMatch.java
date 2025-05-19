@@ -134,16 +134,13 @@ public class QFJsonElementMatch implements QFSpecificationPart {
 		return definition;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<String> getOriginalValuesAsString() {
 		return List.of(originalValue);
 	}
 
-	/**
-	 * Get operation as string
-	 *
-	 * @return operation as string
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public String getOperationAsString() {
 		return operation.getOperation();
@@ -167,6 +164,7 @@ public class QFJsonElementMatch implements QFSpecificationPart {
 		return operation;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public <E> void processPart(QueryInfo<E> queryInfo, Map<String, List<Predicate>> predicatesMap,
 			Map<String, Path<?>> pathsMap, MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver,

@@ -12,6 +12,8 @@ import jakarta.persistence.criteria.Predicate;
 
 /**
  * Enum with all JSON operations availables
+ *
+ * @author Adrián Cobo
  */
 public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
 
@@ -125,6 +127,7 @@ public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
 		this.operation = operation;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getOperation() {
 		return operation;

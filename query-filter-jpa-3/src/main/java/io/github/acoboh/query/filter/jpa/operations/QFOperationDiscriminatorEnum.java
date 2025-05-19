@@ -14,6 +14,8 @@ import jakarta.persistence.criteria.Predicate;
 
 /**
  * Enumeration with all the discriminator operations
+ *
+ * @author Adrián Cobo
  */
 public enum QFOperationDiscriminatorEnum implements QFPredicateDiscriminatorResolutor {
 
@@ -76,6 +78,7 @@ public enum QFOperationDiscriminatorEnum implements QFPredicateDiscriminatorReso
 		this.operation = operation;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getOperation() {
 		return operation;
@@ -87,8 +90,6 @@ public enum QFOperationDiscriminatorEnum implements QFPredicateDiscriminatorReso
 	 * @param value
 	 *            value of the operation
 	 * @return operation
-	 * @throws QFOperationNotFoundException
-	 *             if the operation is not found
 	 */
 	public static QFOperationDiscriminatorEnum fromValue(String value) {
 		QFOperationDiscriminatorEnum operationEnum = operationMap.get(value);

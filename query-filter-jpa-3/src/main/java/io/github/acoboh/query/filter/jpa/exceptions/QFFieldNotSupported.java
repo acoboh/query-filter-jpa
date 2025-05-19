@@ -4,6 +4,12 @@ import java.io.Serial;
 
 import org.springframework.http.HttpStatus;
 
+/**
+ * Exception thrown if the field is not supported for the query filter methods
+ *
+ * @author Adrián Cobo
+ * @since 1.0.0
+ */
 public class QFFieldNotSupported extends QueryFilterException {
 
 	@Serial
@@ -17,6 +23,8 @@ public class QFFieldNotSupported extends QueryFilterException {
 	 *
 	 * @param field
 	 *            field not supported
+	 * @param message
+	 *            the message to be shown
 	 */
 	public QFFieldNotSupported(String message, String field) {
 		super(message, field);
@@ -33,16 +41,19 @@ public class QFFieldNotSupported extends QueryFilterException {
 		return field;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public HttpStatus getHttpStatus() {
 		return HttpStatus.BAD_REQUEST;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Object[] getArguments() {
 		return arguments;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getMessageCode() {
 		return "qf.exceptions.field-not-supported";

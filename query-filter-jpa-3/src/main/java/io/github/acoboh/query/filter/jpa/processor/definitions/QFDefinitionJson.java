@@ -19,6 +19,8 @@ import jakarta.persistence.metamodel.Metamodel;
 
 /**
  * Definition for JSON filter fields
+ *
+ * @author Adrián Cobo
  */
 public class QFDefinitionJson extends QFAbstractDefinition {
 
@@ -90,6 +92,7 @@ public class QFDefinitionJson extends QFAbstractDefinition {
 	 * Get definition paths
 	 *
 	 * @return paths
+	 * @since 1.0.0
 	 */
 	public List<QFAttribute> getAttributes() {
 		return attributes;
@@ -99,15 +102,30 @@ public class QFDefinitionJson extends QFAbstractDefinition {
 	 * Get join types
 	 *
 	 * @return join types
+	 * @since 1.0.0
 	 */
 	public List<JoinType> getJoinTypes() {
 		return joinTypes;
 	}
 
+	/**
+	 * Get if the operation is allowed
+	 *
+	 * @param operation
+	 *            to check
+	 * @return a boolean true if the operation is allowed
+	 * @since 1.0.0
+	 */
 	public boolean isOperationAllowed(QFOperationJsonEnum operation) {
 		return allowedOperations.isEmpty() || allowedOperations.contains(operation);
 	}
 
+	/**
+	 * Get allowed operations
+	 *
+	 * @return a set of allowed operations
+	 * @since 1.0.0
+	 */
 	public Set<QFOperationJsonEnum> getRealAllowedOperations() {
 		if (allowedOperations.isEmpty()) {
 			return Set.of(QFOperationJsonEnum.values());

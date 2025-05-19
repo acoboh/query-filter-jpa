@@ -15,6 +15,13 @@ import org.springframework.context.annotation.ImportRuntimeHints;
 
 import io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass;
 
+/**
+ * <p>
+ * HintsRegistrarDef class.
+ * </p>
+ *
+ * @author Adrián Cobo
+ */
 @Configuration
 @ImportRuntimeHints(HintsRegistrarDef.QFRuntimeHintsRegistrar.class)
 public class HintsRegistrarDef {

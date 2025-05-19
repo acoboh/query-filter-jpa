@@ -64,6 +64,18 @@ public class QFProcessor<F, E> {
 	private Map<String, PredicateProcessorResolutor> predicateMap;
 	private String predicateName;
 
+	/**
+	 * Default constructor
+	 *
+	 * @param filterClass
+	 *            filter class
+	 * @param entityClass
+	 *            entity class
+	 * @param appContext
+	 *            application context for spel expressions
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException
+	 *             if any.
+	 */
 	public QFProcessor(Class<F> filterClass, Class<E> entityClass, ApplicationContextAwareSupport appContext)
 			throws QueryFilterDefinitionException {
 		this(filterClass, entityClass, appContext.getApplicationContext());

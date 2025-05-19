@@ -45,9 +45,7 @@ public class QFCustomConverter implements GenericConverter {
 
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public Set<ConvertiblePair> getConvertibleTypes() {
 		Set<ConvertiblePair> set = new HashSet<>();
@@ -59,9 +57,7 @@ public class QFCustomConverter implements GenericConverter {
 		return set;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public Object convert(Object source, @NonNull TypeDescriptor sourceType, @NonNull TypeDescriptor targetType) {
 

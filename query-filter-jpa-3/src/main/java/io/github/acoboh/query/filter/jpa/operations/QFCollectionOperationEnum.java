@@ -100,6 +100,7 @@ public enum QFCollectionOperationEnum implements QFPredicateCollectionResolutor 
 		this.operation = operation;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getOperation() {
 		return operation;

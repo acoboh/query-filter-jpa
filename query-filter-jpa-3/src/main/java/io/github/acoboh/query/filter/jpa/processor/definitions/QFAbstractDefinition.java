@@ -21,6 +21,8 @@ import jakarta.persistence.metamodel.Metamodel;
 
 /**
  * Abstract class for base definition
+ *
+ * @author Adrián Cobo
  */
 public abstract class QFAbstractDefinition {
 
@@ -109,8 +111,10 @@ public abstract class QFAbstractDefinition {
 	 * @param entityClass
 	 *            entity class
 	 * @return abstract definition
-	 * @throws QueryFilterDefinitionException
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException
 	 *             if any error happens creating the definition
+	 * @param metamodel
+	 *            a {@link jakarta.persistence.metamodel.Metamodel} object
 	 */
 	public static QFAbstractDefinition buildDefinition(Field filterField, Class<?> filterClass, Class<?> entityClass,
 			Metamodel metamodel) throws QueryFilterDefinitionException {

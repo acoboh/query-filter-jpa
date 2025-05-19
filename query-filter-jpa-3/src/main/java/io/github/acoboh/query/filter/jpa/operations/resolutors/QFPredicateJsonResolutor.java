@@ -7,6 +7,8 @@ import jakarta.persistence.criteria.Predicate;
 
 /**
  * Interface for predicate json resolutors
+ *
+ * @author Adrián Cobo
  */
 public interface QFPredicateJsonResolutor {
 

@@ -58,6 +58,7 @@ class QfArraySQLFunction extends AbstractSqmSelfRenderingFunctionDescriptor {
 		return operator;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void render(SqlAppender sqlAppender, List<? extends SqlAstNode> sqlAstArguments,
 			ReturnableType<?> returnType, SqlAstTranslator<?> walker) {

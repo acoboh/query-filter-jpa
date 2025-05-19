@@ -50,9 +50,7 @@ public class QFBeanFactoryPostProcessor implements ApplicationContextAware, Bean
 
 	private ApplicationContext applicationContext;
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
 		Assert.notNull(applicationContext, "ApplicationContext cannot be null");
@@ -125,6 +123,7 @@ public class QFBeanFactoryPostProcessor implements ApplicationContextAware, Bean
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void postProcessBeanFactory(@NonNull ConfigurableListableBeanFactory beanFactory) throws BeansException {
 		Assert.isInstanceOf(ConfigurableBeanFactory.class, beanFactory, "BeanFactory must be ConfigurableBeanFactory");
@@ -203,9 +202,7 @@ public class QFBeanFactoryPostProcessor implements ApplicationContextAware, Bean
 
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public int getOrder() {
 		return Ordered.LOWEST_PRECEDENCE;

@@ -10,6 +10,7 @@ import org.hibernate.boot.model.FunctionContributor;
  */
 public class FunctionContributorImpl implements FunctionContributor {
 
+	/** {@inheritDoc} */
 	@Override
 	public void contributeFunctions(FunctionContributions functionContributions) {
 		for (var fEnum : ArrayFunction.values()) {

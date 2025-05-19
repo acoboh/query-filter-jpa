@@ -9,6 +9,8 @@ import jakarta.persistence.criteria.Predicate;
 
 /**
  * Interface for predicate discriminator predicate resolutors
+ *
+ * @author Adrián Cobo
  */
 public interface QFPredicateDiscriminatorResolutor {
 

@@ -32,6 +32,8 @@ import jakarta.persistence.metamodel.Metamodel;
 
 /**
  * Basic definition for filter fields
+ *
+ * @author Adrián Cobo
  */
 public final class QFDefinitionElement extends QFAbstractDefinition implements IDefinitionSortable {
 
@@ -204,11 +206,13 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<List<QFAttribute>> getPaths() {
 		return paths;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isAutoFetch(int index) {
 		return autoFetchPaths.get(index);
@@ -322,6 +326,7 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 		return finalClasses.get(0);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<JoinType> getJoinTypes(int index) {
 		if (index < 0 || index >= joinTypes.size()) {
@@ -331,15 +336,30 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 		return joinTypes.get(index);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<String> getPathField() {
 		return fullPath;
 	}
 
+	/**
+	 * Get if the operation is allowed
+	 *
+	 * @param operation
+	 *            to check
+	 * @return a boolean true if the operation is allowed
+	 * @since 1.0.0
+	 */
 	public boolean isOperationAllowed(QFOperationEnum operation) {
 		return allowedOperations.isEmpty() || allowedOperations.contains(operation);
 	}
 
+	/**
+	 * Get the allowed operations
+	 *
+	 * @return a set of allowed operations
+	 * @since 1.0.0
+	 */
 	public Set<QFOperationEnum> getRealAllowedOperations() {
 		if (allowedOperations.isEmpty()) {
 			return QFOperationEnum.getOperationsOfClass(finalClasses.get(0), arrayTyped);

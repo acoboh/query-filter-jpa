@@ -19,6 +19,8 @@ import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 
 /**
+ * QFCollectionMatch class is used to process collection elements in a query
+ *
  * @author Adrián Cobo
  */
 public class QFCollectionMatch implements QFSpecificationPart {
@@ -51,21 +53,13 @@ public class QFCollectionMatch implements QFSpecificationPart {
 
 	}
 
-	/**
-	 * Get original values as string
-	 *
-	 * @return original values
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public List<String> getOriginalValuesAsString() {
 		return List.of(String.valueOf(value));
 	}
 
-	/**
-	 * Get operation as string
-	 *
-	 * @return operation as string
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public String getOperationAsString() {
 		return operation.getOperation();
@@ -98,6 +92,7 @@ public class QFCollectionMatch implements QFSpecificationPart {
 		return definition;
 	}
 
+	/** {@inheritDoc} */
 	@SuppressWarnings("unchecked")
 	@Override
 	public <E> void processPart(QueryInfo<E> queryInfo, Map<String, List<Predicate>> predicatesMap,

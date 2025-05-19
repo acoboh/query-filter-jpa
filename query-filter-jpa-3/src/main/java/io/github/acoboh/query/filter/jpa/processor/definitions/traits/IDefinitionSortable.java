@@ -7,6 +7,8 @@ import jakarta.persistence.criteria.JoinType;
 
 /**
  * Sortable interface
+ *
+ * @author Adrián Cobo
  */
 public interface IDefinitionSortable {
 
@@ -53,6 +55,7 @@ public interface IDefinitionSortable {
 	 * @param index
 	 *            of path
 	 * @return join types
+	 * @since 1.0.0
 	 */
 	List<JoinType> getJoinTypes(int index);
 

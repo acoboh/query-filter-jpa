@@ -92,21 +92,13 @@ public class QFDiscriminatorMatch implements QFSpecificationPart {
 
 	}
 
-	/**
-	 * Get the original values
-	 *
-	 * @return original values
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public List<String> getOriginalValuesAsString() {
 		return this.values;
 	}
 
-	/**
-	 * Get operation as string
-	 *
-	 * @return operation as string
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public String getOperationAsString() {
 		return operation.getOperation();
@@ -170,11 +162,13 @@ public class QFDiscriminatorMatch implements QFSpecificationPart {
 	 * Get operation
 	 *
 	 * @return operation
+	 * @since 1.0.0
 	 */
 	public QFOperationDiscriminatorEnum getOperation() {
 		return operation;
 	}
 
+	/** {@inheritDoc} */
 	@SuppressWarnings("unchecked")
 	@Override
 	public <E> void processPart(QueryInfo<E> queryInfo, Map<String, List<Predicate>> predicatesMap,

@@ -21,6 +21,8 @@ import jakarta.persistence.metamodel.Metamodel;
 
 /**
  * Definition for discriminator classes
+ *
+ * @author Adrián Cobo
  */
 public class QFDefinitionDiscriminator extends QFAbstractDefinition {
 
@@ -119,15 +121,30 @@ public class QFDefinitionDiscriminator extends QFAbstractDefinition {
 	 * Get the join types
 	 *
 	 * @return join types
+	 * @since 1.0.0
 	 */
 	public List<JoinType> getJoinTypes() {
 		return joinTypes;
 	}
 
+	/**
+	 * Get if the operation is allowed
+	 *
+	 * @param operation
+	 *            to check
+	 * @return a boolean true if the operation is allowed
+	 * @since 1.0.0
+	 */
 	public boolean isOperationAllowed(QFOperationDiscriminatorEnum operation) {
 		return allowedOperations.isEmpty() || allowedOperations.contains(operation);
 	}
 
+	/**
+	 * Get the allowed operations
+	 *
+	 * @return a set of allowed operations
+	 * @since 1.0.0
+	 */
 	public Set<QFOperationDiscriminatorEnum> getRealAllowedOperations() {
 		if (allowedOperations.isEmpty()) {
 			return Set.of(QFOperationDiscriminatorEnum.values());

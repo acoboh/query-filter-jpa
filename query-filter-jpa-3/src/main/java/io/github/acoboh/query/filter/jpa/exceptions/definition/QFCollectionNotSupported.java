@@ -4,6 +4,8 @@ import java.io.Serial;
 
 /**
  * Exception thrown if the element can not be filter collection type
+ *
+ * @author Adrián Cobo
  */
 public class QFCollectionNotSupported extends QueryFilterDefinitionException {
 
@@ -33,6 +35,8 @@ public class QFCollectionNotSupported extends QueryFilterDefinitionException {
 	}
 
 	/**
+	 * Get the filter name
+	 *
 	 * @return filter name
 	 */
 	public String getFilterName() {
@@ -40,6 +44,8 @@ public class QFCollectionNotSupported extends QueryFilterDefinitionException {
 	}
 
 	/**
+	 * Get the filter class
+	 *
 	 * @return filter class
 	 */
 	public Class<?> getFilterClass() {
@@ -47,6 +53,8 @@ public class QFCollectionNotSupported extends QueryFilterDefinitionException {
 	}
 
 	/**
+	 * Get the actual type
+	 *
 	 * @return actual type
 	 */
 	public Class<?> getActualType() {

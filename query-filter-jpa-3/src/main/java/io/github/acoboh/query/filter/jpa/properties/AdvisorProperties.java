@@ -104,6 +104,7 @@ public class AdvisorProperties {
 	 * Get if the error message should be extended
 	 *
 	 * @return if the error message should be extended
+	 * @since 1.0.0
 	 */
 	public boolean isExtendErrorMessage() {
 		return extendErrorMessage;
@@ -114,6 +115,7 @@ public class AdvisorProperties {
 	 *
 	 * @param extendErrorMessage
 	 *            if the error message should be extended
+	 * @since 1.0.0
 	 */
 	public void setExtendErrorMessage(boolean extendErrorMessage) {
 		this.extendErrorMessage = extendErrorMessage;

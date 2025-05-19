@@ -18,6 +18,8 @@ import jakarta.persistence.metamodel.Metamodel;
 
 /**
  * Definition for sorable fields
+ *
+ * @author Adrián Cobo
  */
 public class QFDefinitionSortable extends QFAbstractDefinition implements IDefinitionSortable {
 
@@ -53,26 +55,31 @@ public class QFDefinitionSortable extends QFAbstractDefinition implements IDefin
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<List<QFAttribute>> getPaths() {
 		return attributes;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isSortable() {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isAutoFetch(int index) {
 		return autoFetch;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<String> getPathField() {
 		return fullPath;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<JoinType> getJoinTypes(int index) {
 		return joinTypes;

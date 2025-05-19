@@ -19,6 +19,8 @@ import jakarta.persistence.metamodel.Metamodel;
 
 /**
  * Definition for collection filter field
+ *
+ * @author Adrián Cobo
  */
 public class QFDefinitionCollection extends QFAbstractDefinition {
 
@@ -68,15 +70,30 @@ public class QFDefinitionCollection extends QFAbstractDefinition {
 	 * Get join types of the collection
 	 *
 	 * @return join types
+	 * @since 1.0.0
 	 */
 	public List<JoinType> getJoinTypes() {
 		return joinTypes;
 	}
 
+	/**
+	 * Get if the operation is allowed for the collection filter
+	 *
+	 * @param operation
+	 *            operation to check
+	 * @return a boolean true if the operation is allowed, false otherwise
+	 * @since 1.0.0
+	 */
 	public boolean isOperationAllowed(QFCollectionOperationEnum operation) {
 		return allowedOperations.isEmpty() || allowedOperations.contains(operation);
 	}
 
+	/**
+	 * Get the allowed operations for the collection filter
+	 *
+	 * @return a set with the allowed operations
+	 * @since 1.0.0
+	 */
 	public Set<QFCollectionOperationEnum> getRealAllowedOperations() {
 		if (allowedOperations.isEmpty()) {
 			return Set.of(QFCollectionOperationEnum.values());

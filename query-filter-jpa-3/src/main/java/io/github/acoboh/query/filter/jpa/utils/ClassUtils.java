@@ -17,6 +17,8 @@ import io.github.acoboh.query.filter.jpa.exceptions.definition.QFTypeException;
 
 /**
  * Class introspection utilities
+ *
+ * @author Adrián Cobo
  */
 public class ClassUtils {
 
@@ -58,6 +60,8 @@ public class ClassUtils {
 	 * @param field
 	 *            Field to check
 	 * @return Class of the list
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.definition.QFTypeException
+	 *             if any.
 	 */
 	public static Class<?> getClassOfList(Field field) throws QFTypeException {
 

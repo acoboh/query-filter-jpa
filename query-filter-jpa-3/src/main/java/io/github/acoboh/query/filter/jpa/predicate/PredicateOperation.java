@@ -61,11 +61,7 @@ public enum PredicateOperation {
 	/**
 	 * Resolve the predicate with criteria builder
 	 *
-	 * @param cb
-	 *            Criteria builder
-	 * @param predicates
-	 *            Predicates to be used on operation
-	 * @return the predicate
+	 * @return the predicate to be used in the query
 	 */
 	public abstract Predicate getPredicate(CriteriaBuilder cb, List<Predicate> predicates);
 

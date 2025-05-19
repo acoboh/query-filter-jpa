@@ -12,6 +12,8 @@ import jakarta.persistence.criteria.Predicate;
 
 /**
  * Interface to create all parts of the final specification
+ *
+ * @author Adrián Cobo
  */
 public interface QFSpecificationPart {
 
@@ -30,6 +32,9 @@ public interface QFSpecificationPart {
 	 *            Spel Resolver class
 	 * @param entityClass
 	 *            Entity class
+	 * @param queryInfo
+	 *            a {@link io.github.acoboh.query.filter.jpa.processor.QueryInfo}
+	 *            object
 	 */
 	<E> void processPart(QueryInfo<E> queryInfo, Map<String, List<Predicate>> predicatesMap,
 			Map<String, Path<?>> pathsMap, MultiValueMap<String, Object> mlmap, SpelResolverContext spelResolver,
@@ -44,8 +49,9 @@ public interface QFSpecificationPart {
 
 	/**
 	 * Get the field operation as string
-	 * 
+	 *
 	 * @return operation as string
+	 * @since 1.0.0
 	 */
 	String getOperationAsString();
 
@@ -53,6 +59,7 @@ public interface QFSpecificationPart {
 	 * Get original values as string
 	 *
 	 * @return original values
+	 * @since 1.0.0
 	 */
 	List<String> getOriginalValuesAsString();
 

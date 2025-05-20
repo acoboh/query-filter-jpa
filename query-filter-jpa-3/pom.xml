@@ -16,40 +16,11 @@
     <description>Query filter JPA for Spring Boot 3.X</description>
 
     <properties>
-        <!-- JDK 17 -->
-        <jdk.version>17</jdk.version>
-        <jdk-test.version>17</jdk-test.version>
-        <maven.compiler.source>${jdk.version}</maven.compiler.source>
-        <maven.compiler.target>${jdk.version}</maven.compiler.target>
-
-        <maven.compiler.testSource>${jdk-test.version}</maven.compiler.testSource>
-        <maven.compiler.testTarget>${jdk-test.version}</maven.compiler.testTarget>
-
-        <!-- Spring dependencies -->
-        <spring-boot.version>3.4.4</spring-boot.version>
-
         <!-- Reflections -->
         <reflections.version>0.10.2</reflections.version>
-
         <!-- Hypersistance tests -->
-        <hypersistance.version>3.9.4</hypersistance.version>
-
+        <hypersistance.version>3.9.10</hypersistance.version>
     </properties>
-
-    <dependencyManagement>
-        <dependencies>
-
-            <!-- Spring Boot BOM -->
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
 
@@ -89,14 +60,12 @@
             <scope>provided</scope>
         </dependency>
 
-        <!--
-        https://mvnrepository.com/artifact/org.springframework/spring-webmvc -->
+        <!-- Spring MVC -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <scope>provided</scope>
         </dependency>
-
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -119,13 +88,14 @@
             <optional>true</optional>
         </dependency>
 
-
+        <!-- Jackson databind -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <scope>provided</scope>
         </dependency>
 
+        <!-- Guava -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
@@ -145,7 +115,6 @@
         </dependency>
 
         <!-- TEST SCOPE -->
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
@@ -218,7 +187,7 @@
 
         <dependency>
             <groupId>io.hypersistence</groupId>
-            <artifactId>hypersistence-utils-hibernate-62</artifactId>
+            <artifactId>hypersistence-utils-hibernate-63</artifactId>
             <version>${hypersistance.version}</version>
             <scope>test</scope>
         </dependency>

@@ -43,8 +43,9 @@
     </scm>
 
     <properties>
-        <jdk.version>8</jdk.version>
-        <jdk-test.version>8</jdk-test.version>
+        <!-- JDK 17 -->
+        <jdk.version>17</jdk.version>
+        <jdk-test.version>17</jdk-test.version>
         <maven.compiler.source>${jdk.version}</maven.compiler.source>
         <maven.compiler.target>${jdk.version}</maven.compiler.target>
 
@@ -63,13 +64,16 @@
         <maven-surfire-plugin.version>3.5.3</maven-surfire-plugin.version>
         <sonartype-publishing.version>0.7.0</sonartype-publishing.version>
 
+        <!-- Spring dependencies -->
+        <spring-boot.version>3.4.5</spring-boot.version>
+
         <datasource-proxy.version>1.6</datasource-proxy.version>
-        <testcontainers.version>1.20.6</testcontainers.version>
+        <testcontainers.version>1.21.0</testcontainers.version>
         <junit.version>5.12.1</junit.version>
         <assertj-core.version>3.27.3</assertj-core.version>
 
         <!-- Guava dependencies -->
-        <guava.version>33.4.7-jre</guava.version>
+        <guava.version>33.4.8-jre</guava.version>
 
         <!-- JDBC Driver versions -->
         <postgresql.version>42.7.5</postgresql.version>
@@ -86,11 +90,6 @@
     </properties>
 
     <modules>
-        <!-- Spring Boot 2.7.X -->
-        <!--<module>query-filter-jpa</module>-->
-        <!--<module>query-filter-jpa-openapi</module>-->
-
-        <!-- Spring Boot 3.X -->
         <module>query-filter-jpa-3</module>
         <module>query-filter-jpa-openapi-3</module>
     </modules>
@@ -98,6 +97,14 @@
     <dependencyManagement>
         <dependencies>
 
+            <!-- Spring Boot BOM -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
 
             <dependency>
                 <groupId>org.testcontainers</groupId>

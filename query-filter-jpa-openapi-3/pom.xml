@@ -17,20 +17,9 @@
 
 
     <properties>
-        <jdk.version>17</jdk.version>
-        <jdk-test.version>17</jdk-test.version>
-        <maven.compiler.source>${jdk.version}</maven.compiler.source>
-        <maven.compiler.target>${jdk.version}</maven.compiler.target>
-
-        <maven.compiler.testSource>${jdk-test.version}</maven.compiler.testSource>
-        <maven.compiler.testTarget>${jdk-test.version}</maven.compiler.testTarget>
-
-        <!-- Spring dependencies -->
-        <spring.version>6.2.5</spring.version>
 
         <!--OpenAPI dependencies -->
-        <openapi.version>2.8.6</openapi.version>
-
+        <openapi.version>2.8.8</openapi.version>
     </properties>
 
     <dependencies>
@@ -43,14 +32,12 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
-            <version>${spring.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>${spring.version}</version>
             <scope>provided</scope>
         </dependency>
 

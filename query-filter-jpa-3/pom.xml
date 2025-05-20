@@ -16,8 +16,6 @@
     <description>Query filter JPA for Spring Boot 3.X</description>
 
     <properties>
-        <!-- Reflections -->
-        <reflections.version>0.10.2</reflections.version>
         <!-- Hypersistance tests -->
         <hypersistance.version>3.9.10</hypersistance.version>
     </properties>
@@ -99,13 +97,6 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-        </dependency>
-
-        <!-- Reflections -->
-        <dependency>
-            <groupId>org.reflections</groupId>
-            <artifactId>reflections</artifactId>
-            <version>${reflections.version}</version>
         </dependency>
 
         <dependency>

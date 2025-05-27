@@ -102,7 +102,7 @@ public @interface QFElement {
 	/**
 	 * Can resolve SpEL security expressions like:
 	 * <p>
-	 * <code>principal?.name</code>
+	 * {@code principal?.name}
 	 * <p>
 	 * <b>Use with caution!</b>
 	 * <p>
@@ -110,21 +110,19 @@ public @interface QFElement {
 	 * <p>
 	 * If there is more than one value, only the first one will be used. Example:
 	 * <p>
-	 * <code>
-	 * &#64;security.isAuthorized(),isAuthenticated()
-	 * </code>
+	 * {@code @security.isAuthorized(),isAuthenticated() }
 	 * <p>
-	 * In this case, only the first part <code>@security.isAuthorized()</code> will
-	 * be used
+	 * In this case, only the first part {@code @security.isAuthorized()} will be
+	 * used
 	 * <p>
 	 * You can also reuse vales from other fields used example:
 	 * <p>
 	 * Example of use the value of a query element named 'otherElement' to check if
 	 * filter value is greater than 10
 	 * <p>
-	 * <code>
-	 * #otherElement &gt; 10
-	 * </code>
+	 * {@code
+	 * #otherElement > 10
+	 * }
 	 * <p>
 	 * You need to use the option <b>order</b> to use this functionality.
 	 *
@@ -149,7 +147,7 @@ public @interface QFElement {
 	int order() default Integer.MIN_VALUE;
 
 	/**
-	 * If the filter is sortable, you can active Fetch Load automatically
+	 * If the filter is sortable, you can activate Fetch Load automatically
 	 *
 	 * @return true if fetch is enabled
 	 */
@@ -207,9 +205,8 @@ public @interface QFElement {
 	 * the first join type for the first until the latest is reached, and it will be
 	 * used for the rest.
 	 * <p>
-	 * Example: If you specify {@code JoinType.LEFT, JoinType.INNER}, the first join
-	 * will be a LEFT join, the second will be an INNER join, and all the rest will
-	 * be INNER joins.
+	 * Example: If you specify {@code {LEFT, INNER}}, the first join will be a LEFT
+	 * join, the second will be an INNER join, and all the rest will be INNER joins.
 	 * 
 	 * @return join type to use
 	 */

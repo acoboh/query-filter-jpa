@@ -25,13 +25,11 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>

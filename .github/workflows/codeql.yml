@@ -49,16 +49,20 @@ jobs:
           mvn clean package -B -V -e -Dfindbugs.skip -Dcheckstyle.skip \
             -Dpmd.skip=true -Dspotbugs.skip -Denforcer.skip -Dmaven.javadoc.skip \
             -DskipTests -Dlicense.skip=true -Drat.skip=true -Dspotless.check.skip=true
+      # Testcontainers steps only for non-main branches
       - name: Setup Testcontainers Cloud Client
+        if: ${{ github.ref != 'refs/heads/main' }}
         uses: atomicjar/testcontainers-cloud-setup-action@v1
         with:
           token: ${{ secrets.TC_CLOUD_TOKEN }}
       - name: Test containers execution
+        if: ${{ github.ref != 'refs/heads/main' }}
         run: |
           mvn test -B -V -e -Dfindbugs.skip -Dcheckstyle.skip \
             -Dpmd.skip=true -Dspotbugs.skip -Denforcer.skip -Dmaven.javadoc.skip \
             -Dlicense.skip=true -Drat.skip=true -Dspotless.check.skip=true
       - name: Terminate Testcontainers Cloud Client active sessions
+        if: ${{ github.ref != 'refs/heads/main' }}
         uses: atomicjar/testcontainers-cloud-setup-action@v1
         with:
           action: terminate
@@ -68,4 +72,3 @@ jobs:
           category: "/language:${{matrix.language}}"
       - name: Maven Dependency Tree Dependency Submission
         uses: advanced-security/maven-dependency-submission-action@v5.0.0
-            

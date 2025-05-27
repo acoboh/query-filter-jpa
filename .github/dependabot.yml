@@ -1,43 +1,15 @@
 version: 2
 updates:
 
-  # # Parent pom
-  # - package-ecosystem: "maven"
-  #   directories: 
-  #     - "/"
-  #   schedule:
-  #     interval: "weekly"
-  #   ignore:
-  #     - dependency-name: "org.apache.maven.plugins:maven-source-plugin"
-  #       versions: ["4.x"] # Ignore actual betas
-
-  # # Spring Boot 2 Versions
-  # - package-ecosystem: "maven"
-  #   directories: 
-  #     - "/query-filter-jpa"
-  #     - "/query-filter-jpa-openapi"
-  #   schedule:
-  #     interval: "weekly"
-  #   ignore:
-  #   # Ignore versions of Spring Boot 3
-  #     - dependency-name: "org.springframework.boot:spring-boot-dependencies"
-  #       versions: ["3.x"] 
-  #     - dependency-name: "org.springframework:spring-webmvc"
-  #       versions: ["6.x.x"]
-  #     - dependency-name: "org.springframework:spring-beans"
-  #       versions: ["6.x.x"]
-  #     - dependency-name: "org.springframework:spring-context"
-  #       versions: ["6.x.x"]
-  #     - dependency-name: "org.springdoc:springdoc-openapi-common"
-  #       versions: ["1.8.x"] # Ignored latest version. It has bugs not resolved
-      
-  # # Spring Boot 3 Versions
-  # - package-ecosystem: "maven"
-  #   directories: 
-  #     - "/query-filter-jpa-3"
-  #     - "/query-filter-jpa-openapi-3"
-  #   schedule:
-  #     interval: "weekly"
+  # Maven dependencies update
+  - package-ecosystem: "maven"
+    directories:
+      - "/"
+    schedule:
+      interval: "weekly"
+    ignore:
+      - dependency-name: "org.apache.maven.plugins:maven-source-plugin"
+        versions: [ "4.x" ] # Ignore actual betas
 
   # Git actions update
   - package-ecosystem: "github-actions"

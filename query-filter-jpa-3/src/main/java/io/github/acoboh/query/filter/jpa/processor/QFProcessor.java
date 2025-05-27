@@ -2,11 +2,13 @@ package io.github.acoboh.query.filter.jpa.processor;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +56,10 @@ public class QFProcessor<F, E> {
 	private final QFDefinitionClass queryFilterClass;
 
 	private final Map<String, QFAbstractDefinition> definitionMap;
+
+	// Map to store fields that will launch other filters by OnPresent annotation
+	private final Map<String, Set<String>> fieldsLaunchOnPresent;
+	private final List<QFDefinitionElement> definitionsOnPresent;
 
 	private final List<QFElementMatch> defaultMatches;
 
@@ -129,6 +135,22 @@ public class QFProcessor<F, E> {
 				}
 			}
 		}
+
+		definitionsOnPresent = definitionMap.values().stream().filter(QFDefinitionElement.class::isInstance)
+				.map(QFDefinitionElement.class::cast).filter(QFDefinitionElement::isOnPresentFilterEnabled)
+				.sorted(Comparator.comparingInt(QFDefinitionElement::getOrder)).toList();
+
+		fieldsLaunchOnPresent = new HashMap<>();
+		for (QFDefinitionElement def : definitionsOnPresent) {
+			String definitionName = def.getFilterName();
+			for (var related : def.getOnFilterPresentFilters()) {
+				if (related == null || related.isEmpty()) {
+					continue;
+				}
+
+				fieldsLaunchOnPresent.computeIfAbsent(related, k -> new HashSet<>()).add(definitionName);
+			}
+		}
 	}
 
 	private static Map<String, QFAbstractDefinition> getDefinition(Class<?> filterClass,
@@ -167,11 +189,7 @@ public class QFProcessor<F, E> {
 
 		for (var abstractDef : definitionMap.values()) {
 			if (abstractDef instanceof QFDefinitionElement def) {
-				for (var elem : def.getElementAnnotations()) {
-					if (elem.defaultValues().length > 0) {
-						ret.add(new QFElementMatch(Arrays.asList(elem.defaultValues()), elem.defaultOperation(), def));
-					}
-				}
+				ret.addAll(def.getDefaultElementMatches());
 			}
 		}
 
@@ -277,6 +295,24 @@ public class QFProcessor<F, E> {
 	 */
 	protected List<QFElementMatch> getDefaultMatches() {
 		return defaultMatches;
+	}
+
+	/**
+	 * Get all the definitions that are enabled on present filter
+	 * 
+	 * @return list of definitions that are enabled on present filter
+	 */
+	protected List<QFDefinitionElement> getDefinitionsOnPresent() {
+		return definitionsOnPresent;
+	}
+
+	/**
+	 * Get fields that will launch other filters by OnPresent annotation
+	 *
+	 * @return map of fields that will launch other filters by OnPresent annotation
+	 */
+	protected Map<String, Set<String>> getFieldsLaunchOnPresent() {
+		return fieldsLaunchOnPresent;
 	}
 
 	/**

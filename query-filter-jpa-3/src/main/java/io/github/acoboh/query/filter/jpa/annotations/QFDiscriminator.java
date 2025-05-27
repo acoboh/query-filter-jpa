@@ -75,7 +75,7 @@ public @interface QFDiscriminator {
 	 * the first join type for the first until the latest is reached, and it will be
 	 * used for the rest.
 	 * <p>
-	 * Example: If you specify {@code JoinType.LEFT, JoinType.INNER}, the first join
+	 * Example: If you specify {@code {LEFT, INNER}}, the first join
 	 * will be a LEFT join, the second will be an INNER join, and all the rest will
 	 * be INNER joins.
 	 *

@@ -14,6 +14,7 @@ import io.github.acoboh.query.filter.jpa.annotations.QFDiscriminator;
 import io.github.acoboh.query.filter.jpa.annotations.QFElement;
 import io.github.acoboh.query.filter.jpa.annotations.QFElements;
 import io.github.acoboh.query.filter.jpa.annotations.QFJsonElement;
+import io.github.acoboh.query.filter.jpa.annotations.QFOnFilterPresent;
 import io.github.acoboh.query.filter.jpa.annotations.QFSortable;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFAnnotationsException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
@@ -145,9 +146,10 @@ public abstract class QFAbstractDefinition {
 			QFElement[] elementAnnotations = filterField.getAnnotationsByType(QFElement.class);
 			QFElements elementsAnnotation = filterField.getAnnotation(QFElements.class);
 			QFDate dateAnnotation = filterField.getAnnotation(QFDate.class);
+			QFOnFilterPresent onFilterPresentAnnotation = filterField.getAnnotation(QFOnFilterPresent.class);
 
 			return new QFDefinitionElement(filterField, filterClass, entityClass, blockParsing, elementsAnnotation,
-					elementAnnotations, dateAnnotation, metamodel);
+					elementAnnotations, dateAnnotation, onFilterPresentAnnotation, metamodel);
 
 		} else if (isQFJson) {
 			// Create json definition

@@ -24,7 +24,6 @@ import org.springframework.util.MultiValueMap;
 
 import com.google.common.collect.Sets;
 
-import io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass;
 import io.github.acoboh.query.filter.jpa.exceptions.QFBlockException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFDiscriminatorNotFoundException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException;
@@ -117,9 +116,9 @@ public class QueryFilter<E> implements Specification<E> {
 		Assert.notNull(type, "type cannot be null");
 
 		this.definitionMap = processor.getDefinitionMap();
-		QFDefinitionClass queryFilterClassAnnotation = processor.getDefinitionClassAnnotation();
 
-		this.specificationsWarp = new QFSpecificationsWarp(processor.getDefaultMatches());
+		this.specificationsWarp = new QFSpecificationsWarp(processor.getDefaultMatches(),
+				processor.getFieldsLaunchOnPresent(), processor.getDefinitionsOnPresent());
 
 		this.defaultSorting = processor.getDefaultSorting();
 		this.entityClass = processor.getEntityClass();
@@ -132,7 +131,7 @@ public class QueryFilter<E> implements Specification<E> {
 			this.predicate = predicateMap.get(this.predicateName);
 		}
 
-		this.distinct = queryFilterClassAnnotation.distinct();
+		this.distinct = processor.getDefinitionClassAnnotation().distinct();
 
 		this.initialInput = input != null ? input : "";
 
@@ -1050,7 +1049,7 @@ public class QueryFilter<E> implements Specification<E> {
 
 		processSort(queryInfo, pathsMap);
 
-		List<QFSpecificationPart> sortedParts = specificationsWarp.getAllPartsSorted();
+		var sortedParts = specificationsWarp.getAllPartsSorted();
 
 		MultiValueMap<String, Object> mlmap = new LinkedMultiValueMap<>(sortedParts.size());
 

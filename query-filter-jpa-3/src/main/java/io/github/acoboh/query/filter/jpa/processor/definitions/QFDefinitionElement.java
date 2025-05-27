@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -18,6 +19,7 @@ import io.github.acoboh.query.filter.jpa.annotations.QFBlockParsing;
 import io.github.acoboh.query.filter.jpa.annotations.QFDate;
 import io.github.acoboh.query.filter.jpa.annotations.QFElement;
 import io.github.acoboh.query.filter.jpa.annotations.QFElements;
+import io.github.acoboh.query.filter.jpa.annotations.QFOnFilterPresent;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFDateClassNotSupported;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFDateParseError;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFElementMultipleClassesException;
@@ -26,6 +28,7 @@ import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 import io.github.acoboh.query.filter.jpa.predicate.PredicateOperation;
 import io.github.acoboh.query.filter.jpa.processor.QFAttribute;
 import io.github.acoboh.query.filter.jpa.processor.definitions.traits.IDefinitionSortable;
+import io.github.acoboh.query.filter.jpa.processor.match.QFElementMatch;
 import io.github.acoboh.query.filter.jpa.utils.DateUtils;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.metamodel.Metamodel;
@@ -43,6 +46,9 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 	private final PredicateOperation defaultOperation;
 
 	private final QFDate dateAnnotation;
+
+	private final QFOnFilterPresent onFilterPresent;
+	private final Set<String> onFilterPresentFilters;
 
 	private final DateTimeFormatter dateTimeFormatter;
 
@@ -65,8 +71,8 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 	private final int order;
 
 	QFDefinitionElement(Field filterField, Class<?> filterClass, Class<?> entityClass, QFBlockParsing blockedParsing,
-			QFElements elementsAnnotation, QFElement[] elementAnnotations, QFDate dateAnnotation, Metamodel metamodel)
-			throws QueryFilterDefinitionException {
+			QFElements elementsAnnotation, QFElement[] elementAnnotations, QFDate dateAnnotation,
+			QFOnFilterPresent onFilterPresent, Metamodel metamodel) throws QueryFilterDefinitionException {
 		super(filterField, filterClass, entityClass, blockedParsing);
 
 		// Element annotations
@@ -74,6 +80,9 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 
 		// Date annotation
 		this.dateAnnotation = dateAnnotation;
+
+		// On filter present annotation
+		this.onFilterPresent = onFilterPresent;
 
 		if (elementsAnnotation != null) {
 			this.defaultOperation = elementsAnnotation.operation();
@@ -145,6 +154,22 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 
 		if (joinTypes.stream().anyMatch(List::isEmpty)) {
 			LOGGER.warn("Join types not defined. Will use default join type");
+		}
+
+		if (onFilterPresent != null) {
+			if (onFilterPresent.value().length == 0) {
+				LOGGER.error("On filter present annotation must have at least one filter link");
+				throw new QueryFilterDefinitionException(
+						"On filter present annotation must have at least one filter link");
+			}
+			var count = Stream.of(elementAnnotations).filter(e -> e.defaultValues().length > 0).count();
+			if (count == 0) {
+				LOGGER.warn("On filter present annotation must have default values");
+				throw new QueryFilterDefinitionException("On filter present annotation must have default values");
+			}
+			onFilterPresentFilters = Set.of(onFilterPresent.value());
+		} else {
+			onFilterPresentFilters = null;
 		}
 
 		if (dateAnnotation != null) {
@@ -300,6 +325,22 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 	}
 
 	/**
+	 * Get if the on filter present annotation is enabled
+	 * 
+	 * @return true if the on filter present annotation is enabled
+	 */
+	public boolean isOnPresentFilterEnabled() {
+		return onFilterPresent != null;
+	}
+
+	/**
+	 * Get the on filter present fields
+	 */
+	public Set<String> getOnFilterPresentFilters() {
+		return onFilterPresentFilters;
+	}
+
+	/**
 	 * Get order of evaluation
 	 *
 	 * @return order of evaluation
@@ -365,6 +406,38 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 			return QFOperationEnum.getOperationsOfClass(finalClasses.get(0), arrayTyped);
 		}
 		return allowedOperations;
+	}
+
+	public List<QFElementMatch> getDefaultElementMatches() {
+		if (onFilterPresent != null) {
+			LOGGER.trace("On filter present annotation found. Will ignore default values");
+			return List.of();
+		}
+
+		List<QFElementMatch> matches = new ArrayList<>();
+
+		for (var elem : elementAnnotations) {
+			if (elem.defaultValues().length > 0) {
+				LOGGER.trace("Default values found for element annotation {}. Will add to matches", elem);
+				matches.add(new QFElementMatch(Arrays.asList(elem.defaultValues()), elem.defaultOperation(), this));
+			}
+		}
+		LOGGER.debug("Default values found for element annotations {}. Will add to matches", matches.size());
+		return matches;
+	}
+
+	public List<QFElementMatch> getNewMatchesOnFilterPresent() {
+
+		List<QFElementMatch> matches = new ArrayList<>();
+
+		for (var elem : elementAnnotations) {
+			if (elem.defaultValues().length > 0) {
+				LOGGER.trace("Default values found for element annotation {}. Will add to matches", elem);
+				matches.add(new QFElementMatch(Arrays.asList(elem.defaultValues()), elem.defaultOperation(), this));
+			}
+		}
+		LOGGER.debug("Default values found for element annotations {}. Will add to matches", matches.size());
+		return matches;
 	}
 
 }

@@ -19,7 +19,7 @@
     <properties>
 
         <!--OpenAPI dependencies -->
-        <openapi.version>2.8.8</openapi.version>
+        <openapi.version>2.8.9</openapi.version>
     </properties>
 
     <dependencies>

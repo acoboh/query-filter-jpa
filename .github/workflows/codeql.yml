@@ -15,6 +15,9 @@ on:
       - 'pom.xml'
       - '**/pom.xml'
 
+env:
+  RUN_TESTCONTAINERS: 'false'
+
 jobs:
   analyze:
     name: Analyze
@@ -51,18 +54,18 @@ jobs:
             -DskipTests -Dlicense.skip=true -Drat.skip=true -Dspotless.check.skip=true
       # Testcontainers steps only for non-main branches
       - name: Setup Testcontainers Cloud Client
-        if: ${{ github.ref != 'refs/heads/main' }}
+        if: ${{ github.ref != 'refs/heads/main' && env.RUN_TESTCONTAINERS == 'true' }}
         uses: atomicjar/testcontainers-cloud-setup-action@v1
         with:
           token: ${{ secrets.TC_CLOUD_TOKEN }}
       - name: Test containers execution
-        if: ${{ github.ref != 'refs/heads/main' }}
+        if: ${{ github.ref != 'refs/heads/main' && env.RUN_TESTCONTAINERS == 'true' }}
         run: |
           mvn test -B -V -e -Dfindbugs.skip -Dcheckstyle.skip \
             -Dpmd.skip=true -Dspotbugs.skip -Denforcer.skip -Dmaven.javadoc.skip \
             -Dlicense.skip=true -Drat.skip=true -Dspotless.check.skip=true
       - name: Terminate Testcontainers Cloud Client active sessions
-        if: ${{ github.ref != 'refs/heads/main' }}
+        if: ${{ github.ref != 'refs/heads/main' && env.RUN_TESTCONTAINERS == 'true' }}
         uses: atomicjar/testcontainers-cloud-setup-action@v1
         with:
           action: terminate

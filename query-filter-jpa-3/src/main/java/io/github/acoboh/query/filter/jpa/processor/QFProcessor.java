@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,7 @@ import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefini
 import io.github.acoboh.query.filter.jpa.predicate.PredicateProcessorResolutor;
 import io.github.acoboh.query.filter.jpa.processor.definitions.QFAbstractDefinition;
 import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionElement;
+import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionSortable;
 import io.github.acoboh.query.filter.jpa.processor.definitions.traits.IDefinitionSortable;
 import io.github.acoboh.query.filter.jpa.processor.match.QFElementMatch;
 import jakarta.persistence.EntityManager;
@@ -62,6 +64,10 @@ public class QFProcessor<F, E> {
 	private final List<QFDefinitionElement> definitionsOnPresent;
 
 	private final List<QFElementMatch> defaultMatches;
+
+	private final Set<String> requiredOnStringFilter;
+	private final Set<String> requiredOnExecution;
+	private final Set<String> requiredOnSort;
 
 	private final List<Pair<IDefinitionSortable, Direction>> defaultSorting;
 
@@ -151,6 +157,20 @@ public class QFProcessor<F, E> {
 				fieldsLaunchOnPresent.computeIfAbsent(related, k -> new HashSet<>()).add(definitionName);
 			}
 		}
+
+		// Sortable fields are bypassed on execution phase
+		requiredOnExecution = definitionMap.values().stream()
+				.filter(e -> e.isRequiredExecution() && !(e instanceof QFDefinitionSortable))
+				.map(QFAbstractDefinition::getFilterName).collect(Collectors.toSet());
+
+		requiredOnStringFilter = definitionMap.values().stream().filter(QFAbstractDefinition::isRequiredStringFilter)
+				.map(QFAbstractDefinition::getFilterName).collect(Collectors.toSet());
+
+		// Only applied fields that are sortable and required on sort
+		requiredOnSort = definitionMap.values().stream()
+				.filter(e -> e.isRequiredSort() && (e instanceof IDefinitionSortable sortable) && sortable.isSortable())
+				.map(QFAbstractDefinition::getFilterName).collect(Collectors.toSet());
+
 	}
 
 	private static Map<String, QFAbstractDefinition> getDefinition(Class<?> filterClass,
@@ -295,6 +315,33 @@ public class QFProcessor<F, E> {
 	 */
 	protected List<QFElementMatch> getDefaultMatches() {
 		return defaultMatches;
+	}
+
+	/**
+	 * Get the set of fields that are required on string filter
+	 * 
+	 * @return set of fields that are required on string filter
+	 */
+	protected Set<String> getRequiredOnStringFilter() {
+		return requiredOnStringFilter;
+	}
+
+	/**
+	 * Get the set of fields that are required on execution phase
+	 * 
+	 * @return set of fields that are required on execution phase
+	 */
+	protected Set<String> getRequiredOnExecution() {
+		return requiredOnExecution;
+	}
+
+	/**
+	 * Get the set of fields that are required on sort
+	 * 
+	 * @return set of fields that are required on sort
+	 */
+	protected Set<String> getRequiredOnSort() {
+		return requiredOnSort;
 	}
 
 	/**

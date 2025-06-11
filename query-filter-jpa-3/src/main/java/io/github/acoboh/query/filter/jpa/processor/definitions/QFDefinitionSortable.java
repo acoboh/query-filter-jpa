@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.github.acoboh.query.filter.jpa.annotations.QFBlockParsing;
+import io.github.acoboh.query.filter.jpa.annotations.QFRequired;
 import io.github.acoboh.query.filter.jpa.annotations.QFSortable;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 import io.github.acoboh.query.filter.jpa.processor.QFAttribute;
@@ -33,8 +34,9 @@ public class QFDefinitionSortable extends QFAbstractDefinition implements IDefin
 	private final List<JoinType> joinTypes;
 
 	QFDefinitionSortable(Field filterField, Class<?> filterClass, Class<?> entityClass, QFBlockParsing blockParsing,
-			QFSortable sortableAnnotation, Metamodel metamodel) throws QueryFilterDefinitionException {
-		super(filterField, filterClass, entityClass, blockParsing);
+			QFRequired required, QFSortable sortableAnnotation, Metamodel metamodel)
+			throws QueryFilterDefinitionException {
+		super(filterField, filterClass, entityClass, blockParsing, required);
 
 		attributes = new ArrayList<>(1); // Only one path
 

@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import io.github.acoboh.query.filter.jpa.annotations.QFBlockParsing;
 import io.github.acoboh.query.filter.jpa.annotations.QFCollectionElement;
+import io.github.acoboh.query.filter.jpa.annotations.QFRequired;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFCollectionNotSupported;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 import io.github.acoboh.query.filter.jpa.operations.QFCollectionOperationEnum;
@@ -31,8 +32,9 @@ public class QFDefinitionCollection extends QFAbstractDefinition {
 	private final Set<QFCollectionOperationEnum> allowedOperations;
 
 	QFDefinitionCollection(Field filterField, Class<?> filterClass, Class<?> entityClass, QFBlockParsing blockParsing,
-			QFCollectionElement collectionElement, Metamodel metamodel) throws QueryFilterDefinitionException {
-		super(filterField, filterClass, entityClass, blockParsing);
+			QFRequired required, QFCollectionElement collectionElement, Metamodel metamodel)
+			throws QueryFilterDefinitionException {
+		super(filterField, filterClass, entityClass, blockParsing, required);
 
 		var fieldClassProcessor = new FieldClassProcessor(entityClass, collectionElement.value(),
 				collectionElement.subClassMapping(), collectionElement.subClassMappingPath(), metamodel);

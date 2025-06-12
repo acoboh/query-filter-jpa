@@ -101,7 +101,6 @@ public class QueryFilter<E> implements Specification<E> {
 	private final transient List<Pair<IDefinitionSortable, Direction>> sortDefinitionList = new ArrayList<>();
 	private boolean isConstructor = true;
 
-	private final Set<String> requiredOnStringFilter;
 	private final Set<String> requiredOnExecution;
 	private final Set<String> requiredOnSort;
 
@@ -134,7 +133,6 @@ public class QueryFilter<E> implements Specification<E> {
 		this.predicateName = processor.getDefaultPredicate();
 
 		this.requiredOnExecution = processor.getRequiredOnExecution();
-		this.requiredOnStringFilter = processor.getRequiredOnStringFilter();
 		this.requiredOnSort = processor.getRequiredOnSort();
 
 		if (this.predicateName != null) {
@@ -172,7 +170,7 @@ public class QueryFilter<E> implements Specification<E> {
 		allFieldsOnString.addAll(specificationsWarp.getFilterNames());
 
 		// Check if the fields are required on string filter
-		for (String field : requiredOnStringFilter) {
+		for (String field : processor.getRequiredOnStringFilter()) {
 			if (!allFieldsOnString.contains(field)) {
 				throw new QFRequiredException(field);
 			}

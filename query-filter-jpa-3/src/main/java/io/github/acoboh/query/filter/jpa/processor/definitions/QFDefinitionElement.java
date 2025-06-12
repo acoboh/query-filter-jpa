@@ -118,7 +118,7 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 		arrayTyped = Stream.of(elementAnnotations).allMatch(QFElement::arrayTyped);
 		spelExpression = Stream.of(elementAnnotations).allMatch(QFElement::isSpPELExpression);
 		blankIgnore = Stream.of(elementAnnotations).allMatch(QFElement::blankIgnore);
-		order = Stream.of(elementAnnotations).mapToInt(QFElement::order).max().orElseGet(() -> 0);
+		order = Stream.of(elementAnnotations).mapToInt(QFElement::order).max().orElse(0);
 		subQuery = Stream.of(elementAnnotations).allMatch(QFElement::subquery);
 		joinTypes = Stream.of(elementAnnotations).map(e -> List.of(e.joinTypes())).toList();
 
@@ -423,7 +423,7 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 				matches.add(new QFElementMatch(Arrays.asList(elem.defaultValues()), elem.defaultOperation(), this));
 			}
 		}
-		LOGGER.debug("Default values found for element annotations {}. Will add to matches", matches.size());
+		LOGGER.debug("Total of default values to process {}. Will add to matches", matches.size());
 		return matches;
 	}
 
@@ -433,11 +433,11 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 
 		for (var elem : elementAnnotations) {
 			if (elem.defaultValues().length > 0) {
-				LOGGER.trace("Default values found for element annotation {}. Will add to matches", elem);
+				LOGGER.trace("OnFilterPresent values found for element annotation {}. Will add to matches", elem);
 				matches.add(new QFElementMatch(Arrays.asList(elem.defaultValues()), elem.defaultOperation(), this));
 			}
 		}
-		LOGGER.debug("Default values found for element annotations {}. Will add to matches", matches.size());
+		LOGGER.debug("OnFilterPresent values found for element annotations {}. Will add to matches", matches.size());
 		return matches;
 	}
 

@@ -12,6 +12,7 @@ import io.github.acoboh.query.filter.jpa.exceptions.definition.QFElementExceptio
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 import io.github.acoboh.query.filter.jpa.processor.QFAttribute;
 import jakarta.persistence.metamodel.Attribute;
+import jakarta.persistence.metamodel.EntityType;
 import jakarta.persistence.metamodel.ManagedType;
 import jakarta.persistence.metamodel.Metamodel;
 import jakarta.persistence.metamodel.PluralAttribute;
@@ -86,23 +87,29 @@ class FieldClassProcessor {
 				continue;
 			}
 
-			try {
-				if (prevAttribute == null) {
-					prevAttribute = entity.getAttribute(level);
-				} else {
-					prevAttribute = getAttribute(prevAttribute, level);
-				}
-
-				attributes.add(new QFAttribute(prevAttribute, null));
-			} catch (Exception e) {
-				throw new QueryFilterDefinitionException("Error processing level {}. Exception", e, level);
-			}
+			prevAttribute = getAttribute(level, prevAttribute, entity);
+			attributes.add(new QFAttribute(prevAttribute, null));
 
 		}
 
 		finalClass = attributes.get(attributes.size() - 1).getAttribute().getJavaType();
 
 		return attributes;
+	}
+
+	private Attribute<?, ?> getAttribute(String level, Attribute<?, ?> prevAttribute, EntityType<?> entity)
+			throws QueryFilterDefinitionException {
+		try {
+			if (prevAttribute == null) {
+				prevAttribute = entity.getAttribute(level);
+			} else {
+				prevAttribute = getAttribute(prevAttribute, level);
+			}
+
+		} catch (Exception e) {
+			throw new QueryFilterDefinitionException("Error processing level {}. Exception", e, level);
+		}
+		return prevAttribute;
 	}
 
 	private @Nullable String[] getLevelSubClassIfAvailable() throws QFElementException {

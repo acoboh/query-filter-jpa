@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import io.github.acoboh.query.filter.jpa.annotations.QFBlockParsing;
 import io.github.acoboh.query.filter.jpa.annotations.QFJsonElement;
+import io.github.acoboh.query.filter.jpa.annotations.QFRequired;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFJsonException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationJsonEnum;
@@ -32,8 +33,9 @@ public class QFDefinitionJson extends QFAbstractDefinition {
 	private final Set<QFOperationJsonEnum> allowedOperations;
 
 	QFDefinitionJson(Field filterField, Class<?> filterClass, Class<?> entityClass, QFBlockParsing blockParsing,
-			QFJsonElement jsonAnnotation, Metamodel metamodel) throws QueryFilterDefinitionException {
-		super(filterField, filterClass, entityClass, blockParsing);
+			QFRequired required, QFJsonElement jsonAnnotation, Metamodel metamodel)
+			throws QueryFilterDefinitionException {
+		super(filterField, filterClass, entityClass, blockParsing, required);
 		this.jsonAnnotation = jsonAnnotation;
 
 		// Add json filter name

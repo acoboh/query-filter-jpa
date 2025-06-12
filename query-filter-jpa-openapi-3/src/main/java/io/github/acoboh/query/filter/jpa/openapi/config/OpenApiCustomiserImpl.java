@@ -229,7 +229,6 @@ class OpenApiCustomiserImpl implements OpenApiCustomizer {
 			case PUT -> item.getPut();
 			case TRACE -> item.getTrace();
 			case GET -> item.getGet();
-			default -> throw new IllegalArgumentException("Method not supported" + method);
 		};
 
 	}

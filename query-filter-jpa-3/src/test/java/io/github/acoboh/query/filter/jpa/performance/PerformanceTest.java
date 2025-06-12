@@ -1,5 +1,7 @@
 package io.github.acoboh.query.filter.jpa.performance;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,9 +33,9 @@ class PerformanceTest {
 		// First regex
 		Pattern pattern1 = Pattern.compile("([^&=]+)\\[([a-zA-Z]+)\\]=((?:[^&]|&[^a-zA-Z0-9])*[^&]*)|sort=([^&]+)");
 		startTime = System.nanoTime();
-		for (int j = 0; j < QUERIES.length; j++) {
+		for (String query : QUERIES) {
 			for (int i = 0; i < ITERATIONS; i++) {
-				Matcher matcher = pattern1.matcher(QUERIES[j]);
+				Matcher matcher = pattern1.matcher(query);
 				while (matcher.find()) {
 					if (matcher.group(1) != null && matcher.group(2) != null && matcher.group(3) != null) {
 						String field = matcher.group(1);
@@ -48,6 +50,8 @@ class PerformanceTest {
 			}
 		}
 
+		assertThat(QUERIES.length * ITERATIONS).isGreaterThan(0);
+
 		endTime = System.nanoTime();
 		logger.info("First regex duration: {} ms", (endTime - startTime) / 1000000);
 	}
@@ -61,9 +65,9 @@ class PerformanceTest {
 		// Second regex
 		Pattern pattern2 = Pattern.compile("(([^&=]+)\\[([a-zA-Z]+)\\]=((?:[^&]|&[^a-zA-Z0-9])*[^&]*))|(sort=([^&]+))");
 		startTime = System.nanoTime();
-		for (int j = 0; j < QUERIES.length; j++) {
+		for (String query : QUERIES) {
 			for (int i = 0; i < ITERATIONS; i++) {
-				Matcher matcher = pattern2.matcher(QUERIES[j]);
+				Matcher matcher = pattern2.matcher(query);
 				while (matcher.find()) {
 					if (matcher.group(1) != null) {
 						String field = matcher.group(2);
@@ -77,6 +81,9 @@ class PerformanceTest {
 				}
 			}
 		}
+
+		assertThat(QUERIES.length * ITERATIONS).isGreaterThan(0);
+
 		endTime = System.nanoTime();
 		logger.info("Second regex duration: {} ms", (endTime - startTime) / 1000000);
 	}

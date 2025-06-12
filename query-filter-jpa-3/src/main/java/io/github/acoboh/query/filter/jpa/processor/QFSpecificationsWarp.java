@@ -27,7 +27,7 @@ class QFSpecificationsWarp {
 
 	// Reverse map. Map key is the field with the on present annotation. value is
 	// the related values
-	private final Map<String, Set<String>> fieldsLauchedOnPresent;
+	private final Map<String, Set<String>> fieldsLaunchedOnPresent;
 
 	private final Map<String, QFDefinitionElement> mapFieldsOnPresent;
 
@@ -49,7 +49,7 @@ class QFSpecificationsWarp {
 		this.mapFieldsOnPresent = defaultOnPresentFields.stream()
 				.collect(Collectors.toMap(QFAbstractDefinition::getFilterName, e -> e));
 
-		fieldsLauchedOnPresent = defaultOnPresentFields.stream().collect(
+		fieldsLaunchedOnPresent = defaultOnPresentFields.stream().collect(
 				Collectors.toMap(QFAbstractDefinition::getFilterName, QFDefinitionElement::getOnFilterPresentFilters));
 
 		for (var presentDefValue : specifications) {
@@ -114,7 +114,7 @@ class QFSpecificationsWarp {
 		if (fieldsLaunchOnPresent.containsKey(field) && !fieldsLaunchOnPresent.get(field).isEmpty()) {
 
 			for (String relatedFields : fieldsLaunchOnPresent.get(field)) {
-				Set<String> affectedBy = fieldsLauchedOnPresent.get(relatedFields);
+				Set<String> affectedBy = fieldsLaunchedOnPresent.get(relatedFields);
 				if (specifications.stream().noneMatch(e -> affectedBy.contains(e.getDefinition().getFilterName()))) {
 					specifications.removeIf(e -> e.getDefinition().getFilterName().equals(relatedFields));
 				}
@@ -140,6 +140,10 @@ class QFSpecificationsWarp {
 	 */
 	public List<QFSpecificationPart> getAllPartsSorted() {
 		return specifications.stream().sorted(COMPARATOR).toList();
+	}
+
+	public Set<String> getFilterNames() {
+		return specifications.stream().map(e -> e.getDefinition().getFilterName()).collect(Collectors.toSet());
 	}
 
 	private static class QFSpecificationComparator implements Comparator<QFSpecificationPart> {

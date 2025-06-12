@@ -35,9 +35,9 @@ public @interface QFPredicate {
 	 * <p>
 	 * An example:
 	 * <p>
-	 * <code>
+	 * {@code
 	 * (name OR shortname) AND user
-	 * </code>
+	 * }
 	 * <p>
 	 * All the fields not included will be ignored on the executed query
 	 *

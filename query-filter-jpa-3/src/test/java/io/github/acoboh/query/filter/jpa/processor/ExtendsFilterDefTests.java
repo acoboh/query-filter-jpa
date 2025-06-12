@@ -33,7 +33,7 @@ import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class ExtendsFilterDefTests {
+class ExtendsFilterDefTests {
 
 	private static final PostBlog POST_EXAMPLE = new PostBlog();
 

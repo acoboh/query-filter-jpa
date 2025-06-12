@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import io.github.acoboh.query.filter.jpa.annotations.QFBlockParsing;
 import io.github.acoboh.query.filter.jpa.annotations.QFDiscriminator;
+import io.github.acoboh.query.filter.jpa.annotations.QFRequired;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFDiscriminatorException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationDiscriminatorEnum;
@@ -37,9 +38,9 @@ public class QFDefinitionDiscriminator extends QFAbstractDefinition {
 	private final Map<String, Class<?>> discriminatorMap = new HashMap<>();
 
 	QFDefinitionDiscriminator(Field filterField, Class<?> filterClass, Class<?> entityClass,
-			QFBlockParsing blockParsing, QFDiscriminator discriminatorAnnotation, Metamodel metamodel)
-			throws QueryFilterDefinitionException {
-		super(filterField, filterClass, entityClass, blockParsing);
+			QFBlockParsing blockParsing, QFRequired required, QFDiscriminator discriminatorAnnotation,
+			Metamodel metamodel) throws QueryFilterDefinitionException {
+		super(filterField, filterClass, entityClass, blockParsing, required);
 
 		this.discriminatorAnnotation = discriminatorAnnotation;
 

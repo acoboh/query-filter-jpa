@@ -20,6 +20,7 @@ import io.github.acoboh.query.filter.jpa.annotations.QFDate;
 import io.github.acoboh.query.filter.jpa.annotations.QFElement;
 import io.github.acoboh.query.filter.jpa.annotations.QFElements;
 import io.github.acoboh.query.filter.jpa.annotations.QFOnFilterPresent;
+import io.github.acoboh.query.filter.jpa.annotations.QFRequired;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFDateClassNotSupported;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFDateParseError;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFElementMultipleClassesException;
@@ -71,9 +72,9 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 	private final int order;
 
 	QFDefinitionElement(Field filterField, Class<?> filterClass, Class<?> entityClass, QFBlockParsing blockedParsing,
-			QFElements elementsAnnotation, QFElement[] elementAnnotations, QFDate dateAnnotation,
+			QFRequired required, QFElements elementsAnnotation, QFElement[] elementAnnotations, QFDate dateAnnotation,
 			QFOnFilterPresent onFilterPresent, Metamodel metamodel) throws QueryFilterDefinitionException {
-		super(filterField, filterClass, entityClass, blockedParsing);
+		super(filterField, filterClass, entityClass, blockedParsing, required);
 
 		// Element annotations
 		this.elementAnnotations = elementAnnotations;
@@ -117,7 +118,7 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 		arrayTyped = Stream.of(elementAnnotations).allMatch(QFElement::arrayTyped);
 		spelExpression = Stream.of(elementAnnotations).allMatch(QFElement::isSpPELExpression);
 		blankIgnore = Stream.of(elementAnnotations).allMatch(QFElement::blankIgnore);
-		order = Stream.of(elementAnnotations).mapToInt(QFElement::order).max().orElseGet(() -> 0);
+		order = Stream.of(elementAnnotations).mapToInt(QFElement::order).max().orElse(0);
 		subQuery = Stream.of(elementAnnotations).allMatch(QFElement::subquery);
 		joinTypes = Stream.of(elementAnnotations).map(e -> List.of(e.joinTypes())).toList();
 
@@ -422,7 +423,7 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 				matches.add(new QFElementMatch(Arrays.asList(elem.defaultValues()), elem.defaultOperation(), this));
 			}
 		}
-		LOGGER.debug("Default values found for element annotations {}. Will add to matches", matches.size());
+		LOGGER.debug("Total of default values to process {}. Will add to matches", matches.size());
 		return matches;
 	}
 
@@ -432,11 +433,11 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 
 		for (var elem : elementAnnotations) {
 			if (elem.defaultValues().length > 0) {
-				LOGGER.trace("Default values found for element annotation {}. Will add to matches", elem);
+				LOGGER.trace("OnFilterPresent values found for element annotation {}. Will add to matches", elem);
 				matches.add(new QFElementMatch(Arrays.asList(elem.defaultValues()), elem.defaultOperation(), this));
 			}
 		}
-		LOGGER.debug("Default values found for element annotations {}. Will add to matches", matches.size());
+		LOGGER.debug("OnFilterPresent values found for element annotations {}. Will add to matches", matches.size());
 		return matches;
 	}
 

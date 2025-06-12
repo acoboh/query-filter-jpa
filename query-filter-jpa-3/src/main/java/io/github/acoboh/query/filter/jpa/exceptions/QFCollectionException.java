@@ -39,7 +39,7 @@ public class QFCollectionException extends QueryFilterException {
 
 	/**
 	 * <p>
-	 * Getter for the field <code>field</code>.
+	 * Getter for the field {@code field}.
 	 * </p>
 	 *
 	 * @return field
@@ -50,7 +50,7 @@ public class QFCollectionException extends QueryFilterException {
 
 	/**
 	 * <p>
-	 * Getter for the field <code>reason</code>.
+	 * Getter for the field {@code reason}.
 	 * </p>
 	 *
 	 * @return reason

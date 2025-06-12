@@ -4,6 +4,7 @@ import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -34,6 +35,7 @@ import io.github.acoboh.query.filter.jpa.exceptions.QFNotSortableException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFNotValuable;
 import io.github.acoboh.query.filter.jpa.exceptions.QFOperationNotFoundException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFParseException;
+import io.github.acoboh.query.filter.jpa.exceptions.QFRequiredException;
 import io.github.acoboh.query.filter.jpa.operations.QFCollectionOperationEnum;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationDiscriminatorEnum;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
@@ -99,6 +101,9 @@ public class QueryFilter<E> implements Specification<E> {
 	private final transient List<Pair<IDefinitionSortable, Direction>> sortDefinitionList = new ArrayList<>();
 	private boolean isConstructor = true;
 
+	private final Set<String> requiredOnExecution;
+	private final Set<String> requiredOnSort;
+
 	private @Nullable String predicateName;
 	private transient @Nullable PredicateProcessorResolutor predicate;
 
@@ -127,6 +132,9 @@ public class QueryFilter<E> implements Specification<E> {
 		this.predicateMap = processor.getPredicateMap();
 		this.predicateName = processor.getDefaultPredicate();
 
+		this.requiredOnExecution = processor.getRequiredOnExecution();
+		this.requiredOnSort = processor.getRequiredOnSort();
+
 		if (this.predicateName != null) {
 			this.predicate = predicateMap.get(this.predicateName);
 		}
@@ -154,6 +162,18 @@ public class QueryFilter<E> implements Specification<E> {
 
 			}
 
+		}
+
+		var listSort = defaultSortEnabled ? defaultSorting : sortDefinitionList;
+		var allFieldsOnString = listSort.stream().map(e -> e.getFirst().getFilterName())
+				.collect(Collectors.toCollection(HashSet::new));
+		allFieldsOnString.addAll(specificationsWarp.getFilterNames());
+
+		// Check if the fields are required on string filter
+		for (String field : processor.getRequiredOnStringFilter()) {
+			if (!allFieldsOnString.contains(field)) {
+				throw new QFRequiredException(field);
+			}
 		}
 
 		isConstructor = false;
@@ -1036,6 +1056,23 @@ public class QueryFilter<E> implements Specification<E> {
 
 		if (query == null) {
 			throw new IllegalArgumentException("Query cannot be null in QueryFilter predicates");
+		}
+
+		// Check required fields
+		var warpFields = specificationsWarp.getFilterNames();
+		for (var field : requiredOnExecution) {
+			if (!warpFields.contains(field)) {
+				throw new QFRequiredException(field);
+			}
+		}
+
+		// Check required sort fields
+		var listSort = defaultSortEnabled ? defaultSorting : sortDefinitionList;
+		var listSortNames = listSort.stream().map(e -> e.getFirst().getFilterName()).collect(Collectors.toSet());
+		for (var field : requiredOnSort) {
+			if (!listSortNames.contains(field)) {
+				throw new QFRequiredException(field);
+			}
 		}
 
 		Map<String, List<Predicate>> predicatesMap = new HashMap<>();

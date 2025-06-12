@@ -90,16 +90,12 @@ class JoinTypesElementTest {
 	@Order(2)
 	void testJoinTypes() {
 
-		// Filter
-		String filter = "comments.author=author and comments.likes=1";
-
 		// Execute
 		var qf = queryFilterProcessor.newQueryFilter("commentAuthor=null:true", QFParamType.RHS_COLON);
 
 		var result = repository.findAll(qf);
 
-		assertThat(result).isNotNull();
-		assertThat(result).hasSize(1);
+		assertThat(result).isNotNull().hasSize(1);
 		assertThat(result.get(0)).isEqualTo(POST_EXAMPLE_2);
 
 	}

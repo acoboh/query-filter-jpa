@@ -88,96 +88,90 @@ class DefaultValuesTests {
 		assertThat(repository.findAll()).hasSize(2);
 	}
 
-	// @Test
-	// @DisplayName("1. Default values filtering")
-	// @Order(1)
-	// void testDefaultValueFilter() {
-	//
-	// QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter(null,
-	// QFParamType.RHS_COLON);
-	// assertThat(qf).isNotNull();
-	//
-	// assertThat(qf.isFiltering("author")).isTrue();
-	// assertThat(qf.getActualValue("author")).containsExactly("Author 1");
-	//
-	// var found = repository.findAll(qf);
-	//
-	// assertThat(found).containsExactly(POST_EXAMPLE);
-	//
-	// }
-	//
-	// @Test
-	// @DisplayName("2. Default values filtering remove")
-	// @Order(2)
-	// void testDefaultValuesRemoved() {
-	// QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter(null,
-	// QFParamType.RHS_COLON);
-	// assertThat(qf).isNotNull();
-	//
-	// assertThat(qf.isFiltering("author")).isTrue();
-	// assertThat(qf.getActualValue("author")).containsExactly("Author 1");
-	//
-	// qf.deleteField("author");
-	// assertThat(qf.isFiltering("author")).isFalse();
-	//
-	// var found = repository.findAll(qf);
-	//
-	// assertThat(found).containsExactlyInAnyOrder(POST_EXAMPLE, POST_EXAMPLE_2);
-	//
-	// }
-	//
-	// @Test
-	// @DisplayName("4. Default values filtering override on definition")
-	// @Order(4)
-	// void testDefaultValuesOverrideOnDefinition() {
-	// QueryFilter<PostBlog> qf =
-	// queryFilterProcessor.newQueryFilter("author=eq:Author 2",
-	// QFParamType.RHS_COLON);
-	// assertThat(qf).isNotNull();
-	//
-	// assertThat(qf.isFiltering("author")).isTrue();
-	// assertThat(qf.getActualValue("author")).containsExactly("Author 2");
-	//
-	// var found = repository.findAll(qf);
-	//
-	// assertThat(found).containsExactly(POST_EXAMPLE_2);
-	// }
-	//
-	// @Test
-	// @DisplayName("5. Default values filtering override manually")
-	// @Order(5)
-	// void testDefaultValuesOverrideManually() {
-	// QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("",
-	// QFParamType.RHS_COLON);
-	// assertThat(qf).isNotNull();
-	//
-	// assertThat(qf.isFiltering("author")).isTrue();
-	// assertThat(qf.getActualValue("author")).containsExactly("Author 1");
-	//
-	// qf.addNewField("author", QFOperationEnum.EQUAL, "Author 2");
-	//
-	// assertThat(qf.isFiltering("author")).isTrue();
-	// assertThat(qf.getActualValue("author")).containsExactly("Author 2");
-	//
-	// var found = repository.findAll(qf);
-	//
-	// assertThat(found).containsExactly(POST_EXAMPLE_2);
-	// }
-	//
-	// @Test
-	// @DisplayName("6. Test on filter present default values")
-	// @Order(6)
-	// void testOnFilterPresentDefaultValues() {
-	// QueryFilter<PostBlog> qf = queryFilterOnPresentProcessor.newQueryFilter(null,
-	// QFParamType.RHS_COLON);
-	// assertThat(qf).isNotNull();
-	//
-	// assertThat(qf.isFilteringAny("author", "likes")).isFalse();
-	//
-	// var found = repository.findAll(qf);
-	//
-	// assertThat(found).containsExactlyInAnyOrder(POST_EXAMPLE, POST_EXAMPLE_2);
-	// }
+	@Test
+	@DisplayName("1. Default values filtering")
+	@Order(1)
+	void testDefaultValueFilter() {
+
+		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter(null, QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
+
+		assertThat(qf.isFiltering("author")).isTrue();
+		assertThat(qf.getActualValue("author")).containsExactly("Author 1");
+
+		var found = repository.findAll(qf);
+
+		assertThat(found).containsExactly(POST_EXAMPLE);
+
+	}
+
+	@Test
+	@DisplayName("2. Default values filtering remove")
+	@Order(2)
+	void testDefaultValuesRemoved() {
+		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter(null, QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
+
+		assertThat(qf.isFiltering("author")).isTrue();
+		assertThat(qf.getActualValue("author")).containsExactly("Author 1");
+
+		qf.deleteField("author");
+		assertThat(qf.isFiltering("author")).isFalse();
+
+		var found = repository.findAll(qf);
+
+		assertThat(found).containsExactlyInAnyOrder(POST_EXAMPLE, POST_EXAMPLE_2);
+
+	}
+
+	@Test
+	@DisplayName("4. Default values filtering override on definition")
+	@Order(4)
+	void testDefaultValuesOverrideOnDefinition() {
+		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("author=eq:Author 2", QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
+
+		assertThat(qf.isFiltering("author")).isTrue();
+		assertThat(qf.getActualValue("author")).containsExactly("Author 2");
+
+		var found = repository.findAll(qf);
+
+		assertThat(found).containsExactly(POST_EXAMPLE_2);
+	}
+
+	@Test
+	@DisplayName("5. Default values filtering override manually")
+	@Order(5)
+	void testDefaultValuesOverrideManually() {
+		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("", QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
+
+		assertThat(qf.isFiltering("author")).isTrue();
+		assertThat(qf.getActualValue("author")).containsExactly("Author 1");
+
+		qf.addNewField("author", QFOperationEnum.EQUAL, "Author 2");
+
+		assertThat(qf.isFiltering("author")).isTrue();
+		assertThat(qf.getActualValue("author")).containsExactly("Author 2");
+
+		var found = repository.findAll(qf);
+
+		assertThat(found).containsExactly(POST_EXAMPLE_2);
+	}
+
+	@Test
+	@DisplayName("6. Test on filter present default values")
+	@Order(6)
+	void testOnFilterPresentDefaultValues() {
+		QueryFilter<PostBlog> qf = queryFilterOnPresentProcessor.newQueryFilter(null, QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
+
+		assertThat(qf.isFilteringAny("author", "likes")).isFalse();
+
+		var found = repository.findAll(qf);
+
+		assertThat(found).containsExactlyInAnyOrder(POST_EXAMPLE, POST_EXAMPLE_2);
+	}
 
 	@Test
 	@DisplayName("7. Test on filter present default values with author")

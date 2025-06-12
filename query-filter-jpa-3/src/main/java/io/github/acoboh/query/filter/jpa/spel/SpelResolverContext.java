@@ -93,7 +93,7 @@ public abstract class SpelResolverContext {
 		}
 
 		var properties = new ServletRequestParameterPropertyValues(request);
-		Map<String, Object> requestParams = properties.getPropertyValueList().stream()
+		Map<String, Object> requestParams = properties.getPropertyValueList().stream().filter(e -> e.getValue() != null)
 				.collect(Collectors.toMap(PropertyValue::getName, PropertyValue::getValue));
 
 		context.setVariable("_parameters", requestParams);

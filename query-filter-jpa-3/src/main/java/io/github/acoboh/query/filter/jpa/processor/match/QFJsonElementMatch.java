@@ -2,9 +2,9 @@ package io.github.acoboh.query.filter.jpa.processor.match;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,13 +91,13 @@ public class QFJsonElementMatch implements QFSpecificationPart {
 	private static void addKeys(String currentPath, JsonNode jsonNode, Map<String, String> map, List<Integer> suffix) {
 		if (jsonNode.isObject()) {
 			ObjectNode objectNode = (ObjectNode) jsonNode;
-			Iterator<Map.Entry<String, JsonNode>> iter = objectNode.fields();
+			Set<Map.Entry<String, JsonNode>> iter = objectNode.properties();
 			String pathPrefix = currentPath.isEmpty() ? "" : currentPath + "-";
 
-			while (iter.hasNext()) {
-				Map.Entry<String, JsonNode> entry = iter.next();
+			for (var entry : iter) {
 				addKeys(pathPrefix + entry.getKey(), entry.getValue(), map, suffix);
 			}
+
 		} else if (jsonNode.isArray()) {
 			ArrayNode arrayNode = (ArrayNode) jsonNode;
 

@@ -14,9 +14,9 @@ public enum QFParamType {
 	 * <p>
 	 * Example:
 	 * <p>
-	 * <code>
+	 * {@code
 	 * authorName=eq:Adrian
-	 * </code>
+	 * }
 	 */
 	RHS_COLON("(([^&=]+)=([a-zA-Z]+):((?:[^&]|&[^a-zA-Z0-9])*[^&]*))|(sort=([^&]+))", // Pattern Regex
 			"RHS Colon"),
@@ -26,9 +26,9 @@ public enum QFParamType {
 	 * <p>
 	 * Example:
 	 * <p>
-	 * <code>
+	 * {@code
 	 * authorName[eq]=Adrian
-	 * </code>
+	 * }
 	 */
 	LHS_BRACKETS("(([^&=]+)\\[([a-zA-Z]+)\\]=((?:[^&]|&[^a-zA-Z0-9])*[^&]*))|(sort=([^&]+))", // Pattern Regex
 			"LHS Brackets"); // Name

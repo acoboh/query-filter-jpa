@@ -17,6 +17,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -65,6 +66,7 @@ class RequiredTest {
 	private static QFProcessor<RequiredSortDef2, PostBlog> processorSort2;
 	private static QFProcessor<RequiredAuthorDef2, PostBlog> processorAuthor2;
 	private static QFProcessor<RequiredAuthorDef3, PostBlog> processorAuthor3;
+	private static QFProcessor<RequiredAuthorDef4, PostBlog> processorAuthor4;
 
 	@Autowired
 	private ApplicationContext applicationContext;
@@ -82,11 +84,13 @@ class RequiredTest {
 		processorSort2 = new QFProcessor<>(RequiredSortDef2.class, PostBlog.class, applicationContext);
 		processorAuthor2 = new QFProcessor<>(RequiredAuthorDef2.class, PostBlog.class, applicationContext);
 		processorAuthor3 = new QFProcessor<>(RequiredAuthorDef3.class, PostBlog.class, applicationContext);
+		processorAuthor4 = new QFProcessor<>(RequiredAuthorDef4.class, PostBlog.class, applicationContext);
 		assertThat(processorAuthor).isNotNull();
 		assertThat(processorSort).isNotNull();
 		assertThat(processorSort2).isNotNull();
 		assertThat(processorAuthor2).isNotNull();
 		assertThat(processorAuthor3).isNotNull();
+		assertThat(processorAuthor4).isNotNull();
 	}
 
 	// Set up the database with a sample post
@@ -105,7 +109,7 @@ class RequiredTest {
 	void testRequiredAuthor() {
 
 		var ex = assertThrows(QFRequiredException.class,
-				() -> processorAuthor.newQueryFilter(null, QFParamType.RHS_COLON));
+				() -> processorAuthor.newQueryFilter());
 		assertThat(ex.getMessage()).contains("author");
 
 		ex = assertThrows(QFRequiredException.class,
@@ -163,7 +167,7 @@ class RequiredTest {
 		assertThat(list).hasSize(1).containsExactly(POST_EXAMPLE);
 
 		var ex = assertThrows(QFRequiredException.class,
-				() -> processorSort2.newQueryFilter(null, QFParamType.RHS_COLON));
+				() -> processorSort2.newQueryFilter());
 		assertThat(ex.getMessage()).contains("likes");
 
 		// Clear sort to test without sorting
@@ -180,26 +184,90 @@ class RequiredTest {
 	@Order(6)
 	void testRequiredAuthorNotOnStringButOnExecution() {
 
+		// Works by default
 		var qf = processorAuthor2.newQueryFilter("author=eq:author", QFParamType.RHS_COLON);
 		assertThat(qf).isNotNull();
 
 		var list = repository.findAll(qf);
 		assertThat(list).hasSize(1).containsExactly(POST_EXAMPLE);
 
-		qf = processorAuthor2.newQueryFilter(null, QFParamType.RHS_COLON);
+		// Works on string build
+		qf = processorAuthor2.newQueryFilter();
 		assertThat(qf).isNotNull();
 
+		// Error on execution
 		final var finalQf = qf;
 		var ex = assertThrows(QFRequiredException.class, () -> repository.findAll(finalQf));
 		assertThat(ex.getMessage()).contains("author");
 
+		// Added and works on execution
 		qf.addNewField("author", QFOperationEnum.EQUAL, "author");
 		list = repository.findAll(qf);
 		assertThat(list).hasSize(1).containsExactly(POST_EXAMPLE);
 	}
 
 	@Test
-	@DisplayName("11. Test by clear BBDD")
+	@DisplayName("7. Required author on sort, not in string or execution")
+	@Order(7)
+	void testRequiredAuthorOnExecutionAndSortNotInString() {
+
+		// Author with operation, not sort, throw exception
+		var qf = processorAuthor3.newQueryFilter("author=eq:author", QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
+
+		final var finalQF1 = qf;
+		var ex = assertThrows(QFRequiredException.class, () -> repository.findAll(finalQF1));
+		assertThat(ex.getMessage()).contains("author");
+		assertThat(ex.getField()).isEqualTo("author");
+
+		// Works on string build
+		qf = processorAuthor3.newQueryFilter();
+		assertThat(qf).isNotNull();
+
+		// Error on execution
+		final var finalQf2 = qf;
+		ex = assertThrows(QFRequiredException.class, () -> repository.findAll(finalQf2));
+		assertThat(ex.getMessage()).contains("author");
+
+		// Added and works on execution
+		qf.addSortBy("author", Sort.Direction.ASC);
+
+		var list = repository.findAll(qf);
+		assertThat(list).hasSize(1).containsExactly(POST_EXAMPLE);
+
+		// Works on sort with string
+		qf = processorAuthor3.newQueryFilter("sort=+author", QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
+		list = repository.findAll(qf);
+		assertThat(list).hasSize(1).containsExactly(POST_EXAMPLE);
+
+	}
+
+	@Test
+	@DisplayName("8. Test with required author only on string")
+	@Order(8)
+	void testRequiredAuthorOnlyOnString() {
+
+		// Author with operation, not sort, throw exception
+		var ex = assertThrows(QFRequiredException.class, () -> processorAuthor4.newQueryFilter());
+		assertThat(ex.getMessage()).contains("author");
+
+		var qf = processorAuthor4.newQueryFilter("author=eq:author", QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
+
+		var list = repository.findAll(qf);
+		assertThat(list).hasSize(1).containsExactly(POST_EXAMPLE);
+
+		qf.deleteField("author");
+
+		// Now it should not throw an exception
+		list = repository.findAll(qf);
+		assertThat(list).hasSize(1).containsExactly(POST_EXAMPLE);
+
+	}
+
+	@Test
+	@DisplayName("END. Test by clear BBDD")
 	@Order(Ordered.LOWEST_PRECEDENCE)
 	void clearBBDD() {
 		repository.deleteAll();
@@ -250,7 +318,7 @@ class RequiredTest {
 	@QFDefinitionClass(PostBlog.class)
 	public static class RequiredAuthorDef3 {
 		@QFElement("author")
-		@QFRequired(onStringFilter = false, onSort = true)
+		@QFRequired(onStringFilter = false, onSort = true, onExecution = false)
 		private String author;
 	}
 

@@ -258,6 +258,18 @@ public class QFProcessor<F, E> {
 	}
 
 	/**
+	 * Create a new {@linkplain QueryFilter} instance with no string filter by
+	 * default
+	 * 
+	 * @return new {@linkplain QueryFilter} instance
+	 * @throws io.github.acoboh.query.filter.jpa.exceptions.QueryFilterException
+	 *             if any parsing exception occurs
+	 */
+	public QueryFilter<E> newQueryFilter() {
+		return new QueryFilter<>(null, QFParamType.RHS_COLON, this);
+	}
+
+	/**
 	 * Create a new {@linkplain QueryFilter} instance
 	 *
 	 * @param input

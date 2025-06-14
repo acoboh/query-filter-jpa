@@ -12,10 +12,10 @@ import io.github.acoboh.query.filter.jpa.model.jsondata.ModelJson;
 @QFDefinitionClass(ModelJson.class)
 public class JsonFilterDef {
 
-	@QFJsonElement(value = "jsonbData")
+	@QFJsonElement("jsonbData")
 	private String jsonb;
 
-	@QFJsonElement(value = "jsonbData")
+	@QFJsonElement("jsonbData")
 	private String json;
 
 }

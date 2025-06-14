@@ -26,14 +26,17 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 
 import io.github.acoboh.query.filter.jpa.annotations.QFDiscriminator;
 import io.github.acoboh.query.filter.jpa.annotations.QFParam;
+import io.github.acoboh.query.filter.jpa.operations.QFCollectionOperationEnum;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationDiscriminatorEnum;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationJsonEnum;
 import io.github.acoboh.query.filter.jpa.processor.QFProcessor;
 import io.github.acoboh.query.filter.jpa.processor.definitions.QFAbstractDefinition;
+import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionCollection;
 import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionDiscriminator;
 import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionElement;
 import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionJson;
+import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionSortable;
 import io.github.acoboh.query.filter.jpa.processor.definitions.traits.IDefinitionSortable;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
@@ -163,58 +166,94 @@ class OpenApiCustomiserImpl implements OpenApiCustomizer {
 
 	private String createDescription(QFParam annotation, QFProcessor<?, ?> processor) {
 
-		StringBuilder builder = new StringBuilder("Filter is <b><i>").append(annotation.type().getBeatifulName());
+		StringBuilder builder = new StringBuilder("Filter is **_").append(annotation.type().getBeatifulName());
 
-		builder.append("</i></b>. Available fields: \n");
+		builder.append("_**. Available fields:  \n");
 
 		Collection<QFAbstractDefinition> defValues = processor.getDefinitionMap().values();
 		List<QFAbstractDefinition> defValuesOrdered = new ArrayList<>(defValues);
 		defValuesOrdered.sort(Comparator.comparing(QFAbstractDefinition::getFilterName));
+
+		String prefix = "";
 
 		for (var def : defValuesOrdered) {
 			if (def.isConstructorBlocked()) {
 				continue;
 			}
 
-			builder.append("<p><b>").append(def.getFilterName()).append("</b>:");
-
-			if (def instanceof QFDefinitionElement defElement) {
-				Set<QFOperationEnum> qfOperations = defElement.getRealAllowedOperations();
-
-				if (!qfOperations.isEmpty()) {
-					builder.append(" Operations: [<i>");
-					String operationsAvailable = qfOperations.stream().map(QFOperationEnum::getValue)
-							.collect(Collectors.joining(","));
-					builder.append(operationsAvailable).append("</i>]");
-				}
-
-			}
+			builder.append(prefix).append("* **").append(def.getFilterName()).append("**");
+			prefix = "  \n\n";
 
 			if (def instanceof IDefinitionSortable idef && idef.isSortable()) {
-				builder.append(" <i>(Sortable)</i>");
+				builder.append(" _(Sortable)_");
+			}
+
+			if (def instanceof QFDefinitionSortable) {
+				continue;
+			}
+
+			builder.append("  \n");
+
+			createOperations(def, builder);
+
+			if (def instanceof QFDefinitionElement elem && elem.getFirstFinalClass() != null
+					&& elem.getFirstFinalClass().isEnum()) {
+				// Add info about enum
+
+				builder.append("  \nEnum values: [_");
+				String enumValues = Arrays.stream(elem.getFirstFinalClass().getEnumConstants()).map(Object::toString)
+						.collect(Collectors.joining(","));
+				builder.append(enumValues).append("_]");
+
 			}
 
 			if (def instanceof QFDefinitionDiscriminator qdefDiscriminator) {
-				builder.append(" Operations: [<i>");
-				String operationsAvailable = qdefDiscriminator.getRealAllowedOperations().stream()
-						.map(QFOperationDiscriminatorEnum::getOperation).collect(Collectors.joining(","));
-				builder.append(operationsAvailable).append("</i>]");
-
-				builder.append(" Possible Values: [");
+				builder.append("  \nPossible Values: [");
 				String values = Arrays.stream(qdefDiscriminator.getDiscriminatorAnnotation().value())
 						.map(QFDiscriminator.Value::name).collect(Collectors.joining(","));
 				builder.append(values).append("]");
-			} else if (def instanceof QFDefinitionJson qdefJson) {
-				builder.append(" <i>(JSON element)</i> Operations: [<i>");
-
-				String operationsAvailable = qdefJson.getRealAllowedOperations().stream()
-						.map(QFOperationJsonEnum::getOperation).collect(Collectors.joining(","));
-				builder.append(operationsAvailable).append("</i>]");
+			} else if (def instanceof QFDefinitionJson) {
+				builder.append(" _(JSON element)_");
+			} else if (def instanceof QFDefinitionCollection) {
+				builder.append(" _(Collection)_");
 			}
 
 		}
 
 		return builder.toString();
+
+	}
+
+	private void createOperations(QFAbstractDefinition def, StringBuilder builder) {
+
+		Set<String> operations;
+
+		if (def instanceof QFDefinitionElement defElement) {
+			operations = defElement.getRealAllowedOperations().stream().map(QFOperationEnum::getValue)
+					.collect(Collectors.toSet());
+
+		} else if (def instanceof QFDefinitionDiscriminator qdefDiscriminator) {
+			operations = qdefDiscriminator.getRealAllowedOperations().stream()
+					.map(QFOperationDiscriminatorEnum::getOperation).collect(Collectors.toSet());
+
+		} else if (def instanceof QFDefinitionJson qdefJson) {
+			operations = qdefJson.getRealAllowedOperations().stream().map(QFOperationJsonEnum::getOperation)
+					.collect(Collectors.toSet());
+
+		} else if (def instanceof QFDefinitionCollection defCollection) {
+			operations = defCollection.getRealAllowedOperations().stream().map(QFCollectionOperationEnum::getOperation)
+					.collect(Collectors.toSet());
+
+		} else {
+			LOGGER.warn("Unknown definition type {}", def.getClass().getName());
+			return;
+		}
+
+		if (!operations.isEmpty()) {
+			builder.append(" Operations: [_");
+			String operationsAvailable = String.join(",", operations);
+			builder.append(operationsAvailable).append("_]");
+		}
 
 	}
 

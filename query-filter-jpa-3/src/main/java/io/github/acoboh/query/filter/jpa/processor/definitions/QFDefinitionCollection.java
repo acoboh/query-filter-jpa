@@ -1,6 +1,5 @@
 package io.github.acoboh.query.filter.jpa.processor.definitions;
 
-import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -8,13 +7,13 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.github.acoboh.query.filter.jpa.annotations.QFBlockParsing;
 import io.github.acoboh.query.filter.jpa.annotations.QFCollectionElement;
-import io.github.acoboh.query.filter.jpa.annotations.QFRequired;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFCollectionNotSupported;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 import io.github.acoboh.query.filter.jpa.operations.QFCollectionOperationEnum;
 import io.github.acoboh.query.filter.jpa.processor.QFAttribute;
+import io.github.acoboh.query.filter.jpa.processor.QFSpecificationPart;
+import io.github.acoboh.query.filter.jpa.processor.match.QFCollectionMatch;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.metamodel.Metamodel;
 
@@ -31,13 +30,16 @@ public class QFDefinitionCollection extends QFAbstractDefinition {
 	private final List<JoinType> joinTypes;
 	private final Set<QFCollectionOperationEnum> allowedOperations;
 
-	QFDefinitionCollection(Field filterField, Class<?> filterClass, Class<?> entityClass, QFBlockParsing blockParsing,
-			QFRequired required, QFCollectionElement collectionElement, Metamodel metamodel)
-			throws QueryFilterDefinitionException {
-		super(filterField, filterClass, entityClass, blockParsing, required);
+	private final QFCollectionElement collectionElement;
 
-		var fieldClassProcessor = new FieldClassProcessor(entityClass, collectionElement.value(),
+	QFDefinitionCollection(FilterFieldInfo fieldInfo, QFCollectionElement collectionElement, Metamodel metamodel)
+			throws QueryFilterDefinitionException {
+		super(fieldInfo);
+
+		var fieldClassProcessor = new FieldClassProcessor(fieldInfo.entityClass(), collectionElement.value(),
 				collectionElement.subClassMapping(), collectionElement.subClassMappingPath(), metamodel);
+
+		this.collectionElement = collectionElement;
 
 		this.attributes = fieldClassProcessor.getAttributes();
 
@@ -46,7 +48,8 @@ public class QFDefinitionCollection extends QFAbstractDefinition {
 		}
 
 		if (!Collection.class.isAssignableFrom(fieldClassProcessor.getFinalClass())) {
-			throw new QFCollectionNotSupported(filterName, filterClass, fieldClassProcessor.getFinalClass());
+			throw new QFCollectionNotSupported(filterName, fieldInfo.filterClass(),
+					fieldClassProcessor.getFinalClass());
 		}
 
 		if (collectionElement.joinTypes().length == 0) {
@@ -103,4 +106,19 @@ public class QFDefinitionCollection extends QFAbstractDefinition {
 		return allowedOperations;
 	}
 
+	@Override
+	protected List<QFSpecificationPart> getInnerDefaultValues() {
+		return List.of(
+				new QFCollectionMatch(this, collectionElement.defaultOperation(), collectionElement.defaultValue()));
+	}
+
+	@Override
+	public int getOrder() {
+		return collectionElement.order();
+	}
+
+	@Override
+	public boolean hasDefaultValues() {
+		return collectionElement.defaultValue() != Integer.MIN_VALUE;
+	}
 }

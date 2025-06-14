@@ -144,7 +144,7 @@ public @interface QFElement {
 	 *
 	 * @return order of filters
 	 */
-	int order() default Integer.MIN_VALUE;
+	int order() default 0;
 
 	/**
 	 * If the filter is sortable, you can activate Fetch Load automatically

@@ -1,11 +1,12 @@
 package io.github.acoboh.query.filter.jpa.processor.definitions;
 
 import java.lang.reflect.Field;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
 
 import io.github.acoboh.query.filter.jpa.annotations.QFBlockParsing;
 import io.github.acoboh.query.filter.jpa.annotations.QFCollectionElement;
@@ -19,6 +20,8 @@ import io.github.acoboh.query.filter.jpa.annotations.QFRequired;
 import io.github.acoboh.query.filter.jpa.annotations.QFSortable;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFAnnotationsException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
+import io.github.acoboh.query.filter.jpa.processor.QFSpecificationPart;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.metamodel.Metamodel;
 
 /**
@@ -30,20 +33,7 @@ public abstract class QFAbstractDefinition {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(QFAbstractDefinition.class);
 
-	/**
-	 * Field to be filtered
-	 */
-	protected final Field field;
-
-	/**
-	 * Filter class
-	 */
-	protected final Class<?> filterClass;
-
-	/**
-	 * Entity class
-	 */
-	protected final Class<?> entityClass;
+	protected final FilterFieldInfo filterInfo;
 
 	/**
 	 * Filter name
@@ -55,19 +45,14 @@ public abstract class QFAbstractDefinition {
 	private final boolean isRequiredExecution;
 	private final boolean isRequiredSort;
 
-	QFAbstractDefinition(Field filterField, Class<?> filterClass, Class<?> entityClass, QFBlockParsing blockParsing,
-			QFRequired required) {
-		Assert.notNull(filterField, "Filter field must not be null");
-		Assert.notNull(filterClass, "Filter class must not be null");
-		Assert.notNull(entityClass, "Entity class must not be null");
+	QFAbstractDefinition(FilterFieldInfo filterInfo) {
+		this.filterInfo = filterInfo;
 
-		this.field = filterField;
-		this.filterClass = filterClass;
-		this.entityClass = entityClass;
+		this.filterName = filterInfo.field().getName(); // Default value
 
-		this.filterName = filterField.getName(); // Default value
+		this.isBlocked = filterInfo.blockParsing() != null;
 
-		this.isBlocked = blockParsing != null;
+		var required = filterInfo.required();
 
 		this.isRequiredStringFilter = required != null && required.onStringFilter();
 		this.isRequiredExecution = required != null && required.onExecution();
@@ -90,7 +75,7 @@ public abstract class QFAbstractDefinition {
 	 * @return entity class
 	 */
 	public Class<?> getEntityClass() {
-		return entityClass;
+		return filterInfo.entityClass();
 	}
 
 	/**
@@ -99,7 +84,7 @@ public abstract class QFAbstractDefinition {
 	 * @return filter class
 	 */
 	public Class<?> getFilterClass() {
-		return filterClass;
+		return filterInfo.filterClass();
 	}
 
 	/**
@@ -139,6 +124,44 @@ public abstract class QFAbstractDefinition {
 	}
 
 	/**
+	 * Get if the on filter present annotation is enabled
+	 *
+	 * @return true if the on filter present annotation is enabled
+	 */
+	public boolean isOnPresentFilterEnabled() {
+		return filterInfo.onFilterPresent() != null;
+	}
+
+	/**
+	 * Get the on filter present fields
+	 */
+	public @Nullable Set<String> getOnFilterPresentFilters() {
+		return filterInfo.onFilterPresent() != null ? Set.of(filterInfo.onFilterPresent().value()) : null;
+	}
+
+	public final List<QFSpecificationPart> getDefaultElementMatches() {
+		if (isOnPresentFilterEnabled()) {
+			LOGGER.trace("On filter present for {} is defined. Will ignore default elements", filterName);
+			return List.of();
+		}
+		return getDefaultMatches();
+	}
+
+	public final List<QFSpecificationPart> getDefaultMatches() {
+		if (!hasDefaultValues()) {
+			LOGGER.trace("No default values defined for {}. Will not create default elements", filterName);
+			return List.of();
+		}
+		return getInnerDefaultValues();
+	}
+
+	protected abstract List<QFSpecificationPart> getInnerDefaultValues();
+
+	public abstract int getOrder();
+
+	public abstract boolean hasDefaultValues();
+
+	/**
 	 * Create a new base definition based on annotations of the field
 	 *
 	 * @param filterField
@@ -176,6 +199,10 @@ public abstract class QFAbstractDefinition {
 
 		QFBlockParsing blockParsing = filterField.getAnnotation(QFBlockParsing.class);
 		QFRequired required = filterField.getAnnotation(QFRequired.class);
+		QFOnFilterPresent onFilterPresent = filterField.getAnnotation(QFOnFilterPresent.class);
+
+		var filterFieldInfo = new FilterFieldInfo(filterField, filterClass, entityClass, blockParsing, required,
+				onFilterPresent);
 
 		if (isQFElement) {
 			// Create element definition
@@ -183,33 +210,28 @@ public abstract class QFAbstractDefinition {
 			QFElement[] elementAnnotations = filterField.getAnnotationsByType(QFElement.class);
 			QFElements elementsAnnotation = filterField.getAnnotation(QFElements.class);
 			QFDate dateAnnotation = filterField.getAnnotation(QFDate.class);
-			QFOnFilterPresent onFilterPresentAnnotation = filterField.getAnnotation(QFOnFilterPresent.class);
 
-			return new QFDefinitionElement(filterField, filterClass, entityClass, blockParsing, required,
-					elementsAnnotation, elementAnnotations, dateAnnotation, onFilterPresentAnnotation, metamodel);
+			return new QFDefinitionElement(filterFieldInfo, elementsAnnotation, elementAnnotations, dateAnnotation,
+					metamodel);
 
 		} else if (isQFJson) {
 			// Create json definition
 			QFJsonElement jsonAnnotation = filterField.getAnnotation(QFJsonElement.class);
-			return new QFDefinitionJson(filterField, filterClass, entityClass, blockParsing, required, jsonAnnotation,
-					metamodel);
+			return new QFDefinitionJson(filterFieldInfo, jsonAnnotation, metamodel);
 
 		} else if (isQFDiscriminator) {
 			// Create discriminator definition
 			QFDiscriminator discriminatorAnnotation = filterField.getAnnotation(QFDiscriminator.class);
-			return new QFDefinitionDiscriminator(filterField, filterClass, entityClass, blockParsing, required,
-					discriminatorAnnotation, metamodel);
+			return new QFDefinitionDiscriminator(filterFieldInfo, discriminatorAnnotation, metamodel);
 
 		} else if (isQFCollection) {
 			// Create collection definition
 			QFCollectionElement collectionAnnotation = filterField.getAnnotation(QFCollectionElement.class);
-			return new QFDefinitionCollection(filterField, filterClass, entityClass, blockParsing, required,
-					collectionAnnotation, metamodel);
+			return new QFDefinitionCollection(filterFieldInfo, collectionAnnotation, metamodel);
 
 		} else if (isQFSortable) {
 			QFSortable sortableAnnotation = filterField.getAnnotation(QFSortable.class);
-			return new QFDefinitionSortable(filterField, filterClass, entityClass, blockParsing, required,
-					sortableAnnotation, metamodel);
+			return new QFDefinitionSortable(filterFieldInfo, sortableAnnotation, metamodel);
 		}
 
 		return null;

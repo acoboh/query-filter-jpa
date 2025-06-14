@@ -7,13 +7,13 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.github.acoboh.query.filter.jpa.annotations.QFBlockParsing;
 import io.github.acoboh.query.filter.jpa.annotations.QFJsonElement;
-import io.github.acoboh.query.filter.jpa.annotations.QFRequired;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFJsonException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationJsonEnum;
 import io.github.acoboh.query.filter.jpa.processor.QFAttribute;
+import io.github.acoboh.query.filter.jpa.processor.QFSpecificationPart;
+import io.github.acoboh.query.filter.jpa.processor.match.QFJsonElementMatch;
 import jakarta.persistence.Column;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.metamodel.Metamodel;
@@ -32,10 +32,9 @@ public class QFDefinitionJson extends QFAbstractDefinition {
 	private final List<JoinType> joinTypes;
 	private final Set<QFOperationJsonEnum> allowedOperations;
 
-	QFDefinitionJson(Field filterField, Class<?> filterClass, Class<?> entityClass, QFBlockParsing blockParsing,
-			QFRequired required, QFJsonElement jsonAnnotation, Metamodel metamodel)
+	QFDefinitionJson(FilterFieldInfo fieldInfo, QFJsonElement jsonAnnotation, Metamodel metamodel)
 			throws QueryFilterDefinitionException {
-		super(filterField, filterClass, entityClass, blockParsing, required);
+		super(fieldInfo);
 		this.jsonAnnotation = jsonAnnotation;
 
 		// Add json filter name
@@ -43,7 +42,8 @@ public class QFDefinitionJson extends QFAbstractDefinition {
 			super.filterName = jsonAnnotation.name();
 		}
 
-		var fieldClassProcessor = new FieldClassProcessor(entityClass, jsonAnnotation.value(), null, null, metamodel);
+		var fieldClassProcessor = new FieldClassProcessor(fieldInfo.entityClass(), jsonAnnotation.value(), null, null,
+				metamodel);
 
 		this.attributes = fieldClassProcessor.getAttributes();
 
@@ -82,9 +82,9 @@ public class QFDefinitionJson extends QFAbstractDefinition {
 	}
 
 	/**
-	 * Get if the field is case sensitive
+	 * Get if the field is case-sensitive
 	 *
-	 * @return true if the field is case sensitive
+	 * @return true if the field is case-sensitive
 	 */
 	public boolean isCaseSensitive() {
 		return jsonAnnotation.caseSensitive();
@@ -135,4 +135,18 @@ public class QFDefinitionJson extends QFAbstractDefinition {
 		return allowedOperations;
 	}
 
+	@Override
+	public List<QFSpecificationPart> getInnerDefaultValues() {
+		return List.of(new QFJsonElementMatch(jsonAnnotation.defaultValue(), jsonAnnotation.defaultOperation(), this));
+	}
+
+	@Override
+	public int getOrder() {
+		return jsonAnnotation.order();
+	}
+
+	@Override
+	public boolean hasDefaultValues() {
+		return !jsonAnnotation.defaultValue().isEmpty();
+	}
 }

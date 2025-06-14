@@ -11,8 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.github.acoboh.query.filter.jpa.processor.definitions.QFAbstractDefinition;
-import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionElement;
-import io.github.acoboh.query.filter.jpa.processor.match.QFElementMatch;
 
 class QFSpecificationsWarp {
 
@@ -29,7 +27,7 @@ class QFSpecificationsWarp {
 	// the related values
 	private final Map<String, Set<String>> fieldsLaunchedOnPresent;
 
-	private final Map<String, QFDefinitionElement> mapFieldsOnPresent;
+	private final Map<String, QFAbstractDefinition> mapFieldsOnPresent;
 
 	private final List<QFSpecificationPart> specifications = new LinkedList<>();
 
@@ -39,8 +37,8 @@ class QFSpecificationsWarp {
 	 * @param defaultValues
 	 *            default values of the query filter
 	 */
-	public QFSpecificationsWarp(List<? extends QFSpecificationPart> defaultValues,
-			Map<String, Set<String>> fieldsLaunchOnPresent, List<QFDefinitionElement> defaultOnPresentFields) {
+	public QFSpecificationsWarp(List<QFSpecificationPart> defaultValues, Map<String, Set<String>> fieldsLaunchOnPresent,
+			List<QFAbstractDefinition> defaultOnPresentFields) {
 		this.defaultFields = defaultValues.stream().map(e -> e.getDefinition().getFilterName())
 				.collect(Collectors.toList()); // Modifiable List
 		this.specifications.addAll(defaultValues);
@@ -49,8 +47,9 @@ class QFSpecificationsWarp {
 		this.mapFieldsOnPresent = defaultOnPresentFields.stream()
 				.collect(Collectors.toMap(QFAbstractDefinition::getFilterName, e -> e));
 
-		fieldsLaunchedOnPresent = defaultOnPresentFields.stream().collect(
-				Collectors.toMap(QFAbstractDefinition::getFilterName, QFDefinitionElement::getOnFilterPresentFilters));
+		fieldsLaunchedOnPresent = defaultOnPresentFields.stream().filter(e -> e.getOnFilterPresentFilters() != null)
+				.collect(Collectors.toMap(QFAbstractDefinition::getFilterName,
+						QFAbstractDefinition::getOnFilterPresentFilters));
 
 		for (var presentDefValue : specifications) {
 			processOnFilterPresent(presentDefValue.getDefinition().getFilterName());
@@ -93,7 +92,7 @@ class QFSpecificationsWarp {
 				}
 
 				if (mapFieldsOnPresent.containsKey(fieldToAdd)) {
-					var toAdd = mapFieldsOnPresent.get(fieldToAdd).getNewMatchesOnFilterPresent();
+					var toAdd = mapFieldsOnPresent.get(fieldToAdd).getDefaultMatches();
 					LOGGER.trace("Adding default values for field {}: {}", fieldToAdd, toAdd);
 					specifications.addAll(toAdd);
 				}
@@ -151,12 +150,17 @@ class QFSpecificationsWarp {
 		@Override
 		public int compare(QFSpecificationPart o1, QFSpecificationPart o2) {
 
-			if (o1 instanceof QFElementMatch qf1 && o2 instanceof QFElementMatch qf2) {
-				return Integer.compare(qf1.getDefinition().getOrder(), qf2.getDefinition().getOrder());
+			var def1 = o1.getDefinition();
+			var def2 = o2.getDefinition();
+
+			// First the def without default values
+			if (def1.hasDefaultValues() && !def2.hasDefaultValues()) {
+				return 1;
+			} else if (!def1.hasDefaultValues() && def2.hasDefaultValues()) {
+				return -1;
 			}
 
-			return 0;
-
+			return Integer.compare(o1.getDefinition().getOrder(), o2.getDefinition().getOrder());
 		}
 
 	}

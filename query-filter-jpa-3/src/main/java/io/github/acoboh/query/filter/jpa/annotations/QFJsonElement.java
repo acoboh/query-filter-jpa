@@ -63,9 +63,8 @@ public @interface QFJsonElement {
 	 * the first join type for the first until the latest is reached, and it will be
 	 * used for the rest.
 	 * <p>
-	 * Example: If you specify {@code {LEFT, INNER}}, the first join
-	 * will be a LEFT join, the second will be an INNER join, and all the rest will
-	 * be INNER joins.
+	 * Example: If you specify {@code {LEFT, INNER}}, the first join will be a LEFT
+	 * join, the second will be an INNER join, and all the rest will be INNER joins.
 	 *
 	 * @return join type to use
 	 */
@@ -79,5 +78,37 @@ public @interface QFJsonElement {
 	 * @return array of allowed operations
 	 */
 	QFOperationJsonEnum[] allowedOperations() default {};
+
+	/**
+	 * Default value to use if the input is not specified
+	 * <p>
+	 * If the default value is not specified, it will be ignored.
+	 *
+	 * @return default value
+	 */
+	String defaultValue() default "";
+
+	/**
+	 * Default operation to use if the input is not specified
+	 * <p>
+	 * If the default operation is not specified, it will be used
+	 * {@link QFOperationJsonEnum#EQUAL}.
+	 *
+	 * @return default operation
+	 */
+	QFOperationJsonEnum defaultOperation() default QFOperationJsonEnum.EQUAL;
+
+	/**
+	 * Order of the element in the query
+	 * <p>
+	 * If the order is not specified, it will be used 0.
+	 * <p>
+	 * If you want to change the order of the elements, you can use this attribute.
+	 * <p>
+	 * The lower the number, the higher the priority.
+	 *
+	 * @return order of the element in the query
+	 */
+	int order() default 0;
 
 }

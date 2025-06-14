@@ -1,6 +1,5 @@
 package io.github.acoboh.query.filter.jpa.processor.definitions;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -8,11 +7,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.github.acoboh.query.filter.jpa.annotations.QFBlockParsing;
-import io.github.acoboh.query.filter.jpa.annotations.QFRequired;
 import io.github.acoboh.query.filter.jpa.annotations.QFSortable;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 import io.github.acoboh.query.filter.jpa.processor.QFAttribute;
+import io.github.acoboh.query.filter.jpa.processor.QFSpecificationPart;
 import io.github.acoboh.query.filter.jpa.processor.definitions.traits.IDefinitionSortable;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.metamodel.Metamodel;
@@ -33,15 +31,14 @@ public class QFDefinitionSortable extends QFAbstractDefinition implements IDefin
 	private final List<String> fullPath;
 	private final List<JoinType> joinTypes;
 
-	QFDefinitionSortable(Field filterField, Class<?> filterClass, Class<?> entityClass, QFBlockParsing blockParsing,
-			QFRequired required, QFSortable sortableAnnotation, Metamodel metamodel)
+	QFDefinitionSortable(FilterFieldInfo fieldInfo, QFSortable sortableAnnotation, Metamodel metamodel)
 			throws QueryFilterDefinitionException {
-		super(filterField, filterClass, entityClass, blockParsing, required);
+		super(fieldInfo);
 
 		attributes = new ArrayList<>(1); // Only one path
 
-		FieldClassProcessor fieldClassProcessor = new FieldClassProcessor(entityClass, sortableAnnotation.value(), null,
-				null, metamodel);
+		FieldClassProcessor fieldClassProcessor = new FieldClassProcessor(fieldInfo.entityClass(),
+				sortableAnnotation.value(), null, null, metamodel);
 		attributes.add(fieldClassProcessor.getAttributes());
 
 		autoFetch = sortableAnnotation.autoFetch();
@@ -49,7 +46,7 @@ public class QFDefinitionSortable extends QFAbstractDefinition implements IDefin
 		this.fullPath = Collections.singletonList(sortableAnnotation.value());
 
 		if (sortableAnnotation.joinTypes().length == 0) {
-			LOGGER.warn("Join types are empty for field {}. Defaulting to INNER", filterField.getName());
+			LOGGER.warn("Join types are empty for field {}. Defaulting to INNER", fieldInfo.field().getName());
 			joinTypes = List.of(JoinType.INNER);
 		} else {
 			joinTypes = List.of(sortableAnnotation.joinTypes());
@@ -85,5 +82,21 @@ public class QFDefinitionSortable extends QFAbstractDefinition implements IDefin
 	@Override
 	public List<JoinType> getJoinTypes(int index) {
 		return joinTypes;
+	}
+
+	@Override
+	public List<QFSpecificationPart> getInnerDefaultValues() {
+		LOGGER.trace("Default values must be ignored on sortable definitions");
+		return Collections.emptyList();
+	}
+
+	@Override
+	public int getOrder() {
+		return 0;
+	}
+
+	@Override
+	public boolean hasDefaultValues() {
+		return false;
 	}
 }

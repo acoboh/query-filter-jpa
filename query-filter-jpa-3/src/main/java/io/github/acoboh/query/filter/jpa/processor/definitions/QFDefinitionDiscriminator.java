@@ -1,22 +1,22 @@
 package io.github.acoboh.query.filter.jpa.processor.definitions;
 
-import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.github.acoboh.query.filter.jpa.annotations.QFBlockParsing;
 import io.github.acoboh.query.filter.jpa.annotations.QFDiscriminator;
-import io.github.acoboh.query.filter.jpa.annotations.QFRequired;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFDiscriminatorException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationDiscriminatorEnum;
 import io.github.acoboh.query.filter.jpa.processor.QFAttribute;
+import io.github.acoboh.query.filter.jpa.processor.QFSpecificationPart;
+import io.github.acoboh.query.filter.jpa.processor.match.QFDiscriminatorMatch;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.metamodel.Metamodel;
 
@@ -37,21 +37,20 @@ public class QFDefinitionDiscriminator extends QFAbstractDefinition {
 
 	private final Map<String, Class<?>> discriminatorMap = new HashMap<>();
 
-	QFDefinitionDiscriminator(Field filterField, Class<?> filterClass, Class<?> entityClass,
-			QFBlockParsing blockParsing, QFRequired required, QFDiscriminator discriminatorAnnotation,
-			Metamodel metamodel) throws QueryFilterDefinitionException {
-		super(filterField, filterClass, entityClass, blockParsing, required);
+	QFDefinitionDiscriminator(FilterFieldInfo fieldInfo, QFDiscriminator discriminatorAnnotation, Metamodel metamodel)
+			throws QueryFilterDefinitionException {
+		super(fieldInfo);
 
 		this.discriminatorAnnotation = discriminatorAnnotation;
 
 		if (!discriminatorAnnotation.path().isEmpty()) {
-			var fieldClassProcessor = new FieldClassProcessor(entityClass, discriminatorAnnotation.path(), null, null,
-					metamodel);
+			var fieldClassProcessor = new FieldClassProcessor(fieldInfo.entityClass(), discriminatorAnnotation.path(),
+					null, null, metamodel);
 			this.attributes = fieldClassProcessor.getAttributes();
 			this.finalClass = fieldClassProcessor.getFinalClass();
 		} else {
 			this.attributes = Collections.emptyList();
-			this.finalClass = entityClass;
+			this.finalClass = fieldInfo.entityClass();
 		}
 
 		if (!discriminatorAnnotation.name().isEmpty()) {
@@ -79,6 +78,14 @@ public class QFDefinitionDiscriminator extends QFAbstractDefinition {
 		}
 
 		allowedOperations = Set.of(discriminatorAnnotation.allowedOperations());
+
+		// Check default values
+		if (!Stream.of(discriminatorAnnotation.defaultValues()).allMatch(discriminatorMap::containsKey)) {
+			LOGGER.trace("Discriminator default values {} are not valid for discriminator {}",
+					discriminatorAnnotation.defaultValues(), filterName);
+			throw new QFDiscriminatorException("Discriminator default values are not valid for discriminator %s",
+					filterName);
+		}
 
 	}
 
@@ -153,4 +160,20 @@ public class QFDefinitionDiscriminator extends QFAbstractDefinition {
 		return allowedOperations;
 	}
 
+	@Override
+	protected List<QFSpecificationPart> getInnerDefaultValues() {
+
+		return List.of(new QFDiscriminatorMatch(List.of(discriminatorAnnotation.defaultValues()),
+				discriminatorAnnotation.defaultOperation(), this));
+	}
+
+	@Override
+	public int getOrder() {
+		return discriminatorAnnotation.order();
+	}
+
+	@Override
+	public boolean hasDefaultValues() {
+		return discriminatorAnnotation.defaultValues().length > 0;
+	}
 }

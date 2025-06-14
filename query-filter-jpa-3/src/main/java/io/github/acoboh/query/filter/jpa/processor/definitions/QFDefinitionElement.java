@@ -1,6 +1,5 @@
 package io.github.acoboh.query.filter.jpa.processor.definitions;
 
-import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -15,12 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.util.Pair;
 
-import io.github.acoboh.query.filter.jpa.annotations.QFBlockParsing;
 import io.github.acoboh.query.filter.jpa.annotations.QFDate;
 import io.github.acoboh.query.filter.jpa.annotations.QFElement;
 import io.github.acoboh.query.filter.jpa.annotations.QFElements;
-import io.github.acoboh.query.filter.jpa.annotations.QFOnFilterPresent;
-import io.github.acoboh.query.filter.jpa.annotations.QFRequired;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFDateClassNotSupported;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFDateParseError;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFElementMultipleClassesException;
@@ -28,6 +24,7 @@ import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefini
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 import io.github.acoboh.query.filter.jpa.predicate.PredicateOperation;
 import io.github.acoboh.query.filter.jpa.processor.QFAttribute;
+import io.github.acoboh.query.filter.jpa.processor.QFSpecificationPart;
 import io.github.acoboh.query.filter.jpa.processor.definitions.traits.IDefinitionSortable;
 import io.github.acoboh.query.filter.jpa.processor.match.QFElementMatch;
 import io.github.acoboh.query.filter.jpa.utils.DateUtils;
@@ -48,7 +45,6 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 
 	private final QFDate dateAnnotation;
 
-	private final QFOnFilterPresent onFilterPresent;
 	private final Set<String> onFilterPresentFilters;
 
 	private final DateTimeFormatter dateTimeFormatter;
@@ -71,19 +67,15 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 
 	private final int order;
 
-	QFDefinitionElement(Field filterField, Class<?> filterClass, Class<?> entityClass, QFBlockParsing blockedParsing,
-			QFRequired required, QFElements elementsAnnotation, QFElement[] elementAnnotations, QFDate dateAnnotation,
-			QFOnFilterPresent onFilterPresent, Metamodel metamodel) throws QueryFilterDefinitionException {
-		super(filterField, filterClass, entityClass, blockedParsing, required);
+	QFDefinitionElement(FilterFieldInfo filterInfo, QFElements elementsAnnotation, QFElement[] elementAnnotations,
+			QFDate dateAnnotation, Metamodel metamodel) throws QueryFilterDefinitionException {
+		super(filterInfo);
 
 		// Element annotations
 		this.elementAnnotations = elementAnnotations;
 
 		// Date annotation
 		this.dateAnnotation = dateAnnotation;
-
-		// On filter present annotation
-		this.onFilterPresent = onFilterPresent;
 
 		if (elementsAnnotation != null) {
 			this.defaultOperation = elementsAnnotation.operation();
@@ -97,11 +89,12 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 		} else if (elementAnnotations.length > 1) {
 			LOGGER.warn(
 					"Multiple element annotations found on field {}. Will ignore name parameter on all annotations and will be the field name {}",
-					filterField, getFilterName());
+					filterInfo.field(), getFilterName());
 		}
 
 		// Initialize paths and classes
-		Pair<List<Class<?>>, List<List<QFAttribute>>> pairDef = setupPaths(elementAnnotations, entityClass, metamodel);
+		Pair<List<Class<?>>, List<List<QFAttribute>>> pairDef = setupPaths(elementAnnotations, filterInfo.entityClass(),
+				metamodel);
 		this.paths = pairDef.getSecond();
 		this.finalClasses = pairDef.getFirst();
 
@@ -148,7 +141,7 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 					LOGGER.error("Allowed operations {} not valid for class {}", allowedOperations, finalClazz);
 					throw new QueryFilterDefinitionException(
 							"Allowed operations " + allowedOperations + " not valid for class " + finalClazz
-									+ " on field " + getFilterName() + " of filter " + filterClass);
+									+ " on field " + getFilterName() + " of filter " + filterInfo.filterClass());
 				}
 			}
 		}
@@ -157,6 +150,7 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 			LOGGER.warn("Join types not defined. Will use default join type");
 		}
 
+		var onFilterPresent = filterInfo.onFilterPresent();
 		if (onFilterPresent != null) {
 			if (onFilterPresent.value().length == 0) {
 				LOGGER.error("On filter present annotation must have at least one filter link");
@@ -254,9 +248,9 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 	}
 
 	/**
-	 * Get if the field is case sensitive
+	 * Get if the field is case-sensitive
 	 *
-	 * @return true if the field is case sensitive
+	 * @return true if the field is case-sensitive
 	 */
 	public boolean isCaseSensitive() {
 		return caseSensitive;
@@ -325,18 +319,7 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 		return elementAnnotations;
 	}
 
-	/**
-	 * Get if the on filter present annotation is enabled
-	 * 
-	 * @return true if the on filter present annotation is enabled
-	 */
-	public boolean isOnPresentFilterEnabled() {
-		return onFilterPresent != null;
-	}
-
-	/**
-	 * Get the on filter present fields
-	 */
+	@Override
 	public Set<String> getOnFilterPresentFilters() {
 		return onFilterPresentFilters;
 	}
@@ -348,6 +331,11 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 	 */
 	public int getOrder() {
 		return order;
+	}
+
+	@Override
+	public boolean hasDefaultValues() {
+		return Stream.of(elementAnnotations).anyMatch(e -> e.defaultValues().length > 0);
 	}
 
 	/**
@@ -409,27 +397,11 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 		return allowedOperations;
 	}
 
-	public List<QFElementMatch> getDefaultElementMatches() {
-		if (onFilterPresent != null) {
-			LOGGER.trace("On filter present annotation found. Will ignore default values");
-			return List.of();
-		}
+	/** {@inheritDoc} */
+	@Override
+	protected List<QFSpecificationPart> getInnerDefaultValues() {
 
-		List<QFElementMatch> matches = new ArrayList<>();
-
-		for (var elem : elementAnnotations) {
-			if (elem.defaultValues().length > 0) {
-				LOGGER.trace("Default values found for element annotation {}. Will add to matches", elem);
-				matches.add(new QFElementMatch(Arrays.asList(elem.defaultValues()), elem.defaultOperation(), this));
-			}
-		}
-		LOGGER.debug("Total of default values to process {}. Will add to matches", matches.size());
-		return matches;
-	}
-
-	public List<QFElementMatch> getNewMatchesOnFilterPresent() {
-
-		List<QFElementMatch> matches = new ArrayList<>();
+		List<QFSpecificationPart> matches = new ArrayList<>();
 
 		for (var elem : elementAnnotations) {
 			if (elem.defaultValues().length > 0) {

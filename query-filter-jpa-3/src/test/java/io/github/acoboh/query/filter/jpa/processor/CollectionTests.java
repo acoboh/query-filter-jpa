@@ -17,11 +17,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.Ordered;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import io.github.acoboh.query.filter.jpa.annotations.QFCollectionElement;
+import io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass;
 import io.github.acoboh.query.filter.jpa.domain.FilterCollectionBlogDef;
+import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 import io.github.acoboh.query.filter.jpa.model.Comments;
 import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.operations.QFCollectionOperationEnum;
@@ -116,13 +121,18 @@ class CollectionTests {
 	@Autowired
 	private QFProcessor<FilterCollectionBlogDef, PostBlog> queryFilterProcessor;
 
+	private static QFProcessor<DefaultValuesDef, PostBlog> qfProcessorDefaultValues;
+
 	@Autowired
 	private PostBlogRepository repository;
+
+	@Autowired
+	private ApplicationContext applicationContext;
 
 	@Test
 	@DisplayName("0. Setup")
 	@Order(0)
-	void setup() {
+	void setup() throws QueryFilterDefinitionException {
 
 		assertThat(queryFilterProcessor).isNotNull();
 		assertThat(repository).isNotNull();
@@ -133,6 +143,9 @@ class CollectionTests {
 		repository.saveAndFlush(POST_EXAMPLE_2);
 
 		assertThat(repository.findAll()).hasSize(2).containsExactlyInAnyOrder(POST_EXAMPLE, POST_EXAMPLE_2);
+
+		qfProcessorDefaultValues = new QFProcessor<>(DefaultValuesDef.class, PostBlog.class, applicationContext);
+		assertThat(qfProcessorDefaultValues).isNotNull();
 	}
 
 	@Test
@@ -233,11 +246,40 @@ class CollectionTests {
 	}
 
 	@Test
+	@DisplayName("Test default value")
+	@Order(4)
+	void testDefaultValues() {
+
+		QueryFilter<PostBlog> qf = qfProcessorDefaultValues.newQueryFilter();
+		assertThat(qf).isNotNull();
+
+		assertThat(qf.isFiltering("commentsSize")).isTrue();
+		assertThat(qf.getActualCollectionValue("commentsSize")).isEqualTo(2);
+
+		var fieldValues = qf.getAllFieldValues();
+		assertThat(fieldValues).hasSize(1).containsExactlyInAnyOrder(
+				// commentsSize=gt:10 (default value)
+				new QFFieldInfo("commentsSize", "lt", List.of("2")));
+
+		var found = repository.findAll(qf);
+		assertThat(found).containsExactly(POST_EXAMPLE);
+
+	}
+
+	@Test
 	@DisplayName("5. Test by clear BBDD")
-	@Order(10)
+	@Order(Ordered.LOWEST_PRECEDENCE)
 	void clearBBDD() {
 		repository.deleteAll();
 		assertThat(repository.findAll()).isEmpty();
+	}
+
+	@QFDefinitionClass(PostBlog.class)
+	public static class DefaultValuesDef {
+
+		@QFCollectionElement(value = "comments", defaultValue = 2, defaultOperation = QFCollectionOperationEnum.LESS_THAN)
+		private int commentsSize;
+
 	}
 
 }

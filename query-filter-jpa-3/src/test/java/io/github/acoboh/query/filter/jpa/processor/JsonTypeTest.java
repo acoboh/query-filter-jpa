@@ -13,11 +13,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.Ordered;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass;
+import io.github.acoboh.query.filter.jpa.annotations.QFJsonElement;
 import io.github.acoboh.query.filter.jpa.domain.JsonFilterDef;
+import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 import io.github.acoboh.query.filter.jpa.model.jsondata.ModelJson;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationJsonEnum;
 import io.github.acoboh.query.filter.jpa.repositories.ModelJsonRepository;
@@ -60,10 +65,15 @@ class JsonTypeTest {
 	@Autowired
 	private QFProcessor<JsonFilterDef, ModelJson> queryFilterProcessor;
 
+	@Autowired
+	private ApplicationContext applicationContext;
+
+	private static QFProcessor<DefaultValuesDef, ModelJson> qfProcessorDefaultValues;
+
 	@Test
 	@DisplayName("0. Setup")
 	@Order(0)
-	void setup() {
+	void setup() throws QueryFilterDefinitionException {
 
 		assertThat(queryFilterProcessor).isNotNull();
 		assertThat(repository).isNotNull();
@@ -74,6 +84,9 @@ class JsonTypeTest {
 		repository.saveAndFlush(MODEL2);
 
 		assertThat(repository.findAll()).hasSize(2).containsExactlyInAnyOrder(MODEL1, MODEL2);
+
+		qfProcessorDefaultValues = new QFProcessor<>(DefaultValuesDef.class, ModelJson.class, applicationContext);
+		assertThat(qfProcessorDefaultValues).isNotNull();
 
 	}
 
@@ -126,11 +139,34 @@ class JsonTypeTest {
 	}
 
 	@Test
-	@DisplayName("2. Test by clear BBDD")
-	@Order(12)
+	@DisplayName("2. Test default values")
+	@Order(2)
+	void testDefaultValues() {
+
+		QueryFilter<ModelJson> qf = qfProcessorDefaultValues.newQueryFilter(null, QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
+
+		assertThat(qf.isFiltering("jsonb")).isTrue();
+		assertThat(qf.getActualJsonValue("jsonb")).containsEntry("bkey4", "value4");
+
+		var found = repository.findAll(qf);
+		assertThat(found).containsExactly(MODEL2);
+
+	}
+
+	@Test
+	@DisplayName("END. Test by clear BBDD")
+	@Order(Ordered.LOWEST_PRECEDENCE)
 	void clearBBDD() {
 		repository.deleteAll();
 		assertThat(repository.findAll()).isEmpty();
+	}
+
+	@QFDefinitionClass(ModelJson.class)
+	public static class DefaultValuesDef {
+
+		@QFJsonElement(value = "jsonbData", defaultValue = "{'bkey4':'value4'}", defaultOperation = QFOperationJsonEnum.EQUAL)
+		private String jsonb;
 	}
 
 }

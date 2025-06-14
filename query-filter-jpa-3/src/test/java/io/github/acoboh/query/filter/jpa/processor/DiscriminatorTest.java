@@ -15,12 +15,17 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.Ordered;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass;
+import io.github.acoboh.query.filter.jpa.annotations.QFDiscriminator;
 import io.github.acoboh.query.filter.jpa.domain.DiscriminatorFilterDef;
 import io.github.acoboh.query.filter.jpa.exceptions.QFDiscriminatorNotFoundException;
+import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 import io.github.acoboh.query.filter.jpa.model.discriminators.Announcement;
 import io.github.acoboh.query.filter.jpa.model.discriminators.Post;
 import io.github.acoboh.query.filter.jpa.model.discriminators.Topic;
@@ -45,6 +50,11 @@ class DiscriminatorTest {
 	@Autowired
 	private PostDiscriminatorRepository repository;
 
+	@Autowired
+	private ApplicationContext applicationContext;
+
+	private static QFProcessor<DefaultValuesDef, Topic> qfProcessorDefaultValues;
+
 	private static final Post POST_EXAMPLE = new Post();
 	private static final Announcement ANN_EXAMPLE = new Announcement();
 
@@ -63,7 +73,7 @@ class DiscriminatorTest {
 	@Test
 	@DisplayName("0. Setup")
 	@Order(0)
-	void setup() {
+	void setup() throws QueryFilterDefinitionException {
 
 		assertThat(queryFilterProcessor).isNotNull();
 		assertThat(repository).isNotNull();
@@ -74,6 +84,9 @@ class DiscriminatorTest {
 		repository.saveAndFlush(ANN_EXAMPLE);
 
 		assertThat(repository.findAll()).hasSize(2).containsExactlyInAnyOrder(POST_EXAMPLE, ANN_EXAMPLE);
+
+		qfProcessorDefaultValues = new QFProcessor<>(DefaultValuesDef.class, Topic.class, applicationContext);
+		assertThat(qfProcessorDefaultValues).isNotNull();
 	}
 
 	@Test
@@ -209,11 +222,42 @@ class DiscriminatorTest {
 	}
 
 	@Test
-	@DisplayName("5. Test by clear BBDD")
-	@Order(10)
+	@DisplayName("8. Test default values")
+	@Order(8)
+	void testDefaultValues() {
+
+		QueryFilter<Topic> qf = qfProcessorDefaultValues.newQueryFilter();
+		assertThat(qf).isNotNull();
+
+		assertThat(qf.isFiltering("type")).isTrue();
+		assertThat(qf.getActualValue("type")).containsExactly("ANNOUNCEMENT");
+
+		var fields = qf.getAllFieldValues();
+		assertThat(fields).isNotNull().hasSize(1);
+		var field = fields.get(0);
+		assertThat(field.name()).isEqualTo("type");
+		assertThat(field.values()).containsExactly("ANNOUNCEMENT");
+		assertThat(field.operation()).isEqualTo(QFOperationDiscriminatorEnum.NOT_EQUAL.getOperation());
+
+		List<Topic> found = repository.findAll(qf);
+		assertThat(found).containsExactly(POST_EXAMPLE);
+
+	}
+
+	@Test
+	@DisplayName("END. Test by clear BBDD")
+	@Order(Ordered.LOWEST_PRECEDENCE)
 	void clearBBDD() {
 		repository.deleteAll();
 		assertThat(repository.findAll()).isEmpty();
+	}
+
+	@QFDefinitionClass(Topic.class)
+	public static class DefaultValuesDef {
+
+		@QFDiscriminator(value = {@QFDiscriminator.Value(name = "ANNOUNCEMENT", type = Announcement.class),
+				@QFDiscriminator.Value(name = "POST", type = Post.class)}, defaultValues = "ANNOUNCEMENT", defaultOperation = QFOperationDiscriminatorEnum.NOT_EQUAL)
+		private String type;
 	}
 
 }

@@ -28,10 +28,8 @@ import io.github.acoboh.query.filter.jpa.exceptions.definition.QFNotSortableDefi
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 import io.github.acoboh.query.filter.jpa.predicate.PredicateProcessorResolutor;
 import io.github.acoboh.query.filter.jpa.processor.definitions.QFAbstractDefinition;
-import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionElement;
 import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionSortable;
 import io.github.acoboh.query.filter.jpa.processor.definitions.traits.IDefinitionSortable;
-import io.github.acoboh.query.filter.jpa.processor.match.QFElementMatch;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.metamodel.Metamodel;
 
@@ -61,9 +59,9 @@ public class QFProcessor<F, E> {
 
 	// Map to store fields that will launch other filters by OnPresent annotation
 	private final Map<String, Set<String>> fieldsLaunchOnPresent;
-	private final List<QFDefinitionElement> definitionsOnPresent;
+	private final List<QFAbstractDefinition> definitionsOnPresent;
 
-	private final List<QFElementMatch> defaultMatches;
+	private final List<QFSpecificationPart> defaultMatches;
 
 	private final Set<String> requiredOnStringFilter;
 	private final Set<String> requiredOnExecution;
@@ -142,13 +140,17 @@ public class QFProcessor<F, E> {
 			}
 		}
 
-		definitionsOnPresent = definitionMap.values().stream().filter(QFDefinitionElement.class::isInstance)
-				.map(QFDefinitionElement.class::cast).filter(QFDefinitionElement::isOnPresentFilterEnabled)
-				.sorted(Comparator.comparingInt(QFDefinitionElement::getOrder)).toList();
+		definitionsOnPresent = definitionMap.values().stream().filter(QFAbstractDefinition::isOnPresentFilterEnabled)
+				.sorted(Comparator.comparingInt(QFAbstractDefinition::getOrder)).toList();
 
 		fieldsLaunchOnPresent = new HashMap<>();
-		for (QFDefinitionElement def : definitionsOnPresent) {
+		for (var def : definitionsOnPresent) {
 			String definitionName = def.getFilterName();
+			if (def.getOnFilterPresentFilters() == null) {
+				LOGGER.trace("Filter {} is enabled on present filter but has no related filters to launch",
+						definitionName);
+				continue;
+			}
 			for (var related : def.getOnFilterPresentFilters()) {
 				if (related == null || related.isEmpty()) {
 					continue;
@@ -204,16 +206,8 @@ public class QFProcessor<F, E> {
 		return fields;
 	}
 
-	private static List<QFElementMatch> defaultMatches(Map<String, QFAbstractDefinition> definitionMap) {
-		List<QFElementMatch> ret = new ArrayList<>();
-
-		for (var abstractDef : definitionMap.values()) {
-			if (abstractDef instanceof QFDefinitionElement def) {
-				ret.addAll(def.getDefaultElementMatches());
-			}
-		}
-
-		return Collections.unmodifiableList(ret);
+	private static List<QFSpecificationPart> defaultMatches(Map<String, QFAbstractDefinition> definitionMap) {
+		return definitionMap.values().stream().flatMap(e -> e.getDefaultElementMatches().stream()).toList();
 	}
 
 	private static List<Pair<IDefinitionSortable, Direction>> getDefaultSorting(QFDefinitionClass queryFilterClass,
@@ -325,7 +319,7 @@ public class QFProcessor<F, E> {
 	 *
 	 * @return default matches
 	 */
-	protected List<QFElementMatch> getDefaultMatches() {
+	protected List<QFSpecificationPart> getDefaultMatches() {
 		return defaultMatches;
 	}
 
@@ -361,7 +355,7 @@ public class QFProcessor<F, E> {
 	 * 
 	 * @return list of definitions that are enabled on present filter
 	 */
-	protected List<QFDefinitionElement> getDefinitionsOnPresent() {
+	protected List<QFAbstractDefinition> getDefinitionsOnPresent() {
 		return definitionsOnPresent;
 	}
 

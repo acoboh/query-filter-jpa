@@ -13,8 +13,8 @@
 	<description>Basic Example of query filter for Spring Boot 3.X</description>
 
 	<properties>
-		<jdk.version>21</jdk.version>
-		<jdk-test.version>21</jdk-test.version>
+		<jdk.version>24</jdk.version>
+		<jdk-test.version>24</jdk-test.version>
 		<maven.compiler.source>${jdk.version}</maven.compiler.source>
 		<maven.compiler.target>${jdk.version}</maven.compiler.target>
 
@@ -24,13 +24,13 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!-- Spring Boot-->
-		<spring-boot.version>3.4.4</spring-boot.version>
+		<spring-boot.version>3.5.2</spring-boot.version>
 
 		<!-- Springdoc for OpenAPI-->
-		<springdoc.version>2.8.6</springdoc.version>
+		<springdoc.version>2.8.9</springdoc.version>
 
 		<!-- Hypersistance utils -->
-		<hypersistance-utils.version>3.9.9</hypersistance-utils.version>
+		<hypersistance-utils.version>3.10.1</hypersistance-utils.version>
 
 		<!-- Query Filter Versions -->
 		<query-filter.version>1.0.0-SNAPSHOT</query-filter.version>

@@ -64,6 +64,19 @@ class NumericEntityTests {
 	}
 
 	@Test
+	@DisplayName("2. Find by value between")
+	@Order(2)
+	void findByValueBetween() {
+
+		var qf = queryFilterProcessor.newQueryFilter("bigDecimal=btw:2.5,3.0", QFParamType.RHS_COLON);
+
+		var list = repository.findAll(qf);
+
+		assertThat(list).hasSize(1);
+		assertThat(list.get(0)).isEqualTo(NUMERIC_EXAMPLE);
+	}
+
+	@Test
 	@DisplayName("END. Test by clear BBDD")
 	@Order(Ordered.LOWEST_PRECEDENCE)
 	void clearBBDD() {

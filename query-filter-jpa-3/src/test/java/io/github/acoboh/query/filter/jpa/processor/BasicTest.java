@@ -276,6 +276,20 @@ class BasicTest {
 	}
 
 	@Test
+	@DisplayName("11. Test author between")
+	@Order(12)
+	void testQueryByAuthorBetween() throws QueryFilterException {
+		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("author=btw:authoa,authoz", QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
+
+		List<PostBlog> list = repository.findAll(qf);
+		assertThat(list).hasSize(1);
+
+		PostBlog postBlog = list.get(0);
+		assertPostEqual(postBlog);
+	}
+
+	@Test
 	@DisplayName("11. Test by clear BBDD")
 	@Order(12)
 	void clearBBDD() {

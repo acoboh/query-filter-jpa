@@ -19,6 +19,7 @@ import org.springframework.util.MultiValueMap;
 import io.github.acoboh.query.filter.jpa.exceptions.QFDateParsingException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFEnumException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFFieldOperationException;
+import io.github.acoboh.query.filter.jpa.exceptions.QFFilterNotValid;
 import io.github.acoboh.query.filter.jpa.exceptions.QFOperationNotAllowed;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 import io.github.acoboh.query.filter.jpa.processor.QFAttribute;
@@ -79,6 +80,10 @@ public class QFElementMatch implements QFSpecificationPart {
 		this.definition = definition;
 		this.originalValues = values;
 		this.operation = operation;
+
+		if (!operation.isValid(values, definition.isArrayTyped())) {
+			throw new QFFilterNotValid(operation, definition.getFilterName());
+		}
 
 		formatter = definition.getDateTimeFormatter();
 

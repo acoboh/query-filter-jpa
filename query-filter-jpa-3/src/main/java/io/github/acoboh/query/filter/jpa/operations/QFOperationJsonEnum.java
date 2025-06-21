@@ -68,7 +68,7 @@ public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
 
 				predicates[i++] = PredicateUtils.parseLikePredicate(cb,
 						cb.function(JSON_EXTRACT_FUNCTION, String.class, path, cb.literal(nodeEntry.getKey())),
-						nodeEntry.getValue(), match.getDefinition().isCaseSensitive());
+						nodeEntry.getValue(), match.getDefinition().isCaseSensitive(), true);
 			}
 
 			return cb.and(predicates);
@@ -87,7 +87,7 @@ public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
 			for (Map.Entry<String, String> nodeEntry : match.getMapValues().entrySet()) {
 				predicates[i++] = PredicateUtils.parseStartsPredicate(cb,
 						cb.function(JSON_EXTRACT_FUNCTION, String.class, path, cb.literal(nodeEntry.getKey())),
-						nodeEntry.getValue(), match.getDefinition().isCaseSensitive());
+						nodeEntry.getValue(), match.getDefinition().isCaseSensitive(), true);
 			}
 
 			return cb.and(predicates);
@@ -105,7 +105,7 @@ public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
 			for (Map.Entry<String, String> nodeEntry : match.getMapValues().entrySet()) {
 				predicates[i++] = PredicateUtils.parseEndsPredicate(cb,
 						cb.function(JSON_EXTRACT_FUNCTION, String.class, path, cb.literal(nodeEntry.getKey())),
-						nodeEntry.getValue(), match.getDefinition().isCaseSensitive());
+						nodeEntry.getValue(), match.getDefinition().isCaseSensitive(), true);
 			}
 
 			return cb.and(predicates);

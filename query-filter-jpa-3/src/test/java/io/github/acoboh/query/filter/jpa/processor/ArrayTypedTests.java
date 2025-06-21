@@ -319,6 +319,36 @@ class ArrayTypedTests {
 	}
 
 	@Test
+	@DisplayName("11. Test NOT OVERLAP")
+	@Order(11)
+	void testNotOverlap() throws QueryFilterException {
+
+		var qf = queryFilterProcessor.newQueryFilter("tags=nOvlp:TAG6", QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
+
+		var list = repository.findAll(qf);
+		assertThat(list).hasSize(2).containsExactlyInAnyOrder(POST_EXAMPLE, POST_EXAMPLE_2);
+
+		qf = queryFilterProcessor.newQueryFilter("tags=nOvlp:TAG3", QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
+
+		list = repository.findAll(qf);
+		assertThat(list).hasSize(1).containsExactlyInAnyOrder(POST_EXAMPLE_2);
+
+		qf = queryFilterProcessor.newQueryFilter("tags=nOvlp:TAG4", QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
+
+		list = repository.findAll(qf);
+		assertThat(list).isEmpty();
+
+		qf = queryFilterProcessor.newQueryFilter("tags=nOvlp:TAG3,TAG5", QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
+
+		list = repository.findAll(qf);
+		assertThat(list).isEmpty();
+	}
+
+	@Test
 	@DisplayName("END. Clear BBDD")
 	@Order(Ordered.LOWEST_PRECEDENCE)
 	void clearBBDD() {

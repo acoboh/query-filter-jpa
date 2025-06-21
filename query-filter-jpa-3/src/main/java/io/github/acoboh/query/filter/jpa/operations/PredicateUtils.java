@@ -64,9 +64,9 @@ class PredicateUtils {
 	 *         of the like operation
 	 */
 	public static Predicate parseLikePredicate(CriteriaBuilder criteriaBuilder, Expression<String> exp, String value,
-			boolean caseSensitive) {
+			boolean caseSensitive, boolean like) {
 		String finalValue = "%".concat(value).concat("%");
-		return finalLikeSensitive(criteriaBuilder, exp, finalValue, caseSensitive);
+		return finalLikeSensitive(criteriaBuilder, exp, finalValue, caseSensitive, like);
 	}
 
 	/**
@@ -90,9 +90,9 @@ class PredicateUtils {
 	 *         of the like operation
 	 */
 	public static Predicate parseStartsPredicate(CriteriaBuilder criteriaBuilder, Expression<String> exp, String value,
-			boolean caseSensitive) {
+			boolean caseSensitive, boolean like) {
 		String finalValue = value.concat("%");
-		return finalLikeSensitive(criteriaBuilder, exp, finalValue, caseSensitive);
+		return finalLikeSensitive(criteriaBuilder, exp, finalValue, caseSensitive, like);
 	}
 
 	/**
@@ -116,9 +116,9 @@ class PredicateUtils {
 	 *         of the like operation
 	 */
 	public static Predicate parseEndsPredicate(CriteriaBuilder criteriaBuilder, Expression<String> exp, String value,
-			boolean caseSensitive) {
+			boolean caseSensitive, boolean like) {
 		String finalValue = "%".concat(value);
-		return finalLikeSensitive(criteriaBuilder, exp, finalValue, caseSensitive);
+		return finalLikeSensitive(criteriaBuilder, exp, finalValue, caseSensitive, like);
 	}
 
 	/**
@@ -137,13 +137,24 @@ class PredicateUtils {
 	 * @return a {@link jakarta.persistence.criteria.Predicate} object
 	 */
 	public static Predicate finalLikeSensitive(CriteriaBuilder criteriaBuilder, Expression<String> exp, String value,
-			boolean caseSensitive) {
+			boolean caseSensitive, boolean like) {
+
 		if (caseSensitive) {
 			LOGGER.trace("Case sensitive true on like expression");
-			return criteriaBuilder.like(exp, value);
+			if (like) {
+				LOGGER.trace("Like is true on like expression");
+				return criteriaBuilder.like(exp, value);
+			}
+			return criteriaBuilder.notLike(exp, value);
 		}
 
-		return criteriaBuilder.like(criteriaBuilder.lower(exp), value.toLowerCase());
+		if (like) {
+			LOGGER.trace("Case sensitive false on like expression");
+			return criteriaBuilder.like(criteriaBuilder.lower(exp), value.toLowerCase());
+		}
+
+		LOGGER.trace("Case sensitive false on not like expression");
+		return criteriaBuilder.notLike(criteriaBuilder.lower(exp), value.toLowerCase());
 	}
 
 	/**

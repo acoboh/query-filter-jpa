@@ -1,5 +1,7 @@
 package io.github.acoboh.query.filter.jpa.operations.resolutors;
 
+import java.util.List;
+
 import org.springframework.util.MultiValueMap;
 
 import io.github.acoboh.query.filter.jpa.processor.match.QFElementMatch;
@@ -38,5 +40,26 @@ public interface QFPredicateResolutor {
 	 * @return string operation
 	 */
 	String getOperation();
+
+	/**
+	 * Check if the operation is valid for the values provided
+	 * 
+	 * @param values
+	 *            values to check
+	 * @return true if the operation is valid for the values provided, false
+	 *         otherwise
+	 */
+	default boolean isValid(List<String> values, boolean arrayTyped) {
+		if (values == null || values.isEmpty()) {
+			return false;
+		}
+
+		if (arrayTyped) { // If array typed, we can have multiple values
+			return true;
+		}
+
+		// If not array typed, we expect only one value
+		return values.size() == 1;
+	}
 
 }

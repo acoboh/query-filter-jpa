@@ -16,15 +16,18 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.Ordered;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import io.github.acoboh.query.filter.jpa.domain.FilterBlogDatesDef;
 import io.github.acoboh.query.filter.jpa.exceptions.QFDateParsingException;
+import io.github.acoboh.query.filter.jpa.exceptions.QFFilterNotValid;
 import io.github.acoboh.query.filter.jpa.exceptions.QFNotValuable;
 import io.github.acoboh.query.filter.jpa.exceptions.QueryFilterException;
 import io.github.acoboh.query.filter.jpa.model.PostBlog;
+import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 import io.github.acoboh.query.filter.jpa.repositories.PostBlogRepository;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
 
@@ -75,7 +78,7 @@ class DatesTest {
 
 	@Test
 	@DisplayName("0. Setup")
-	@Order(0)
+	@Order(Ordered.HIGHEST_PRECEDENCE)
 	void setup() {
 
 		assertThat(queryFilterProcessor).isNotNull();
@@ -195,8 +198,37 @@ class DatesTest {
 	}
 
 	@Test
+	@DisplayName("8. Test between dates")
+	@Order(8)
+	void testBetweenDates() throws QueryFilterException {
+
+		QueryFilter<PostBlog> qf = queryFilterProcessor
+				.newQueryFilter("instant=btw:2022-01-01T00:00:00Z,2023-01-01T00:00:00Z", QFParamType.RHS_COLON);
+
+		assertThat(qf).isNotNull();
+
+		List<PostBlog> createDateResults = repository.findAll(qf);
+		assertThat(createDateResults).hasSize(1).containsExactly(POST_EXAMPLE);
+
+	}
+
+	@Test
+	@DisplayName("9. Test between dates with error if only one date")
+	@Order(9)
+	void testBetweenDatesWithError() throws QueryFilterException {
+
+		QFFilterNotValid ex = assertThrows(QFFilterNotValid.class,
+				() -> queryFilterProcessor.newQueryFilter("instant=btw:2022-01-01T00:00:00Z", QFParamType.RHS_COLON));
+
+		assertThat(ex).isNotNull();
+		assertThat(ex.getField()).isEqualTo("instant");
+		assertThat(ex.getOperation()).isEqualTo(QFOperationEnum.BETWEEN);
+
+	}
+
+	@Test
 	@DisplayName("END. Test by clear BBDD")
-	@Order(10)
+	@Order(Ordered.LOWEST_PRECEDENCE)
 	void clearBBDD() {
 		repository.deleteAll();
 		assertThat(repository.findAll()).isEmpty();

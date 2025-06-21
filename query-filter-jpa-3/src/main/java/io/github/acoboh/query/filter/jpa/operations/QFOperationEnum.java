@@ -2,6 +2,7 @@ package io.github.acoboh.query.filter.jpa.operations;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -130,6 +131,31 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 		}
 
 	},
+	BETWEEN("btw", false, false, null) {
+		@SuppressWarnings({"unchecked", "rawtypes"})
+		@Override
+		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
+				MultiValueMap<String, Object> mlContext) {
+			List<Object> values = match.parsedValues(index);
+			mlContext.add(match.getDefinition().getFilterName(), match.parsedValues(0));
+			return cb.between((Path<Comparable>) path, (Comparable) values.get(0), (Comparable) values.get(1));
+		}
+
+		@Override
+		public boolean isValid(List<String> values, boolean arrayTyped) {
+			return values != null && values.size() == 2;
+		}
+	},
+	REGEX("regex", false, false, null) {
+		@Override
+		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
+				MultiValueMap<String, Object> mlContext) {
+			mlContext.add(match.getDefinition().getFilterName(), match.getSingleValue());
+			return PredicateUtils.finalLikeSensitive(cb, path.as(String.class), match.getSingleValue(),
+					match.getDefinition().isCaseSensitive(), true);
+		}
+	},
+
 	/**
 	 * Like operation for strings
 	 */
@@ -139,9 +165,18 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 				MultiValueMap<String, Object> mlContext) {
 			mlContext.add(match.getDefinition().getFilterName(), match.getSingleValue());
 			return PredicateUtils.parseLikePredicate(cb, path.as(String.class), match.getSingleValue(),
-					match.getDefinition().isCaseSensitive());
+					match.getDefinition().isCaseSensitive(), true);
 		}
 
+	},
+	NOT_LIKE("nlike", false, false, null) {
+		@Override
+		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
+				MultiValueMap<String, Object> mlContext) {
+			mlContext.add(match.getDefinition().getFilterName(), match.getSingleValue());
+			return PredicateUtils.parseLikePredicate(cb, path.as(String.class), match.getSingleValue(),
+					match.getDefinition().isCaseSensitive(), false);
+		}
 	},
 	/**
 	 * Starts with operation for strings
@@ -152,7 +187,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 				MultiValueMap<String, Object> mlContext) {
 			mlContext.add(match.getDefinition().getFilterName(), match.getSingleValue());
 			return PredicateUtils.parseStartsPredicate(cb, path.as(String.class), match.getSingleValue(),
-					match.getDefinition().isCaseSensitive());
+					match.getDefinition().isCaseSensitive(), true);
 		}
 
 	},
@@ -165,7 +200,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 				MultiValueMap<String, Object> mlContext) {
 			mlContext.add(match.getDefinition().getFilterName(), match.getSingleValue());
 			return PredicateUtils.parseEndsPredicate(cb, path.as(String.class), match.getSingleValue(),
-					match.getDefinition().isCaseSensitive());
+					match.getDefinition().isCaseSensitive(), true);
 		}
 
 	},
@@ -190,6 +225,10 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 			return in;
 		}
 
+		@Override
+		public boolean isValid(List<String> values, boolean arrayTyped) {
+			return values != null && !values.isEmpty();
+		}
 	},
 	/**
 	 * Not in operation
@@ -211,6 +250,11 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 			}
 			return cb.not(in);
 
+		}
+
+		@Override
+		public boolean isValid(List<String> values, boolean arrayTyped) {
+			return values != null && !values.isEmpty();
 		}
 
 	},
@@ -245,6 +289,20 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 
 	},
 	/**
+	 * Not overlap operation for PostgreSQL Arrays
+	 */
+	NOT_OVERLAP("nOvlp", true, true, ArrayFunction.OVERLAP) {
+		@Override
+		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
+				MultiValueMap<String, Object> mlContext) {
+			if (match.getDefinition().isArrayTyped()) {
+				return PredicateUtils.defaultArrayPredicate(path, cb, match, index, getArrayFunction(), mlContext,
+						false);
+			}
+			throw new QFUnsopportedSQLException(this, match.getDefinition().getFilterName());
+		}
+	},
+	/**
 	 * Contained by for PostgreSQL Arrays
 	 */
 	CONTAINED("containedBy", true, true, ArrayFunction.IS_CONTAINED_BY) {
@@ -257,7 +315,17 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 			}
 			throw new QFUnsopportedSQLException(this, match.getDefinition().getFilterName());
 		}
-
+	},
+	NOT_CONTAINED("notContainedBy", true, true, ArrayFunction.IS_CONTAINED_BY) {
+		@Override
+		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
+				MultiValueMap<String, Object> mlContext) {
+			if (match.getDefinition().isArrayTyped()) {
+				return PredicateUtils.defaultArrayPredicate(path, cb, match, index, getArrayFunction(), mlContext,
+						false);
+			}
+			throw new QFUnsopportedSQLException(this, match.getDefinition().getFilterName());
+		}
 	};
 
 	private static final Map<String, QFOperationEnum> CONSTANTS = new HashMap<>();
@@ -355,12 +423,12 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 			}
 
 			switch (op) {
-				case GREATER_THAN, GREATER_EQUAL_THAN, LESS_THAN, LESS_EQUAL_THAN :
+				case GREATER_THAN, GREATER_EQUAL_THAN, LESS_THAN, LESS_EQUAL_THAN, BETWEEN :
 					if (Comparable.class.isAssignableFrom(clazz) || clazz.isPrimitive()) {
 						ret.add(op);
 					}
 					break;
-				case ENDS_WITH, STARTS_WITH, LIKE :
+				case ENDS_WITH, STARTS_WITH, LIKE, NOT_LIKE, REGEX :
 					if (String.class.isAssignableFrom(clazz)) {
 						ret.add(op);
 					}

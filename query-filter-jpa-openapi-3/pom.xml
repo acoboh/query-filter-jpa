@@ -15,9 +15,7 @@
     <name>query-filter-jpa-openapi-3</name>
     <description>Query Filter JPA OpenAPI Documentation for Spring Boot 3.X</description>
 
-
     <properties>
-
         <!--OpenAPI dependencies -->
         <openapi.version>2.8.9</openapi.version>
     </properties>
@@ -49,6 +47,5 @@
         </dependency>
 
     </dependencies>
-
 
 </project>

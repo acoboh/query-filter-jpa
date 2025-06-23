@@ -25,18 +25,14 @@ with OpenAPI, and use intuitive query syntax—all without writing complex speci
 
 ### 1️⃣ Install the dependency
 
-For **Spring Boot 3**:
-
 ```xml
 
 <dependency>
     <groupId>io.github.acoboh</groupId>
     <artifactId>query-filter-jpa-3</artifactId>
-    <version>0.4.0</version>
+    <version>1.0.0</version>
 </dependency>
 ```
-
-_For Spring Boot 2, use `query-filter-jpa` instead._
 
 ### 2️⃣ Define your entity
 
@@ -116,7 +112,7 @@ SELECT * FROM posts WHERE author = 'john' AND likes >= 10 ORDER BY create_date D
 ### ✅ LHS Brackets Syntax (`field[operation]=value`)
 
 ```url
-/posts?author[eq]=john&likes[gte]=10&sort=-createDate
+/posts?filter=author[eq]=john&likes[gte]=10&sort=-createDate
 ```
 
 _Same SQL output as above._
@@ -130,11 +126,9 @@ QueryFilterJPA automatically documents your filters in **Swagger-UI**. Add the f
 <dependency>
     <groupId>io.github.acoboh</groupId>
     <artifactId>query-filter-jpa-openapi-3</artifactId>
-    <version>0.4.0</version>
+    <version>1.0.0</version>
 </dependency>
 ```
-
-_For Spring Boot 2, use `query-filter-jpa-openapi` instead._
 
 ![OpenAPI Example](/doc/resources/swagger-example-posts.png)
 

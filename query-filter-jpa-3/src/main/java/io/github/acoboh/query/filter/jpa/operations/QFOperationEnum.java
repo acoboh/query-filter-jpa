@@ -146,7 +146,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 			return values != null && values.size() == 2;
 		}
 	},
-	REGEX("regex", false, false, null) {
+	REGULAR_LIKE("rlike", false, false, null) {
 		@Override
 		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
 				MultiValueMap<String, Object> mlContext) {
@@ -291,7 +291,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 	/**
 	 * Not overlap operation for PostgreSQL Arrays
 	 */
-	NOT_OVERLAP("nOvlp", true, true, ArrayFunction.OVERLAP) {
+	NOT_OVERLAP("novlp", true, true, ArrayFunction.OVERLAP) {
 		@Override
 		public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
 				MultiValueMap<String, Object> mlContext) {
@@ -428,7 +428,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 						ret.add(op);
 					}
 					break;
-				case ENDS_WITH, STARTS_WITH, LIKE, NOT_LIKE, REGEX :
+				case ENDS_WITH, STARTS_WITH, LIKE, NOT_LIKE, REGULAR_LIKE :
 					if (String.class.isAssignableFrom(clazz)) {
 						ret.add(op);
 					}

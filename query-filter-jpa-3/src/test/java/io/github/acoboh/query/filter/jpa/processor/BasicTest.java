@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.Ordered;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -76,7 +77,7 @@ class BasicTest {
 
 	@Test
 	@DisplayName("0. Setup")
-	@Order(1)
+	@Order(Ordered.HIGHEST_PRECEDENCE)
 	void setup() {
 
 		assertThat(queryFilterProcessor).isNotNull();
@@ -89,7 +90,7 @@ class BasicTest {
 
 	@Test
 	@DisplayName("1. Test empty query")
-	@Order(2)
+	@Order(1)
 	void testQueryByName() throws QueryFilterException {
 
 		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("", QFParamType.RHS_COLON);
@@ -113,7 +114,7 @@ class BasicTest {
 
 	@Test
 	@DisplayName("2. Test by author")
-	@Order(3)
+	@Order(2)
 	void testQueryByAuthor() throws QueryFilterException {
 
 		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("author=like:auth", QFParamType.RHS_COLON);
@@ -160,7 +161,7 @@ class BasicTest {
 
 	@Test
 	@DisplayName("3. Test by not existing author")
-	@Order(4)
+	@Order(3)
 	void testQueryByMissingAuthor() throws QueryFilterException {
 		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("author=like:example", QFParamType.RHS_COLON);
 		assertThat(qf).isNotNull();
@@ -177,7 +178,7 @@ class BasicTest {
 
 	@Test
 	@DisplayName("4. Test by avgNote")
-	@Order(5)
+	@Order(4)
 	void testQueryByAvgNote() throws QueryFilterException {
 		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("avgNote=gt:1.2", QFParamType.RHS_COLON);
 		assertThat(qf).isNotNull();
@@ -191,7 +192,7 @@ class BasicTest {
 
 	@Test
 	@DisplayName("5. Test by avgNote less than 1")
-	@Order(6)
+	@Order(5)
 	void testQueryByAvgNoteLessThan1() throws QueryFilterException {
 		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("avgNote=lt:1.2", QFParamType.RHS_COLON);
 		assertThat(qf).isNotNull();
@@ -202,7 +203,7 @@ class BasicTest {
 
 	@Test
 	@DisplayName("6. Test by create date")
-	@Order(7)
+	@Order(6)
 	void testQueryByCreateDate() throws QueryFilterException {
 		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("createDate=gt:2020-01-01T00:00:00Z",
 				QFParamType.RHS_COLON);
@@ -217,7 +218,7 @@ class BasicTest {
 
 	@Test
 	@DisplayName("7. Test by last timestamp")
-	@Order(8)
+	@Order(7)
 	void testQueryByLastTimestamp() throws QueryFilterException {
 
 		QFNotValuable ex = assertThrows(QFNotValuable.class, () -> queryFilterProcessor
@@ -230,7 +231,7 @@ class BasicTest {
 
 	@Test
 	@DisplayName("8. Test by published is blocked. Assert throws QueryFilterException")
-	@Order(9)
+	@Order(8)
 	void testQueryByPublished() {
 
 		QueryFilterException qfException = assertThrows(QueryFilterException.class, () -> {
@@ -246,7 +247,7 @@ class BasicTest {
 
 	@Test
 	@DisplayName("9. Test by post type")
-	@Order(10)
+	@Order(9)
 	void testQueryByPostType() throws QueryFilterException {
 		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("postType=eq:TEXT", QFParamType.RHS_COLON);
 		assertThat(qf).isNotNull();
@@ -260,7 +261,7 @@ class BasicTest {
 
 	@Test
 	@DisplayName("10. Test by published is allowed manually")
-	@Order(11)
+	@Order(10)
 	void testQueryByPublishedManually() throws QueryFilterException {
 		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter(null, QFParamType.RHS_COLON);
 		assertThat(qf).isNotNull();
@@ -277,9 +278,10 @@ class BasicTest {
 
 	@Test
 	@DisplayName("11. Test author between")
-	@Order(12)
+	@Order(11)
 	void testQueryByAuthorBetween() throws QueryFilterException {
-		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("author=btw:authoa,authoz", QFParamType.RHS_COLON);
+		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("author=btw:authoa,authoz",
+				QFParamType.RHS_COLON);
 		assertThat(qf).isNotNull();
 
 		List<PostBlog> list = repository.findAll(qf);
@@ -290,8 +292,22 @@ class BasicTest {
 	}
 
 	@Test
-	@DisplayName("11. Test by clear BBDD")
+	@DisplayName("12. Test regular like")
 	@Order(12)
+	void testQueryByAuthorLike() throws QueryFilterException {
+		QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("author=rlike:autho_", QFParamType.RHS_COLON);
+		assertThat(qf).isNotNull();
+
+		List<PostBlog> list = repository.findAll(qf);
+		assertThat(list).hasSize(1);
+
+		PostBlog postBlog = list.get(0);
+		assertPostEqual(postBlog);
+	}
+
+	@Test
+	@DisplayName("END. Test by clear BBDD")
+	@Order(Ordered.LOWEST_PRECEDENCE)
 	void clearBBDD() {
 		repository.deleteAll();
 		assertThat(repository.findAll()).isEmpty();

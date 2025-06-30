@@ -67,7 +67,7 @@
         <spring-boot.version>3.5.2</spring-boot.version>
 
         <datasource-proxy.version>1.10.1</datasource-proxy.version>
-        <testcontainers.version>1.21.2</testcontainers.version>
+        <testcontainers.version>1.21.3</testcontainers.version>
         <junit.version>5.13.1</junit.version>
         <assertj-core.version>3.27.3</assertj-core.version>
 

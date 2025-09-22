@@ -64,7 +64,7 @@
         <sonartype-publishing.version>0.8.0</sonartype-publishing.version>
 
         <!-- Spring dependencies -->
-        <spring-boot.version>3.5.2</spring-boot.version>
+        <spring-boot.version>3.5.6</spring-boot.version>
 
         <datasource-proxy.version>1.10.1</datasource-proxy.version>
         <testcontainers.version>1.21.2</testcontainers.version>

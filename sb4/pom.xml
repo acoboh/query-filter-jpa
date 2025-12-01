@@ -1,0 +1,101 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.github.acoboh</groupId>
+        <artifactId>query-filter-jpa-parent</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>query-filter-jpa-4-parent</artifactId>
+    <packaging>pom</packaging>
+
+    <name>query-filter-jpa-4-parent</name>
+    <description>Query filter JPA Parent for Spring Boot 4.X</description>
+
+    <properties>
+        <!-- Spring dependencies -->
+        <spring-boot.version>4.0.0</spring-boot.version>
+
+        <!-- Hypersistance tests -->
+        <hypersistance.version>3.12.0</hypersistance.version>
+
+        <!-- JUnit version -->
+        <junit.version>6.0.1</junit.version>
+        <assertj-core.version>3.27.6</assertj-core.version>
+
+        <!-- Maven Compiler Plugin Version -->
+        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+
+        <!-- Google prone core -->
+        <error-prone.version>2.18.0</error-prone.version>
+    </properties>
+
+    <modules>
+        <module>query-filter-jpa-4</module>
+        <module>query-filter-jpa-openapi-4</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Spring Boot BOM -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Junit -->
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${assertj-core.version}</version>
+            </dependency>
+
+        </dependencies>
+
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                    <configuration>
+                        <compilerArgs>
+                            <arg>-XDcompilePolicy=simple</arg>
+                            <arg>-Xplugin:ErrorProne
+                                -Xep:JavaUtilDate:ERROR
+                                -Xep:VariableNameSameAsType:ERROR
+                                -XepExcludedPaths:.*/src/test/java/.*
+                            </arg>
+                        </compilerArgs>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>com.google.errorprone</groupId>
+                                <artifactId>error_prone_core</artifactId>
+                                <version>${error-prone.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
+            </plugins>
+
+        </pluginManagement>
+    </build>
+
+</project>

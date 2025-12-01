@@ -63,16 +63,14 @@
         <maven-surfire-plugin.version>3.5.3</maven-surfire-plugin.version>
         <sonartype-publishing.version>0.8.0</sonartype-publishing.version>
 
-        <datasource-proxy.version>1.10.1</datasource-proxy.version>
-        <testcontainers.version>1.21.2</testcontainers.version>
-        <junit.version>5.13.1</junit.version>
-        <assertj-core.version>3.27.3</assertj-core.version>
+        <datasource-proxy.version>1.11.0</datasource-proxy.version>
+        <testcontainers.version>2.0.2</testcontainers.version>
 
         <!-- Guava dependencies -->
-        <guava.version>33.4.8-jre</guava.version>
+        <guava.version>33.5.0-jre</guava.version>
 
         <!-- JDBC Driver versions -->
-        <postgresql.version>42.7.7</postgresql.version>
+        <postgresql.version>42.7.8</postgresql.version>
 
         <!-- JaCoCo Properties -->
         <jacoco.version>0.8.13</jacoco.version>
@@ -86,10 +84,8 @@
     </properties>
 
     <modules>
-        <module>query-filter-jpa-3</module>
-        <module>query-filter-jpa-openapi-3</module>
-        <module>query-filter-jpa-4</module>
-        <module>query-filter-jpa-openapi-4</module>
+        <module>sb3</module>
+        <module>sb4</module>
     </modules>
 
     <dependencyManagement>
@@ -103,23 +99,9 @@
             </dependency>
 
             <dependency>
-                <groupId>org.junit</groupId>
-                <artifactId>junit-bom</artifactId>
-                <version>${junit.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.assertj</groupId>
-                <artifactId>assertj-core</artifactId>
-                <version>${assertj-core.version}</version>
             </dependency>
 
             <dependency>

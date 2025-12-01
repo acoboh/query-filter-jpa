@@ -9,18 +9,18 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>query-filter-jpa-3</artifactId>
+    <artifactId>query-filter-jpa-4</artifactId>
     <packaging>jar</packaging>
 
-    <name>query-filter-jpa-3</name>
-    <description>Query filter JPA for Spring Boot 3.X</description>
+    <name>query-filter-jpa-4</name>
+    <description>Query filter JPA for Spring Boot 4.X</description>
 
     <properties>
         <!-- Spring dependencies -->
-        <spring-boot.version>3.5.2</spring-boot.version>
+        <spring-boot.version>4.0.0</spring-boot.version>
 
         <!-- Hypersistance tests -->
-        <hypersistance.version>3.10.1</hypersistance.version>
+        <hypersistance.version>3.12.0</hypersistance.version>
     </properties>
 
     <dependencyManagement>
@@ -193,7 +193,7 @@
 
         <dependency>
             <groupId>io.hypersistence</groupId>
-            <artifactId>hypersistence-utils-hibernate-63</artifactId>
+            <artifactId>hypersistence-utils-hibernate-71</artifactId>
             <version>${hypersistance.version}</version>
             <scope>test</scope>
         </dependency>

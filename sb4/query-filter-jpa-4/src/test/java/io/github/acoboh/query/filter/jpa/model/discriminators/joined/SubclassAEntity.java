@@ -26,7 +26,6 @@ public class SubclassAEntity extends ParentEntity {
     /**
      * Set the subclass field
      *
-     * @param subClassField
      */
     public void setSubClassField(String subClassField) {
         this.subClassField = subClassField;
@@ -44,7 +43,6 @@ public class SubclassAEntity extends ParentEntity {
     /**
      * Set the flag
      *
-     * @param flag
      */
     public void setFlag(boolean flag) {
         this.flag = flag;

@@ -5,6 +5,7 @@ import io.github.acoboh.query.filter.jpa.exceptions.QueryFilterException;
 import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.repositories.PostBlogRepository;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +80,7 @@ class MultipleElementsTest {
     }
 
     @Autowired
-    private QFProcessor<FilterBlogMultipleElementsDef, PostBlog> queryFilterProcessor;
+    private QFProcessor<@NonNull FilterBlogMultipleElementsDef, @NonNull PostBlog> queryFilterProcessor;
 
     @Autowired
     private PostBlogRepository repository;
@@ -105,8 +106,7 @@ class MultipleElementsTest {
     @Order(1)
     void queryMultipleAnd() throws QueryFilterException {
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("multipleAnd=eq:text", QFParamType.RHS_COLON);
-
+        var qf = queryFilterProcessor.newQueryFilter("multipleAnd=eq:text", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         List<PostBlog> list = repository.findAll(qf);
@@ -118,8 +118,7 @@ class MultipleElementsTest {
     @Order(2)
     void queryMultipleDefault() throws QueryFilterException {
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("multipleDefault=eq:text",
-                QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("multipleDefault=eq:text", QFParamType.RHS_COLON);
 
         assertThat(qf).isNotNull();
 
@@ -132,7 +131,7 @@ class MultipleElementsTest {
     @Order(3)
     void queryMultipleOr() throws QueryFilterException {
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("multipleOr=eq:text", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("multipleOr=eq:text", QFParamType.RHS_COLON);
 
         assertThat(qf).isNotNull();
 

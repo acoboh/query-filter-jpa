@@ -2,6 +2,9 @@ package io.github.acoboh.query.filter.jpa.spel;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.PropertyValue;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
@@ -20,10 +23,12 @@ import java.util.stream.Collectors;
  */
 public abstract class SpelResolverContext {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpelResolverContext.class);
+
     /**
      * Http servlet request parameter
      */
-    protected final HttpServletRequest request;
+    protected final @Nullable HttpServletRequest request;
 
     /**
      * Http servlet response parameter
@@ -36,7 +41,7 @@ public abstract class SpelResolverContext {
      * @param request  the servlet request
      * @param response the servlet response
      */
-    protected SpelResolverContext(HttpServletRequest request, HttpServletResponse response) {
+    protected SpelResolverContext(@Nullable HttpServletRequest request, HttpServletResponse response) {
         this.request = request;
         this.response = response;
     }
@@ -48,7 +53,7 @@ public abstract class SpelResolverContext {
      * @param contextValues      actual context values
      * @return object evaluated
      */
-    public Object evaluate(String securityExpression, MultiValueMap<String, Object> contextValues) {
+    public @Nullable Object evaluate(String securityExpression, @Nullable MultiValueMap<String, Object> contextValues) {
 
         ExpressionParser expressionParser = getExpressionParser();
 
@@ -60,7 +65,9 @@ public abstract class SpelResolverContext {
             fillContextWithRequestValues(context);
         }
 
-        fillContextWithMap(context, contextValues);
+        if (contextValues != null) {
+            fillContextWithMap(context, contextValues);
+        }
 
         return expression.getValue(context);
 
@@ -81,6 +88,10 @@ public abstract class SpelResolverContext {
     public abstract EvaluationContext getEvaluationContext();
 
     private void fillContextWithRequestValues(EvaluationContext context) {
+        if (request == null) {
+            LOGGER.trace("No request available to fill context. Ignoring...");
+            return;
+        }
 
         Object pathObject = request.getAttribute(View.PATH_VARIABLES);
         if (pathObject instanceof Map<?, ?> map) {

@@ -12,7 +12,7 @@
     <artifactId>query-filter-jpa-3-parent</artifactId>
     <packaging>pom</packaging>
 
-    <name>query-filter-jpa-3</name>
+    <name>query-filter-jpa-3-parent</name>
     <description>Query filter JPA for Spring Boot 3.X</description>
 
     <properties>
@@ -21,6 +21,9 @@
 
         <!-- Hypersistance tests -->
         <hypersistance.version>3.10.1</hypersistance.version>
+
+        <!-- Test containers -->
+        <testcontainers.version>2.0.2</testcontainers.version>
 
         <!-- JUnit version -->
         <junit.version>5.14.1</junit.version>

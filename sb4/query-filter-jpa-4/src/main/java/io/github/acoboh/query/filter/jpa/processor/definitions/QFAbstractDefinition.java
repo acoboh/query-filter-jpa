@@ -167,8 +167,8 @@ public abstract class QFAbstractDefinition {
      *                                                                                                definition
      * @param metamodel a {@link jakarta.persistence.metamodel.Metamodel} object
      */
-    public static QFAbstractDefinition buildDefinition(Field filterField, Class<?> filterClass, Class<?> entityClass,
-            Metamodel metamodel) throws QueryFilterDefinitionException {
+    public static @Nullable QFAbstractDefinition buildDefinition(Field filterField, Class<?> filterClass,
+            Class<?> entityClass, Metamodel metamodel) throws QueryFilterDefinitionException {
 
         boolean isQFElement = filterField.isAnnotationPresent(QFElement.class)
                 || filterField.isAnnotationPresent(QFElements.class);

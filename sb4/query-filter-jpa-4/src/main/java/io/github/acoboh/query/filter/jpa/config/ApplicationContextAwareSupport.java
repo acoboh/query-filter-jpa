@@ -1,6 +1,6 @@
 package io.github.acoboh.query.filter.jpa.config;
 
-import org.jspecify.annotations.NonNull;
+import jakarta.annotation.Nullable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
@@ -17,11 +17,11 @@ import org.springframework.stereotype.Component;
 @Component("applicationContextAwareSupport")
 public class ApplicationContextAwareSupport implements ApplicationContextAware {
 
-    private ApplicationContext applicationContextAware;
+    private @Nullable ApplicationContext applicationContextAware;
 
     /** {@inheritDoc} */
     @Override
-    public void setApplicationContext(@NonNull ApplicationContext applicationContext) {
+    public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContextAware = applicationContext;
     }
 
@@ -32,7 +32,7 @@ public class ApplicationContextAwareSupport implements ApplicationContextAware {
      *
      * @return a {@link org.springframework.context.ApplicationContext} object
      */
-    public ApplicationContext getApplicationContext() {
+    public @Nullable ApplicationContext getApplicationContext() {
         return applicationContextAware;
     }
 }

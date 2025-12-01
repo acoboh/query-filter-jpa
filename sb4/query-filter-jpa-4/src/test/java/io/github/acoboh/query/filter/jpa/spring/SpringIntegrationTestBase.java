@@ -27,8 +27,8 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 
 import javax.sql.DataSource;
 import java.util.Properties;
@@ -58,7 +58,7 @@ public class SpringIntegrationTestBase {
          * PostgreSQL Container
          */
         @Container
-        public static PostgreSQLContainer<?> psqlContainer = new PostgreSQLContainer<>("postgres:14-alpine")
+        public static PostgreSQLContainer psqlContainer = new PostgreSQLContainer("postgres:14-alpine")
                 .withDatabaseName("test_db").withUsername("user").withPassword("password");
 
         static {
@@ -164,7 +164,7 @@ public class SpringIntegrationTestBase {
     }
 
     private static class PrettyQueryEntryCreator extends DefaultQueryLogEntryCreator {
-        private Formatter formatter = FormatStyle.BASIC.getFormatter();
+        private final Formatter formatter = FormatStyle.BASIC.getFormatter();
 
         @Override
         protected String formatQuery(String query) {

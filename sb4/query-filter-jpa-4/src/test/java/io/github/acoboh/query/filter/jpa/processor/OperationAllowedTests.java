@@ -5,6 +5,7 @@ import io.github.acoboh.query.filter.jpa.exceptions.QFOperationNotAllowed;
 import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ class OperationAllowedTests {
             QFOperationEnum.STARTS_WITH, QFOperationEnum.ENDS_WITH, QFOperationEnum.LIKE);
 
     @Autowired
-    private QFProcessor<FilterAllowedOperationsBlogDef, PostBlog> qfProcessor;
+    private QFProcessor<@NonNull FilterAllowedOperationsBlogDef, @NonNull PostBlog> qfProcessor;
 
     @Test
     @DisplayName("0. Setup")

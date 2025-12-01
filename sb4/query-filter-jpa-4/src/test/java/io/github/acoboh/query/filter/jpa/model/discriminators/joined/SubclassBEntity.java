@@ -24,7 +24,6 @@ public class SubclassBEntity extends ParentEntity {
     /**
      * Set the text
      *
-     * @param text
      */
     public void setText(String text) {
         this.text = text;

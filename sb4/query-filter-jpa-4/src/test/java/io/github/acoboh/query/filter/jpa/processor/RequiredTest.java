@@ -11,6 +11,7 @@ import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 import io.github.acoboh.query.filter.jpa.repositories.PostBlogRepository;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,12 +57,12 @@ class RequiredTest {
         POST_EXAMPLE.setPostType(PostBlog.PostType.TEXT);
     }
 
-    private static QFProcessor<RequiredAuthorDef, PostBlog> processorAuthor;
-    private static QFProcessor<RequiredSortDef, PostBlog> processorSort;
-    private static QFProcessor<RequiredSortDef2, PostBlog> processorSort2;
-    private static QFProcessor<RequiredAuthorDef2, PostBlog> processorAuthor2;
-    private static QFProcessor<RequiredAuthorDef3, PostBlog> processorAuthor3;
-    private static QFProcessor<RequiredAuthorDef4, PostBlog> processorAuthor4;
+    private static QFProcessor<@NonNull RequiredAuthorDef, @NonNull PostBlog> processorAuthor;
+    private static QFProcessor<@NonNull RequiredSortDef, @NonNull PostBlog> processorSort;
+    private static QFProcessor<@NonNull RequiredSortDef2, @NonNull PostBlog> processorSort2;
+    private static QFProcessor<@NonNull RequiredAuthorDef2, @NonNull PostBlog> processorAuthor2;
+    private static QFProcessor<@NonNull RequiredAuthorDef3, @NonNull PostBlog> processorAuthor3;
+    private static QFProcessor<@NonNull RequiredAuthorDef4, @NonNull PostBlog> processorAuthor4;
 
     @Autowired
     private ApplicationContext applicationContext;

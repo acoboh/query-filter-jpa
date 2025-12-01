@@ -46,7 +46,13 @@ public class QFDefinitionCollection extends QFAbstractDefinition {
             super.filterName = collectionElement.name();
         }
 
-        if (!Collection.class.isAssignableFrom(fieldClassProcessor.getFinalClass())) {
+        var finalClass = fieldClassProcessor.getFinalClass();
+        if (finalClass == null) {
+            throw new QueryFilterDefinitionException(
+                    "Cannot determine final class for collection filter " + filterName);
+        }
+
+        if (!Collection.class.isAssignableFrom(finalClass)) {
             throw new QFCollectionNotSupported(filterName, fieldInfo.filterClass(),
                     fieldClassProcessor.getFinalClass());
         }

@@ -14,6 +14,7 @@ import io.github.acoboh.query.filter.jpa.processor.QFSpecificationPart;
 import io.github.acoboh.query.filter.jpa.processor.definitions.traits.IDefinitionSortable;
 import io.github.acoboh.query.filter.jpa.processor.match.QFElementMatch;
 import io.github.acoboh.query.filter.jpa.utils.DateUtils;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.metamodel.Metamodel;
 import org.slf4j.Logger;
@@ -21,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.util.Pair;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
@@ -38,11 +40,11 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
     private final QFElement[] elementAnnotations;
     private final PredicateOperation defaultOperation;
 
-    private final QFDate dateAnnotation;
+    private final @Nullable QFDate dateAnnotation;
 
-    private final Set<String> onFilterPresentFilters;
+    private final @Nullable Set<String> onFilterPresentFilters;
 
-    private final DateTimeFormatter dateTimeFormatter;
+    private final @Nullable DateTimeFormatter dateTimeFormatter;
 
     private final List<List<QFAttribute>> paths;
     private final List<List<JoinType>> joinTypes;
@@ -62,8 +64,9 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
 
     private final int order;
 
-    QFDefinitionElement(FilterFieldInfo filterInfo, QFElements elementsAnnotation, QFElement[] elementAnnotations,
-            QFDate dateAnnotation, Metamodel metamodel) throws QueryFilterDefinitionException {
+    QFDefinitionElement(FilterFieldInfo filterInfo, @Nullable QFElements elementsAnnotation,
+            QFElement[] elementAnnotations, @Nullable QFDate dateAnnotation, Metamodel metamodel)
+            throws QueryFilterDefinitionException {
         super(filterInfo);
 
         // Element annotations
@@ -187,7 +190,13 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
             List<QFAttribute> attributes = fieldClassProcessor.getAttributes();
             paths.add(attributes);
 
-            finalClasses.add(fieldClassProcessor.getFinalClass());
+            var finalClass = fieldClassProcessor.getFinalClass();
+            if (finalClass == null) {
+                throw new QueryFilterDefinitionException(
+                        "Cannot determine final class for element filter with path " + elem.value());
+            }
+
+            finalClasses.add(finalClass);
         }
 
         long distinct = finalClasses.stream().distinct().count();
@@ -200,7 +209,11 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
     }
 
     private DateTimeFormatter checkDateTimeFormatter() throws QFDateClassNotSupported, QFDateParseError {
-        LocalDateTime now = LocalDateTime.now();
+        if (dateAnnotation == null) {
+            throw new IllegalStateException("Date annotation is null");
+        }
+
+        LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault());
 
         DateTimeFormatter formatter = DateUtils.getFormatter(dateAnnotation);
         String value = formatter.format(now);
@@ -256,6 +269,7 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
      *
      * @return true if sortable
      */
+    @Override
     public boolean isSortable() {
         return sortable;
     }
@@ -265,7 +279,7 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
      *
      * @return date annotation
      */
-    public QFDate getDateAnnotation() {
+    public @Nullable QFDate getDateAnnotation() {
         return dateAnnotation;
     }
 
@@ -274,7 +288,7 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
      *
      * @return date time formatted
      */
-    public DateTimeFormatter getDateTimeFormatter() {
+    public @Nullable DateTimeFormatter getDateTimeFormatter() {
         return dateTimeFormatter;
     }
 
@@ -315,7 +329,7 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
     }
 
     @Override
-    public Set<String> getOnFilterPresentFilters() {
+    public @Nullable Set<String> getOnFilterPresentFilters() {
         return onFilterPresentFilters;
     }
 
@@ -324,6 +338,7 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
      *
      * @return order of evaluation
      */
+    @Override
     public int getOrder() {
         return order;
     }

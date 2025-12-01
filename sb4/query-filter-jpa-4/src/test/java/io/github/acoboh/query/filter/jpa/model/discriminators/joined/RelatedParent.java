@@ -32,7 +32,6 @@ public class RelatedParent {
     /**
      * Set the id
      *
-     * @param id
      */
     public void setId(String id) {
         this.id = id;
@@ -50,7 +49,6 @@ public class RelatedParent {
     /**
      * Set the parent
      *
-     * @param parent
      */
     public void setParent(ParentEntity parent) {
         this.parent = parent;

@@ -12,6 +12,7 @@ import io.github.acoboh.query.filter.jpa.predicate.PredicateProcessorResolutor;
 import io.github.acoboh.query.filter.jpa.processor.definitions.QFAbstractDefinition;
 import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionSortable;
 import io.github.acoboh.query.filter.jpa.processor.definitions.traits.IDefinitionSortable;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.metamodel.Metamodel;
 import org.slf4j.Logger;
@@ -61,8 +62,8 @@ public class QFProcessor<F, E> {
 
     private final ApplicationContext appContext;
 
-    private Map<String, PredicateProcessorResolutor> predicateMap;
-    private String predicateName;
+    private @Nullable Map<String, PredicateProcessorResolutor> predicateMap;
+    private @Nullable String predicateName;
 
     /**
      * Default constructor
@@ -75,7 +76,7 @@ public class QFProcessor<F, E> {
      */
     public QFProcessor(Class<F> filterClass, Class<E> entityClass, ApplicationContextAwareSupport appContext)
             throws QueryFilterDefinitionException {
-        this(filterClass, entityClass, appContext.getApplicationContext());
+        this(filterClass, entityClass, Objects.requireNonNull(appContext.getApplicationContext()));
     }
 
     /**
@@ -139,7 +140,7 @@ public class QFProcessor<F, E> {
                 continue;
             }
             for (var related : def.getOnFilterPresentFilters()) {
-                if (related == null || related.isEmpty()) {
+                if (related.isEmpty()) {
                     continue;
                 }
 
@@ -201,7 +202,7 @@ public class QFProcessor<F, E> {
             Map<String, QFAbstractDefinition> definitionMap, Class<?> filterClass)
             throws QueryFilterDefinitionException {
 
-        if (queryFilterClass.defaultSort() == null || queryFilterClass.defaultSort().length == 0) {
+        if (queryFilterClass.defaultSort().length == 0) {
             return Collections.emptyList();
         }
 
@@ -265,7 +266,7 @@ public class QFProcessor<F, E> {
      *                                                                           exception
      *                                                                           occurs
      */
-    public QueryFilter<E> newQueryFilter(String input, QFParamType type) throws QueryFilterException {
+    public QueryFilter<E> newQueryFilter(@Nullable String input, QFParamType type) throws QueryFilterException {
         return new QueryFilter<>(input, type, this);
     }
 
@@ -382,7 +383,7 @@ public class QFProcessor<F, E> {
      *
      * @return predicate map
      */
-    protected Map<String, PredicateProcessorResolutor> getPredicateMap() {
+    protected @Nullable Map<String, PredicateProcessorResolutor> getPredicateMap() {
         return predicateMap;
     }
 
@@ -391,7 +392,7 @@ public class QFProcessor<F, E> {
      *
      * @return default predicate
      */
-    protected String getDefaultPredicate() {
+    protected @Nullable String getDefaultPredicate() {
         return predicateName;
     }
 }

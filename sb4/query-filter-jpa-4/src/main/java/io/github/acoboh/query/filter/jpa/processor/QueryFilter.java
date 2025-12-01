@@ -14,9 +14,8 @@ import io.github.acoboh.query.filter.jpa.processor.match.QFDiscriminatorMatch;
 import io.github.acoboh.query.filter.jpa.processor.match.QFElementMatch;
 import io.github.acoboh.query.filter.jpa.processor.match.QFJsonElementMatch;
 import io.github.acoboh.query.filter.jpa.spel.SpelResolverContext;
-import jakarta.annotation.Nullable;
 import jakarta.persistence.criteria.*;
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort.Direction;
@@ -86,7 +85,7 @@ public class QueryFilter<E> implements Specification<E> {
      * @param type      Type of filter
      * @param processor query filter processor
      */
-    protected QueryFilter(String input, QFParamType type, QFProcessor<?, E> processor) {
+    protected QueryFilter(@Nullable String input, QFParamType type, QFProcessor<?, E> processor) {
         Assert.notNull(type, "type cannot be null");
 
         this.definitionMap = processor.getDefinitionMap();
@@ -104,7 +103,7 @@ public class QueryFilter<E> implements Specification<E> {
         this.requiredOnExecution = processor.getRequiredOnExecution();
         this.requiredOnSort = processor.getRequiredOnSort();
 
-        if (this.predicateName != null) {
+        if (this.predicateName != null && predicateMap != null) {
             this.predicate = predicateMap.get(this.predicateName);
         }
 
@@ -220,7 +219,6 @@ public class QueryFilter<E> implements Specification<E> {
 
     }
 
-    @NonNull
     private QFAbstractDefinition getSafeFieldDefinition(String fieldName) {
         QFAbstractDefinition def = definitionMap.get(fieldName);
         if (def == null) {
@@ -798,7 +796,7 @@ public class QueryFilter<E> implements Specification<E> {
      *                                                                               not
      *                                                                               found
      */
-    public Integer getActualCollectionValue(String field) throws QFFieldNotFoundException {
+    public @Nullable Integer getActualCollectionValue(String field) throws QFFieldNotFoundException {
         QFAbstractDefinition def = getSafeFieldDefinition(field);
 
         if (!(def instanceof QFDefinitionCollection)) {
@@ -847,7 +845,7 @@ public class QueryFilter<E> implements Specification<E> {
      * @return operation and values of the field
      * @since 1.0.0
      */
-    public Pair<QFOperationJsonEnum, Map<String, String>> getFirstActualJsonOperation(String field) {
+    public @Nullable Pair<QFOperationJsonEnum, Map<String, String>> getFirstActualJsonOperation(String field) {
         var def = getSafeFieldDefinition(field);
 
         QFSpecificationPart qfSpec = specificationsWarp.getAllParts().stream()
@@ -869,7 +867,8 @@ public class QueryFilter<E> implements Specification<E> {
      * @return operation and values of the field
      * @since 1.0.0
      */
-    public Pair<QFOperationDiscriminatorEnum, List<String>> getFirstActualDiscriminatorOperation(String field) {
+    public @Nullable Pair<QFOperationDiscriminatorEnum, List<String>> getFirstActualDiscriminatorOperation(
+            String field) {
         var def = getSafeFieldDefinition(field);
 
         QFSpecificationPart qfSpec = specificationsWarp.getAllParts().stream()
@@ -891,7 +890,7 @@ public class QueryFilter<E> implements Specification<E> {
      * @return a {@link org.springframework.data.util.Pair} object
      * @since 1.0.0
      */
-    public Pair<QFCollectionOperationEnum, Integer> getFirstActualCollectionOperation(String field) {
+    public @Nullable Pair<QFCollectionOperationEnum, Integer> getFirstActualCollectionOperation(String field) {
         var def = getSafeFieldDefinition(field);
 
         QFSpecificationPart qfSpec = specificationsWarp.getAllParts().stream()
@@ -1052,8 +1051,8 @@ public class QueryFilter<E> implements Specification<E> {
 
     /** {@inheritDoc} */
     @Override
-    public Predicate toPredicate(@NonNull Root<E> root, CriteriaQuery<?> query,
-            @NonNull CriteriaBuilder criteriaBuilder) {
+    public @Nullable Predicate toPredicate(Root<E> root, @Nullable CriteriaQuery<?> query,
+            CriteriaBuilder criteriaBuilder) {
 
         if (query == null) {
             throw new IllegalArgumentException("Query cannot be null in QueryFilter predicates");
@@ -1106,11 +1105,16 @@ public class QueryFilter<E> implements Specification<E> {
         var sortList = defaultSortEnabled ? defaultSorting : sortDefinitionList;
         if (!sortList.isEmpty()) {
             LOGGER.trace("Adding all sort operations");
-            queryInfo.query().orderBy(QueryUtils.parseOrders(queryInfo, sortList, pathsMap));
+            var query = queryInfo.query();
+            if (query == null) {
+                throw new IllegalArgumentException("Query cannot be null in QueryFilter sort processing");
+            }
+
+            query.orderBy(QueryUtils.parseOrders(queryInfo, sortList, pathsMap));
         }
     }
 
-    private Predicate parseFinalPredicate(CriteriaBuilder cb, Map<String, List<Predicate>> predicatesMap) {
+    private @Nullable Predicate parseFinalPredicate(CriteriaBuilder cb, Map<String, List<Predicate>> predicatesMap) {
 
         Map<String, Predicate> simplifiedPredicate = predicatesMap.entrySet().stream()
                 .collect(Collectors.toMap(Entry::getKey, e -> cb.and(e.getValue().toArray(new Predicate[0]))));

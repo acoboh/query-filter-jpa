@@ -89,8 +89,9 @@ class OpenApiCustomiserImpl implements OpenApiCustomizer {
                 QFProcessor<?, ?> processor = applicationContext.getBean(names[0], QFProcessor.class);
 
                 Set<String> requestMappingPatterns;
-                if (requestMapping.getKey().getPathPatternsCondition() != null) {
-                    requestMappingPatterns = requestMapping.getKey().getPathPatternsCondition().getPatternValues();
+                var rq = requestMapping.getKey().getPathPatternsCondition();
+                if (rq != null) {
+                    requestMappingPatterns = rq.getPatternValues();
                 } else { // Otherwise will be illegal state exception
                     requestMappingPatterns = requestMapping.getKey().getDirectPaths();
                 }
@@ -182,8 +183,7 @@ class OpenApiCustomiserImpl implements OpenApiCustomizer {
 
             createOperations(def, builder);
 
-            if (def instanceof QFDefinitionElement elem && elem.getFirstFinalClass() != null
-                    && elem.getFirstFinalClass().isEnum()) {
+            if (def instanceof QFDefinitionElement elem && elem.getFirstFinalClass().isEnum()) {
                 // Add info about enum
 
                 builder.append("  \nEnum values: [_");

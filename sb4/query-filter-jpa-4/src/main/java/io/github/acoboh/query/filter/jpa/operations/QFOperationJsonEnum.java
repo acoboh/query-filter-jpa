@@ -18,7 +18,7 @@ import java.util.Map;
 public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
 
     /**
-     *
+     * EQUAL operation
      */
     EQUAL("eq") {
         @Override
@@ -37,7 +37,7 @@ public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
         }
     },
     /**
-     *
+     * Not equal operation
      */
     NOT_EQUAL("ne") {
         @Override
@@ -56,7 +56,7 @@ public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
         }
     },
     /**
-     *
+     * Like operation
      */
     LIKE("like") {
         @Override
@@ -75,7 +75,7 @@ public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
         }
     },
     /**
-     *
+     * Starts with operation
      */
     STARTS_WITH("starts") {
         @Override
@@ -94,7 +94,7 @@ public enum QFOperationJsonEnum implements QFPredicateJsonResolutor {
         }
     },
     /**
-     *
+     * Ends with operation
      */
     ENDS_WITH("ends") {
         @Override

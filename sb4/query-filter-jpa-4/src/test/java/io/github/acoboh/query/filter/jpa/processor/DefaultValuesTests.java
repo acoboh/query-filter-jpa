@@ -6,6 +6,7 @@ import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 import io.github.acoboh.query.filter.jpa.repositories.PostBlogRepository;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,10 +60,10 @@ class DefaultValuesTests {
     }
 
     @Autowired
-    private QFProcessor<FilterBlogDefaultValuesDef, PostBlog> queryFilterProcessor;
+    private QFProcessor<@NonNull FilterBlogDefaultValuesDef, @NonNull PostBlog> queryFilterProcessor;
 
     @Autowired
-    private QFProcessor<FilterBlogOnPresentDef, PostBlog> queryFilterOnPresentProcessor;
+    private QFProcessor<@NonNull FilterBlogOnPresentDef, @NonNull PostBlog> queryFilterOnPresentProcessor;
 
     @Autowired
     private PostBlogRepository repository;
@@ -88,7 +89,7 @@ class DefaultValuesTests {
     @Order(1)
     void testDefaultValueFilter() {
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter(null, QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter(null, QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         assertThat(qf.isFiltering("author")).isTrue();
@@ -104,7 +105,7 @@ class DefaultValuesTests {
     @DisplayName("2. Default values filtering remove")
     @Order(2)
     void testDefaultValuesRemoved() {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter(null, QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter(null, QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         assertThat(qf.isFiltering("author")).isTrue();
@@ -123,7 +124,7 @@ class DefaultValuesTests {
     @DisplayName("4. Default values filtering override on definition")
     @Order(4)
     void testDefaultValuesOverrideOnDefinition() {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("author=eq:Author 2", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("author=eq:Author 2", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         assertThat(qf.isFiltering("author")).isTrue();
@@ -138,7 +139,7 @@ class DefaultValuesTests {
     @DisplayName("5. Default values filtering override manually")
     @Order(5)
     void testDefaultValuesOverrideManually() {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         assertThat(qf.isFiltering("author")).isTrue();
@@ -158,7 +159,7 @@ class DefaultValuesTests {
     @DisplayName("6. Test on filter present default values")
     @Order(6)
     void testOnFilterPresentDefaultValues() {
-        QueryFilter<PostBlog> qf = queryFilterOnPresentProcessor.newQueryFilter(null, QFParamType.RHS_COLON);
+        var qf = queryFilterOnPresentProcessor.newQueryFilter(null, QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         assertThat(qf.isFilteringAny("author", "likes")).isFalse();
@@ -172,8 +173,7 @@ class DefaultValuesTests {
     @DisplayName("7. Test on filter present default values with author")
     @Order(7)
     void testOnFilterPresentDefaultValuesWithAuthor() {
-        QueryFilter<PostBlog> qf = queryFilterOnPresentProcessor.newQueryFilter("author=eq:Author 1",
-                QFParamType.RHS_COLON);
+        var qf = queryFilterOnPresentProcessor.newQueryFilter("author=eq:Author 1", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         assertThat(qf.isFilteringAny("author")).isTrue();
@@ -200,7 +200,7 @@ class DefaultValuesTests {
     @DisplayName("8. Test on filter present default values with author and text")
     @Order(8)
     void testOnFilterPresentDefaultValuesWithAuthorAndText() {
-        QueryFilter<PostBlog> qf = queryFilterOnPresentProcessor.newQueryFilter("author=eq:Author 2&text=like:Text",
+        var qf = queryFilterOnPresentProcessor.newQueryFilter("author=eq:Author 2&text=like:Text",
                 QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 

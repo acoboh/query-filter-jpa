@@ -4,6 +4,7 @@ import io.github.acoboh.query.filter.jpa.processor.match.QFElementMatch;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
+import org.jspecify.annotations.Nullable;
 import org.springframework.util.MultiValueMap;
 
 import java.util.List;
@@ -42,7 +43,7 @@ public interface QFPredicateResolutor {
      * @return true if the operation is valid for the values provided, false
      *         otherwise
      */
-    default boolean isValid(List<String> values, boolean arrayTyped) {
+    default boolean isValid(@Nullable List<String> values, boolean arrayTyped) {
         if (values == null || values.isEmpty()) {
             return false;
         }

@@ -4,6 +4,7 @@ import io.github.acoboh.query.filter.jpa.processor.definitions.QFAbstractDefinit
 import io.github.acoboh.query.filter.jpa.utils.StringParseUtils;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,9 +21,9 @@ class PredicateLevel {
 
     private final List<String> levelParts = new ArrayList<>();
     private final List<PredicatePart> parts;
-    private List<PredicateLevel> nestedLevels;
-    private PredicateOperation levelOperator;
-    private Set<String> fieldsSet;
+    private @Nullable List<PredicateLevel> nestedLevels;
+    private @Nullable PredicateOperation levelOperator;
+    private @Nullable Set<String> fieldsSet;
 
     /**
      * Predicate constructor
@@ -131,7 +132,7 @@ class PredicateLevel {
      * @param predicates Predicates to be used on nested levels for resolution
      * @return Predicate used
      */
-    public Predicate resolveLevel(CriteriaBuilder cb, Map<String, Predicate> predicates) {
+    public @Nullable Predicate resolveLevel(CriteriaBuilder cb, Map<String, Predicate> predicates) {
 
         List<Predicate> expresions = new ArrayList<>();
 
@@ -150,7 +151,7 @@ class PredicateLevel {
             for (PredicateLevel level : nestedLevels) {
 
                 Predicate customPredicate = level.resolveLevel(cb, predicates);
-                if (customPredicate.getExpressions().isEmpty()) {
+                if (customPredicate == null || customPredicate.getExpressions().isEmpty()) {
                     LOGGER.trace("Empty predicate nested level. Ignored");
                 } else if (customPredicate.getExpressions().size() == 1) {
                     LOGGER.trace("Single expression on nested level. Unwrap predicate");
@@ -165,6 +166,11 @@ class PredicateLevel {
 
         if (expresions.isEmpty()) {
             return null;
+        }
+
+        if (levelOperator == null) {
+            LOGGER.error("No operator defined for multiple expressions");
+            throw new IllegalStateException("No operator defined for multiple expressions");
         }
 
         return levelOperator.getPredicate(cb, expresions);

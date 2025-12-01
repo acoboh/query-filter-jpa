@@ -1,6 +1,7 @@
 package io.github.acoboh.query.filter.jpa.repositories;
 
 import io.github.acoboh.query.filter.jpa.model.subquery.RoleModel;
+import org.jspecify.annotations.NonNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -8,6 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  *
  * @author Adrián Cobo
  */
-public interface RoleRepository extends JpaRepository<RoleModel, Long> {
+public interface RoleRepository extends JpaRepository<@NonNull RoleModel, @NonNull Long> {
 
 }

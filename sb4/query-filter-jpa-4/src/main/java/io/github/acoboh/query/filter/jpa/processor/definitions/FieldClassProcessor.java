@@ -1,5 +1,6 @@
 package io.github.acoboh.query.filter.jpa.processor.definitions;
 
+import com.google.common.base.Splitter;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFElementException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 import io.github.acoboh.query.filter.jpa.processor.QFAttribute;
@@ -19,14 +20,14 @@ class FieldClassProcessor {
     private final Class<?> rootClass;
     private final String pathField;
     private final Metamodel metamodel;
-    private List<QFAttribute> attributes;
-    private Class<?> finalClass;
+    private @Nullable List<QFAttribute> attributes;
+    private @Nullable Class<?> finalClass;
 
-    private final Class<?> subclassMapping;
-    private final String subClassMappingPath;
+    private final @Nullable Class<?> subclassMapping;
+    private final @Nullable String subClassMappingPath;
 
-    FieldClassProcessor(Class<?> rootClass, String pathField, Class<?> subclassMapping, String subClassMappingPath,
-            Metamodel metamodel) {
+    FieldClassProcessor(Class<?> rootClass, String pathField, @Nullable Class<?> subclassMapping,
+            @Nullable String subClassMappingPath, Metamodel metamodel) {
         Assert.notNull(pathField, "Path field cannot be null");
         this.rootClass = rootClass;
         this.pathField = pathField;
@@ -50,12 +51,13 @@ class FieldClassProcessor {
 
         LOGGER.debug("Parsing with metamodel");
 
-        String[] splitLevel = pathField.split("\\.");
-        attributes = new ArrayList<>(splitLevel.length);
+        var splitLevel = Splitter.on('.').splitToList(pathField);
+        attributes = new ArrayList<>(splitLevel.size());
 
         var entity = metamodel.entity(rootClass);
 
         // Level subclass
+        @Nullable
         String[] levelsSubClass = getLevelSubClassIfAvailable();
 
         Attribute<?, ?> prevAttribute = null;
@@ -67,7 +69,7 @@ class FieldClassProcessor {
 
             Class<?> treatClass;
 
-            if (levelsSubClass != null && levelsSubClass.length == actualLevel) {
+            if (levelsSubClass != null && levelsSubClass.length == actualLevel && subclassMapping != null) {
                 // Check levelClass is parent of subclassMapping
                 if ((actualLevel == 0 && !entity.getJavaType().isAssignableFrom(subclassMapping)) || (actualLevel > 0
                         && prevAttribute != null && !prevAttribute.getJavaType().isAssignableFrom(subclassMapping))) {
@@ -90,7 +92,7 @@ class FieldClassProcessor {
         return attributes;
     }
 
-    private Attribute<?, ?> getAttribute(String level, Attribute<?, ?> prevAttribute, EntityType<?> entity)
+    private Attribute<?, ?> getAttribute(String level, @Nullable Attribute<?, ?> prevAttribute, EntityType<?> entity)
             throws QueryFilterDefinitionException {
         try {
             if (prevAttribute == null) {
@@ -105,7 +107,7 @@ class FieldClassProcessor {
         return prevAttribute;
     }
 
-    private @Nullable String[] getLevelSubClassIfAvailable() throws QFElementException {
+    private String @Nullable [] getLevelSubClassIfAvailable() throws QFElementException {
         String[] levelsSubClass = null;
 
         if (subclassMapping != null && !Void.class.equals(subclassMapping)) {
@@ -154,7 +156,7 @@ class FieldClassProcessor {
      *
      * @return final class
      */
-    public Class<?> getFinalClass() {
+    public @Nullable Class<?> getFinalClass() {
         return finalClass;
     }
 

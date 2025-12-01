@@ -11,6 +11,7 @@ import org.springframework.data.util.Pair;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -71,7 +72,7 @@ public class QueryUtils {
 
             if (path.getTreatClass() != null) {
                 if (index == 0) {
-                    root = getTreatCast(root, paths.get(0).getTreatClass(), queryInfo.cb());
+                    root = getTreatCast(root, Objects.requireNonNull(paths.get(0).getTreatClass()), queryInfo.cb());
                 } else {
                     join = getTreatCast(join, path.getTreatClass(), queryInfo.cb());
                 }

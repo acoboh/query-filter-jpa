@@ -7,6 +7,7 @@ import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 import io.github.acoboh.query.filter.jpa.repositories.PostBlogRepository;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,7 +104,7 @@ class SpELTest {
     }
 
     @Autowired
-    private QFProcessor<FilterBlogSpELDef, PostBlog> queryFilterProcessor;
+    private QFProcessor<@NonNull FilterBlogSpELDef, @NonNull PostBlog> queryFilterProcessor;
     @Autowired
     private PostBlogRepository repository;
 
@@ -130,7 +131,7 @@ class SpELTest {
     void testDefaultSpELExpression() throws QueryFilterException {
 
         // Filter for likes = 1. Automatically get comments with likes > 10
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("likes=gte:1", QFParamType.RHS_COLON);
+        QueryFilter<@NonNull PostBlog> qf = queryFilterProcessor.newQueryFilter("likes=gte:1", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         List<PostBlog> blogList = repository.findAll(qf);
@@ -149,7 +150,7 @@ class SpELTest {
     @Order(2)
     void testCustomSpELExpression() throws QueryFilterException {
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("likes=in:0,1,2", QFParamType.RHS_COLON);
+        QueryFilter<@NonNull PostBlog> qf = queryFilterProcessor.newQueryFilter("likes=in:0,1,2", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         qf.overrideField("commentLikes", QFOperationEnum.EQUAL, "(#likes['0'] + #likes['1']) * 100");

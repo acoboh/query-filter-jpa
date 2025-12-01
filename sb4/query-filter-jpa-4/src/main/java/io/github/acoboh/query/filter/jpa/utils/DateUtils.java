@@ -2,6 +2,7 @@ package io.github.acoboh.query.filter.jpa.utils;
 
 import io.github.acoboh.query.filter.jpa.annotations.QFDate;
 import io.github.acoboh.query.filter.jpa.annotations.QFDate.QFDateDefault;
+import jakarta.annotation.Nullable;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -29,7 +30,7 @@ public class DateUtils {
     public static DateTimeFormatter getFormatter(QFDate dateAnnotation) {
         DateTimeFormatter formatter;
 
-        if (dateAnnotation.parseDefaulting() != null && dateAnnotation.parseDefaulting().length > 0) {
+        if (dateAnnotation.parseDefaulting().length > 0) {
             DateTimeFormatterBuilder builder = new DateTimeFormatterBuilder()
                     .appendPattern(dateAnnotation.timeFormat());
 
@@ -44,8 +45,7 @@ public class DateUtils {
         }
 
         ZoneId zone = ZoneId.of(dateAnnotation.zoneOffset());
-        formatter.withZone(zone);
-        return formatter;
+        return formatter.withZone(zone);
     }
 
     /**
@@ -57,7 +57,7 @@ public class DateUtils {
      * @param dateAnnotation annotation
      * @return the date parsed
      */
-    public static Object parseDate(DateTimeFormatter formatter, String value, Class<?> finalClass,
+    public static @Nullable Object parseDate(DateTimeFormatter formatter, String value, Class<?> finalClass,
             QFDate dateAnnotation) {
         if (Timestamp.class.isAssignableFrom(finalClass)) {
             LocalDateTime dt = LocalDateTime.parse(value, formatter);

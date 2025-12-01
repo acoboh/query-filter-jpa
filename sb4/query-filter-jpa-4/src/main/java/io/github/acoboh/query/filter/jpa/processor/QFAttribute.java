@@ -1,5 +1,6 @@
 package io.github.acoboh.query.filter.jpa.processor;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.metamodel.Attribute;
 
 /**
@@ -11,7 +12,7 @@ import jakarta.persistence.metamodel.Attribute;
 public class QFAttribute {
 
     private final Attribute<?, ?> attribute;
-    private final Class<?> treatClass;
+    private final @Nullable Class<?> treatClass;
     private final String pathName;
     private final boolean isEnum;
 
@@ -23,7 +24,7 @@ public class QFAttribute {
      * @param attribute  attribute of the metamodel
      * @param treatClass the class to treat as
      */
-    public QFAttribute(Attribute<?, ?> attribute, Class<?> treatClass) {
+    public QFAttribute(Attribute<?, ?> attribute, @Nullable Class<?> treatClass) {
         this.attribute = attribute;
         this.treatClass = treatClass;
 
@@ -51,7 +52,7 @@ public class QFAttribute {
      *
      * @return a {@link java.lang.Class} object
      */
-    public Class<?> getTreatClass() {
+    public @Nullable Class<?> getTreatClass() {
         return treatClass;
     }
 

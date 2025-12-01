@@ -9,6 +9,7 @@ import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.operations.QFCollectionOperationEnum;
 import io.github.acoboh.query.filter.jpa.repositories.PostBlogRepository;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,9 +115,9 @@ class CollectionTests {
     }
 
     @Autowired
-    private QFProcessor<FilterCollectionBlogDef, PostBlog> queryFilterProcessor;
+    private QFProcessor<@NonNull FilterCollectionBlogDef, @NonNull PostBlog> queryFilterProcessor;
 
-    private static QFProcessor<DefaultValuesDef, PostBlog> qfProcessorDefaultValues;
+    private static QFProcessor<@NonNull DefaultValuesDef, @NonNull PostBlog> qfProcessorDefaultValues;
 
     @Autowired
     private PostBlogRepository repository;
@@ -148,7 +149,7 @@ class CollectionTests {
     @Order(1)
     void testCollectionFilterByMethods() {
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("", QFParamType.RHS_COLON);
         qf.addNewField("commentsSize", QFCollectionOperationEnum.GREATER_THAN, 1);
 
         var actualV = qf.getActualCollectionValue("commentsSize");
@@ -190,7 +191,7 @@ class CollectionTests {
     @Order(2)
     void testCollectionFilterString() {
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("commentsSize=eq:1", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("commentsSize=eq:1", QFParamType.RHS_COLON);
 
         List<PostBlog> list = repository.findAll(qf);
         assertThat(list).hasSize(1).containsExactly(POST_EXAMPLE);
@@ -218,7 +219,7 @@ class CollectionTests {
     @Order(3)
     void testCollectionFilterMultiple() {
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("commentsSize=eq:1&authorComments=eq:Author 1",
+        var qf = queryFilterProcessor.newQueryFilter("commentsSize=eq:1&authorComments=eq:Author 1",
                 QFParamType.RHS_COLON);
 
         List<PostBlog> list = repository.findAll(qf);
@@ -245,7 +246,7 @@ class CollectionTests {
     @Order(4)
     void testDefaultValues() {
 
-        QueryFilter<PostBlog> qf = qfProcessorDefaultValues.newQueryFilter();
+        var qf = qfProcessorDefaultValues.newQueryFilter();
         assertThat(qf).isNotNull();
 
         assertThat(qf.isFiltering("commentsSize")).isTrue();

@@ -124,6 +124,7 @@ public class QFJsonElementMatch implements QFSpecificationPart {
      *
      * @return field definition
      */
+    @Override
     public QFDefinitionJson getDefinition() {
         return definition;
     }

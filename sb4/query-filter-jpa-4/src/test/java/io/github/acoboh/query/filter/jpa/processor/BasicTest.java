@@ -8,6 +8,7 @@ import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 import io.github.acoboh.query.filter.jpa.repositories.PostBlogRepository;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +54,7 @@ class BasicTest {
     }
 
     @Autowired
-    private QFProcessor<FilterBlogDef, PostBlog> queryFilterProcessor;
+    private QFProcessor<@NonNull FilterBlogDef, @NonNull PostBlog> queryFilterProcessor;
 
     @Autowired
     private PostBlogRepository repository;
@@ -88,7 +89,7 @@ class BasicTest {
     @Order(1)
     void testQueryByName() throws QueryFilterException {
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         List<PostBlog> list = repository.findAll(qf);
@@ -103,8 +104,8 @@ class BasicTest {
         list = repository.findAll(qf);
         assertThat(list).hasSize(1);
 
-        list.get(0);
-        assertPostEqual(postBlog);
+        var p = list.get(0);
+        assertPostEqual(p);
     }
 
     @Test
@@ -112,7 +113,7 @@ class BasicTest {
     @Order(2)
     void testQueryByAuthor() throws QueryFilterException {
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("author=like:auth", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("author=like:auth", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         assertThat(qf.getInitialInput()).isEqualTo("author=like:auth");
@@ -158,7 +159,7 @@ class BasicTest {
     @DisplayName("3. Test by not existing author")
     @Order(3)
     void testQueryByMissingAuthor() throws QueryFilterException {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("author=like:example", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("author=like:example", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         List<PostBlog> list = repository.findAll(qf);
@@ -175,7 +176,7 @@ class BasicTest {
     @DisplayName("4. Test by avgNote")
     @Order(4)
     void testQueryByAvgNote() throws QueryFilterException {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("avgNote=gt:1.2", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("avgNote=gt:1.2", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         List<PostBlog> list = repository.findAll(qf);
@@ -189,7 +190,7 @@ class BasicTest {
     @DisplayName("5. Test by avgNote less than 1")
     @Order(5)
     void testQueryByAvgNoteLessThan1() throws QueryFilterException {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("avgNote=lt:1.2", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("avgNote=lt:1.2", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         List<PostBlog> list = repository.findAll(qf);
@@ -200,8 +201,7 @@ class BasicTest {
     @DisplayName("6. Test by create date")
     @Order(6)
     void testQueryByCreateDate() throws QueryFilterException {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("createDate=gt:2020-01-01T00:00:00Z",
-                QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("createDate=gt:2020-01-01T00:00:00Z", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         List<PostBlog> list = repository.findAll(qf);
@@ -229,9 +229,7 @@ class BasicTest {
     @Order(8)
     void testQueryByPublished() {
 
-        QueryFilterException qfException = assertThrows(QueryFilterException.class, () -> {
-            queryFilterProcessor.newQueryFilter("published=eq:true", QFParamType.RHS_COLON);
-        });
+        QueryFilterException qfException = assertThrows(QueryFilterException.class, () -> queryFilterProcessor.newQueryFilter("published=eq:true", QFParamType.RHS_COLON));
 
         assertThat(qfException.getClass()).isAssignableFrom(QFBlockException.class);
 
@@ -244,7 +242,7 @@ class BasicTest {
     @DisplayName("9. Test by post type")
     @Order(9)
     void testQueryByPostType() throws QueryFilterException {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("postType=eq:TEXT", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("postType=eq:TEXT", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         List<PostBlog> list = repository.findAll(qf);
@@ -258,7 +256,7 @@ class BasicTest {
     @DisplayName("10. Test by published is allowed manually")
     @Order(10)
     void testQueryByPublishedManually() throws QueryFilterException {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter(null, QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter(null, QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         qf.addNewField("published", QFOperationEnum.EQUAL, "true");
@@ -275,7 +273,7 @@ class BasicTest {
     @DisplayName("11. Test author between")
     @Order(11)
     void testQueryByAuthorBetween() throws QueryFilterException {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("author=btw:authoa,authoz",
+        var qf = queryFilterProcessor.newQueryFilter("author=btw:authoa,authoz",
                 QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
@@ -290,7 +288,7 @@ class BasicTest {
     @DisplayName("12. Test regular like")
     @Order(12)
     void testQueryByAuthorLike() throws QueryFilterException {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("author=rlike:autho_", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("author=rlike:autho_", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         List<PostBlog> list = repository.findAll(qf);

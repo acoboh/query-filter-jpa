@@ -41,7 +41,6 @@ public class Comments {
     /**
      * Set new ID
      *
-     * @param id
      */
     public void setId(int id) {
         this.id = id;

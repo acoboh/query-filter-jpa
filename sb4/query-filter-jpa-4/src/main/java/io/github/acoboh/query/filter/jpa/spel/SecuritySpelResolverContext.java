@@ -1,7 +1,9 @@
 package io.github.acoboh.query.filter.jpa.spel;
 
+import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.GenericTypeResolver;
@@ -26,7 +28,7 @@ class SecuritySpelResolverContext extends SpelResolverContext {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SecuritySpelResolverContext.class);
 
-    private final SecurityExpressionHandler<FilterInvocation> securityExpressionHandler;
+    private final @Nullable SecurityExpressionHandler<FilterInvocation> securityExpressionHandler;
 
     /**
      * Default constructor
@@ -42,7 +44,7 @@ class SecuritySpelResolverContext extends SpelResolverContext {
     }
 
     @SuppressWarnings("unchecked")
-    private static SecurityExpressionHandler<FilterInvocation> getFilterSecurityHandler(
+    private static @Nullable SecurityExpressionHandler<FilterInvocation> getFilterSecurityHandler(
             List<SecurityExpressionHandler<?>> securityExpressionHandlers) {
 
         if (CollectionUtils.isEmpty(securityExpressionHandlers)) {
@@ -50,7 +52,7 @@ class SecuritySpelResolverContext extends SpelResolverContext {
             return null;
         }
 
-        return (SecurityExpressionHandler<FilterInvocation>) securityExpressionHandlers.stream()
+        return (SecurityExpressionHandler<@NonNull FilterInvocation>) securityExpressionHandlers.stream()
                 .filter(handler -> FilterInvocation.class.equals(
                         GenericTypeResolver.resolveTypeArgument(handler.getClass(), SecurityExpressionHandler.class)))
                 .findAny()
@@ -62,7 +64,7 @@ class SecuritySpelResolverContext extends SpelResolverContext {
     /** {@inheritDoc} */
     @Override
     public EvaluationContext getEvaluationContext() {
-        if (securityExpressionHandler == null) {
+        if (securityExpressionHandler == null || request == null) {
             return new StandardEvaluationContext();
         }
 

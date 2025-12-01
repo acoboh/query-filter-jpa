@@ -7,6 +7,7 @@ import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 import io.github.acoboh.query.filter.jpa.repositories.PostBlogRepository;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,7 +133,7 @@ class CustomPredicatesTest {
     }
 
     @Autowired
-    private QFProcessor<FilterBlogPredicatesDef, PostBlog> queryFilterProcessor;
+    private QFProcessor<@NonNull FilterBlogPredicatesDef, @NonNull PostBlog> queryFilterProcessor;
     @Autowired
     private PostBlogRepository repository;
 
@@ -157,8 +158,7 @@ class CustomPredicatesTest {
     @Order(1)
     void customPredicateSelection() throws QueryFilterException {
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("likes=eq:1&commentLikes=eq:300",
-                QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("likes=eq:1&commentLikes=eq:300", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         List<PostBlog> list = repository.findAll(qf);
@@ -199,7 +199,7 @@ class CustomPredicatesTest {
     @Order(2)
     void customPredicateWithIncludeMissing() throws QueryFilterException {
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter(
+        var qf = queryFilterProcessor.newQueryFilter(
                 "author=in:Author 1,Author 2&commentAuthor=in:Author 1,Author 2&likes=eq:1", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
@@ -254,8 +254,7 @@ class CustomPredicatesTest {
     @DisplayName("3. Custom predicate with missing fields and ignore new ones")
     @Order(3)
     void customPredicateWithMissingFieldsAndIgnoreNew() throws QueryFilterException {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("author=in:Author 1,Author 2",
-                QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("author=in:Author 1,Author 2", QFParamType.RHS_COLON);
         qf.setPredicate(FilterBlogPredicatesDef.OR_ONLY_AUTHORS); // Additional fields must be ignored
 
         List<PostBlog> list = repository.findAll(qf);

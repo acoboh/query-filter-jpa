@@ -5,6 +5,7 @@ import io.github.acoboh.query.filter.jpa.exceptions.QFOperationNotFoundException
 import io.github.acoboh.query.filter.jpa.exceptions.QFUnsopportedSQLException;
 import io.github.acoboh.query.filter.jpa.operations.resolutors.QFPredicateResolutor;
 import io.github.acoboh.query.filter.jpa.processor.match.QFElementMatch;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaBuilder.In;
 import jakarta.persistence.criteria.Path;
@@ -27,7 +28,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
         @Override
         public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
                 MultiValueMap<String, Object> mlContext) {
-            if (match.getDefinition().isArrayTyped()) {
+            if (match.getDefinition().isArrayTyped() && this.getArrayFunction() != null) {
                 return PredicateUtils.defaultArrayPredicate(path, cb, match, index, this.getArrayFunction(), mlContext,
                         true);
             }
@@ -45,7 +46,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
         @Override
         public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
                 MultiValueMap<String, Object> mlContext) {
-            if (match.getDefinition().isArrayTyped()) {
+            if (match.getDefinition().isArrayTyped() && this.getArrayFunction() != null) {
                 return PredicateUtils.defaultArrayPredicate(path, cb, match, index, getArrayFunction(), mlContext,
                         true);
             }
@@ -62,7 +63,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
         @SuppressWarnings({ "unchecked", "rawtypes" })
         public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
                 MultiValueMap<String, Object> mlContext) {
-            if (match.getDefinition().isArrayTyped()) {
+            if (match.getDefinition().isArrayTyped() && this.getArrayFunction() != null) {
                 return PredicateUtils.defaultArrayPredicate(path, cb, match, index, getArrayFunction(), mlContext,
                         true);
             }
@@ -80,7 +81,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
         @Override
         public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
                 MultiValueMap<String, Object> mlContext) {
-            if (match.getDefinition().isArrayTyped()) {
+            if (match.getDefinition().isArrayTyped() && this.getArrayFunction() != null) {
                 return PredicateUtils.defaultArrayPredicate(path, cb, match, index, getArrayFunction(), mlContext,
                         true);
             }
@@ -98,7 +99,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
         @Override
         public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
                 MultiValueMap<String, Object> mlContext) {
-            if (match.getDefinition().isArrayTyped()) {
+            if (match.getDefinition().isArrayTyped() && this.getArrayFunction() != null) {
                 return PredicateUtils.defaultArrayPredicate(path, cb, match, index, getArrayFunction(), mlContext,
                         true);
             }
@@ -116,7 +117,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
         @Override
         public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
                 MultiValueMap<String, Object> mlContext) {
-            if (match.getDefinition().isArrayTyped()) {
+            if (match.getDefinition().isArrayTyped() && this.getArrayFunction() != null) {
                 return PredicateUtils.defaultArrayPredicate(path, cb, match, index, getArrayFunction(), mlContext,
                         true);
             }
@@ -137,7 +138,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
         }
 
         @Override
-        public boolean isValid(List<String> values, boolean arrayTyped) {
+        public boolean isValid(@Nullable List<String> values, boolean arrayTyped) {
             return values != null && values.size() == 2;
         }
     },
@@ -206,7 +207,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
         @Override
         public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
                 MultiValueMap<String, Object> mlContext) {
-            if (match.getDefinition().isArrayTyped()) {
+            if (match.getDefinition().isArrayTyped() && this.getArrayFunction() != null) {
                 return PredicateUtils.defaultArrayPredicate(path, cb, match, index, getArrayFunction(), mlContext,
                         true);
             }
@@ -221,7 +222,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
         }
 
         @Override
-        public boolean isValid(List<String> values, boolean arrayTyped) {
+        public boolean isValid(@Nullable List<String> values, boolean arrayTyped) {
             return values != null && !values.isEmpty();
         }
     },
@@ -232,7 +233,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
         @Override
         public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
                 MultiValueMap<String, Object> mlContext) {
-            if (match.getDefinition().isArrayTyped()) {
+            if (match.getDefinition().isArrayTyped() && this.getArrayFunction() != null) {
                 return PredicateUtils.defaultArrayPredicate(path, cb, match, index, getArrayFunction(), mlContext,
                         false);
             }
@@ -248,7 +249,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
         }
 
         @Override
-        public boolean isValid(List<String> values, boolean arrayTyped) {
+        public boolean isValid(@Nullable List<String> values, boolean arrayTyped) {
             return values != null && !values.isEmpty();
         }
 
@@ -275,7 +276,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
         @Override
         public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
                 MultiValueMap<String, Object> mlContext) {
-            if (match.getDefinition().isArrayTyped()) {
+            if (match.getDefinition().isArrayTyped() && this.getArrayFunction() != null) {
                 return PredicateUtils.defaultArrayPredicate(path, cb, match, index, getArrayFunction(), mlContext,
                         true);
             }
@@ -290,7 +291,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
         @Override
         public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
                 MultiValueMap<String, Object> mlContext) {
-            if (match.getDefinition().isArrayTyped()) {
+            if (match.getDefinition().isArrayTyped() && this.getArrayFunction() != null) {
                 return PredicateUtils.defaultArrayPredicate(path, cb, match, index, getArrayFunction(), mlContext,
                         false);
             }
@@ -304,7 +305,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
         @Override
         public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
                 MultiValueMap<String, Object> mlContext) {
-            if (match.getDefinition().isArrayTyped()) {
+            if (match.getDefinition().isArrayTyped() && this.getArrayFunction() != null) {
                 return PredicateUtils.defaultArrayPredicate(path, cb, match, index, getArrayFunction(), mlContext,
                         true);
             }
@@ -315,7 +316,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
         @Override
         public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
                 MultiValueMap<String, Object> mlContext) {
-            if (match.getDefinition().isArrayTyped()) {
+            if (match.getDefinition().isArrayTyped() && this.getArrayFunction() != null) {
                 return PredicateUtils.defaultArrayPredicate(path, cb, match, index, getArrayFunction(), mlContext,
                         false);
             }
@@ -341,9 +342,9 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 
     private final boolean onlyArrayTyped;
 
-    private final ArrayFunction arrayFunction;
+    private final @Nullable ArrayFunction arrayFunction;
 
-    QFOperationEnum(String value, boolean arrayTyped, boolean onlyArrayTyped, ArrayFunction arrayFunction) {
+    QFOperationEnum(String value, boolean arrayTyped, boolean onlyArrayTyped, @Nullable ArrayFunction arrayFunction) {
         this.value = value;
         this.arrayTyped = arrayTyped;
         this.onlyArrayTyped = onlyArrayTyped;
@@ -373,7 +374,7 @@ public enum QFOperationEnum implements QFPredicateResolutor {
      *
      * @return array function for PostgreSQL
      */
-    public ArrayFunction getArrayFunction() {
+    public @Nullable ArrayFunction getArrayFunction() {
         return arrayFunction;
     }
 

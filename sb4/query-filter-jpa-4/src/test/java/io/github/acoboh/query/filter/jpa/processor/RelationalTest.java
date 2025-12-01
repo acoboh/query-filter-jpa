@@ -6,6 +6,7 @@ import io.github.acoboh.query.filter.jpa.model.Comments;
 import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.repositories.PostBlogRepository;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,7 +124,7 @@ class RelationalTest {
     }
 
     @Autowired
-    private QFProcessor<FilterBlogDef, PostBlog> queryFilterProcessor;
+    private QFProcessor<@NonNull FilterBlogDef, @NonNull PostBlog> queryFilterProcessor;
 
     @Autowired
     private PostBlogRepository repository;
@@ -149,7 +150,7 @@ class RelationalTest {
     @DisplayName("1. Test empty query")
     @Order(2)
     void query() throws QueryFilterException {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         List<PostBlog> list = repository.findAll(qf);
@@ -161,7 +162,7 @@ class RelationalTest {
     @DisplayName("2. Test by comment likes")
     @Order(3)
     void queryByCommentLikes() throws QueryFilterException {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("commentLikes=gt:2", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("commentLikes=gt:2", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         List<PostBlog> list = repository.findAll(qf);
@@ -195,8 +196,7 @@ class RelationalTest {
     @Order(4)
     void queryByAuthor() throws QueryFilterException {
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("commentAuthor=eq:Author 1",
-                QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("commentAuthor=eq:Author 1", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         List<PostBlog> list = repository.findAll(qf);

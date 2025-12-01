@@ -3,7 +3,7 @@ package io.github.acoboh.query.filter.jpa.converters;
 import io.github.acoboh.query.filter.jpa.annotations.QFParam;
 import io.github.acoboh.query.filter.jpa.processor.QFProcessor;
 import io.github.acoboh.query.filter.jpa.processor.QueryFilter;
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.converter.GenericConverter;
@@ -41,7 +41,7 @@ public class QFCustomConverter implements GenericConverter {
 
     /** {@inheritDoc} */
     @Override
-    public Set<ConvertiblePair> getConvertibleTypes() {
+    public @Nullable Set<ConvertiblePair> getConvertibleTypes() {
         Set<ConvertiblePair> set = new HashSet<>();
         for (QFProcessor<?, ?> processor : queryFilterProcessors) {
             ResolvableType type = ResolvableType.forClassWithGenerics(QueryFilter.class, processor.getEntityClass());
@@ -53,9 +53,9 @@ public class QFCustomConverter implements GenericConverter {
 
     /** {@inheritDoc} */
     @Override
-    public Object convert(Object source, @NonNull TypeDescriptor sourceType, @NonNull TypeDescriptor targetType) {
+    public Object convert(@Nullable Object source, TypeDescriptor sourceType, TypeDescriptor targetType) {
 
-        if (Objects.requireNonNull(source).getClass() == QFProcessor.class) {
+        if (source != null && source.getClass() == QFProcessor.class) {
             return source;
         }
 
@@ -76,7 +76,7 @@ public class QFCustomConverter implements GenericConverter {
         QFProcessor<?, ?> found = mapProcessors.get(pairKey);
 
         if (found == null) {
-            throw new IllegalArgumentException("No QueryFilterProcessor found for " + source.getClass());
+            throw new IllegalArgumentException("No QueryFilterProcessor found for " + pairKey);
         }
 
         return found.newQueryFilter(filter, queryParam.type());

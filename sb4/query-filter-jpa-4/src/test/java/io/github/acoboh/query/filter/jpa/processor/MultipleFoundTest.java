@@ -7,6 +7,7 @@ import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 import io.github.acoboh.query.filter.jpa.repositories.PostBlogRepository;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,7 +82,7 @@ class MultipleFoundTest {
     }
 
     @Autowired
-    private QFProcessor<FilterBlogDef, PostBlog> queryFilterProcessor;
+    private QFProcessor<@NonNull FilterBlogDef, @NonNull PostBlog> queryFilterProcessor;
 
     @Autowired
     private PostBlogRepository repository;
@@ -107,7 +108,7 @@ class MultipleFoundTest {
     @Order(2)
     void testEmptyQuery() throws QueryFilterException {
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         List<PostBlog> list = repository.findAll(qf);
@@ -120,7 +121,7 @@ class MultipleFoundTest {
     void testQueryByAuthor() throws QueryFilterException {
 
         // Query only for post-example 1
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("author=eq:Author", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("author=eq:Author", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         List<PostBlog> list = repository.findAll(qf);
@@ -141,7 +142,7 @@ class MultipleFoundTest {
     @DisplayName("3. Test by not existing author")
     @Order(4)
     void testQueryByMissingAuthor() throws QueryFilterException {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("author=like:example", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("author=like:example", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         List<PostBlog> list = repository.findAll(qf);
@@ -154,7 +155,7 @@ class MultipleFoundTest {
     void testQueryByAvgNote() throws QueryFilterException {
 
         // Query greater thant 0.5 (only post-example 1)
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("avgNote=gt:0.5", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("avgNote=gt:0.5", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         List<PostBlog> list = repository.findAll(qf);
@@ -187,8 +188,7 @@ class MultipleFoundTest {
     @DisplayName("5. Test by create date")
     @Order(6)
     void testQueryByCreateDate() throws QueryFilterException {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("createDate=gt:2020-01-01T00:00:00Z",
-                QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("createDate=gt:2020-01-01T00:00:00Z", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         List<PostBlog> list = repository.findAll(qf);
@@ -211,7 +211,7 @@ class MultipleFoundTest {
     @DisplayName("7. Test by post type")
     @Order(8)
     void testQueryByPostType() throws QueryFilterException {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("postType=eq:TEXT", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("postType=eq:TEXT", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         List<PostBlog> list = repository.findAll(qf);
@@ -240,7 +240,7 @@ class MultipleFoundTest {
     @DisplayName("8. Test by published is allowed manually")
     @Order(9)
     void testQueryByPublishedManually() throws QueryFilterException {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter(null, QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter(null, QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         qf.addNewField("published", QFOperationEnum.EQUAL, "true");

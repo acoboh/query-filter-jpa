@@ -5,6 +5,7 @@ import io.github.acoboh.query.filter.jpa.model.Comments;
 import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.repositories.PostBlogRepository;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +62,7 @@ class JoinTypesElementTest {
     }
 
     @Autowired
-    private QFProcessor<FilterBlogJoinType, PostBlog> queryFilterProcessor;
+    private QFProcessor<@NonNull FilterBlogJoinType, @NonNull PostBlog> queryFilterProcessor;
 
     @Autowired
     private PostBlogRepository repository;

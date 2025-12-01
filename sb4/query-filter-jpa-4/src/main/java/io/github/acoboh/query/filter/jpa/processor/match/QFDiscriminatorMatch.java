@@ -9,6 +9,7 @@ import io.github.acoboh.query.filter.jpa.processor.QueryInfo;
 import io.github.acoboh.query.filter.jpa.processor.QueryUtils;
 import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionDiscriminator;
 import io.github.acoboh.query.filter.jpa.spel.SpelResolverContext;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
@@ -19,6 +20,7 @@ import org.springframework.util.MultiValueMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Class with info about the discriminator matching for filtering
@@ -39,7 +41,7 @@ public class QFDiscriminatorMatch implements QFSpecificationPart {
     private final Class<?> entityClass;
 
     private final boolean isRoot;
-    private List<QFAttribute> path;
+    private @Nullable List<QFAttribute> path;
 
     /**
      * Default constructor
@@ -135,6 +137,7 @@ public class QFDiscriminatorMatch implements QFSpecificationPart {
      *
      * @return original field definition
      */
+    @Override
     public QFDefinitionDiscriminator getDefinition() {
         return definition;
     }
@@ -153,7 +156,7 @@ public class QFDiscriminatorMatch implements QFSpecificationPart {
      *
      * @return paths for nested levels
      */
-    public List<QFAttribute> getPath() {
+    public @Nullable List<QFAttribute> getPath() {
         return path;
     }
 
@@ -178,8 +181,8 @@ public class QFDiscriminatorMatch implements QFSpecificationPart {
         if (isRoot) {
             expression = queryInfo.root().type();
         } else {
-            expression = QueryUtils.getObject(queryInfo, path, definition.getJoinTypes(), pathsMap, false, false)
-                    .type();
+            expression = QueryUtils.getObject(queryInfo, Objects.requireNonNull(path), definition.getJoinTypes(),
+                    pathsMap, false, false).type();
         }
 
         predicatesMap.computeIfAbsent(definition.getFilterName(), t -> new ArrayList<>()).add(operation

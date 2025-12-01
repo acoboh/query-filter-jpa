@@ -1,6 +1,7 @@
 package io.github.acoboh.query.filter.jpa.predicate;
 
 import io.github.acoboh.query.filter.jpa.processor.definitions.QFAbstractDefinition;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;
 import org.slf4j.Logger;
@@ -24,7 +25,7 @@ public class PredicateProcessorResolutor {
     private final boolean includeMissing;
     private final PredicateOperation defaultOperation;
 
-    private Set<String> fieldsFiltered;
+    private @Nullable Set<String> fieldsFiltered;
 
     /**
      * Create a predicate processor resolutor
@@ -65,7 +66,7 @@ public class PredicateProcessorResolutor {
      * @param predicates      map of predicates
      * @return predicate resolved
      */
-    public Predicate resolvePredicate(CriteriaBuilder criteriaBuilder, Map<String, Predicate> predicates) {
+    public @Nullable Predicate resolvePredicate(CriteriaBuilder criteriaBuilder, Map<String, Predicate> predicates) {
 
         Predicate res = predicateLevel.resolveLevel(criteriaBuilder, predicates);
         if (includeMissing) {
@@ -74,7 +75,7 @@ public class PredicateProcessorResolutor {
 
             for (Map.Entry<String, Predicate> entry : predicates.entrySet()) {
 
-                if (!fieldsFiltered.contains(entry.getKey())) {
+                if (fieldsFiltered == null || !fieldsFiltered.contains(entry.getKey())) {
                     LOGGER.trace("Added filter field '{}' by default on predicate", entry.getKey());
                     toAdd.add(entry.getValue());
 
@@ -85,7 +86,7 @@ public class PredicateProcessorResolutor {
             if (!toAdd.isEmpty()) {
                 LOGGER.trace("Adding all missing fields on expression");
 
-                if (res.getExpressions().isEmpty()) {
+                if (res == null || res.getExpressions().isEmpty()) {
                     LOGGER.trace("Using only missing level as final filter");
 
                     res = defaultOperation.getPredicate(criteriaBuilder, toAdd);

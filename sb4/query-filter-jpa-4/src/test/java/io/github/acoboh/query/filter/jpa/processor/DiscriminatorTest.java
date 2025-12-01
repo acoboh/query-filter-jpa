@@ -11,6 +11,7 @@ import io.github.acoboh.query.filter.jpa.model.discriminators.Topic;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationDiscriminatorEnum;
 import io.github.acoboh.query.filter.jpa.repositories.PostDiscriminatorRepository;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class DiscriminatorTest {
 
     @Autowired
-    private QFProcessor<DiscriminatorFilterDef, Topic> queryFilterProcessor;
+    private QFProcessor<@NonNull DiscriminatorFilterDef, @NonNull Topic> queryFilterProcessor;
 
     @Autowired
     private PostDiscriminatorRepository repository;
@@ -48,7 +49,7 @@ class DiscriminatorTest {
     @Autowired
     private ApplicationContext applicationContext;
 
-    private static QFProcessor<DefaultValuesDef, Topic> qfProcessorDefaultValues;
+    private static QFProcessor<@NonNull DefaultValuesDef, @NonNull Topic> qfProcessorDefaultValues;
 
     private static final Post POST_EXAMPLE = new Post();
     private static final Announcement ANN_EXAMPLE = new Announcement();
@@ -89,7 +90,7 @@ class DiscriminatorTest {
     @Order(1)
     void announcementDiscriminator() {
 
-        QueryFilter<Topic> qf = queryFilterProcessor.newQueryFilter("type=eq:ANNOUNCEMENT", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("type=eq:ANNOUNCEMENT", QFParamType.RHS_COLON);
 
         assertThat(qf).isNotNull();
 
@@ -103,7 +104,7 @@ class DiscriminatorTest {
     @Order(2)
     void postDiscriminator() {
 
-        QueryFilter<Topic> qf = queryFilterProcessor.newQueryFilter("type=eq:POST", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("type=eq:POST", QFParamType.RHS_COLON);
 
         assertThat(qf).isNotNull();
 
@@ -117,7 +118,7 @@ class DiscriminatorTest {
     @Order(3)
     void allDiscriminator() {
 
-        QueryFilter<Topic> qf = queryFilterProcessor.newQueryFilter("type=in:ANNOUNCEMENT,POST", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("type=in:ANNOUNCEMENT,POST", QFParamType.RHS_COLON);
 
         assertThat(qf).isNotNull();
 
@@ -145,7 +146,7 @@ class DiscriminatorTest {
     @Order(5)
     void testNotEqual() {
 
-        QueryFilter<Topic> qf = queryFilterProcessor.newQueryFilter("type=ne:POST", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("type=ne:POST", QFParamType.RHS_COLON);
 
         assertThat(qf).isNotNull();
 
@@ -159,8 +160,7 @@ class DiscriminatorTest {
     @Order(6)
     void testNotIn() {
 
-        QueryFilter<Topic> qf = queryFilterProcessor.newQueryFilter("type=nin:POST,ANNOUNCEMENT",
-                QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("type=nin:POST,ANNOUNCEMENT", QFParamType.RHS_COLON);
 
         assertThat(qf).isNotNull();
 
@@ -174,7 +174,7 @@ class DiscriminatorTest {
     @Order(7)
     void testManualDiscriminator() {
 
-        QueryFilter<Topic> qf = queryFilterProcessor.newQueryFilter(null, QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter(null, QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
         assertThat(qf.getInitialInput()).isEmpty();
 
@@ -221,7 +221,7 @@ class DiscriminatorTest {
     @Order(8)
     void testDefaultValues() {
 
-        QueryFilter<Topic> qf = qfProcessorDefaultValues.newQueryFilter();
+        var qf = qfProcessorDefaultValues.newQueryFilter();
         assertThat(qf).isNotNull();
 
         assertThat(qf.isFiltering("type")).isTrue();

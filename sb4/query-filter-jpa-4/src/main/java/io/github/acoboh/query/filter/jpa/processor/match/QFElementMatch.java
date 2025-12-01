@@ -42,10 +42,10 @@ public class QFElementMatch implements QFSpecificationPart {
     private final List<Class<?>> matchClasses;
     private final List<Boolean> isEnumList;
 
-    private List<String> processedValues;
-    private List<List<Object>> parsedValues;
+    private @Nullable List<String> processedValues;
+    private @Nullable List<List<Object>> parsedValues;
 
-    private final DateTimeFormatter formatter;
+    private final @Nullable DateTimeFormatter formatter;
 
     private boolean initialized = false;
 
@@ -98,8 +98,8 @@ public class QFElementMatch implements QFSpecificationPart {
      *                                                                                exception
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public boolean initialize(SpelResolverContext spelResolver, MultiValueMap<String, Object> context)
-            throws QFFieldOperationException, QFEnumException {
+    public boolean initialize(@Nullable SpelResolverContext spelResolver,
+            @Nullable MultiValueMap<String, Object> context) throws QFFieldOperationException, QFEnumException {
 
         if (definition.isSpelExpression() && !originalValues.isEmpty()) {
             if (spelResolver == null) {
@@ -133,7 +133,7 @@ public class QFElementMatch implements QFSpecificationPart {
             matchClasses.add(finalClass);
 
             // Check is an enumeration
-            Boolean isEnum = lastPath.isEnum();
+            boolean isEnum = lastPath.isEnum();
             isEnumList.add(isEnum);
 
             List<Object> parsedPathValue = new ArrayList<>(processedValues.size());
@@ -195,6 +195,7 @@ public class QFElementMatch implements QFSpecificationPart {
      *
      * @return field definition
      */
+    @Override
     public QFDefinitionElement getDefinition() {
         return definition;
     }
@@ -238,7 +239,7 @@ public class QFElementMatch implements QFSpecificationPart {
      * @return list of values
      */
     public List<Object> parsedValues(int index) {
-        if (!initialized) {
+        if (!initialized || parsedValues == null || parsedValues.size() <= index) {
             throw new IllegalStateException();
         }
         return parsedValues.get(index);
@@ -250,7 +251,7 @@ public class QFElementMatch implements QFSpecificationPart {
      * @return first single value
      */
     public String getSingleValue() {
-        if (!initialized) {
+        if (!initialized || processedValues == null || processedValues.isEmpty()) {
             throw new IllegalStateException();
         }
         return processedValues.get(0);
@@ -263,7 +264,7 @@ public class QFElementMatch implements QFSpecificationPart {
      * @return first parsed value
      */
     public Object getPrimaryParsedValue(int index) {
-        if (!initialized) {
+        if (!initialized || parsedValues == null || parsedValues.isEmpty()) {
             throw new IllegalStateException();
         }
         return parsedValues.get(index).get(0);
@@ -280,7 +281,7 @@ public class QFElementMatch implements QFSpecificationPart {
         }
 
         if (definition.isBlankIgnore()) {
-            return !processedValues.isEmpty();
+            return processedValues != null && !processedValues.isEmpty();
         }
 
         return true;
@@ -288,6 +289,10 @@ public class QFElementMatch implements QFSpecificationPart {
     }
 
     private Object parseTimestamp(String value, Class<?> finalClass) {
+
+        if (formatter == null || definition.getDateAnnotation() == null) {
+            throw new IllegalStateException("Date formatter is null");
+        }
 
         try {
             Object parsedValue = DateUtils.parseDate(formatter, value, finalClass, definition.getDateAnnotation());
@@ -336,7 +341,7 @@ public class QFElementMatch implements QFSpecificationPart {
 
     }
 
-    private List<String> parseResults(Object spelResolved) {
+    private List<String> parseResults(@Nullable Object spelResolved) {
 
         if (spelResolved == null) {
             return Collections.emptyList();
@@ -350,22 +355,6 @@ public class QFElementMatch implements QFSpecificationPart {
             return ((Collection<?>) spelResolved).stream().map(Object::toString).toList();
         } else if (String.class.equals(originalClass)) {
             return Collections.singletonList((String) spelResolved);
-        } else if (boolean.class.equals(originalClass)) {
-            return Collections.singletonList(String.valueOf((boolean) spelResolved));
-        } else if (byte.class.equals(originalClass)) {
-            return Collections.singletonList(String.valueOf((byte) spelResolved));
-        } else if (short.class.equals(originalClass)) {
-            return Collections.singletonList(String.valueOf((short) spelResolved));
-        } else if (int.class.equals(originalClass)) {
-            return Collections.singletonList(String.valueOf((int) spelResolved));
-        } else if (long.class.equals(originalClass)) {
-            return Collections.singletonList(String.valueOf((long) spelResolved));
-        } else if (float.class.equals(originalClass)) {
-            return Collections.singletonList(String.valueOf((float) spelResolved));
-        } else if (double.class.equals(originalClass)) {
-            return Collections.singletonList(String.valueOf((double) spelResolved));
-        } else if (char.class.equals(originalClass)) {
-            return Collections.singletonList(String.valueOf((char) spelResolved));
         }
 
         // Primitive array copy
@@ -493,7 +482,12 @@ public class QFElementMatch implements QFSpecificationPart {
         int index = 0;
         for (var path : paths) {
 
-            Subquery<E> subquery = queryInfo.query().subquery(entityClass);
+            var query = queryInfo.query();
+            if (query == null) {
+                throw new IllegalStateException("CriteriaQuery is null");
+            }
+
+            Subquery<E> subquery = query.subquery(entityClass);
             Root<E> newRoot = subquery.from(entityClass);
 
             subquery.select(newRoot);

@@ -7,6 +7,7 @@ import io.github.acoboh.query.filter.jpa.model.discriminators.joined.SubclassAEn
 import io.github.acoboh.query.filter.jpa.model.discriminators.joined.SubclassBEntity;
 import io.github.acoboh.query.filter.jpa.repositories.ParentEntityRepository;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +61,7 @@ class DiscriminatorJoinTest {
     }
 
     @Autowired
-    private QFProcessor<FilterParentEntityDef, ParentEntity> queryFilterProcessor;
+    private QFProcessor<@NonNull FilterParentEntityDef, @NonNull ParentEntity> queryFilterProcessor;
 
     @Autowired
     private ParentEntityRepository repository;
@@ -91,7 +92,7 @@ class DiscriminatorJoinTest {
     @Order(1)
     void filterByParentClass() {
 
-        QueryFilter<ParentEntity> qf = queryFilterProcessor.newQueryFilter("type=eq:A", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("type=eq:A", QFParamType.RHS_COLON);
 
         assertThat(qf).isNotNull();
 
@@ -112,8 +113,7 @@ class DiscriminatorJoinTest {
     @Order(2)
     void filterByDiscriminatorClass() {
 
-        QueryFilter<ParentEntity> qf = queryFilterProcessor.newQueryFilter("discriminatorType=eq:subclassA",
-                QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("discriminatorType=eq:subclassA", QFParamType.RHS_COLON);
 
         assertThat(qf).isNotNull();
 
@@ -138,8 +138,7 @@ class DiscriminatorJoinTest {
         // all data from SubclassB will be returned matching
         // the criteria query
 
-        QueryFilter<ParentEntity> qf = queryFilterProcessor.newQueryFilter("subClassAField=eq:Subclass A field",
-                QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("subClassAField=eq:Subclass A field", QFParamType.RHS_COLON);
 
         assertThat(qf).isNotNull();
 

@@ -5,6 +5,7 @@ import io.github.acoboh.query.filter.jpa.exceptions.QueryFilterException;
 import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.repositories.PostBlogRepository;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +63,7 @@ class ArrayTypedTests {
     }
 
     @Autowired
-    private QFProcessor<ArrayTypeFilterDef, PostBlog> queryFilterProcessor;
+    private QFProcessor<@NonNull ArrayTypeFilterDef, @NonNull PostBlog> queryFilterProcessor;
 
     @Autowired
     private PostBlogRepository repository;
@@ -88,7 +89,7 @@ class ArrayTypedTests {
     @Order(1)
     void testOverlap() throws QueryFilterException {
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("tags=ovlp:TAG1,TAG4", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("tags=ovlp:TAG1,TAG4", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         List<PostBlog> list = repository.findAll(qf);
@@ -112,7 +113,7 @@ class ArrayTypedTests {
     @DisplayName("2. Test IN")
     @Order(2)
     void testIN() {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("tags=in:TAG1,TAG3", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("tags=in:TAG1,TAG3", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         List<PostBlog> list = repository.findAll(qf);
@@ -137,8 +138,7 @@ class ArrayTypedTests {
     @Order(3)
     void testEqual() {
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("tags=eq:TAG1,TAG2,TAG3,TAG4",
-                QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("tags=eq:TAG1,TAG2,TAG3,TAG4", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         List<PostBlog> list = repository.findAll(qf);
@@ -163,8 +163,7 @@ class ArrayTypedTests {
     @Order(4)
     void testNotEqual() {
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("tags=ne:TAG1,TAG2,TAG3,TAG4",
-                QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("tags=ne:TAG1,TAG2,TAG3,TAG4", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         List<PostBlog> list = repository.findAll(qf);
@@ -188,7 +187,7 @@ class ArrayTypedTests {
     @DisplayName("5. Test is contained by")
     @Order(5)
     void testIsContained() {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("tags=containedBy:TAG1,TAG2,TAG3,TAG4,TAG5",
+        var qf = queryFilterProcessor.newQueryFilter("tags=containedBy:TAG1,TAG2,TAG3,TAG4,TAG5",
                 QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
@@ -219,7 +218,7 @@ class ArrayTypedTests {
     @DisplayName("6. Test greater than")
     @Order(6)
     void testGreaterThan() {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("tags=gt:TAG1,TAG4", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("tags=gt:TAG1,TAG4", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         List<PostBlog> list = repository.findAll(qf);
@@ -237,7 +236,7 @@ class ArrayTypedTests {
     @DisplayName("7. Test less than")
     @Order(7)
     void testLessThan() {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("tags=lt:TAG2,TAG3", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("tags=lt:TAG2,TAG3", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         List<PostBlog> list = repository.findAll(qf);
@@ -255,8 +254,7 @@ class ArrayTypedTests {
     @DisplayName("8. Test greater equal than")
     @Order(8)
     void testGreaterEqualThan() {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("tags=gte:TAG1,TAG4,TAG5",
-                QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("tags=gte:TAG1,TAG4,TAG5", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         List<PostBlog> list = repository.findAll(qf);
@@ -274,8 +272,7 @@ class ArrayTypedTests {
     @DisplayName("9. Test less equal than")
     @Order(9)
     void testLessEqualThan() {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("tags=lte:TAG1,TAG4,TAG5",
-                QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("tags=lte:TAG1,TAG4,TAG5", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         List<PostBlog> list = repository.findAll(qf);
@@ -293,7 +290,7 @@ class ArrayTypedTests {
     @DisplayName("10. Test NOT IN")
     @Order(10)
     void testNotIN() {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("tags=nin:TAG1,TAG3", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("tags=nin:TAG1,TAG3", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         List<PostBlog> list = repository.findAll(qf);

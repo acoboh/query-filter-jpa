@@ -3,7 +3,7 @@ package io.github.acoboh.query.filter.jpa.config;
 import io.github.acoboh.query.filter.jpa.annotations.EnableQueryFilter;
 import io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass;
 import io.github.acoboh.query.filter.jpa.processor.QFProcessor;
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -38,16 +38,20 @@ public class QFBeanFactoryPostProcessor implements ApplicationContextAware, Bean
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QFBeanFactoryPostProcessor.class);
 
-    private ApplicationContext applicationContext;
+    private @Nullable ApplicationContext applicationContext;
 
     /** {@inheritDoc} */
     @Override
-    public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         Assert.notNull(applicationContext, "ApplicationContext cannot be null");
         this.applicationContext = applicationContext;
     }
 
     private Set<Class<?>> getClassAnnotatedWithQFDef(List<String> packages) {
+
+        if (this.applicationContext == null) {
+            throw new IllegalStateException("ApplicationContext has not been set");
+        }
 
         Assert.notNull(packages, "packages must not be null");
 
@@ -67,12 +71,13 @@ public class QFBeanFactoryPostProcessor implements ApplicationContextAware, Bean
             }
 
             for (BeanDefinition beanDefinition : scanner.findCandidateComponents(pack)) {
-                if (beanDefinition.getBeanClassName() == null) {
-                    continue;
-                }
 
                 try {
-                    Class<?> clazz = ClassUtils.forName(beanDefinition.getBeanClassName(), classLoader);
+                    var name = beanDefinition.getBeanClassName();
+                    if (name == null) {
+                        continue;
+                    }
+                    Class<?> clazz = ClassUtils.forName(name, classLoader);
                     LOGGER.debug("Found class {} with @QFDefinitionClass annotation", clazz.getName());
                     classSet.add(clazz);
                 } catch (ClassNotFoundException e) {
@@ -87,6 +92,10 @@ public class QFBeanFactoryPostProcessor implements ApplicationContextAware, Bean
 
     private <T extends Annotation> List<String> getBeansWithAnnotation(Class<T> annotation, boolean repeatable,
             SupplierPackages<T> supplier) {
+
+        if (this.applicationContext == null) {
+            throw new IllegalStateException("ApplicationContext has not been set");
+        }
 
         List<String> packages = new ArrayList<>();
 
@@ -115,7 +124,7 @@ public class QFBeanFactoryPostProcessor implements ApplicationContextAware, Bean
 
     /** {@inheritDoc} */
     @Override
-    public void postProcessBeanFactory(@NonNull ConfigurableListableBeanFactory beanFactory) throws BeansException {
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
         Assert.isInstanceOf(ConfigurableBeanFactory.class, beanFactory, "BeanFactory must be ConfigurableBeanFactory");
 
         DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) beanFactory;

@@ -4,6 +4,7 @@ import io.github.acoboh.query.filter.jpa.domain.ExtendBaseFilterDef;
 import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.repositories.PostBlogRepository;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,7 @@ class ExtendsFilterDefTests {
     }
 
     @Autowired
-    private QFProcessor<ExtendBaseFilterDef, PostBlog> qfProcessor;
+    private QFProcessor<@NonNull ExtendBaseFilterDef, @NonNull PostBlog> qfProcessor;
 
     @Autowired
     private PostBlogRepository repository;
@@ -78,7 +79,7 @@ class ExtendsFilterDefTests {
     @Order(2)
     void testExtends() {
 
-        QueryFilter<PostBlog> queryFilter = qfProcessor.newQueryFilter("sort=-uuid", QFParamType.RHS_COLON);
+        var queryFilter = qfProcessor.newQueryFilter("sort=-uuid", QFParamType.RHS_COLON);
         assertThat(queryFilter).isNotNull();
 
         assertThat(queryFilter.getSortFields()).contains(Pair.of("uuid", Direction.DESC));

@@ -47,7 +47,6 @@ public abstract class ParentEntity {
     /**
      * Set the id
      *
-     * @param id
      */
     public void setId(String id) {
         this.id = id;
@@ -65,7 +64,6 @@ public abstract class ParentEntity {
     /**
      * Set the type
      *
-     * @param type
      */
     public void setType(TypeEnum type) {
         this.type = type;
@@ -83,7 +81,6 @@ public abstract class ParentEntity {
     /**
      * Set the active
      *
-     * @param active
      */
     public void setActive(boolean active) {
         this.active = active;

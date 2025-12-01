@@ -1,5 +1,6 @@
 package io.github.acoboh.query.filter.jpa.predicate;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;
 
@@ -53,7 +54,7 @@ public enum PredicateOperation {
      * @param value String value of operation to be found
      * @return predicate operation found. Null if the operation is not found
      */
-    public static PredicateOperation getOperator(String value) {
+    public static @Nullable PredicateOperation getOperator(String value) {
         return map.get(value);
     }
 

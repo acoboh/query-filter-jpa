@@ -8,6 +8,7 @@ import io.github.acoboh.query.filter.jpa.model.jsondata.ModelJson;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationJsonEnum;
 import io.github.acoboh.query.filter.jpa.repositories.ModelJsonRepository;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,12 +59,12 @@ class JsonTypeTest {
     private ModelJsonRepository repository;
 
     @Autowired
-    private QFProcessor<JsonFilterDef, ModelJson> queryFilterProcessor;
+    private QFProcessor<@NonNull JsonFilterDef, @NonNull ModelJson> queryFilterProcessor;
 
     @Autowired
     private ApplicationContext applicationContext;
 
-    private static QFProcessor<DefaultValuesDef, ModelJson> qfProcessorDefaultValues;
+    private static QFProcessor<@NonNull DefaultValuesDef, @NonNull ModelJson> qfProcessorDefaultValues;
 
     @Test
     @DisplayName("0. Setup")
@@ -91,8 +92,7 @@ class JsonTypeTest {
     void testFindByJsonData() {
 
         // Find common data
-        QueryFilter<ModelJson> qf = queryFilterProcessor.newQueryFilter("jsonb=eq:{'bkey1':'value1'}",
-                QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("jsonb=eq:{'bkey1':'value1'}", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         var actual = qf.getActualJsonValue("jsonb");
@@ -138,7 +138,7 @@ class JsonTypeTest {
     @Order(2)
     void testDefaultValues() {
 
-        QueryFilter<ModelJson> qf = qfProcessorDefaultValues.newQueryFilter(null, QFParamType.RHS_COLON);
+        var qf = qfProcessorDefaultValues.newQueryFilter(null, QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         assertThat(qf.isFiltering("jsonb")).isTrue();

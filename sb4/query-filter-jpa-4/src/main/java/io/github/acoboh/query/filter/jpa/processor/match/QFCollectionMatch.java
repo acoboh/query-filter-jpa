@@ -84,6 +84,7 @@ public class QFCollectionMatch implements QFSpecificationPart {
      *
      * @return element definition
      */
+    @Override
     public QFDefinitionCollection getDefinition() {
         return definition;
     }

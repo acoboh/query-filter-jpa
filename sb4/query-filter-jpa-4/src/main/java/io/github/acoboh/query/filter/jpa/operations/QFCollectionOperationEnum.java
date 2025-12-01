@@ -19,7 +19,7 @@ import java.util.Map;
  */
 public enum QFCollectionOperationEnum implements QFPredicateCollectionResolutor {
     /**
-     *
+     * Equal operation
      */
     EQUAL("eq") {
         @Override
@@ -30,7 +30,7 @@ public enum QFCollectionOperationEnum implements QFPredicateCollectionResolutor 
         }
     },
     /**
-     *
+     * Not equal operation
      */
     NOT_EQUAL("ne") {
         @Override
@@ -41,7 +41,7 @@ public enum QFCollectionOperationEnum implements QFPredicateCollectionResolutor 
         }
     },
     /**
-     *
+     * Greater than operation
      */
     GREATER_THAN("gt") {
         @Override
@@ -52,7 +52,7 @@ public enum QFCollectionOperationEnum implements QFPredicateCollectionResolutor 
         }
     },
     /**
-     *
+     * Greater equal than operation
      */
     GREATER_EQUAL_THAN("gte") {
         @Override
@@ -63,7 +63,7 @@ public enum QFCollectionOperationEnum implements QFPredicateCollectionResolutor 
         }
     },
     /**
-     *
+     * Less than operation
      */
     LESS_THAN("lt") {
         @Override
@@ -74,7 +74,7 @@ public enum QFCollectionOperationEnum implements QFPredicateCollectionResolutor 
         }
     },
     /**
-     *
+     * Less equal than operation
      */
     LESS_EQUAL_THAN("lte") {
         @Override

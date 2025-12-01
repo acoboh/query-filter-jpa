@@ -5,7 +5,6 @@ import io.github.acoboh.query.filter.jpa.exceptions.language.ExceptionLanguageRe
 import io.github.acoboh.query.filter.jpa.properties.AdvisorProperties;
 import io.github.acoboh.query.filter.jpa.properties.QueryFilterProperties;
 import jakarta.servlet.http.HttpServletRequest;
-import org.jspecify.annotations.NonNull;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -14,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -55,21 +54,21 @@ public class QFExceptionAdvisor {
      * @return new response
      */
     @ExceptionHandler(QueryFilterException.class)
-    public ResponseEntity<@NonNull Object> handleEngineExceptions(QueryFilterException ex, HttpServletRequest request) {
+    public ResponseEntity<Object> handleEngineExceptions(QueryFilterException ex, HttpServletRequest request) {
         return handleAdvisorMessageResolver(ex, ex, request);
     }
 
-    private ResponseEntity<@NonNull Object> handleAdvisorMessageResolver(ExceptionLanguageResolver resolver,
-            Exception ex, HttpServletRequest request) {
+    private ResponseEntity<Object> handleAdvisorMessageResolver(ExceptionLanguageResolver resolver, Exception ex,
+            HttpServletRequest request) {
         String message = message(resolver.getMessageCode(), resolver.getArguments());
         return defaultErrorMessage(ex, request, resolver.getHttpStatus(), message, extendErrorMessage);
     }
 
-    private ResponseEntity<@NonNull Object> defaultErrorMessage(Exception e, HttpServletRequest request,
-            HttpStatus status, String message, boolean extend) {
+    private ResponseEntity<Object> defaultErrorMessage(Exception e, HttpServletRequest request, HttpStatus status,
+            String message, boolean extend) {
 
         Map<String, Object> map = new LinkedHashMap<>(6);
-        map.put("timestamp", new Date());
+        map.put("timestamp", Instant.now());
         map.put("status", status.value());
         map.put("error", status.getReasonPhrase());
         map.put("exception", e.getClass());

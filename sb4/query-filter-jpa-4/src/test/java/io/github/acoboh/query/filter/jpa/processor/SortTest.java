@@ -5,6 +5,7 @@ import io.github.acoboh.query.filter.jpa.domain.FilterBlogSortWithPredicateDef;
 import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.repositories.PostBlogRepository;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,10 +64,10 @@ class SortTest {
     }
 
     @Autowired
-    private QFProcessor<FilterBlogSortDef, PostBlog> queryFilterProcessor;
+    private QFProcessor<@NonNull FilterBlogSortDef, @NonNull PostBlog> queryFilterProcessor;
 
     @Autowired
-    private QFProcessor<FilterBlogSortWithPredicateDef, PostBlog> qfProcessorWithPredicates;
+    private QFProcessor<@NonNull FilterBlogSortWithPredicateDef, @NonNull PostBlog> qfProcessorWithPredicates;
 
     @Autowired
     private PostBlogRepository repository;
@@ -92,7 +93,7 @@ class SortTest {
     @Order(1)
     void testDefaultSortCreation() {
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         assertThat(qf.isSorted()).isTrue();
@@ -113,7 +114,7 @@ class SortTest {
     @DisplayName("2. Test clear sort options")
     @Order(2)
     void testClearSortOptions() {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         assertThat(qf.isSorted()).isTrue();
@@ -146,7 +147,7 @@ class SortTest {
     @DisplayName("3. Test clear sort options on creation")
     @Order(3)
     void testSortOptionsOnConstructor() {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("sort=-likes", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("sort=-likes", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         assertThat(qf.isSorted()).isTrue();
@@ -177,8 +178,7 @@ class SortTest {
     @DisplayName("4. Test sort options concat on creation")
     @Order(4)
     void testSortConcatOnConstructor() {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("sort=-likes,+lastTimestamp",
-                QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("sort=-likes,+lastTimestamp", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         assertThat(qf.isSorted()).isTrue();
@@ -233,7 +233,7 @@ class SortTest {
     @DisplayName("5. Test sort with predicates Issue #31")
     @Order(5)
     void testSortWithPredicates() {
-        QueryFilter<PostBlog> qf = qfProcessorWithPredicates.newQueryFilter("sort=-likes", QFParamType.RHS_COLON);
+        var qf = qfProcessorWithPredicates.newQueryFilter("sort=-likes", QFParamType.RHS_COLON);
 
         assertThat(qf).isNotNull();
 

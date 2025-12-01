@@ -35,9 +35,7 @@ class TestQFProcessorErrors {
     @DisplayName("1. Test QFProcessor Discriminator with not inherited class")
     void testDiscriminatorNotInherited() {
 
-        QFDiscriminatorException ex = assertThrows(QFDiscriminatorException.class, () -> {
-            new QFProcessor<>(DiscriminatorFilterErrorDef.class, Topic.class, appContext);
-        });
+        QFDiscriminatorException ex = assertThrows(QFDiscriminatorException.class, () -> new QFProcessor<>(DiscriminatorFilterErrorDef.class, Topic.class, appContext));
 
         assertThat(ex.getMessage()).isEqualTo(
                 "Entity class 'class io.github.acoboh.query.filter.jpa.model.discriminators.Topic' is not assignable from value class 'class io.github.acoboh.query.filter.jpa.model.PostBlog'");
@@ -47,9 +45,7 @@ class TestQFProcessorErrors {
     @DisplayName("2. Test QFProcessor QFElement with not allowed operation")
     void testQFElementNotAllowedOperation() {
 
-        QueryFilterDefinitionException ex = assertThrows(QueryFilterDefinitionException.class, () -> {
-            new QFProcessor<>(OperationAllowedError1Def.class, PostBlog.class, appContext);
-        });
+        QueryFilterDefinitionException ex = assertThrows(QueryFilterDefinitionException.class, () -> new QFProcessor<>(OperationAllowedError1Def.class, PostBlog.class, appContext));
 
         assertThat(ex.getMessage()).isEqualTo(
                 "Allowed operations [ENDS_WITH] not valid for class int on field likes of filter class io.github.acoboh.query.filter.jpa.filtererrors.discriminator.OperationAllowedError1Def");

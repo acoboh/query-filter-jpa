@@ -41,8 +41,16 @@ public class QFDefinitionDiscriminator extends QFAbstractDefinition {
         if (!discriminatorAnnotation.path().isEmpty()) {
             var fieldClassProcessor = new FieldClassProcessor(fieldInfo.entityClass(), discriminatorAnnotation.path(),
                     null, null, metamodel);
+
             this.attributes = fieldClassProcessor.getAttributes();
-            this.finalClass = fieldClassProcessor.getFinalClass();
+
+            var fClassFinalClass = fieldClassProcessor.getFinalClass();
+            if (fClassFinalClass == null) {
+                throw new QFDiscriminatorException("Discriminator path '%s' is not valid for entity class '%s'",
+                        discriminatorAnnotation.path(), fieldInfo.entityClass());
+            }
+            this.finalClass = fClassFinalClass;
+
         } else {
             this.attributes = Collections.emptyList();
             this.finalClass = fieldInfo.entityClass();

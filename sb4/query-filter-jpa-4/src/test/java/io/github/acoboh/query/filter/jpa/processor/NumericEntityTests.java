@@ -4,6 +4,7 @@ import io.github.acoboh.query.filter.jpa.domain.NumericEntityFilterDef;
 import io.github.acoboh.query.filter.jpa.model.extended.NumericEntity;
 import io.github.acoboh.query.filter.jpa.repositories.NumericEntityRepository;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ class NumericEntityTests {
     private static final NumericEntity NUMERIC_EXAMPLE = new NumericEntity(1L, BigDecimal.valueOf(2.5574936423));
 
     @Autowired
-    private QFProcessor<NumericEntityFilterDef, NumericEntity> queryFilterProcessor;
+    private QFProcessor<@NonNull NumericEntityFilterDef, @NonNull NumericEntity> queryFilterProcessor;
 
     @Autowired
     private NumericEntityRepository repository;

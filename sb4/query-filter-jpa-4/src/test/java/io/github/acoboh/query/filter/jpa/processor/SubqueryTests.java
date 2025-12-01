@@ -6,6 +6,7 @@ import io.github.acoboh.query.filter.jpa.model.subquery.UserModel;
 import io.github.acoboh.query.filter.jpa.repositories.RoleRepository;
 import io.github.acoboh.query.filter.jpa.repositories.UserRepository;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,7 +69,7 @@ class SubqueryTests {
     }
 
     @Autowired
-    private QFProcessor<UserModelFilterDef, UserModel> queryFilterProcessor;
+    private QFProcessor<@NonNull UserModelFilterDef, @NonNull UserModel> queryFilterProcessor;
 
     @Autowired
     private UserRepository repository;
@@ -103,7 +104,7 @@ class SubqueryTests {
     @DisplayName("1. Test user has no role")
     @Order(1)
     void testHasNotRole() {
-        QueryFilter<UserModel> qf = queryFilterProcessor.newQueryFilter("roleNotSub=ne:ROLE1", QFParamType.RHS_COLON);
+        QueryFilter<@NonNull UserModel> qf = queryFilterProcessor.newQueryFilter("roleNotSub=ne:ROLE1", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         // In this case, all users have one condition where the role name is not ROLE1
@@ -125,7 +126,7 @@ class SubqueryTests {
 
         // Subquery and normal query must return exactly the same users
 
-        QueryFilter<UserModel> qf = queryFilterProcessor.newQueryFilter("roleNotSub=eq:ROLE1", QFParamType.RHS_COLON);
+        QueryFilter<@NonNull UserModel> qf = queryFilterProcessor.newQueryFilter("roleNotSub=eq:ROLE1", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         List<UserModel> list = repository.findAll(qf);

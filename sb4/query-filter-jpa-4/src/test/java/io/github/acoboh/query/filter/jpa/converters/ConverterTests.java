@@ -5,6 +5,7 @@ import io.github.acoboh.query.filter.jpa.domain.FilterBlogDef;
 import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.processor.QueryFilter;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -40,7 +41,8 @@ class ConverterTests {
     private static class AnnotationClass {
 
         @SuppressWarnings("unused")
-        public static void paramQueryFilterBlogDef(@QFParam(FilterBlogDef.class) QueryFilter<PostBlog> filter) {
+        public static void paramQueryFilterBlogDef(
+                @QFParam(FilterBlogDef.class) QueryFilter<@NonNull PostBlog> filter) {
             // For custom annotations
         }
 
@@ -60,7 +62,7 @@ class ConverterTests {
         TypeDescriptor targetDescriptor = new TypeDescriptor(type, QueryFilter.class, annotations);
 
         Object converted = conversionService.convert("", sourceDescriptor, targetDescriptor);
-
+        assertThat(converted).isNotNull();
         assertThat(converted.getClass()).isAssignableFrom(QueryFilter.class);
 
         QueryFilter<?> queryFilter = (QueryFilter<?>) converted;

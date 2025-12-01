@@ -9,6 +9,7 @@ import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 import io.github.acoboh.query.filter.jpa.repositories.PostBlogRepository;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,9 +48,9 @@ class DatesTest {
         POST_EXAMPLE.setText("Text");
         POST_EXAMPLE.setAvgNote(2.5d);
         POST_EXAMPLE.setLikes(1);
-        POST_EXAMPLE.setCreateDate(LocalDateTime.of(2022, 01, 01, 12, 30, 0));
-        POST_EXAMPLE.setLastTimestamp(Timestamp.valueOf(LocalDateTime.of(2022, 05, 10, 22, 13, 24)));
-        POST_EXAMPLE.setInstant(LocalDateTime.of(2022, 01, 01, 12, 30, 0).toInstant(ZoneOffset.UTC));
+        POST_EXAMPLE.setCreateDate(LocalDateTime.of(2022, 1, 1, 12, 30, 0));
+        POST_EXAMPLE.setLastTimestamp(Timestamp.valueOf(LocalDateTime.of(2022, 5, 10, 22, 13, 24)));
+        POST_EXAMPLE.setInstant(LocalDateTime.of(2022, 1, 1, 12, 30, 0).toInstant(ZoneOffset.UTC));
         POST_EXAMPLE.setPublished(true);
         POST_EXAMPLE.setPostType(PostBlog.PostType.TEXT);
 
@@ -58,16 +59,16 @@ class DatesTest {
         POST_EXAMPLE_2.setText("Text 2");
         POST_EXAMPLE_2.setAvgNote(0.5d);
         POST_EXAMPLE_2.setLikes(2);
-        POST_EXAMPLE_2.setCreateDate(LocalDateTime.of(2023, 01, 01, 12, 30, 0));
-        POST_EXAMPLE_2.setLastTimestamp(Timestamp.valueOf(LocalDateTime.of(2023, 05, 10, 22, 13, 24)));
-        POST_EXAMPLE_2.setLastTimestamp(Timestamp.valueOf(LocalDateTime.of(2023, 05, 10, 22, 13, 24)));
+        POST_EXAMPLE_2.setCreateDate(LocalDateTime.of(2023, 1, 1, 12, 30, 0));
+        POST_EXAMPLE_2.setLastTimestamp(Timestamp.valueOf(LocalDateTime.of(2023, 5, 10, 22, 13, 24)));
+        POST_EXAMPLE_2.setLastTimestamp(Timestamp.valueOf(LocalDateTime.of(2023, 5, 10, 22, 13, 24)));
         POST_EXAMPLE_2.setPublished(false);
         POST_EXAMPLE_2.setPostType(PostBlog.PostType.VIDEO);
 
     }
 
     @Autowired
-    private QFProcessor<FilterBlogDatesDef, PostBlog> queryFilterProcessor;
+    private QFProcessor<@NonNull FilterBlogDatesDef, @NonNull PostBlog> queryFilterProcessor;
     @Autowired
     private PostBlogRepository repository;
 
@@ -92,7 +93,7 @@ class DatesTest {
     @Order(1)
     void defaultFormat() throws QueryFilterException {
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("createDateDefault=gte:2023-01-01T00:00:00Z",
+        var qf = queryFilterProcessor.newQueryFilter("createDateDefault=gte:2023-01-01T00:00:00Z",
                 QFParamType.RHS_COLON);
 
         assertThat(qf).isNotNull();
@@ -107,10 +108,8 @@ class DatesTest {
     @Order(2)
     void onlySortableElement() {
 
-        QFNotValuable exception = assertThrows(QFNotValuable.class, () -> {
-            queryFilterProcessor.newQueryFilter("lastTimestampSortable=gte:2023-01-01T00:00:00Z",
-                    QFParamType.RHS_COLON);
-        });
+        QFNotValuable exception = assertThrows(QFNotValuable.class, () -> queryFilterProcessor.newQueryFilter("lastTimestampSortable=gte:2023-01-01T00:00:00Z",
+                QFParamType.RHS_COLON));
 
         assertThat(exception).isNotNull();
         assertThat(exception.getField()).isEqualTo("lastTimestampSortable");
@@ -122,7 +121,7 @@ class DatesTest {
     @Order(3)
     void customFormatLocalDateTime() throws QueryFilterException {
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("createDateCustomFormat=lt:2023-01-01 01:12:30",
+        var qf = queryFilterProcessor.newQueryFilter("createDateCustomFormat=lt:2023-01-01 01:12:30",
                 QFParamType.RHS_COLON);
 
         assertThat(qf).isNotNull();
@@ -137,7 +136,7 @@ class DatesTest {
     @Order(4)
     void customFormatTimestamp() throws QueryFilterException {
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("lastTimestampCustomFormat=lt:2023/01/01 00:30",
+        var qf = queryFilterProcessor.newQueryFilter("lastTimestampCustomFormat=lt:2023/01/01 00:30",
                 QFParamType.RHS_COLON);
 
         assertThat(qf).isNotNull();
@@ -167,8 +166,7 @@ class DatesTest {
     @Order(6)
     void customFormatWithDefaults() throws QueryFilterException {
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("withDefaults=eq:2022/01/01",
-                QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("withDefaults=eq:2022/01/01", QFParamType.RHS_COLON);
 
         assertThat(qf).isNotNull();
 
@@ -182,8 +180,7 @@ class DatesTest {
     @Order(7)
     void testInstantTypes() throws QueryFilterException {
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("instant=eq:2022-01-01T12:30:00Z",
-                QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("instant=eq:2022-01-01T12:30:00Z", QFParamType.RHS_COLON);
 
         assertThat(qf).isNotNull();
 
@@ -197,8 +194,8 @@ class DatesTest {
     @Order(8)
     void testBetweenDates() throws QueryFilterException {
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor
-                .newQueryFilter("instant=btw:2022-01-01T00:00:00Z,2023-01-01T00:00:00Z", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("instant=btw:2022-01-01T00:00:00Z,2023-01-01T00:00:00Z",
+                QFParamType.RHS_COLON);
 
         assertThat(qf).isNotNull();
 

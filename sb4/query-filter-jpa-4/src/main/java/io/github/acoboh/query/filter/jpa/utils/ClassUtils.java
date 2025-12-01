@@ -1,6 +1,7 @@
 package io.github.acoboh.query.filter.jpa.utils;
 
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QFTypeException;
+import jakarta.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +35,7 @@ public class ClassUtils {
      * @param fieldName Field name to get
      * @return Field found
      */
-    public static Field getDeclaredFieldSuperclass(Class<?> fromClass, String fieldName) {
+    public static @Nullable Field getDeclaredFieldSuperclass(Class<?> fromClass, String fieldName) {
         Field fieldClazz = null;
         try {
             fieldClazz = fromClass.getDeclaredField(fieldName);

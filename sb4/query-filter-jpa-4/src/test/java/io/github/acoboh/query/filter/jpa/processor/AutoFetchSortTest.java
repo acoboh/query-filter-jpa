@@ -6,12 +6,12 @@ import io.github.acoboh.query.filter.jpa.model.ExtraData;
 import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.repositories.PostBlogRepository;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.util.Pair;
@@ -131,7 +131,7 @@ class AutoFetchSortTest {
     }
 
     @Autowired
-    private QFProcessor<FilterBlogSortRelationalDef, PostBlog> queryFilterProcessor;
+    private QFProcessor<@NonNull FilterBlogSortRelationalDef, @NonNull PostBlog> queryFilterProcessor;
 
     @Autowired
     private PostBlogRepository repository;
@@ -158,8 +158,7 @@ class AutoFetchSortTest {
     @Order(1)
     void testSortBase() {
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("sort=+commentAuthorSort",
-                QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("sort=+commentAuthorSort", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         assertThat(qf.isSorted()).isTrue();
@@ -181,8 +180,7 @@ class AutoFetchSortTest {
     @Order(2)
     void testSortElement() {
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("sort=-commentAuthorElement",
-                QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("sort=-commentAuthorElement", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         assertThat(qf.isSorted()).isTrue();
@@ -204,8 +202,7 @@ class AutoFetchSortTest {
     @Order(3)
     void testSortErrorSort() {
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("sort=-commentAuthorSortError",
-                QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("sort=-commentAuthorSortError", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         assertThat(qf.isSorted()).isTrue();
@@ -229,8 +226,7 @@ class AutoFetchSortTest {
     @Order(4)
     void testSortErrorElement() {
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("sort=-commentAuthorElementError",
-                QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("sort=-commentAuthorElementError", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         assertThat(qf.isSorted()).isTrue();
@@ -253,7 +249,7 @@ class AutoFetchSortTest {
     @DisplayName("5. Test 3 level joins auto-fetch")
     @Order(5)
     void testLevelJoinsAutoFetch() {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("sort=+extraDataSort", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("sort=+extraDataSort", QFParamType.RHS_COLON);
 
         assertThat(qf).isNotNull();
 
@@ -274,7 +270,7 @@ class AutoFetchSortTest {
     @DisplayName("6. Test paginated sort")
     @Order(6)
     void testPaginatedSort() {
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("sort=+extraDataSort", QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("sort=+extraDataSort", QFParamType.RHS_COLON);
 
         assertThat(qf).isNotNull();
 
@@ -290,7 +286,7 @@ class AutoFetchSortTest {
         List<PostBlog> foundAll = repository.findAll(qf);
         assertThat(foundAll).hasSize(2).containsExactly(POST_EXAMPLE, POST_EXAMPLE_2);
 
-        Page<PostBlog> found = repository.findAll(qf, PageRequest.of(0, 1));
+        var found = repository.findAll(qf, PageRequest.of(0, 1));
 
         assertThat(found).hasSize(1).containsExactly(POST_EXAMPLE);
 
@@ -312,8 +308,7 @@ class AutoFetchSortTest {
     @Order(7)
     void testSortWithFetchInnerOnNull() {
 
-        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("sort=+commentAuthorElement",
-                QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("sort=+commentAuthorElement", QFParamType.RHS_COLON);
 
         assertThat(qf).isNotNull();
 

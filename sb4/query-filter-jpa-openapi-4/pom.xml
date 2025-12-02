@@ -16,26 +16,10 @@
     <description>Query Filter JPA OpenAPI Documentation for Spring Boot 4.X</description>
 
     <properties>
-        <!-- Spring dependencies -->
-        <spring-boot.version>4.0.0</spring-boot.version>
-
         <!--OpenAPI dependencies -->
         <openapi.version>3.0.0</openapi.version>
     </properties>
 
-    <dependencyManagement>
-        <dependencies>
-            <!-- Spring Boot BOM -->
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-
-    </dependencyManagement>
 
     <dependencies>
         <dependency>

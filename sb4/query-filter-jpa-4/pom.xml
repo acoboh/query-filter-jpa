@@ -17,8 +17,6 @@
 
     <properties>
 
-        <!-- Hypersistance tests -->
-        <hypersistance.version>3.12.0</hypersistance.version>
     </properties>
 
     <dependencies>

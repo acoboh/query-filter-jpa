@@ -16,26 +16,9 @@
     <description>Query Filter JPA OpenAPI Documentation for Spring Boot 3.X</description>
 
     <properties>
-        <!-- Spring dependencies -->
-        <spring-boot.version>3.5.2</spring-boot.version>
-
         <!--OpenAPI dependencies -->
-        <openapi.version>2.8.9</openapi.version>
+        <openapi.version>2.8.14</openapi.version>
     </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <!-- Spring Boot BOM -->
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-
-    </dependencyManagement>
 
     <dependencies>
         <dependency>

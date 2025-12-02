@@ -17,13 +17,10 @@
 
     <properties>
         <!-- Spring dependencies -->
-        <spring-boot.version>3.5.2</spring-boot.version>
+        <spring-boot.version>3.5.8</spring-boot.version>
 
         <!-- Hypersistance tests -->
-        <hypersistance.version>3.10.1</hypersistance.version>
-
-        <!-- Test containers -->
-        <testcontainers.version>2.0.2</testcontainers.version>
+        <hypersistance.version>3.12.0</hypersistance.version>
 
         <!-- JUnit version -->
         <junit.version>5.14.1</junit.version>

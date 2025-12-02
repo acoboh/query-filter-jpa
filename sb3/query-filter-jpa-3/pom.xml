@@ -18,9 +18,6 @@
     <properties>
         <!-- Spring dependencies -->
         <spring-boot.version>3.5.2</spring-boot.version>
-
-        <!-- Hypersistance tests -->
-        <hypersistance.version>3.10.1</hypersistance.version>
     </properties>
 
     <dependencies>

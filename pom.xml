@@ -7,7 +7,7 @@
 
     <groupId>io.github.acoboh</groupId>
     <artifactId>query-filter-jpa-parent</artifactId>
-    <version>1.0.0</version>
+    <version>2.0.0-SNAPSHOT</version>
 
     <packaging>pom</packaging>
 
@@ -56,6 +56,8 @@
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+        <!-- Maven Plugin Versions -->
+        <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
         <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
         <maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>
@@ -63,19 +65,13 @@
         <maven-surfire-plugin.version>3.5.3</maven-surfire-plugin.version>
         <sonartype-publishing.version>0.8.0</sonartype-publishing.version>
 
-        <!-- Spring dependencies -->
-        <spring-boot.version>3.5.2</spring-boot.version>
-
-        <datasource-proxy.version>1.10.1</datasource-proxy.version>
-        <testcontainers.version>1.21.2</testcontainers.version>
-        <junit.version>5.13.1</junit.version>
-        <assertj-core.version>3.27.3</assertj-core.version>
+        <datasource-proxy.version>1.11.0</datasource-proxy.version>
 
         <!-- Guava dependencies -->
-        <guava.version>33.4.8-jre</guava.version>
+        <guava.version>33.5.0-jre</guava.version>
 
         <!-- JDBC Driver versions -->
-        <postgresql.version>42.7.7</postgresql.version>
+        <postgresql.version>42.7.8</postgresql.version>
 
         <!-- JaCoCo Properties -->
         <jacoco.version>0.8.13</jacoco.version>
@@ -89,48 +85,16 @@
     </properties>
 
     <modules>
-        <module>query-filter-jpa-3</module>
-        <module>query-filter-jpa-openapi-3</module>
+        <module>sb3</module>
+        <module>sb4</module>
     </modules>
 
     <dependencyManagement>
         <dependencies>
-
-            <!-- Spring Boot BOM -->
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.testcontainers</groupId>
-                <artifactId>testcontainers-bom</artifactId>
-                <version>${testcontainers.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.junit</groupId>
-                <artifactId>junit-bom</artifactId>
-                <version>${junit.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.assertj</groupId>
-                <artifactId>assertj-core</artifactId>
-                <version>${assertj-core.version}</version>
             </dependency>
 
             <dependency>
@@ -154,10 +118,25 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven-surfire-plugin.version}</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                    <configuration>
+                        <source>${jdk.version}</source>
+                        <target>${jdk.version}</target>
+                        <release>${jdk.version}</release>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
 
         <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
 
             <plugin>
                 <groupId>org.sonatype.central</groupId>

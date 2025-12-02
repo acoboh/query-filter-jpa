@@ -1,0 +1,46 @@
+package io.github.acoboh.query.filter.jpa.domain;
+
+import io.github.acoboh.query.filter.jpa.annotations.*;
+import io.github.acoboh.query.filter.jpa.model.PostBlog;
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+
+/**
+ * Basic example of filter
+ *
+ * @author Adrián Cobo
+ */
+@QFDefinitionClass(PostBlog.class)
+public class FilterBlogDef {
+
+    @QFElement("author")
+    private String author;
+
+    @QFElement("likes")
+    private int likes;
+
+    @QFElement("avgNote")
+    private double avgNote;
+
+    @QFDate
+    @QFElement("createDate")
+    private LocalDateTime createDate;
+
+    @QFSortable("lastTimestamp")
+    private Timestamp lastTimestamp;
+
+    @QFElement("postType")
+    private String postType;
+
+    @QFElement("published")
+    @QFBlockParsing
+    private boolean published;
+
+    @QFElement("comments.author")
+    private String commentAuthor;
+
+    @QFElement("comments.likes")
+    private String commentLikes;
+
+}

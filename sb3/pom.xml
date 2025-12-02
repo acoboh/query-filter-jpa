@@ -1,0 +1,69 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.github.acoboh</groupId>
+        <artifactId>query-filter-jpa-parent</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>query-filter-jpa-3-parent</artifactId>
+    <packaging>pom</packaging>
+
+    <name>query-filter-jpa-3-parent</name>
+    <description>Query filter JPA for Spring Boot 3.X</description>
+
+    <properties>
+        <!-- Spring dependencies -->
+        <spring-boot.version>3.5.8</spring-boot.version>
+
+        <!-- Hypersistance tests -->
+        <hypersistance.version>3.12.0</hypersistance.version>
+
+        <!-- JUnit version -->
+        <junit.version>5.14.1</junit.version>
+        <assertj-core.version>3.27.6</assertj-core.version>
+    </properties>
+
+    <modules>
+        <module>query-filter-jpa-3</module>
+        <module>query-filter-jpa-openapi-3</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Spring Boot BOM -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Junit -->
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${assertj-core.version}</version>
+            </dependency>
+        </dependencies>
+
+    </dependencyManagement>
+
+    <dependencies>
+
+
+    </dependencies>
+
+</project>

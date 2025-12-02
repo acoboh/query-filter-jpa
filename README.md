@@ -4,6 +4,7 @@
 [![CodeQL](https://github.com/acoboh/query-filter-jpa/actions/workflows/codeql.yml/badge.svg)](https://github.com/acoboh/query-filter-jpa/actions/workflows/codeql.yml)
 [![Maven Publish](https://github.com/acoboh/query-filter-jpa/actions/workflows/maven-publish.yml/badge.svg)](https://github.com/acoboh/query-filter-jpa/actions/workflows/maven-publish.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=acoboh_query-filter-jpa&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=acoboh_query-filter-jpa)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/acoboh/query-filter-jpa)
 
 > [!CAUTION]
 > On next major release (1.0.0), the support for Spring Boot 2 will be dropped and be no longer maintained.

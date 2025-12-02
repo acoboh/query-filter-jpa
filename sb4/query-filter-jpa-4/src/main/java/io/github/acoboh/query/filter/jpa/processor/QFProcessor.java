@@ -215,11 +215,11 @@ public class QFProcessor<F, E> {
                 throw new QFElementException(sort.value(), filterClass);
             }
 
-            if (!(definition instanceof IDefinitionSortable)) {
+            if (!(definition instanceof IDefinitionSortable idefSortable)) {
                 throw new QFNotSortableDefinitionException(definition.getFilterName(), filterClass);
             }
 
-            ret.add(Pair.of((IDefinitionSortable) definition, sort.direction()));
+            ret.add(Pair.of(idefSortable, sort.direction()));
 
         }
 

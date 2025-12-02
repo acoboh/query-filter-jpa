@@ -317,19 +317,17 @@ public class QFElementMatch implements QFSpecificationPart {
         }
 
         switch (operation) {
-        case GREATER_THAN, GREATER_EQUAL_THAN, LESS_THAN, LESS_EQUAL_THAN:
+        case GREATER_THAN, GREATER_EQUAL_THAN, LESS_THAN, LESS_EQUAL_THAN -> {
             if (!Comparable.class.isAssignableFrom(clazz) && !clazz.isPrimitive()) {
                 throw new QFFieldOperationException(operation, definition.getFilterName());
             }
-            break;
-
-        case ENDS_WITH, STARTS_WITH, LIKE:
+        }
+        case ENDS_WITH, STARTS_WITH, LIKE -> {
             if (!String.class.isAssignableFrom(clazz)) {
                 throw new QFFieldOperationException(operation, definition.getFilterName());
             }
-            break;
-        default:
-            LOGGER.trace("Operation {} allowed on field {} by default", operation, definition.getFilterName());
+        }
+        default -> LOGGER.trace("Operation {} allowed on field {} by default", operation, definition.getFilterName());
         }
     }
 

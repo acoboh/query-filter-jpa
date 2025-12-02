@@ -66,15 +66,10 @@ public class UserModel {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
+    public boolean equals(Object o) {
+        if (!(o instanceof UserModel userModel))
             return false;
-        if (getClass() != obj.getClass())
-            return false;
-        UserModel other = (UserModel) obj;
-        return Objects.equals(id, other.id) && Objects.equals(username, other.username);
+        return Objects.equals(id, userModel.id) && Objects.equals(username, userModel.username)
+                && Objects.equals(roles, userModel.roles);
     }
-
 }

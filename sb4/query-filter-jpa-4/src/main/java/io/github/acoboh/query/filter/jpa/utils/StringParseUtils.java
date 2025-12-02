@@ -39,7 +39,7 @@ public class StringParseUtils {
             char cTemp = predicateExp.charAt(i);
 
             switch (cTemp) {
-            case '(':
+            case '(' -> {
                 // Starts
                 level++;
 
@@ -47,10 +47,10 @@ public class StringParseUtils {
                     builder.append(cTemp);
                 }
 
-                break;
-
-            case ')':
+            }
+            case ')' -> {
                 level--;
+
                 if (level == 0) {
                     ret.add(new PredicatePart(balanceLevelParenthesis(builder.toString()), true));
                     builder = new StringBuilder();
@@ -58,8 +58,8 @@ public class StringParseUtils {
                     builder.append(cTemp);
                 }
 
-                break;
-            case ' ':
+            }
+            case ' ' -> {
                 if (level == 0) {
 
                     String s = builder.toString();
@@ -71,11 +71,8 @@ public class StringParseUtils {
                 } else {
                     builder.append(cTemp);
                 }
-                break;
-
-            default:
-                builder.append(cTemp);
-
+            }
+            default -> builder.append(cTemp);
             }
         }
 
@@ -112,19 +109,13 @@ public class StringParseUtils {
 
             char cTemp = exp.charAt(i);
 
-            switch (cTemp) {
-            case '(':
+            if (cTemp == '(') {
                 level++;
-                break;
-            case ')':
+            } else if (cTemp == ')') {
                 level--;
                 if (level == 0 && i < exp.length() - 1) {
                     return exp;
                 }
-
-                break;
-            default:
-                break;
             }
 
         }

@@ -8,6 +8,7 @@ import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.util.MultiValueMap;
 
 import java.util.List;
@@ -133,11 +134,11 @@ class PredicateUtils {
 
         if (like) {
             LOGGER.trace("Case sensitive false on like expression");
-            return criteriaBuilder.like(criteriaBuilder.lower(exp), value.toLowerCase());
+            return criteriaBuilder.like(criteriaBuilder.lower(exp), value.toLowerCase(LocaleContextHolder.getLocale()));
         }
 
         LOGGER.trace("Case sensitive false on not like expression");
-        return criteriaBuilder.notLike(criteriaBuilder.lower(exp), value.toLowerCase());
+        return criteriaBuilder.notLike(criteriaBuilder.lower(exp), value.toLowerCase(LocaleContextHolder.getLocale()));
     }
 
     /**

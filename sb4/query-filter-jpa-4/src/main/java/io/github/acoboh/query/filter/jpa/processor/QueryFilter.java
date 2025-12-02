@@ -277,12 +277,12 @@ public class QueryFilter<E> implements Specification<E> {
 
         QFAbstractDefinition def = getSafeFieldDefinition(field);
 
-        if (!(def instanceof QFDefinitionElement)) {
+        if (!(def instanceof QFDefinitionElement iDefElem)) {
             throw new QFNotValuable(field);
 
         }
 
-        QFSpecificationPart qfSpecificationPart = new QFElementMatch(values, operation, (QFDefinitionElement) def);
+        QFSpecificationPart qfSpecificationPart = new QFElementMatch(values, operation, iDefElem);
         specificationsWarp.addSpecification(qfSpecificationPart);
 
     }
@@ -308,11 +308,11 @@ public class QueryFilter<E> implements Specification<E> {
 
         QFAbstractDefinition def = getSafeFieldDefinition(field);
 
-        if (!(def instanceof QFDefinitionDiscriminator)) {
+        if (!(def instanceof QFDefinitionDiscriminator idefDiscriminator)) {
             throw new QFNotValuable(field);
         }
 
-        QFDiscriminatorMatch match = new QFDiscriminatorMatch(classes, operation, (QFDefinitionDiscriminator) def);
+        QFDiscriminatorMatch match = new QFDiscriminatorMatch(classes, operation, idefDiscriminator);
         specificationsWarp.addSpecification(match);
     }
 
@@ -330,11 +330,11 @@ public class QueryFilter<E> implements Specification<E> {
 
         QFAbstractDefinition def = getSafeFieldDefinition(field);
 
-        if (!(def instanceof QFDefinitionJson)) {
+        if (!(def instanceof QFDefinitionJson idefJson)) {
             throw new QFNotValuable(field);
         }
 
-        QFJsonElementMatch match = new QFJsonElementMatch(value, operation, (QFDefinitionJson) def);
+        QFJsonElementMatch match = new QFJsonElementMatch(value, operation, idefJson);
         specificationsWarp.addSpecification(match);
 
     }
@@ -353,11 +353,11 @@ public class QueryFilter<E> implements Specification<E> {
 
         QFAbstractDefinition def = getSafeFieldDefinition(field);
 
-        if (!(def instanceof QFDefinitionCollection)) {
+        if (!(def instanceof QFDefinitionCollection idefCollection)) {
             throw new QFNotValuable(field);
         }
 
-        QFCollectionMatch match = new QFCollectionMatch((QFDefinitionCollection) def, operation, value);
+        QFCollectionMatch match = new QFCollectionMatch(idefCollection, operation, value);
         specificationsWarp.addSpecification(match);
 
     }
@@ -584,13 +584,12 @@ public class QueryFilter<E> implements Specification<E> {
 
         QFAbstractDefinition def = getSafeFieldDefinition(field);
 
-        if (!(def instanceof QFDefinitionElement)) {
+        if (!(def instanceof QFDefinitionElement idefElem)) {
             throw new QFNotValuable(field);
         }
 
         specificationsWarp.deleteSpecificationField(field);
-        QFElementMatch match = new QFElementMatch(Arrays.asList(value.split(",")), operation,
-                (QFDefinitionElement) def);
+        QFElementMatch match = new QFElementMatch(Arrays.asList(value.split(",")), operation, idefElem);
         specificationsWarp.addSpecification(match);
 
     }
@@ -622,13 +621,13 @@ public class QueryFilter<E> implements Specification<E> {
 
         QFAbstractDefinition def = getSafeFieldDefinition(field);
 
-        if (!(def instanceof QFDefinitionDiscriminator)) {
+        if (!(def instanceof QFDefinitionDiscriminator idefDiscriminator)) {
             throw new QFNotValuable(field);
         }
 
         specificationsWarp.deleteSpecificationField(field);
         QFDiscriminatorMatch match = new QFDiscriminatorMatch(Arrays.asList(value.split(",")), operation,
-                (QFDefinitionDiscriminator) def);
+                idefDiscriminator);
         specificationsWarp.addSpecification(match);
 
     }
@@ -666,12 +665,12 @@ public class QueryFilter<E> implements Specification<E> {
 
         QFAbstractDefinition def = getSafeFieldDefinition(field);
 
-        if (!(def instanceof QFDefinitionJson)) {
+        if (!(def instanceof QFDefinitionJson idefJson)) {
             throw new QFNotValuable(field);
         }
 
         specificationsWarp.deleteSpecificationField(field);
-        QFJsonElementMatch match = new QFJsonElementMatch(value, operationJson, (QFDefinitionJson) def);
+        QFJsonElementMatch match = new QFJsonElementMatch(value, operationJson, idefJson);
         specificationsWarp.addSpecification(match);
 
     }
@@ -707,12 +706,12 @@ public class QueryFilter<E> implements Specification<E> {
 
         QFAbstractDefinition def = getSafeFieldDefinition(field);
 
-        if (!(def instanceof QFDefinitionCollection)) {
+        if (!(def instanceof QFDefinitionCollection idefCollection)) {
             throw new QFNotValuable(field);
         }
 
         specificationsWarp.deleteSpecificationField(field);
-        QFCollectionMatch match = new QFCollectionMatch((QFDefinitionCollection) def, operationCollection, value);
+        QFCollectionMatch match = new QFCollectionMatch(idefCollection, operationCollection, value);
         specificationsWarp.addSpecification(match);
     }
 

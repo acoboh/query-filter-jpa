@@ -24,7 +24,7 @@ class QFSpecificationsWarp {
 
     private final Map<String, QFAbstractDefinition> mapFieldsOnPresent;
 
-    private final List<QFSpecificationPart> specifications = new LinkedList<>();
+    private final List<QFSpecificationPart> specifications = new ArrayList<>();
 
     /**
      * Default constructor

@@ -73,20 +73,22 @@ class PredicateLevel {
 
                     PredicateLevel nestedLevel = new PredicateLevel(part.part(), fullMap);
                     switch (nestedLevel.parts.size()) {
-                    case 0:
+                    case 0 -> {
                         LOGGER.trace("Nested level is empty. Ignore them");
-                        continue;
-                    case 1:
+                    }
+                    case 1 -> {
                         LOGGER.trace("Nested level must be simplified");
                         levelParts.addAll(nestedLevel.levelParts);
-                        continue;
-                    default:
+                    }
+                    default -> {
                         LOGGER.trace("Adding as nested level");
+
                         if (nestedLevels == null) {
                             nestedLevels = new ArrayList<>();
                         }
 
                         nestedLevels.add(nestedLevel);
+                    }
                     }
 
                 } else {

@@ -12,6 +12,7 @@ import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.metamodel.Metamodel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -47,7 +48,7 @@ public class QFDefinitionJson extends QFAbstractDefinition {
         this.attributes = fieldClassProcessor.getAttributes();
 
         Column column = getColumnAnnotation();
-        if (!column.columnDefinition().toLowerCase().startsWith("jsonb")) {
+        if (!column.columnDefinition().toLowerCase(LocaleContextHolder.getLocale()).startsWith("jsonb")) {
             throw new QFJsonException(
                     "QFJsonElement annotations are only supported on colums of type 'jsonb'. Actual type is {}",
                     column.columnDefinition());

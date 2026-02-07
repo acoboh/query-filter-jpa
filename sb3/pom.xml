@@ -20,7 +20,7 @@
         <spring-boot.version>3.5.8</spring-boot.version>
 
         <!-- Hypersistance tests -->
-        <hypersistance.version>3.12.0</hypersistance.version>
+        <hypersistance.version>3.13.2</hypersistance.version>
 
         <!-- JUnit version -->
         <junit.version>5.14.1</junit.version>

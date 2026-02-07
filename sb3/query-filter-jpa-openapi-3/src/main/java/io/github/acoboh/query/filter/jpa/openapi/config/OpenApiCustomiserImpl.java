@@ -206,6 +206,10 @@ class OpenApiCustomiserImpl implements OpenApiCustomizer {
 
         }
 
+        if (annotation.base64Encoded()) {
+            builder.append("  \n\n> **_Note_**: The filter **must be base64** encoded");
+        }
+
         return builder.toString();
 
     }

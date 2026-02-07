@@ -69,7 +69,6 @@ public class UserModel {
     public boolean equals(Object o) {
         if (!(o instanceof UserModel userModel))
             return false;
-        return Objects.equals(id, userModel.id) && Objects.equals(username, userModel.username)
-                && Objects.equals(roles, userModel.roles);
+        return Objects.equals(id, userModel.id) && Objects.equals(username, userModel.username);
     }
 }

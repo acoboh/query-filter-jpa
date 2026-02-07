@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  *
  * @author Adrián Cobo
  */
-public interface UserRepository extends JpaSpecificationExecutor<@NonNull UserModel>, JpaRepository<@NonNull UserModel, @NonNull Long> {
+public interface UserRepository
+        extends JpaSpecificationExecutor<@NonNull UserModel>, JpaRepository<@NonNull UserModel, @NonNull Long> {
 
 }

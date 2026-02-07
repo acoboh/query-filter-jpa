@@ -6,9 +6,6 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=acoboh_query-filter-jpa&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=acoboh_query-filter-jpa)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/acoboh/query-filter-jpa)
 
-> [!CAUTION]
-> On next major release (1.0.0), the support for Spring Boot 2 will be dropped and be no longer maintained.
-
 ### 🔹 The simplest way to filter JPA queries in Spring Boot!
 
 **QueryFilterJPA** lets you create powerful, dynamic filters with minimal setup. Define filterable fields, integrate

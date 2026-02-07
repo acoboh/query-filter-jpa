@@ -3,12 +3,15 @@ package io.github.acoboh.query.filter.jpa.converters;
 import io.github.acoboh.query.filter.jpa.annotations.QFParam;
 import io.github.acoboh.query.filter.jpa.processor.QFProcessor;
 import io.github.acoboh.query.filter.jpa.processor.QueryFilter;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.converter.GenericConverter;
 import org.springframework.data.util.Pair;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
+import java.nio.charset.Charset;
 import java.util.*;
 
 /**
@@ -41,7 +44,7 @@ public class QFCustomConverter implements GenericConverter {
 
     /** {@inheritDoc} */
     @Override
-    public Set<ConvertiblePair> getConvertibleTypes() {
+    public Set<@NotNull ConvertiblePair> getConvertibleTypes() {
         Set<ConvertiblePair> set = new HashSet<>();
         for (QFProcessor<?, ?> processor : queryFilterProcessors) {
             ResolvableType type = ResolvableType.forClassWithGenerics(QueryFilter.class, processor.getEntityClass());
@@ -53,9 +56,10 @@ public class QFCustomConverter implements GenericConverter {
 
     /** {@inheritDoc} */
     @Override
-    public Object convert(Object source, @NonNull TypeDescriptor sourceType, @NonNull TypeDescriptor targetType) {
+    public Object convert(@Nullable Object source, @NonNull TypeDescriptor sourceType,
+            @NonNull TypeDescriptor targetType) {
 
-        if (source.getClass() == QFProcessor.class) {
+        if (source != null && source.getClass() == QFProcessor.class) {
             return source;
         }
 
@@ -77,6 +81,10 @@ public class QFCustomConverter implements GenericConverter {
 
         if (found == null) {
             throw new IllegalArgumentException("No QueryFilterProcessor found for " + source.getClass());
+        }
+
+        if (queryParam.base64Encoded()) {
+            filter = new String(Base64.getDecoder().decode(filter), Charset.defaultCharset());
         }
 
         return found.newQueryFilter(filter, queryParam.type());

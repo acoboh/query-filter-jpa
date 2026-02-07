@@ -3,18 +3,20 @@ package io.github.acoboh.query.filter.jpa.converters;
 import io.github.acoboh.query.filter.jpa.annotations.QFParam;
 import io.github.acoboh.query.filter.jpa.processor.QFProcessor;
 import io.github.acoboh.query.filter.jpa.processor.QueryFilter;
+import jakarta.validation.constraints.NotNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.converter.GenericConverter;
 import org.springframework.data.util.Pair;
 
+import java.nio.charset.Charset;
 import java.util.*;
 
 /**
  * Class with for custom converters of Spring Boot.
  * <p>
- * This class allows inject {@linkplain QueryFilter} objects on controllers
+ * This class allows to inject {@linkplain QueryFilter} objects on controllers
  *
  * @author Adrián Cobo
  */
@@ -41,7 +43,7 @@ public class QFCustomConverter implements GenericConverter {
 
     /** {@inheritDoc} */
     @Override
-    public @Nullable Set<ConvertiblePair> getConvertibleTypes() {
+    public @Nullable Set<@NotNull ConvertiblePair> getConvertibleTypes() {
         Set<ConvertiblePair> set = new HashSet<>();
         for (QFProcessor<?, ?> processor : queryFilterProcessors) {
             ResolvableType type = ResolvableType.forClassWithGenerics(QueryFilter.class, processor.getEntityClass());
@@ -77,6 +79,10 @@ public class QFCustomConverter implements GenericConverter {
 
         if (found == null) {
             throw new IllegalArgumentException("No QueryFilterProcessor found for " + pairKey);
+        }
+
+        if (queryParam.base64Encoded()) {
+            filter = new String(Base64.getDecoder().decode(filter), Charset.defaultCharset());
         }
 
         return found.newQueryFilter(filter, queryParam.type());

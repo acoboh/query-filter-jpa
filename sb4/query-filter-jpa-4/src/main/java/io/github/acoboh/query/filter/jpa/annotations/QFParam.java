@@ -31,4 +31,10 @@ public @interface QFParam {
      */
     QFParamType type() default QFParamType.RHS_COLON;
 
+    /**
+     * Indicates if the parameter is base64 encoded
+     * @return true if the parameter is base64 encoded, false otherwise
+     */
+    boolean base64Encoded() default false;
+
 }

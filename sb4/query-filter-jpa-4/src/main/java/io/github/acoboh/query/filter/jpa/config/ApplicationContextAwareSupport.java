@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  *
  * @author Adrián Cobo
  */
-@Component("applicationContextAwareSupport")
+@Component("applicationContextAwareSupportJPA")
 public class ApplicationContextAwareSupport implements ApplicationContextAware {
 
     private @Nullable ApplicationContext applicationContextAware;

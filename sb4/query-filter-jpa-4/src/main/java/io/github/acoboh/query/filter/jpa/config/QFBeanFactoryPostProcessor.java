@@ -185,7 +185,7 @@ public class QFBeanFactoryPostProcessor implements ApplicationContextAware, Bean
         var args = new ConstructorArgumentValues();
         args.addGenericArgumentValue(cl);
         args.addGenericArgumentValue(annotationClass.value());
-        args.addGenericArgumentValue(new RuntimeBeanReference("applicationContextAwareSupport"));
+        args.addGenericArgumentValue(new RuntimeBeanReference("applicationContextAwareSupportJPA"));
 
         // Bean definition
         beanDefinition.setConstructorArgumentValues(args);

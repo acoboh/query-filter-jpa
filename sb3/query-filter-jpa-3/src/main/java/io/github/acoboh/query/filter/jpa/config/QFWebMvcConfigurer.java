@@ -1,12 +1,14 @@
 package io.github.acoboh.query.filter.jpa.config;
 
 import io.github.acoboh.query.filter.jpa.converters.QFCustomConverter;
+import io.github.acoboh.query.filter.jpa.converters.QueryFilterMethodArgumentResolver;
 import io.github.acoboh.query.filter.jpa.processor.QFProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -38,4 +40,9 @@ public class QFWebMvcConfigurer implements WebMvcConfigurer {
         registry.addConverter(new QFCustomConverter(processors));
     }
 
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        LOGGER.info("Using QueryFilterWebMvcConfigurer. Registering custom argument resolvers");
+        resolvers.add(new QueryFilterMethodArgumentResolver(processors));
+    }
 }

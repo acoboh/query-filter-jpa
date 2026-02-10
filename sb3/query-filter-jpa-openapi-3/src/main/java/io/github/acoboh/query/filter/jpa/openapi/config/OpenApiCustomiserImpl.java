@@ -152,7 +152,7 @@ class OpenApiCustomiserImpl implements OpenApiCustomizer {
 
     private String createDescription(QFParam annotation, QFProcessor<?, ?> processor) {
 
-        StringBuilder builder = new StringBuilder("Filter is **_").append(annotation.type().getBeatifulName());
+        StringBuilder builder = new StringBuilder("Filter is **_").append(annotation.type().getBeautifulName());
 
         builder.append("_**. Available fields:  \n");
 

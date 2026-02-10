@@ -53,6 +53,8 @@ class ConverterTests {
     @DisplayName("1. Test conversion filter to query filter FilterBlogDef")
     void testConversionFilterToQueryFilter() throws NoSuchMethodException, SecurityException {
 
+        assertThat(conversionService.canConvert(String.class, QueryFilter.class)).isTrue();
+
         Method method = AnnotationClass.class.getDeclaredMethod("paramQueryFilterBlogDef", QueryFilter.class);
         Annotation[] annotations = method.getParameters()[0].getAnnotations();
 

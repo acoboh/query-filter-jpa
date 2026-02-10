@@ -19,7 +19,30 @@ public enum QFParamType {
      * }
      */
     RHS_COLON("(([^&=]+)=([a-zA-Z]+):((?:[^&]|&[^a-zA-Z0-9])*[^&]*))|(sort=([^&]+))", // Pattern Regex
-            "RHS Colon"),
+            "RHS Colon") {
+        @Override
+        String extractOP(String value) {
+            int indexOf = value.indexOf(':');
+            if (indexOf == -1) {
+                return "eq";
+            }
+            return value.substring(0, indexOf);
+        }
+
+        @Override
+        String extractValue(String value) {
+            int indexOf = value.indexOf(':');
+            if (indexOf == -1) {
+                return value;
+            }
+            return value.substring(indexOf + 1);
+        }
+
+        @Override
+        String buildParam(String field, String op, String value) {
+            return String.format("%s=%s:%s", field, op, value);
+        }
+    },
 
     /**
      * LHS Brackets standard
@@ -31,15 +54,38 @@ public enum QFParamType {
      * }
      */
     LHS_BRACKETS("(([^&=]+)\\[([a-zA-Z]+)\\]=((?:[^&]|&[^a-zA-Z0-9])*[^&]*))|(sort=([^&]+))", // Pattern Regex
-            "LHS Brackets"); // Name
+            "LHS Brackets") {
+        @Override
+        String extractOP(String value) {
+            int indexOf = value.indexOf('[');
+            if (indexOf == -1) {
+                return "eq";
+            }
+            return value.substring(indexOf + 1, value.indexOf(']'));
+        }
+
+        @Override
+        String extractValue(String value) {
+            int indexOf = value.indexOf(']');
+            if (indexOf == -1) {
+                return value;
+            }
+            return value.substring(indexOf + 1);
+        }
+
+        @Override
+        String buildParam(String field, String op, String value) {
+            return String.format("%s[%s]=%s", field, op, value);
+        }
+    }; // Name
 
     private final Pattern pattern;
 
-    private final String beatifulName;
+    private final String beautifulName;
 
-    QFParamType(String regexPattern, String beatifulName) {
+    QFParamType(String regexPattern, String beautifulName) {
         this.pattern = Pattern.compile(regexPattern);
-        this.beatifulName = beatifulName;
+        this.beautifulName = beautifulName;
     }
 
     /**
@@ -56,8 +102,14 @@ public enum QFParamType {
      *
      * @return beautiful name
      */
-    public String getBeatifulName() {
-        return beatifulName;
+    public String getBeautifulName() {
+        return beautifulName;
     }
+
+    abstract String extractOP(String value);
+
+    abstract String extractValue(String value);
+
+    abstract String buildParam(String field, String op, String value);
 
 }

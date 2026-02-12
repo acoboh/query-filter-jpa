@@ -54,7 +54,7 @@ public class QueryFilter<E> implements Specification<E> {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private static final Pattern REGEX_PATTERN = Pattern.compile("([+-])([a-zA-Z0-9]+)");
+    private static final Pattern REGEX_PATTERN = Pattern.compile("([+-])?([a-zA-Z0-9]+)");
 
     private String initialInput;
 
@@ -151,6 +151,18 @@ public class QueryFilter<E> implements Specification<E> {
 
         for (var entry : input.entrySet()) {
             String key = entry.getKey();
+
+            // Sort param
+            if (SORT_KEY.equals(key)) {
+                for (var val : entry.getValue()) {
+                    // Sort param
+                    parseSortPart(val);
+                    initialInputBuilder.append(prefix).append("sort=").append(val);
+                }
+                continue;
+            }
+
+            // Value param
             String[] values = entry.getValue();
 
             // Check if the key is known
@@ -176,17 +188,12 @@ public class QueryFilter<E> implements Specification<E> {
                     LOGGER.trace("Processing part {}={}", key, value);
                 }
 
-                if (SORT_KEY.equals(key)) {
-                    // Sort param
-                    parseSortPart(value);
-                    initialInputBuilder.append(prefix).append("sort=").append(value);
-                } else {
-                    // Value param
-                    String partOp = type.extractOP(value);
-                    String partVal = type.extractValue(value);
-                    parseValuePart(key, partOp, partVal);
-                    initialInputBuilder.append(prefix).append(type.buildParam(key, partOp, partVal));
-                }
+                // Value param
+                String partOp = type.extractOP(value);
+                String partVal = type.extractValue(value);
+                parseValuePart(key, partOp, partVal);
+                initialInputBuilder.append(prefix).append(type.buildParam(key, partOp, partVal));
+
                 prefix = "&";
             }
         }
@@ -251,6 +258,7 @@ public class QueryFilter<E> implements Specification<E> {
         while (matcher.find()) {
             match = true;
 
+            @Nullable
             String order = matcher.group(1);
             String fieldName = matcher.group(2);
 
@@ -265,7 +273,7 @@ public class QueryFilter<E> implements Specification<E> {
             }
 
             Direction dir;
-            if (order.equals("-")) {
+            if ("-".equals(order)) {
                 dir = Direction.DESC;
             } else {
                 dir = Direction.ASC;

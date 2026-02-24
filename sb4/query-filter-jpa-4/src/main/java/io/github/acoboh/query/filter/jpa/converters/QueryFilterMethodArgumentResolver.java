@@ -3,7 +3,6 @@ package io.github.acoboh.query.filter.jpa.converters;
 import io.github.acoboh.query.filter.jpa.annotations.QFMultiParam;
 import io.github.acoboh.query.filter.jpa.processor.QFProcessor;
 import io.github.acoboh.query.filter.jpa.processor.QueryFilter;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.core.MethodParameter;
 import org.springframework.data.util.Pair;
@@ -37,9 +36,8 @@ public class QueryFilterMethodArgumentResolver implements HandlerMethodArgumentR
     }
 
     @Override
-    public @Nullable Object resolveArgument(@NonNull MethodParameter parameter,
-            @Nullable ModelAndViewContainer mavContainer, @NonNull NativeWebRequest webRequest,
-            @Nullable WebDataBinderFactory binderFactory) throws Exception {
+    public @Nullable Object resolveArgument(MethodParameter parameter, @Nullable ModelAndViewContainer mavContainer,
+            NativeWebRequest webRequest, @Nullable WebDataBinderFactory binderFactory) throws Exception {
 
         QFMultiParam qfMultiParam = parameter.getParameterAnnotation(QFMultiParam.class);
         if (qfMultiParam == null) {

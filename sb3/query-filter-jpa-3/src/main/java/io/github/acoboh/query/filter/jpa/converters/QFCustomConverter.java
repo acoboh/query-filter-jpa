@@ -22,8 +22,6 @@ import java.util.*;
  */
 public class QFCustomConverter implements GenericConverter {
 
-    private final List<QFProcessor<?, ?>> queryFilterProcessors;
-
     // Filter - Entity
     private final Map<Pair<Class<?>, Class<?>>, QFProcessor<?, ?>> mapProcessors = new HashMap<>();
 
@@ -33,12 +31,9 @@ public class QFCustomConverter implements GenericConverter {
      * @param queryFilterProcessors all query filter processors
      */
     public QFCustomConverter(List<QFProcessor<?, ?>> queryFilterProcessors) {
-        this.queryFilterProcessors = queryFilterProcessors;
-
         for (QFProcessor<?, ?> processor : queryFilterProcessors) {
             mapProcessors.put(Pair.of(processor.getFilterClass(), processor.getEntityClass()), processor);
         }
-
     }
 
     /** {@inheritDoc} */

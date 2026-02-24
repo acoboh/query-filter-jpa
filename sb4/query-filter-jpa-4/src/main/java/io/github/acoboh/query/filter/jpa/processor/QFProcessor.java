@@ -15,6 +15,7 @@ import io.github.acoboh.query.filter.jpa.processor.definitions.traits.IDefinitio
 import jakarta.annotation.Nullable;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.metamodel.Metamodel;
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -268,6 +269,11 @@ public class QFProcessor<F, E> {
      */
     public QueryFilter<E> newQueryFilter(@Nullable String input, QFParamType type) throws QueryFilterException {
         return new QueryFilter<>(input, type, this);
+    }
+
+    public QueryFilter<E> newQueryFilterMap(@NotNull Map<String, String[]> input, boolean ignoreUnknown,
+            QFParamType type) throws QueryFilterException {
+        return new QueryFilter<>(input, ignoreUnknown, type, this);
     }
 
     /**

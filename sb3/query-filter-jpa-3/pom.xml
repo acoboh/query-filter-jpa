@@ -17,7 +17,7 @@
 
     <properties>
         <!-- Spring dependencies -->
-        <spring-boot.version>3.5.2</spring-boot.version>
+        <spring-boot.version>3.5.11</spring-boot.version>
     </properties>
 
     <dependencies>

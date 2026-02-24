@@ -31,7 +31,7 @@ public class QueryFilterMethodArgumentResolver implements HandlerMethodArgumentR
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return (parameter.hasParameterAnnotation(QFMultiParam.class))
+        return parameter.hasParameterAnnotation(QFMultiParam.class)
                 && QueryFilter.class.isAssignableFrom(parameter.getParameterType());
     }
 

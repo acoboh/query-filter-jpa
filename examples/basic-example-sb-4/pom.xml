@@ -7,6 +7,12 @@
     <artifactId>query-filter-basic-example-sb-4</artifactId>
     <version>0.0.1</version>
 
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.0.3</version>
+    </parent>
+
     <packaging>jar</packaging>
 
     <name>query-filter-basic-example-sb-4</name>
@@ -94,6 +100,11 @@
             <groupId>io.hypersistence</groupId>
             <artifactId>hypersistence-utils-hibernate-71</artifactId>
             <version>${hypersistance-utils.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging</artifactId>
         </dependency>
 
         <dependency>
@@ -189,11 +200,12 @@
                         <artifactId>native-maven-plugin</artifactId>
                         <configuration>
                             <classesDirectory>${project.build.outputDirectory}</classesDirectory>
-                            <metadataRepository>
-                                <enabled>true</enabled>
-                                <version>0.3.13</version>
-                            </metadataRepository>
-                            <requiredVersion>22.3</requiredVersion>
+                            <exclusions>
+                                <exclusion>
+                                    <groupId>org.springframework.boot</groupId>
+                                    <artifactId>spring-boot-devtools</artifactId>
+                                </exclusion>
+                            </exclusions>
                         </configuration>
                         <executions>
                             <execution>

@@ -43,7 +43,7 @@ public class PostRestController {
         return service.getPost(uuid);
     }
 
-    @PostMapping("/{uuid}")
+    @PutMapping("/{uuid}")
     public void updatePost(@PathVariable String uuid, @RequestBody PostDTO post) {
         service.updatePost(uuid, post);
     }

@@ -187,14 +187,6 @@
                     <plugin>
                         <groupId>org.graalvm.buildtools</groupId>
                         <artifactId>native-maven-plugin</artifactId>
-                        <configuration>
-                            <classesDirectory>${project.build.outputDirectory}</classesDirectory>
-                            <metadataRepository>
-                                <enabled>true</enabled>
-                                <version>0.3.13</version>
-                            </metadataRepository>
-                            <requiredVersion>22.3</requiredVersion>
-                        </configuration>
                         <executions>
                             <execution>
                                 <id>add-reachability-metadata</id>

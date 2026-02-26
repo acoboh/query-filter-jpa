@@ -7,12 +7,6 @@
     <artifactId>query-filter-basic-example-sb-4</artifactId>
     <version>0.0.1</version>
 
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.3</version>
-    </parent>
-
     <packaging>jar</packaging>
 
     <name>query-filter-basic-example-sb-4</name>

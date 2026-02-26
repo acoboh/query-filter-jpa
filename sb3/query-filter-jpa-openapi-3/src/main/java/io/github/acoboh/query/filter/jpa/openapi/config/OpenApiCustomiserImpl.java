@@ -1,24 +1,31 @@
 package io.github.acoboh.query.filter.jpa.openapi.config;
 
 import io.github.acoboh.query.filter.jpa.annotations.QFDiscriminator;
+import io.github.acoboh.query.filter.jpa.annotations.QFMultiParam;
 import io.github.acoboh.query.filter.jpa.annotations.QFParam;
 import io.github.acoboh.query.filter.jpa.operations.QFCollectionOperationEnum;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationDiscriminatorEnum;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationJsonEnum;
+import io.github.acoboh.query.filter.jpa.processor.QFParamType;
 import io.github.acoboh.query.filter.jpa.processor.QFProcessor;
 import io.github.acoboh.query.filter.jpa.processor.definitions.*;
 import io.github.acoboh.query.filter.jpa.processor.definitions.traits.IDefinitionSortable;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.StringSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.MethodParameter;
 import org.springframework.core.ResolvableType;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.method.HandlerMethod;
@@ -70,67 +77,88 @@ class OpenApiCustomiserImpl implements OpenApiCustomizer {
 
     private void processParameter(OpenAPI openApi, Entry<RequestMappingInfo, HandlerMethod> requestMapping) {
         for (var param : requestMapping.getValue().getMethodParameters()) {
-            var qfParamAnnotation = param.getParameterAnnotation(QFParam.class);
-            if (qfParamAnnotation != null) {
 
-                var filterType = (ParameterizedType) param.getGenericParameterType();
-                Class<?> classType = (Class<?>) filterType.getActualTypeArguments()[0];
+            var qfParam = param.getParameterAnnotation(QFParam.class);
+            var qfMultiParam = param.getParameterAnnotation(QFMultiParam.class);
 
-                var resolvableBeanType = ResolvableType.forClassWithGenerics(QFProcessor.class,
-                        qfParamAnnotation.value(), classType);
-                String[] names = applicationContext.getBeanNamesForType(resolvableBeanType);
-                if (names.length > 1) {
-                    LOGGER.warn("Multiple beans found for type {}", resolvableBeanType);
-                } else if (names.length == 0) {
-                    LOGGER.error("No bean found for type {}", resolvableBeanType);
-                    continue;
-                }
-
-                QFProcessor<?, ?> processor = applicationContext.getBean(names[0], QFProcessor.class);
-
-                Set<String> requestMappingPatterns;
-                if (requestMapping.getKey().getPathPatternsCondition() != null) {
-                    requestMappingPatterns = requestMapping.getKey().getPathPatternsCondition().getPatternValues();
-                } else { // Otherwise will be illegal state exception
-                    requestMappingPatterns = requestMapping.getKey().getPatternsCondition().getPatterns();
-                }
-
-                String paramName = param.getParameterName();
-                LOGGER.trace("Param name from MethodParam {}", paramName);
-                if (paramName == null) {
-                    paramName = param.getParameter().getName();
-                    LOGGER.trace("Param name from parameter {}", paramName);
-                }
-                RequestParam requestParamAnnotation = param.getParameterAnnotation(RequestParam.class);
-                if (requestParamAnnotation != null && !requestParamAnnotation.name().isEmpty()) {
-                    paramName = requestParamAnnotation.name();
-                    LOGGER.trace("Param name from RequestParam annotation {}", paramName);
-                }
-
-                processPath(openApi, requestMapping, paramName, qfParamAnnotation, processor, requestMappingPatterns);
-
+            if (qfParam == null && qfMultiParam == null) {
+                // No annotation found, skip param
+                continue;
             }
+
+            processQFParam(openApi, requestMapping, param, qfParam, qfMultiParam);
 
         }
     }
 
-    private void processPath(OpenAPI openApi, Entry<RequestMappingInfo, HandlerMethod> requestMapping, String paramName,
-            QFParam qfParamAnnotation, QFProcessor<?, ?> processor, Set<String> requestMappingPatterns) {
-        for (String path : requestMappingPatterns) { // For multiple mapping on same method
+    private void processQFParam(OpenAPI openApi, Entry<RequestMappingInfo, HandlerMethod> requestMapping,
+            MethodParameter param, QFParam qfParam, QFMultiParam qfMultiParam) {
+        var filterType = (ParameterizedType) param.getGenericParameterType();
+        Class<?> classType = (Class<?>) filterType.getActualTypeArguments()[0];
 
+        Class<?> entityClass = qfParam != null ? qfParam.value() : qfMultiParam.value();
+
+        var resolvableBeanType = ResolvableType.forClassWithGenerics(QFProcessor.class, entityClass, classType);
+        String[] names = applicationContext.getBeanNamesForType(resolvableBeanType);
+        if (names.length > 1) {
+            LOGGER.warn("Multiple beans found for type {}", resolvableBeanType);
+        } else if (names.length == 0) {
+            LOGGER.error("No bean found for type {}", resolvableBeanType);
+            return;
+        }
+
+        QFProcessor<?, ?> processor = applicationContext.getBean(names[0], QFProcessor.class);
+
+        Set<String> requestMappingPatterns;
+        var pathPatternsCondition = requestMapping.getKey().getPathPatternsCondition();
+
+        if (pathPatternsCondition != null) {
+            requestMappingPatterns = pathPatternsCondition.getPatternValues();
+        } else { // Otherwise will be illegal state exception
+            var req2 = requestMapping.getKey().getPatternsCondition();
+            Assert.notNull(req2, "PatternsCondition is null for request mapping " + requestMapping.getKey());
+            requestMappingPatterns = req2.getPatterns();
+        }
+
+        String paramName = param.getParameterName();
+        LOGGER.trace("Param name from MethodParam {}", paramName);
+        if (paramName == null) {
+            paramName = param.getParameter().getName();
+            LOGGER.trace("Param name from parameter {}", paramName);
+        }
+
+        RequestParam requestParamAnnotation = param.getParameterAnnotation(RequestParam.class);
+        if (requestParamAnnotation != null && !requestParamAnnotation.name().isEmpty()) {
+            paramName = requestParamAnnotation.name();
+            LOGGER.trace("Param name from RequestParam annotation {}", paramName);
+        }
+
+        if (qfParam != null) {
+            processPathQFParamAnnotation(openApi, requestMapping, paramName, qfParam, processor,
+                    requestMappingPatterns);
+        } else {
+            processPathQFMultiParamAnnotation(openApi, requestMapping, paramName, qfMultiParam, processor,
+                    requestMappingPatterns);
+        }
+    }
+
+    private void processPathQFParamAnnotation(OpenAPI openApi, Entry<RequestMappingInfo, HandlerMethod> requestMapping,
+            String paramName, QFParam qfParamAnnotation, QFProcessor<?, ?> processor,
+            Set<String> requestMappingPatterns) {
+
+        for (String path : requestMappingPatterns) { // For multiple mapping on same method
             Optional<PathItem> optPath = openApi.getPaths().entrySet().stream().filter(e -> e.getKey().equals(path))
                     .map(Map.Entry::getValue).findFirst();
 
             if (optPath.isEmpty()) {
-                LOGGER.error("Error processing {} path", path);
+                LOGGER.error("Error processing qf annotation on {} path", path);
                 continue;
             }
 
-            Operation op = getOperation(optPath.get(),
+            Operation op = getApiOperation(optPath.get(),
                     requestMapping.getKey().getMethodsCondition().getMethods().iterator().next());
 
-            Optional<io.swagger.v3.oas.models.parameters.Parameter> optParam = op.getParameters().stream()
-                    .filter(e -> e.getName().equals(paramName)).findFirst();
+            var optParam = op.getParameters().stream().filter(e -> e.getName().equals(paramName)).findFirst();
 
             if (optParam.isEmpty()) {
                 LOGGER.error("Error getting parameter filter on path {}", path);
@@ -141,7 +169,7 @@ class OpenApiCustomiserImpl implements OpenApiCustomizer {
 
             LOGGER.debug("Override description {}", actualDesc);
 
-            optParam.get().setDescription(createDescription(qfParamAnnotation, processor));
+            optParam.get().setDescription(createDescriptionQFParam(qfParamAnnotation, processor));
 
             // Force string schema on swagger
             Schema<String> schema = new Schema<>();
@@ -150,9 +178,9 @@ class OpenApiCustomiserImpl implements OpenApiCustomizer {
         }
     }
 
-    private String createDescription(QFParam annotation, QFProcessor<?, ?> processor) {
+    private String createDescriptionQFParam(QFParam annotation, QFProcessor<?, ?> processor) {
 
-        StringBuilder builder = new StringBuilder("Filter is **_").append(annotation.type().getBeatifulName());
+        StringBuilder builder = new StringBuilder("Filter is **_").append(annotation.type().getBeautifulName());
 
         builder.append("_**. Available fields:  \n");
 
@@ -160,50 +188,13 @@ class OpenApiCustomiserImpl implements OpenApiCustomizer {
         List<QFAbstractDefinition> defValuesOrdered = new ArrayList<>(defValues);
         defValuesOrdered.sort(Comparator.comparing(QFAbstractDefinition::getFilterName));
 
-        String prefix = "";
+        StringBuilder prevRet = null;
 
         for (var def : defValuesOrdered) {
-            if (def.isConstructorBlocked()) {
-                continue;
+            if (prevRet != null) { // Add separation between filters
+                builder.append("  \n\n");
             }
-
-            builder.append(prefix).append("* **").append(def.getFilterName()).append("**");
-            prefix = "  \n\n";
-
-            if (def instanceof IDefinitionSortable idef && idef.isSortable()) {
-                builder.append(" _(Sortable)_");
-            }
-
-            if (def instanceof QFDefinitionSortable) {
-                continue;
-            }
-
-            builder.append("  \n");
-
-            createOperations(def, builder);
-
-            if (def instanceof QFDefinitionElement elem && elem.getFirstFinalClass() != null
-                    && elem.getFirstFinalClass().isEnum()) {
-                // Add info about enum
-
-                builder.append("  \nEnum values: [_");
-                String enumValues = Arrays.stream(elem.getFirstFinalClass().getEnumConstants()).map(Object::toString)
-                        .collect(Collectors.joining(","));
-                builder.append(enumValues).append("_]");
-
-            }
-
-            if (def instanceof QFDefinitionDiscriminator qdefDiscriminator) {
-                builder.append("  \nPossible Values: [");
-                String values = Arrays.stream(qdefDiscriminator.getDiscriminatorAnnotation().value())
-                        .map(QFDiscriminator.Value::name).collect(Collectors.joining(","));
-                builder.append(values).append("]");
-            } else if (def instanceof QFDefinitionJson) {
-                builder.append(" _(JSON element)_");
-            } else if (def instanceof QFDefinitionCollection) {
-                builder.append(" _(Collection)_");
-            }
-
+            prevRet = buildDefinitionData(def, annotation.type(), false, builder);
         }
 
         if (annotation.base64Encoded()) {
@@ -214,7 +205,142 @@ class OpenApiCustomiserImpl implements OpenApiCustomizer {
 
     }
 
-    private void createOperations(QFAbstractDefinition def, StringBuilder builder) {
+    private void processPathQFMultiParamAnnotation(OpenAPI openApi,
+            Entry<RequestMappingInfo, HandlerMethod> requestMapping, String paramName, QFMultiParam qfParamAnnotation,
+            QFProcessor<?, ?> processor, Set<String> requestMappingPatterns) {
+        for (String path : requestMappingPatterns) { // For multiple mapping on same method
+
+            var optPath = openApi.getPaths().entrySet().stream().filter(e -> e.getKey().equals(path))
+                    .map(Map.Entry::getValue).findFirst();
+
+            if (optPath.isEmpty()) {
+                LOGGER.error("Error processing {} path", path);
+                continue;
+            }
+
+            Operation op = getApiOperation(optPath.get(),
+                    requestMapping.getKey().getMethodsCondition().getMethods().iterator().next());
+
+            op.getParameters().removeIf(e -> e.getName().equals(paramName));
+            createDescriptionQFMultiParam(qfParamAnnotation, processor, op);
+
+        }
+    }
+
+    private void createDescriptionQFMultiParam(QFMultiParam qfParamAnnotation, QFProcessor<?, ?> processor,
+            Operation op) {
+
+        Collection<QFAbstractDefinition> defValues = processor.getDefinitionMap().values();
+        List<QFAbstractDefinition> defValuesOrdered = new ArrayList<>(defValues);
+        defValuesOrdered.sort(Comparator.comparing(QFAbstractDefinition::getFilterName));
+
+        Set<String> fieldsSortables = new TreeSet<>();
+        for (var def : defValuesOrdered) {
+            if (def instanceof QFDefinitionSortable) {
+                fieldsSortables.add(def.getFilterName());
+                continue;
+            }
+
+            if (def instanceof IDefinitionSortable idef && idef.isSortable()) {
+                fieldsSortables.add(def.getFilterName());
+            }
+
+            StringBuilder builder = new StringBuilder();
+
+            var paramDef = buildDefinitionData(def, qfParamAnnotation.type(), true, builder);
+            if (paramDef == null) {
+                continue;
+            }
+
+            var param = new io.swagger.v3.oas.models.parameters.Parameter();
+            param.setName(def.getFilterName());
+            param.setIn("query");
+            param.setDescription(paramDef.toString());
+
+            var arraySchema = new ArraySchema();
+            arraySchema.setItems(new StringSchema());
+
+            param.setSchema(arraySchema);
+            param.setExplode(true);
+            op.addParametersItem(param);
+
+        }
+
+        if (!fieldsSortables.isEmpty()) {
+            // Sort param
+            var sortParam = new io.swagger.v3.oas.models.parameters.Parameter();
+            sortParam.setName("sort");
+            sortParam.setIn("query");
+
+            StringBuilder sortDesc = new StringBuilder("Sort by fields: ");
+            String fields = String.join(", ", fieldsSortables);
+            sortDesc.append(fields);
+
+            sortParam.setDescription(sortDesc.toString());
+
+            var arraySchema = new ArraySchema();
+            arraySchema.setItems(new StringSchema());
+
+            sortParam.setSchema(arraySchema);
+            sortParam.setExplode(true);
+            op.addParametersItem(sortParam);
+        }
+
+        op.setDescription((op.getDescription() != null ? op.getDescription() : "") + "\n\nAll Filters are **_"
+                + qfParamAnnotation.type().getBeautifulName() + "_**.");
+
+    }
+
+    public static @Nullable StringBuilder buildDefinitionData(QFAbstractDefinition def, QFParamType paramType,
+            boolean forMulti, StringBuilder builder) {
+
+        if (def.isConstructorBlocked()) {
+            return null;
+        }
+
+        if (!forMulti) { // For single, we can just put the name of the filter
+            builder.append("* **").append(def.getFilterName()).append("**");
+        }
+
+        if (!forMulti && def instanceof IDefinitionSortable idef && idef.isSortable()) {
+            builder.append(" _(Sortable)_");
+        }
+
+        if (def instanceof QFDefinitionSortable) {
+            return builder;
+        }
+
+        if (!forMulti) { // For single, we need to specify the operations available
+            builder.append("  \n");
+        }
+
+        createOperations(def, builder);
+
+        if (def instanceof QFDefinitionElement elem && elem.getFirstFinalClass() != null
+                && elem.getFirstFinalClass().isEnum()) {
+            // Add info about enum
+
+            builder.append("  \nEnum values: [_");
+            String enumValues = Arrays.stream(elem.getFirstFinalClass().getEnumConstants()).map(Object::toString)
+                    .collect(Collectors.joining(","));
+            builder.append(enumValues).append("_]");
+
+        }
+
+        if (def instanceof QFDefinitionDiscriminator qdefDiscriminator) {
+            builder.append("  \nPossible Values: [");
+            String values = Arrays.stream(qdefDiscriminator.getDiscriminatorAnnotation().value())
+                    .map(QFDiscriminator.Value::name).collect(Collectors.joining(","));
+            builder.append(values).append("]");
+        } else if (def instanceof QFDefinitionJson) {
+            builder.append(" _(JSON element)_");
+        } else if (def instanceof QFDefinitionCollection) {
+            builder.append(" _(Collection)_");
+        }
+        return builder;
+    }
+
+    private static void createOperations(QFAbstractDefinition def, StringBuilder builder) {
 
         Set<String> operations;
 
@@ -247,7 +373,7 @@ class OpenApiCustomiserImpl implements OpenApiCustomizer {
 
     }
 
-    private Operation getOperation(PathItem item, RequestMethod method) {
+    private Operation getApiOperation(PathItem item, RequestMethod method) {
 
         return switch (method) {
         case DELETE -> item.getDelete();

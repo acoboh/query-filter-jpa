@@ -21,6 +21,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -229,7 +230,8 @@ class BasicTest {
     @Order(8)
     void testQueryByPublished() {
 
-        QueryFilterException qfException = assertThrows(QueryFilterException.class, () -> queryFilterProcessor.newQueryFilter("published=eq:true", QFParamType.RHS_COLON));
+        QueryFilterException qfException = assertThrows(QueryFilterException.class,
+                () -> queryFilterProcessor.newQueryFilter("published=eq:true", QFParamType.RHS_COLON));
 
         assertThat(qfException.getClass()).isAssignableFrom(QFBlockException.class);
 
@@ -273,8 +275,7 @@ class BasicTest {
     @DisplayName("11. Test author between")
     @Order(11)
     void testQueryByAuthorBetween() throws QueryFilterException {
-        var qf = queryFilterProcessor.newQueryFilter("author=btw:authoa,authoz",
-                QFParamType.RHS_COLON);
+        var qf = queryFilterProcessor.newQueryFilter("author=btw:authoa,authoz", QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         List<PostBlog> list = repository.findAll(qf);
@@ -296,6 +297,85 @@ class BasicTest {
 
         PostBlog postBlog = list.get(0);
         assertPostEqual(postBlog);
+    }
+
+    @Test
+    @DisplayName("20. Test by map constructor")
+    @Order(20)
+    void testByMapConstructor() throws QueryFilterException {
+        Map<String, String[]> map = Map.of("author", new String[] { "like:auth" });
+
+        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilterMap(map, true, QFParamType.RHS_COLON);
+        assertThat(qf).isNotNull();
+
+        List<PostBlog> list = repository.findAll(qf);
+        assertThat(list).hasSize(1);
+
+        PostBlog postBlog = list.get(0);
+        assertPostEqual(postBlog);
+
+        assertThat(qf).hasToString("author=like:auth");
+
+        map = Map.of("author", new String[] { "[like]auth" });
+
+        qf = queryFilterProcessor.newQueryFilterMap(map, true, QFParamType.LHS_BRACKETS);
+        assertThat(qf).isNotNull();
+
+        list = repository.findAll(qf);
+        assertThat(list).hasSize(1);
+
+        postBlog = list.get(0);
+        assertPostEqual(postBlog);
+
+        assertThat(qf).hasToString("author[like]=auth");
+
+    }
+
+    @Test
+    @DisplayName("21. Test by empty map constructor")
+    @Order(21)
+    void testByEmptyMapConstructor() throws QueryFilterException {
+        Map<String, String[]> map = Map.of();
+
+        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilterMap(map, true, QFParamType.RHS_COLON);
+        assertThat(qf).isNotNull();
+
+        List<PostBlog> list = repository.findAll(qf);
+        assertThat(list).hasSize(1);
+
+        PostBlog postBlog = list.get(0);
+        assertPostEqual(postBlog);
+    }
+
+    @Test
+    @DisplayName("22. Test by map eq shortcut")
+    @Order(22)
+    void testByMapEqShortcut() throws QueryFilterException {
+        Map<String, String[]> map = Map.of("avgNote", new String[] { "2.5" });
+
+        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilterMap(map, true, QFParamType.RHS_COLON);
+        assertThat(qf).isNotNull();
+
+        List<PostBlog> list = repository.findAll(qf);
+        assertThat(list).hasSize(1);
+
+        PostBlog postBlog = list.get(0);
+        assertPostEqual(postBlog);
+
+        assertThat(qf).hasToString("avgNote=eq:2.5");
+
+        map = Map.of("avgNote", new String[] { "2.5" });
+
+        qf = queryFilterProcessor.newQueryFilterMap(map, true, QFParamType.LHS_BRACKETS);
+        assertThat(qf).isNotNull();
+
+        list = repository.findAll(qf);
+        assertThat(list).hasSize(1);
+
+        postBlog = list.get(0);
+        assertPostEqual(postBlog);
+
+        assertThat(qf).hasToString("avgNote[eq]=2.5");
     }
 
     @Test

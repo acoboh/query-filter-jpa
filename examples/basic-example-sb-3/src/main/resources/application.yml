@@ -14,3 +14,4 @@ spring:
 logging:
   level:
     io.github.acoboh: trace
+    net.ttddyy.dsproxy: debug

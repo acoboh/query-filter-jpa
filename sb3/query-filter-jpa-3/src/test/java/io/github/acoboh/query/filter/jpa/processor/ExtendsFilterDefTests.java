@@ -40,16 +40,7 @@ class ExtendsFilterDefTests {
         POST_EXAMPLE.setLikes(100);
         POST_EXAMPLE.setCreateDate(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)); // Truncated to avoid rounding
                                                                                         // issues with Java > 8 and BBDD
-        POST_EXAMPLE.setLastTimestamp(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS))); // Truncated
-                                                                                                              // to
-                                                                                                              // avoid
-                                                                                                              // rounding
-                                                                                                              // issues
-                                                                                                              // with
-                                                                                                              // Java
-                                                                                                              // > 8
-                                                                                                              // and
-                                                                                                              // BBDD
+        POST_EXAMPLE.setLastTimestamp(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS)));
         POST_EXAMPLE.setPublished(true);
         POST_EXAMPLE.setPostType(PostBlog.PostType.TEXT);
     }

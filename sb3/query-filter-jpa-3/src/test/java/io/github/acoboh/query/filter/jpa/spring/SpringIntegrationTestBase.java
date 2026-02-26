@@ -148,7 +148,7 @@ public class SpringIntegrationTestBase {
          * @param properties properties base
          */
         protected void additionalProperties(Properties properties) {
-
+            // No additional properties by default
         }
 
         /**
@@ -164,7 +164,7 @@ public class SpringIntegrationTestBase {
     }
 
     private static class PrettyQueryEntryCreator extends DefaultQueryLogEntryCreator {
-        private Formatter formatter = FormatStyle.BASIC.getFormatter();
+        private final Formatter formatter = FormatStyle.BASIC.getFormatter();
 
         @Override
         protected String formatQuery(String query) {

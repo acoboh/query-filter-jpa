@@ -14,6 +14,7 @@ import io.github.acoboh.query.filter.jpa.processor.match.QFDiscriminatorMatch;
 import io.github.acoboh.query.filter.jpa.processor.match.QFElementMatch;
 import io.github.acoboh.query.filter.jpa.processor.match.QFJsonElementMatch;
 import io.github.acoboh.query.filter.jpa.spel.SpelResolverContext;
+import io.github.acoboh.query.filter.jpa.utils.LogSanitizer;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.criteria.*;
 import org.slf4j.Logger;
@@ -49,12 +50,14 @@ public class QueryFilter<E> implements Specification<E> {
     private static final String OPERATION_NOT_NULL_MESSAGE = "operation cannot be null";
     private static final String VALUES_NOT_NULL_MESSAGE = "values cannot be null";
 
+    private static final String SORT_KEY = "sort";
+
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private static final Pattern REGEX_PATTERN = Pattern.compile("([+-])([a-zA-Z0-9]+)");
+    private static final Pattern REGEX_PATTERN = Pattern.compile("([+-])?([a-zA-Z0-9]+)");
 
-    private final String initialInput;
+    private String initialInput;
 
     private final transient QFSpecificationsWarp specificationsWarp;
 
@@ -79,16 +82,7 @@ public class QueryFilter<E> implements Specification<E> {
     private @Nullable String predicateName;
     private transient @Nullable PredicateProcessorResolutor predicate;
 
-    /**
-     * Construtor from query filter processor
-     *
-     * @param input     Input of filter
-     * @param type      Type of filter
-     * @param processor query filter processor
-     */
-    protected QueryFilter(String input, QFParamType type, QFProcessor<?, E> processor) {
-        Assert.notNull(type, "type cannot be null");
-
+    private QueryFilter(QFProcessor<?, E> processor) {
         this.definitionMap = processor.getDefinitionMap();
 
         this.specificationsWarp = new QFSpecificationsWarp(processor.getDefaultMatches(),
@@ -109,6 +103,18 @@ public class QueryFilter<E> implements Specification<E> {
         }
 
         this.distinct = processor.getDefinitionClassAnnotation().distinct();
+    }
+
+    /**
+     * Construtor from query filter processor
+     *
+     * @param input     Input of filter
+     * @param type      Type of filter
+     * @param processor query filter processor
+     */
+    protected QueryFilter(String input, QFParamType type, QFProcessor<?, E> processor) {
+        this(processor);
+        Assert.notNull(type, "type cannot be null");
 
         this.initialInput = input != null ? input : "";
 
@@ -118,7 +124,7 @@ public class QueryFilter<E> implements Specification<E> {
 
             while (matcher.find()) {
                 if (LOGGER.isTraceEnabled()) {
-                    LOGGER.trace("Processing part {}", matcher.group());
+                    LOGGER.trace("Processing part {}", LogSanitizer.sanitize(matcher.group()));
                 }
 
                 if (matcher.group(1) != null) {
@@ -133,6 +139,71 @@ public class QueryFilter<E> implements Specification<E> {
 
         }
 
+        afterPropertiesSet(processor);
+
+    }
+
+    protected QueryFilter(Map<String, String[]> input, boolean ignoreUnknow, QFParamType type,
+            QFProcessor<?, E> processor) {
+        this(processor);
+
+        var initialInputBuilder = new StringBuilder();
+        String prefix = "";
+
+        for (var entry : input.entrySet()) {
+            String key = entry.getKey();
+
+            // Sort param
+            if (SORT_KEY.equals(key)) {
+                for (var val : entry.getValue()) {
+                    // Sort param
+                    parseSortPart(val);
+                    initialInputBuilder.append(prefix).append("sort=").append(val);
+                }
+                continue;
+            }
+
+            // Value param
+            String[] values = entry.getValue();
+
+            // Check if the key is known
+            QFAbstractDefinition def = definitionMap.get(key);
+            if (def == null) {
+                if (ignoreUnknow) {
+                    if (LOGGER.isTraceEnabled()) {
+                        LOGGER.trace("Ignoring unknown parameter {}", LogSanitizer.sanitize(key));
+                    }
+                    continue;
+                } else {
+                    throw new QFFieldNotFoundException(key);
+                }
+            }
+
+            // Check if the field is blocked on constructor
+            if (def.isConstructorBlocked()) {
+                throw new QFBlockException(key);
+            }
+
+            for (var value : values) {
+                if (LOGGER.isTraceEnabled()) {
+                    LOGGER.trace("Processing part {}={}", LogSanitizer.sanitize(key), LogSanitizer.sanitize(value));
+                }
+
+                // Value param
+                String partOp = type.extractOP(value);
+                String partVal = type.extractValue(value);
+                parseValuePart(key, partOp, partVal);
+                initialInputBuilder.append(prefix).append(type.buildParam(key, partOp, partVal));
+
+                prefix = "&";
+            }
+        }
+        this.initialInput = initialInputBuilder.toString();
+
+        afterPropertiesSet(processor);
+    }
+
+    private void afterPropertiesSet(QFProcessor<?, E> processor) {
         var listSort = defaultSortEnabled ? defaultSorting : sortDefinitionList;
         var allFieldsOnString = listSort.stream().map(e -> e.getFirst().getFilterName())
                 .collect(Collectors.toCollection(HashSet::new));
@@ -188,6 +259,7 @@ public class QueryFilter<E> implements Specification<E> {
         while (matcher.find()) {
             match = true;
 
+            @Nullable
             String order = matcher.group(1);
             String fieldName = matcher.group(2);
 
@@ -202,7 +274,7 @@ public class QueryFilter<E> implements Specification<E> {
             }
 
             Direction dir;
-            if (order.equals("-")) {
+            if ("-".equals(order)) {
                 dir = Direction.DESC;
             } else {
                 dir = Direction.ASC;
@@ -798,7 +870,7 @@ public class QueryFilter<E> implements Specification<E> {
      *                                                                               not
      *                                                                               found
      */
-    public Integer getActualCollectionValue(String field) throws QFFieldNotFoundException {
+    public @Nullable Integer getActualCollectionValue(String field) throws QFFieldNotFoundException {
         QFAbstractDefinition def = getSafeFieldDefinition(field);
 
         if (!(def instanceof QFDefinitionCollection)) {
@@ -847,7 +919,7 @@ public class QueryFilter<E> implements Specification<E> {
      * @return operation and values of the field
      * @since 1.0.0
      */
-    public Pair<QFOperationJsonEnum, Map<String, String>> getFirstActualJsonOperation(String field) {
+    public @Nullable Pair<QFOperationJsonEnum, Map<String, String>> getFirstActualJsonOperation(String field) {
         var def = getSafeFieldDefinition(field);
 
         QFSpecificationPart qfSpec = specificationsWarp.getAllParts().stream()
@@ -869,7 +941,8 @@ public class QueryFilter<E> implements Specification<E> {
      * @return operation and values of the field
      * @since 1.0.0
      */
-    public Pair<QFOperationDiscriminatorEnum, List<String>> getFirstActualDiscriminatorOperation(String field) {
+    public @Nullable Pair<QFOperationDiscriminatorEnum, List<String>> getFirstActualDiscriminatorOperation(
+            String field) {
         var def = getSafeFieldDefinition(field);
 
         QFSpecificationPart qfSpec = specificationsWarp.getAllParts().stream()
@@ -891,7 +964,7 @@ public class QueryFilter<E> implements Specification<E> {
      * @return a {@link org.springframework.data.util.Pair} object
      * @since 1.0.0
      */
-    public Pair<QFCollectionOperationEnum, Integer> getFirstActualCollectionOperation(String field) {
+    public @Nullable Pair<QFCollectionOperationEnum, Integer> getFirstActualCollectionOperation(String field) {
         var def = getSafeFieldDefinition(field);
 
         QFSpecificationPart qfSpec = specificationsWarp.getAllParts().stream()
@@ -1110,7 +1183,7 @@ public class QueryFilter<E> implements Specification<E> {
         }
     }
 
-    private Predicate parseFinalPredicate(CriteriaBuilder cb, Map<String, List<Predicate>> predicatesMap) {
+    private @Nullable Predicate parseFinalPredicate(CriteriaBuilder cb, Map<String, List<Predicate>> predicatesMap) {
 
         Map<String, Predicate> simplifiedPredicate = predicatesMap.entrySet().stream()
                 .collect(Collectors.toMap(Entry::getKey, e -> cb.and(e.getValue().toArray(new Predicate[0]))));

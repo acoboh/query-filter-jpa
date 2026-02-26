@@ -2,6 +2,7 @@ package io.github.acoboh.query.filter.jpa.hints;
 
 import io.github.acoboh.query.filter.jpa.annotations.EnableQueryFilter;
 import io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass;
+import io.github.classgraph.ClassGraph;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,22 +57,14 @@ public class HintsRegistrarDef {
         }
 
         private void processQFClasses(ClassLoader classLoader, ReflectionHints rh) {
-            // Create a component provider that includes non-infrastructure classes
-            var scanner = new ClassPathScanningCandidateComponentProvider(false);
 
-            // Add filter to detect classes annotated with EnableQueryFilter
-            scanner.addIncludeFilter(new AnnotationTypeFilter(EnableQueryFilter.class));
-            scanner.setResourceLoader(new PathMatchingResourcePatternResolver(classLoader));
+            try (var scan = new ClassGraph().enableClassInfo().enableAnnotationInfo().scan()) {
+                var classInfos = scan.getClassesWithAnnotation(EnableQueryFilter.class);
+                LOGGER.info("Found {} classes annotated with EnableQueryFilter using ClassGraph", classInfos.size());
 
-            // Find candidate components
-            Set<BeanDefinition> candidates = scanner.findCandidateComponents("");
-
-            LOGGER.info("Found {} classes annotated with EnableQueryFilter", candidates.size());
-
-            for (BeanDefinition beanDefinition : candidates) {
-                try {
-                    Class<?> clazz = Class.forName(beanDefinition.getBeanClassName(), false, classLoader);
-                    LOGGER.info("Processing EnableQueryFilter annotated class {}", clazz.getName());
+                for (var classInfo : classInfos) {
+                    Class<?> clazz = classInfo.loadClass();
+                    LOGGER.info("Processing EnableQueryFilter annotated class {} using ClassGraph", clazz.getName());
                     EnableQueryFilter qfAnnotation = clazz.getAnnotation(EnableQueryFilter.class);
                     if (qfAnnotation == null) {
                         continue;
@@ -87,10 +80,10 @@ public class HintsRegistrarDef {
                         registerClassesInPackage(packClass.getPackageName(), rh, classLoader);
                     }
 
-                } catch (ClassNotFoundException e) {
-                    LOGGER.error("Could not find class {}", beanDefinition.getBeanClassName(), e);
                 }
+
             }
+
         }
 
         private void registerClassesInPackage(String basePackage, ReflectionHints rh, ClassLoader classLoader) {

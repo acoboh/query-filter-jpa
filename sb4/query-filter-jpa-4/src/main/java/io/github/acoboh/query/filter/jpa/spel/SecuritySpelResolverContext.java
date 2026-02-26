@@ -10,7 +10,7 @@ import org.springframework.core.GenericTypeResolver;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
-import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.expression.spel.support.SimpleEvaluationContext;
 import org.springframework.security.access.expression.SecurityExpressionHandler;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -65,7 +65,7 @@ class SecuritySpelResolverContext extends SpelResolverContext {
     @Override
     public EvaluationContext getEvaluationContext() {
         if (securityExpressionHandler == null || request == null) {
-            return new StandardEvaluationContext();
+            return SimpleEvaluationContext.forReadOnlyDataBinding().build();
         }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

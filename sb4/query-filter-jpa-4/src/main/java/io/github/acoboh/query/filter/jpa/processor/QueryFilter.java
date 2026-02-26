@@ -14,10 +14,13 @@ import io.github.acoboh.query.filter.jpa.processor.match.QFDiscriminatorMatch;
 import io.github.acoboh.query.filter.jpa.processor.match.QFElementMatch;
 import io.github.acoboh.query.filter.jpa.processor.match.QFJsonElementMatch;
 import io.github.acoboh.query.filter.jpa.spel.SpelResolverContext;
+import io.github.acoboh.query.filter.jpa.utils.LogSanitizer;
 import jakarta.persistence.criteria.*;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.util.Pair;
@@ -48,12 +51,14 @@ public class QueryFilter<E> implements Specification<E> {
     private static final String OPERATION_NOT_NULL_MESSAGE = "operation cannot be null";
     private static final String VALUES_NOT_NULL_MESSAGE = "values cannot be null";
 
+    private static final String SORT_KEY = "sort";
+
     @Serial
     private static final long serialVersionUID = 1L;
 
     private static final Pattern REGEX_PATTERN = Pattern.compile("([+-])([a-zA-Z0-9]+)");
 
-    private final String initialInput;
+    private String initialInput;
 
     private final transient QFSpecificationsWarp specificationsWarp;
 
@@ -78,16 +83,7 @@ public class QueryFilter<E> implements Specification<E> {
     private @Nullable String predicateName;
     private transient @Nullable PredicateProcessorResolutor predicate;
 
-    /**
-     * Construtor from query filter processor
-     *
-     * @param input     Input of filter
-     * @param type      Type of filter
-     * @param processor query filter processor
-     */
-    protected QueryFilter(@Nullable String input, QFParamType type, QFProcessor<?, E> processor) {
-        Assert.notNull(type, "type cannot be null");
-
+    private QueryFilter(QFProcessor<?, E> processor) {
         this.definitionMap = processor.getDefinitionMap();
 
         this.specificationsWarp = new QFSpecificationsWarp(processor.getDefaultMatches(),
@@ -103,11 +99,24 @@ public class QueryFilter<E> implements Specification<E> {
         this.requiredOnExecution = processor.getRequiredOnExecution();
         this.requiredOnSort = processor.getRequiredOnSort();
 
-        if (this.predicateName != null && predicateMap != null) {
+        if (this.predicateName != null && this.predicateMap != null) {
             this.predicate = predicateMap.get(this.predicateName);
         }
 
         this.distinct = processor.getDefinitionClassAnnotation().distinct();
+        this.initialInput = ""; // Can not be null
+    }
+
+    /**
+     * Construtor from query filter processor
+     *
+     * @param input     Input of filter
+     * @param type      Type of filter
+     * @param processor query filter processor
+     */
+    protected QueryFilter(@Nullable String input, QFParamType type, QFProcessor<?, E> processor) {
+        this(processor);
+        Assert.notNull(type, "type cannot be null");
 
         this.initialInput = input != null ? input : "";
 
@@ -117,7 +126,7 @@ public class QueryFilter<E> implements Specification<E> {
 
             while (matcher.find()) {
                 if (LOGGER.isTraceEnabled()) {
-                    LOGGER.trace("Processing part {}", matcher.group());
+                    LOGGER.trace("Processing part {}", LogSanitizer.sanitize(matcher.group()));
                 }
 
                 if (matcher.group(1) != null) {
@@ -132,6 +141,70 @@ public class QueryFilter<E> implements Specification<E> {
 
         }
 
+        afterPropertiesSet(processor);
+    }
+
+    protected QueryFilter(Map<String, String[]> input, boolean ignoreUnknow, QFParamType type,
+            QFProcessor<?, E> processor) {
+        this(processor);
+
+        var initialInputBuilder = new StringBuilder();
+        String prefix = "";
+
+        for (var entry : input.entrySet()) {
+            String key = entry.getKey();
+
+            // Sort param
+            if (SORT_KEY.equals(key)) {
+                for (var val : entry.getValue()) {
+                    // Sort param
+                    parseSortPart(val);
+                    initialInputBuilder.append(prefix).append("sort=").append(val);
+                }
+                continue;
+            }
+
+            // Value param
+            String[] values = entry.getValue();
+
+            // Check if the key is known
+            QFAbstractDefinition def = definitionMap.get(key);
+            if (def == null) {
+                if (ignoreUnknow) {
+                    if (LOGGER.isTraceEnabled()) {
+                        LOGGER.trace("Ignoring unknown parameter {}", LogSanitizer.sanitize(key));
+                    }
+                    continue;
+                } else {
+                    throw new QFFieldNotFoundException(key);
+                }
+            }
+
+            // Check if the field is blocked on constructor
+            if (def.isConstructorBlocked()) {
+                throw new QFBlockException(key);
+            }
+
+            for (var value : values) {
+                if (LOGGER.isTraceEnabled()) {
+                    LOGGER.trace("Processing part {}={}", LogSanitizer.sanitize(key), LogSanitizer.sanitize(value));
+                }
+
+                // Value param
+                String partOp = type.extractOP(value);
+                String partVal = type.extractValue(value);
+                parseValuePart(key, partOp, partVal);
+                initialInputBuilder.append(prefix).append(type.buildParam(key, partOp, partVal));
+
+                prefix = "&";
+            }
+        }
+        this.initialInput = initialInputBuilder.toString();
+
+        afterPropertiesSet(processor);
+    }
+
+    private void afterPropertiesSet(QFProcessor<?, E> processor) {
         var listSort = defaultSortEnabled ? defaultSorting : sortDefinitionList;
         var allFieldsOnString = listSort.stream().map(e -> e.getFirst().getFilterName())
                 .collect(Collectors.toCollection(HashSet::new));
@@ -260,12 +333,7 @@ public class QueryFilter<E> implements Specification<E> {
      * @param field     field of filter
      * @param operation operation to be applied
      * @param values    list of values
-     * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException if
-     *                                                                               the
-     *                                                                               field
-     *                                                                               is
-     *                                                                               not
-     *                                                                               found
+     * @throws QFFieldNotFoundException if the field is not found
      * @see #addNewField(String, QFOperationEnum, String)
      */
     public void addNewField(String field, QFOperationEnum operation, List<String> values)
@@ -293,12 +361,7 @@ public class QueryFilter<E> implements Specification<E> {
      * @param field     field of filter
      * @param operation operation to be applied
      * @param classes   list of values
-     * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException if
-     *                                                                               the
-     *                                                                               field
-     *                                                                               is
-     *                                                                               not
-     *                                                                               found
+     * @throws QFFieldNotFoundException if the field is not found
      */
     public void addNewField(String field, QFOperationDiscriminatorEnum operation, List<String> classes) {
 
@@ -369,12 +432,7 @@ public class QueryFilter<E> implements Specification<E> {
      * @param operation operation to be applied
      * @param value     value to match. Can be multiple values joined by a ','
      *                  (comma)
-     * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException if
-     *                                                                               the
-     *                                                                               field
-     *                                                                               is
-     *                                                                               not
-     *                                                                               found
+     * @throws QFFieldNotFoundException if the field is not found
      */
     public void addNewField(String field, QFOperationEnum operation, String value) throws QFFieldNotFoundException {
 
@@ -392,21 +450,9 @@ public class QueryFilter<E> implements Specification<E> {
      *
      * @param field     Field name of sorting
      * @param direction Direction of sorting
-     * @throws io.github.acoboh.query.filter.jpa.exceptions.QFNotSortableException   not
-     *                                                                               sortable
-     * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException if
-     *                                                                               field
-     *                                                                               does
-     *                                                                               not
-     *                                                                               exist
-     * @throws io.github.acoboh.query.filter.jpa.exceptions.QFMultipleSortException  if
-     *                                                                               multiple
-     *                                                                               sort
-     *                                                                               exists
-     *                                                                               on
-     *                                                                               the
-     *                                                                               same
-     *                                                                               field
+     * @throws QFNotSortableException   not sortable
+     * @throws QFFieldNotFoundException if field does not exist
+     * @throws QFMultipleSortException  if multiple sort exists on the same field
      */
     public void addSortBy(String field, Direction direction)
             throws QFFieldNotFoundException, QFNotSortableException, QFMultipleSortException {
@@ -431,8 +477,7 @@ public class QueryFilter<E> implements Specification<E> {
      * Remove the sort configuration for the field
      *
      * @param field Field name of sorting
-     * @throws io.github.acoboh.query.filter.jpa.exceptions.QFNotSortableException not
-     *                                                                             sortable
+     * @throws QFNotSortableException not sortable
      * @since 1.0.0
      */
     public void deleteSortBy(String field) {
@@ -489,8 +534,7 @@ public class QueryFilter<E> implements Specification<E> {
     /**
      * Get all the sort fields with full path
      * <p>
-     * This is useful to use {@linkplain org.springframework.data.domain.Pageable}
-     * with {@linkplain org.springframework.data.domain.Sort}
+     * This is useful to use {@linkplain Pageable} with {@linkplain Sort}
      *
      * @return list of a pair of sorting fields
      */
@@ -559,21 +603,10 @@ public class QueryFilter<E> implements Specification<E> {
      * @param field     Field filter name
      * @param operation Operation to apply
      * @param value     value of filter
-     * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException         Missing
-     *                                                                                       field
-     *                                                                                       exception
-     * @throws io.github.acoboh.query.filter.jpa.exceptions.QFDiscriminatorNotFoundException if
-     *                                                                                       the
-     *                                                                                       discriminator
-     *                                                                                       value
-     *                                                                                       is
-     *                                                                                       not
-     *                                                                                       allowed
-     * @throws io.github.acoboh.query.filter.jpa.exceptions.QFJsonParseException             if
-     *                                                                                       any
-     *                                                                                       json
-     *                                                                                       parse
-     *                                                                                       exception
+     * @throws QFFieldNotFoundException         Missing field exception
+     * @throws QFDiscriminatorNotFoundException if the discriminator value is not
+     *                                          allowed
+     * @throws QFJsonParseException             if any json parse exception
      */
     public void overrideField(String field, QFOperationEnum operation, String value)
             throws QFFieldNotFoundException, QFDiscriminatorNotFoundException, QFJsonParseException {
@@ -600,18 +633,9 @@ public class QueryFilter<E> implements Specification<E> {
      * @param field     Field filter name
      * @param operation Operation to apply
      * @param value     value of filter
-     * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException Missing
-     *                                                                               field
-     *                                                                               exception
-     * @throws io.github.acoboh.query.filter.jpa.exceptions.QFNotValuable            if
-     *                                                                               the
-     *                                                                               field
-     *                                                                               is
-     *                                                                               not
-     *                                                                               valuable
-     *                                                                               or
-     *                                                                               type
-     *                                                                               compatible
+     * @throws QFFieldNotFoundException Missing field exception
+     * @throws QFNotValuable            if the field is not valuable or type
+     *                                  compatible
      */
     public void overrideField(String field, QFOperationDiscriminatorEnum operation, String value) {
 
@@ -638,23 +662,10 @@ public class QueryFilter<E> implements Specification<E> {
      * @param field         Field filter name
      * @param operationJson Operation to apply
      * @param value         value of filter
-     * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException Missing
-     *                                                                               field
-     *                                                                               exception
-     * @throws io.github.acoboh.query.filter.jpa.exceptions.QFJsonParseException     if
-     *                                                                               any
-     *                                                                               json
-     *                                                                               parse
-     *                                                                               exception
-     * @throws io.github.acoboh.query.filter.jpa.exceptions.QFNotValuable            if
-     *                                                                               the
-     *                                                                               field
-     *                                                                               is
-     *                                                                               not
-     *                                                                               valuable
-     *                                                                               or
-     *                                                                               type
-     *                                                                               compatible
+     * @throws QFFieldNotFoundException Missing field exception
+     * @throws QFJsonParseException     if any json parse exception
+     * @throws QFNotValuable            if the field is not valuable or type
+     *                                  compatible
      */
     public void overrideField(String field, QFOperationJsonEnum operationJson, String value)
             throws QFFieldNotFoundException, QFNotValuable {
@@ -681,22 +692,9 @@ public class QueryFilter<E> implements Specification<E> {
      * @param field               filter field name
      * @param operationCollection operation
      * @param value               value
-     * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException if
-     *                                                                               the
-     *                                                                               field
-     *                                                                               is
-     *                                                                               not
-     *                                                                               present
-     * @throws io.github.acoboh.query.filter.jpa.exceptions.QFNotValuable            if
-     *                                                                               the
-     *                                                                               field
-     *                                                                               is
-     *                                                                               not
-     *                                                                               a
-     *                                                                               valid
-     *                                                                               collection
-     *                                                                               filter
-     *                                                                               field
+     * @throws QFFieldNotFoundException if the field is not present
+     * @throws QFNotValuable            if the field is not a valid collection
+     *                                  filter field
      */
     public void overrideField(String field, QFCollectionOperationEnum operationCollection, int value)
             throws QFFieldNotFoundException, QFNotValuable {
@@ -720,18 +718,8 @@ public class QueryFilter<E> implements Specification<E> {
      *
      * @param field Field to check
      * @return Values of the field
-     * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException if
-     *                                                                               the
-     *                                                                               field
-     *                                                                               is
-     *                                                                               not
-     *                                                                               present
-     * @throws java.lang.UnsupportedOperationException                               if
-     *                                                                               the
-     *                                                                               field
-     *                                                                               is
-     *                                                                               JSON
-     *                                                                               type
+     * @throws QFFieldNotFoundException      if the field is not present
+     * @throws UnsupportedOperationException if the field is JSON type
      */
     public @Nullable List<String> getActualValue(String field) throws QFFieldNotFoundException {
         getSafeFieldDefinition(field);
@@ -756,12 +744,7 @@ public class QueryFilter<E> implements Specification<E> {
      *
      * @param field filter field
      * @return value of null if the field is not JSON type
-     * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException if
-     *                                                                               the
-     *                                                                               field
-     *                                                                               is
-     *                                                                               not
-     *                                                                               found
+     * @throws QFFieldNotFoundException if the field is not found
      */
     public @Nullable Map<String, String> getActualJsonValue(String field) throws QFFieldNotFoundException {
         QFAbstractDefinition def = getSafeFieldDefinition(field);
@@ -788,12 +771,7 @@ public class QueryFilter<E> implements Specification<E> {
      *
      * @param field filter field name
      * @return the value of null if the field is not Collection type
-     * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException if
-     *                                                                               the
-     *                                                                               field
-     *                                                                               is
-     *                                                                               not
-     *                                                                               found
+     * @throws QFFieldNotFoundException if the field is not found
      */
     public @Nullable Integer getActualCollectionValue(String field) throws QFFieldNotFoundException {
         QFAbstractDefinition def = getSafeFieldDefinition(field);
@@ -885,8 +863,8 @@ public class QueryFilter<E> implements Specification<E> {
     /**
      * Get the first actual operation of the field
      *
-     * @param field a {@link java.lang.String} object
-     * @return a {@link org.springframework.data.util.Pair} object
+     * @param field a {@link String} object
+     * @return a {@link Pair} object
      * @since 1.0.0
      */
     public @Nullable Pair<QFCollectionOperationEnum, Integer> getFirstActualCollectionOperation(String field) {
@@ -984,11 +962,7 @@ public class QueryFilter<E> implements Specification<E> {
      * Delete the field of the filter
      *
      * @param field field to delete
-     * @throws io.github.acoboh.query.filter.jpa.exceptions.QFFieldNotFoundException if
-     *                                                                               the
-     *                                                                               is
-     *                                                                               not
-     *                                                                               present
+     * @throws QFFieldNotFoundException if the is not present
      */
     public void deleteField(String field) throws QFFieldNotFoundException {
         var def = getSafeFieldDefinition(field);

@@ -5,7 +5,6 @@ import io.github.acoboh.query.filter.jpa.processor.QFProcessor;
 import io.github.acoboh.query.filter.jpa.processor.QueryFilter;
 import jakarta.validation.constraints.NotNull;
 import org.jspecify.annotations.Nullable;
-import org.springframework.core.ResolvableType;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.converter.GenericConverter;
 import org.springframework.data.util.Pair;
@@ -22,8 +21,6 @@ import java.util.*;
  */
 public class QFCustomConverter implements GenericConverter {
 
-    private final List<QFProcessor<?, ?>> queryFilterProcessors;
-
     // Filter - Entity
     private final Map<Pair<Class<?>, Class<?>>, QFProcessor<?, ?>> mapProcessors = new HashMap<>();
 
@@ -33,24 +30,15 @@ public class QFCustomConverter implements GenericConverter {
      * @param queryFilterProcessors all query filter processors
      */
     public QFCustomConverter(List<QFProcessor<?, ?>> queryFilterProcessors) {
-        this.queryFilterProcessors = queryFilterProcessors;
-
         for (QFProcessor<?, ?> processor : queryFilterProcessors) {
             mapProcessors.put(Pair.of(processor.getFilterClass(), processor.getEntityClass()), processor);
         }
-
     }
 
     /** {@inheritDoc} */
     @Override
     public @Nullable Set<@NotNull ConvertiblePair> getConvertibleTypes() {
-        Set<ConvertiblePair> set = new HashSet<>();
-        for (QFProcessor<?, ?> processor : queryFilterProcessors) {
-            ResolvableType type = ResolvableType.forClassWithGenerics(QueryFilter.class, processor.getEntityClass());
-            set.add(new ConvertiblePair(String.class, type.toClass()));
-        }
-
-        return set;
+        return Set.of(new ConvertiblePair(String.class, QueryFilter.class));
     }
 
     /** {@inheritDoc} */

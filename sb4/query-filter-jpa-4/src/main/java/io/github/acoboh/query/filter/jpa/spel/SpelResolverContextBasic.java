@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
-import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.expression.spel.support.SimpleEvaluationContext;
 
 /**
  * SPEL Context resolver bean
@@ -33,7 +33,7 @@ class SpelResolverContextBasic extends SpelResolverContext {
     /** {@inheritDoc} */
     @Override
     public EvaluationContext getEvaluationContext() {
-        return new StandardEvaluationContext();
+        return SimpleEvaluationContext.forReadOnlyDataBinding().build();
     }
 
 }

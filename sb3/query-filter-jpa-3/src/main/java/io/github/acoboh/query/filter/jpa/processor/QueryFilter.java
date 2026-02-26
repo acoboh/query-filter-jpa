@@ -14,6 +14,7 @@ import io.github.acoboh.query.filter.jpa.processor.match.QFDiscriminatorMatch;
 import io.github.acoboh.query.filter.jpa.processor.match.QFElementMatch;
 import io.github.acoboh.query.filter.jpa.processor.match.QFJsonElementMatch;
 import io.github.acoboh.query.filter.jpa.spel.SpelResolverContext;
+import io.github.acoboh.query.filter.jpa.utils.LogSanitizer;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.criteria.*;
 import org.slf4j.Logger;
@@ -123,7 +124,7 @@ public class QueryFilter<E> implements Specification<E> {
 
             while (matcher.find()) {
                 if (LOGGER.isTraceEnabled()) {
-                    LOGGER.trace("Processing part {}", matcher.group());
+                    LOGGER.trace("Processing part {}", LogSanitizer.sanitize(matcher.group()));
                 }
 
                 if (matcher.group(1) != null) {
@@ -170,7 +171,7 @@ public class QueryFilter<E> implements Specification<E> {
             if (def == null) {
                 if (ignoreUnknow) {
                     if (LOGGER.isTraceEnabled()) {
-                        LOGGER.trace("Ignoring unknown parameter {}", key);
+                        LOGGER.trace("Ignoring unknown parameter {}", LogSanitizer.sanitize(key));
                     }
                     continue;
                 } else {
@@ -185,7 +186,7 @@ public class QueryFilter<E> implements Specification<E> {
 
             for (var value : values) {
                 if (LOGGER.isTraceEnabled()) {
-                    LOGGER.trace("Processing part {}={}", key, value);
+                    LOGGER.trace("Processing part {}={}", LogSanitizer.sanitize(key, value));
                 }
 
                 // Value param

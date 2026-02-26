@@ -23,7 +23,7 @@
         <hypersistance.version>3.13.2</hypersistance.version>
 
         <!-- JUnit version -->
-        <junit.version>5.14.1</junit.version>
+        <junit.version>6.0.3</junit.version>
         <assertj-core.version>3.27.7</assertj-core.version>
     </properties>
 

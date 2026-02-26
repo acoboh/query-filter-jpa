@@ -15,16 +15,4 @@ public class LogSanitizer {
         return value.replace("\r", " ").replace("\n", " ");
     }
 
-    public static @Nullable Object[] sanitize(Object... values) {
-        Object[] sanitizedValues = new Object[values.length];
-        for (int i = 0; i < values.length; i++) {
-            Object value = values[i];
-            if (value instanceof String s) {
-                sanitizedValues[i] = sanitize(s);
-            } else {
-                sanitizedValues[i] = value;
-            }
-        }
-        return sanitizedValues;
-    }
 }

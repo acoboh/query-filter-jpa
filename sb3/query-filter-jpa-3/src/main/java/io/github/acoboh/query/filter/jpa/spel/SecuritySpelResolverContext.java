@@ -2,12 +2,14 @@ package io.github.acoboh.query.filter.jpa.spel;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.SimpleEvaluationContext;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.security.access.expression.SecurityExpressionHandler;
 import org.springframework.security.core.Authentication;
@@ -42,7 +44,7 @@ class SecuritySpelResolverContext extends SpelResolverContext {
     }
 
     @SuppressWarnings("unchecked")
-    private static SecurityExpressionHandler<FilterInvocation> getFilterSecurityHandler(
+    private static @Nullable SecurityExpressionHandler<FilterInvocation> getFilterSecurityHandler(
             List<SecurityExpressionHandler<?>> securityExpressionHandlers) {
 
         if (CollectionUtils.isEmpty(securityExpressionHandlers)) {
@@ -63,7 +65,7 @@ class SecuritySpelResolverContext extends SpelResolverContext {
     @Override
     public EvaluationContext getEvaluationContext() {
         if (securityExpressionHandler == null) {
-            return new StandardEvaluationContext();
+            return SimpleEvaluationContext.forReadOnlyDataBinding().build();
         }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

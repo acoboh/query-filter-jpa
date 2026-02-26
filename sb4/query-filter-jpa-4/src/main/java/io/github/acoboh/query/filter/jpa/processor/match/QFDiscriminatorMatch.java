@@ -9,6 +9,7 @@ import io.github.acoboh.query.filter.jpa.processor.QueryInfo;
 import io.github.acoboh.query.filter.jpa.processor.QueryUtils;
 import io.github.acoboh.query.filter.jpa.processor.definitions.QFDefinitionDiscriminator;
 import io.github.acoboh.query.filter.jpa.spel.SpelResolverContext;
+import io.github.acoboh.query.filter.jpa.utils.LogSanitizer;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Path;
@@ -71,7 +72,8 @@ public class QFDiscriminatorMatch implements QFSpecificationPart {
 
             Class<?> foundClass = definition.getDiscriminatorMap().get(parsedValue);
             if (foundClass == null) {
-                LOGGER.error("The value {} is not a valid discriminator for the field", parsedValue);
+                LOGGER.error("The value {} is not a valid discriminator for the field",
+                        LogSanitizer.sanitize(parsedValue));
                 throw new QFDiscriminatorNotFoundException(parsedValue, definition.getFilterName());
             }
             matchingClasses.add(foundClass);

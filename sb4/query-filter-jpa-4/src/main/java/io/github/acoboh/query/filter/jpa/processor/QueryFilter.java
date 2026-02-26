@@ -187,7 +187,7 @@ public class QueryFilter<E> implements Specification<E> {
 
             for (var value : values) {
                 if (LOGGER.isTraceEnabled()) {
-                    LOGGER.trace("Processing part {}={}", LogSanitizer.sanitize(key, value));
+                    LOGGER.trace("Processing part {}={}", LogSanitizer.sanitize(key), LogSanitizer.sanitize(value));
                 }
 
                 // Value param

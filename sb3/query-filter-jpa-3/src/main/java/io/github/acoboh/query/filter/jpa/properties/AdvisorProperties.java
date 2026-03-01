@@ -17,7 +17,7 @@ public class AdvisorProperties {
     private String messageSourceBaseName = "queryfilter-messages/messages";
 
     @NotBlank
-    private String messageSourceDefaultEncoding = "UTF-8";
+    private String messageSourceDefaultEncoding = "ISO-8859-1";
 
     private boolean messageSourceUseCodeAsDefaultMessage = true;
 

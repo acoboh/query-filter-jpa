@@ -1,15 +1,16 @@
 version: 2
 updates:
 
-  # Maven dependencies update
-  - package-ecosystem: "maven"
-    directories:
-      - "/"
-    schedule:
-      interval: "weekly"
-    ignore:
-      - dependency-name: "org.apache.maven.plugins:maven-source-plugin"
-        versions: [ "4.x" ] # Ignore actual betas
+  # Currently disabled
+  # # Maven dependencies update
+  # - package-ecosystem: "maven"
+  #   directories:
+  #     - "/"
+  #   schedule:
+  #     interval: "weekly"
+  #   ignore:
+  #     - dependency-name: "org.apache.maven.plugins:maven-source-plugin"
+  #       versions: [ "4.x" ] # Ignore actual betas
 
   # Git actions update
   - package-ecosystem: "github-actions"

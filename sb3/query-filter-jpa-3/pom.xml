@@ -16,8 +16,7 @@
     <description>Query filter JPA for Spring Boot 3.X</description>
 
     <properties>
-        <!-- Spring dependencies -->
-        <spring-boot.version>3.5.11</spring-boot.version>
+
     </properties>
 
     <dependencies>
@@ -156,7 +155,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <scope>runtime</scope>
+            <scope>test</scope>
         </dependency>
 
 

@@ -73,7 +73,6 @@ public class QFJsonElementMatch implements QFSpecificationPart {
         try {
             valueNode = mapper.readTree(value);
         } catch (JsonProcessingException e) {
-            LOGGER.error("Error parsing json", e);
             throw new QFJsonParseException(definition.getFilterName(), e);
         }
 

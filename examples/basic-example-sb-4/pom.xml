@@ -34,7 +34,7 @@
         <datasource-proxy.version>2.0.0</datasource-proxy.version>
 
         <!-- Query Filter Versions -->
-        <query-filter.version>2.0.0-SNAPSHOT</query-filter.version>
+        <query-filter.version>2.0.0</query-filter.version>
 
         <!-- Mapstruct -->
         <mapstruct.version>1.6.3</mapstruct.version>

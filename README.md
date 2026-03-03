@@ -34,11 +34,11 @@ Supports **Spring Boot 3 and Spring Boot 4** (dedicated artifacts for each versi
     <version>2.0.0</version>
 </dependency>
 
-        <!-- Spring Boot 3 -->
+<!-- Spring Boot 3 -->
 <dependency>
-<groupId>io.github.acoboh</groupId>
-<artifactId>query-filter-jpa-3</artifactId>
-<version>2.0.0</version>
+    <groupId>io.github.acoboh</groupId>
+    <artifactId>query-filter-jpa-3</artifactId>
+    <version>2.0.0</version>
 </dependency>
 ```
 
@@ -198,7 +198,7 @@ QueryFilterJPA automatically documents your filters in **Swagger-UI**. Add the f
     <version>2.0.0</version>
 </dependency>
 
-        <!-- Spring Boot 3 -->
+<!-- Spring Boot 3 -->
 <dependency>
     <groupId>io.github.acoboh</groupId>
     <artifactId>query-filter-jpa-openapi-3</artifactId>

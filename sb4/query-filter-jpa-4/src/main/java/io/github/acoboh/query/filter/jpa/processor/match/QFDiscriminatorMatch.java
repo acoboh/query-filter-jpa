@@ -72,8 +72,8 @@ public class QFDiscriminatorMatch implements QFSpecificationPart {
 
             Class<?> foundClass = definition.getDiscriminatorMap().get(parsedValue);
             if (foundClass == null) {
-                LOGGER.error("The value {} is not a valid discriminator for the field",
-                        LogSanitizer.sanitize(parsedValue));
+                LOGGER.atError().addArgument(() -> LogSanitizer.sanitize(parsedValue))
+                        .log("The value {} is not a valid discriminator for the field {}", definition.getFilterName());
                 throw new QFDiscriminatorNotFoundException(parsedValue, definition.getFilterName());
             }
             matchingClasses.add(foundClass);

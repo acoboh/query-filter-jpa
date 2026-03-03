@@ -5,6 +5,7 @@ import io.github.acoboh.query.filter.jpa.annotations.QFParam;
 import io.github.acoboh.query.filter.jpa.domain.FilterBlogDef;
 import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.processor.QFFieldInfo;
+import io.github.acoboh.query.filter.jpa.processor.QFParamType;
 import io.github.acoboh.query.filter.jpa.processor.QueryFilter;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
 import org.junit.jupiter.api.*;
@@ -49,6 +50,12 @@ class PostBlogExampleControllerTest {
             return filter.getAllFieldValues();
         }
 
+        @GetMapping("/test-multi-param-lhs")
+        public List<QFFieldInfo> testMultiRhs(
+                @QFMultiParam(value = FilterBlogDef.class, ignoreUnknown = false, type = QFParamType.LHS_BRACKETS) QueryFilter<PostBlog> filter) {
+            return filter.getAllFieldValues();
+        }
+
         @GetMapping("/test-filter-param")
         public List<QFFieldInfo> testSingle(@RequestParam @QFParam(FilterBlogDef.class) QueryFilter<PostBlog> filter) {
             return filter.getAllFieldValues();
@@ -73,6 +80,13 @@ class PostBlogExampleControllerTest {
                     "values": [
                       "acoboh"
                     ]
+                  },
+                  {
+                    "name": "likes",
+                    "operation": "gte",
+                    "values": [
+                      "100"
+                    ]
                   }
                 ]
                 """;
@@ -81,6 +95,48 @@ class PostBlogExampleControllerTest {
                 get("/test") //
                         .queryParam("postType", "VIDEO") //
                         .queryParam("author", "acoboh") //
+                        .queryParam("likes", "gte:100") //
+        ).andDo(e -> {
+            System.out.println("Response: " + e.getResponse().getContentAsString());
+        }).andExpect(status().isOk()) //
+                .andExpect(content().json(jsonExpected));
+
+    }
+
+    @Test
+    @DisplayName("Test multi param lhs")
+    void testMultiParamLhs() throws Exception {
+        String jsonExpected = """
+                [
+                  {
+                    "name": "postType",
+                    "operation": "eq",
+                    "values": [
+                      "VIDEO"
+                    ]
+                  },
+                  {
+                    "name": "author",
+                    "operation": "eq",
+                    "values": [
+                      "acoboh"
+                    ]
+                  },
+                  {
+                    "name": "likes",
+                    "operation": "gte",
+                    "values": [
+                      "100"
+                    ]
+                  }
+                ]
+                """;
+
+        mockMvc.perform( // Get request
+                get("/test-multi-param-lhs") //
+                        .queryParam("postType", "VIDEO") //
+                        .queryParam("author", "acoboh") //
+                        .queryParam("likes", "[gte]100") //
         ).andDo(e -> {
             System.out.println("Response: " + e.getResponse().getContentAsString());
         }).andExpect(status().isOk()) //

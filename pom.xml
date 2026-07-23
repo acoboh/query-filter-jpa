@@ -69,7 +69,7 @@
         <guava.version>33.5.0-jre</guava.version>
 
         <!-- JDBC Driver versions -->
-        <postgresql.version>42.7.10</postgresql.version>
+        <postgresql.version>42.7.12</postgresql.version>
 
         <!-- JaCoCo Properties -->
         <jacoco.version>0.8.14</jacoco.version>

@@ -3,6 +3,7 @@ package io.github.acoboh.query.filter.jpa.processor;
 import io.github.acoboh.query.filter.jpa.domain.FilterBlogDef;
 import io.github.acoboh.query.filter.jpa.exceptions.QFBlockException;
 import io.github.acoboh.query.filter.jpa.exceptions.QFNotValuable;
+import io.github.acoboh.query.filter.jpa.exceptions.QFParseException;
 import io.github.acoboh.query.filter.jpa.exceptions.QueryFilterException;
 import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.operations.QFOperationEnum;
@@ -299,6 +300,33 @@ class BasicTest {
 
         PostBlog postBlog = list.get(0);
         assertPostEqual(postBlog);
+    }
+
+    @Test
+    @DisplayName("13. Test malformed filter parts throw parse exception instead of being silently ignored")
+    @Order(13)
+    void testMalformedFilterThrowsParseException() {
+
+        // Missing operator: "author=auth" does not match "field=op:value"
+        QFParseException ex = assertThrows(QFParseException.class,
+                () -> queryFilterProcessor.newQueryFilter("author=auth", QFParamType.RHS_COLON));
+        assertThat(ex.getField()).isEqualTo("author=auth");
+
+        // Same missing-operator case, but for the LHS brackets syntax
+        ex = assertThrows(QFParseException.class,
+                () -> queryFilterProcessor.newQueryFilter("author=auth", QFParamType.LHS_BRACKETS));
+        assertThat(ex.getField()).isEqualTo("author=auth");
+
+        // A valid part followed by trailing garbage must still be rejected
+        ex = assertThrows(QFParseException.class,
+                () -> queryFilterProcessor.newQueryFilter("author=eq:auth&garbage", QFParamType.RHS_COLON));
+        assertThat(ex.getField()).isEqualTo("&garbage");
+
+        // Input that does not resemble a filter or sort expression at all
+        ex = assertThrows(QFParseException.class,
+                () -> queryFilterProcessor.newQueryFilter("notAFilterAtAll", QFParamType.RHS_COLON));
+        assertThat(ex.getField()).isEqualTo("notAFilterAtAll");
+
     }
 
     @Test

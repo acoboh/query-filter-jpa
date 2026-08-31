@@ -122,7 +122,11 @@ public class QueryFilter<E> implements Specification<E> {
 
             var matcher = type.getPattern().matcher(input);
 
+            int lastEnd = 0;
             while (matcher.find()) {
+                checkNoUnparsedGap(input, lastEnd, matcher.start());
+                lastEnd = matcher.end();
+
                 if (LOGGER.isTraceEnabled()) {
                     LOGGER.trace("Processing part {}", LogSanitizer.sanitize(matcher.group()));
                 }
@@ -136,11 +140,33 @@ public class QueryFilter<E> implements Specification<E> {
                 }
 
             }
+            checkNoUnparsedGap(input, lastEnd, input.length());
 
         }
 
         afterPropertiesSet(processor);
 
+    }
+
+    /**
+     * Ensure that the region of the raw filter string between two consecutive
+     * matches (or before the first / after the last one) contains nothing but
+     * {@code &} separators. Any other leftover content means part of the input did
+     * not match any known filter or sort expression and was being silently ignored.
+     *
+     * @param input raw filter string
+     * @param start start index of the gap, inclusive
+     * @param end   end index of the gap, exclusive
+     * @throws QFParseException if the gap contains anything other than {@code &}
+     */
+    private static void checkNoUnparsedGap(String input, int start, int end) {
+        if (start == end) {
+            return;
+        }
+        String gap = input.substring(start, end);
+        if (gap.chars().anyMatch(c -> c != '&')) {
+            throw new QFParseException(gap, input);
+        }
     }
 
     protected QueryFilter(Map<String, String[]> input, boolean ignoreUnknow, QFParamType type,

@@ -129,6 +129,16 @@ public abstract class QFAbstractDefinition {
         return filterInfo.onFilterPresent() != null ? Set.of(filterInfo.onFilterPresent().value()) : null;
     }
 
+    /**
+     * Get the default matches to apply for this field, unless
+     * {@link #isOnPresentFilterEnabled()} is active, in which case defaults are
+     * skipped and left for
+     * {@link io.github.acoboh.query.filter.jpa.annotations.QFOnFilterPresent}
+     * processing to decide.
+     *
+     * @return list of default {@link QFSpecificationPart} matches, empty if none
+     *         apply
+     */
     public final List<QFSpecificationPart> getDefaultElementMatches() {
         if (isOnPresentFilterEnabled()) {
             LOGGER.trace("On filter present for {} is defined. Will ignore default elements", filterName);
@@ -137,6 +147,14 @@ public abstract class QFAbstractDefinition {
         return getDefaultMatches();
     }
 
+    /**
+     * Get the default matches to apply for this field, regardless of any
+     * {@link io.github.acoboh.query.filter.jpa.annotations.QFOnFilterPresent}
+     * configuration.
+     *
+     * @return list of default {@link QFSpecificationPart} matches, empty if
+     *         {@link #hasDefaultValues()} is false
+     */
     public final List<QFSpecificationPart> getDefaultMatches() {
         if (!hasDefaultValues()) {
             LOGGER.trace("No default values defined for {}. Will not create default elements", filterName);
@@ -145,10 +163,27 @@ public abstract class QFAbstractDefinition {
         return getInnerDefaultValues();
     }
 
+    /**
+     * Build the concrete default-value matches for this definition. Only called
+     * when {@link #hasDefaultValues()} returns true.
+     *
+     * @return list of default {@link QFSpecificationPart} matches
+     */
     protected abstract List<QFSpecificationPart> getInnerDefaultValues();
 
+    /**
+     * Get the resolution order of this definition, used to sort fields so that ones
+     * depending on other fields' values (e.g. SpEL expressions) are resolved last.
+     *
+     * @return resolution order
+     */
     public abstract int getOrder();
 
+    /**
+     * Get if this definition has default values configured.
+     *
+     * @return true if default values are configured, false otherwise
+     */
     public abstract boolean hasDefaultValues();
 
     /**

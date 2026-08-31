@@ -12,6 +12,7 @@ import java.util.UUID;
  *
  * @author Adrián Cobo
  */
-public interface PostBlogRepository extends JpaSpecificationExecutor<@NonNull PostBlog>, JpaRepository<@NonNull PostBlog, @NonNull UUID> {
+public interface PostBlogRepository
+        extends JpaSpecificationExecutor<@NonNull PostBlog>, JpaRepository<@NonNull PostBlog, @NonNull UUID> {
 
 }

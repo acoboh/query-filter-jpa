@@ -18,8 +18,7 @@ import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.util.List;
 import java.util.UUID;
 
@@ -50,6 +49,11 @@ class DatesTest {
         POST_EXAMPLE.setCreateDate(LocalDateTime.of(2022, 01, 01, 12, 30, 0));
         POST_EXAMPLE.setLastTimestamp(Timestamp.valueOf(LocalDateTime.of(2022, 05, 10, 22, 13, 24)));
         POST_EXAMPLE.setInstant(LocalDateTime.of(2022, 01, 01, 12, 30, 0).toInstant(ZoneOffset.UTC));
+        POST_EXAMPLE.setOffsetDateTime(OffsetDateTime.of(2022, 01, 01, 12, 30, 0, 0, ZoneOffset.UTC));
+        POST_EXAMPLE.setZonedDateTime(ZonedDateTime.of(2022, 01, 01, 12, 30, 0, 0, ZoneOffset.UTC));
+        POST_EXAMPLE
+                .setUtilDate(java.util.Date.from(LocalDateTime.of(2022, 01, 01, 12, 30, 0).toInstant(ZoneOffset.UTC)));
+        POST_EXAMPLE.setSqlDate(java.sql.Date.valueOf(LocalDate.of(2022, 01, 01)));
         POST_EXAMPLE.setPublished(true);
         POST_EXAMPLE.setPostType(PostBlog.PostType.TEXT);
 
@@ -218,6 +222,65 @@ class DatesTest {
         assertThat(ex).isNotNull();
         assertThat(ex.getField()).isEqualTo("instant");
         assertThat(ex.getOperation()).isEqualTo(QFOperationEnum.BETWEEN);
+
+    }
+
+    @Test
+    @DisplayName("10. Test offset date time types")
+    @Order(10)
+    void testOffsetDateTimeTypes() throws QueryFilterException {
+
+        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("offsetDateTime=eq:2022-01-01T12:30",
+                QFParamType.RHS_COLON);
+
+        assertThat(qf).isNotNull();
+
+        List<PostBlog> createDateResults = repository.findAll(qf);
+        assertThat(createDateResults).hasSize(1).containsExactly(POST_EXAMPLE);
+
+    }
+
+    @Test
+    @DisplayName("11. Test zoned date time types")
+    @Order(11)
+    void testZonedDateTimeTypes() throws QueryFilterException {
+
+        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("zonedDateTime=eq:2022-01-01T12:30",
+                QFParamType.RHS_COLON);
+
+        assertThat(qf).isNotNull();
+
+        List<PostBlog> createDateResults = repository.findAll(qf);
+        assertThat(createDateResults).hasSize(1).containsExactly(POST_EXAMPLE);
+
+    }
+
+    @Test
+    @DisplayName("12. Test util date types")
+    @Order(12)
+    void testUtilDateTypes() throws QueryFilterException {
+
+        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("utilDate=eq:2022-01-01T12:30:00Z",
+                QFParamType.RHS_COLON);
+
+        assertThat(qf).isNotNull();
+
+        List<PostBlog> createDateResults = repository.findAll(qf);
+        assertThat(createDateResults).hasSize(1).containsExactly(POST_EXAMPLE);
+
+    }
+
+    @Test
+    @DisplayName("13. Test sql date types")
+    @Order(13)
+    void testSqlDateTypes() throws QueryFilterException {
+
+        QueryFilter<PostBlog> qf = queryFilterProcessor.newQueryFilter("sqlDate=eq:2022-01-01", QFParamType.RHS_COLON);
+
+        assertThat(qf).isNotNull();
+
+        List<PostBlog> createDateResults = repository.findAll(qf);
+        assertThat(createDateResults).hasSize(1).containsExactly(POST_EXAMPLE);
 
     }
 

@@ -150,7 +150,8 @@ class SpELTest {
     @Order(2)
     void testCustomSpELExpression() throws QueryFilterException {
 
-        QueryFilter<@NonNull PostBlog> qf = queryFilterProcessor.newQueryFilter("likes=in:0,1,2", QFParamType.RHS_COLON);
+        QueryFilter<@NonNull PostBlog> qf = queryFilterProcessor.newQueryFilter("likes=in:0,1,2",
+                QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         qf.overrideField("commentLikes", QFOperationEnum.EQUAL, "(#likes['0'] + #likes['1']) * 100");

@@ -18,10 +18,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Resolves controller method parameters annotated with
+ * {@link io.github.acoboh.query.filter.jpa.annotations.QFMultiParam} into
+ * {@link QueryFilter} instances, binding each filter field to its own top-level
+ * query parameter.
+ *
+ * @author Adrián Cobo
+ */
 public class QueryFilterMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
     private final Map<Pair<Class<?>, Class<?>>, QFProcessor<?, ?>> processorCache;
 
+    /**
+     * Default constructor
+     *
+     * @param processors all {@link QFProcessor} beans registered in the application
+     *                   context, indexed by their filter and entity classes
+     */
     public QueryFilterMethodArgumentResolver(List<QFProcessor<?, ?>> processors) {
         this.processorCache = new ConcurrentHashMap<>();
 

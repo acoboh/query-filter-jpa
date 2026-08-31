@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  *
  * @author Adrián Cobo
  */
-public interface ModelJsonRepository extends JpaSpecificationExecutor<@NonNull ModelJson>, JpaRepository<@NonNull ModelJson, @NonNull Long> {
+public interface ModelJsonRepository
+        extends JpaSpecificationExecutor<@NonNull ModelJson>, JpaRepository<@NonNull ModelJson, @NonNull Long> {
 
 }

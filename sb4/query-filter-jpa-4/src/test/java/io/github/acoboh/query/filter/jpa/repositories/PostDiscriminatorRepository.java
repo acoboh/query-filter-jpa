@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  *
  * @author Adrián Cobo
  */
-public interface PostDiscriminatorRepository extends JpaSpecificationExecutor<@NonNull Topic>, JpaRepository<@NonNull Topic, @NonNull Long> {
+public interface PostDiscriminatorRepository
+        extends JpaSpecificationExecutor<@NonNull Topic>, JpaRepository<@NonNull Topic, @NonNull Long> {
 
 }

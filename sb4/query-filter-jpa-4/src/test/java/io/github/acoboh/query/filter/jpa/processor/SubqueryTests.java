@@ -104,7 +104,8 @@ class SubqueryTests {
     @DisplayName("1. Test user has no role")
     @Order(1)
     void testHasNotRole() {
-        QueryFilter<@NonNull UserModel> qf = queryFilterProcessor.newQueryFilter("roleNotSub=ne:ROLE1", QFParamType.RHS_COLON);
+        QueryFilter<@NonNull UserModel> qf = queryFilterProcessor.newQueryFilter("roleNotSub=ne:ROLE1",
+                QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         // In this case, all users have one condition where the role name is not ROLE1
@@ -126,7 +127,8 @@ class SubqueryTests {
 
         // Subquery and normal query must return exactly the same users
 
-        QueryFilter<@NonNull UserModel> qf = queryFilterProcessor.newQueryFilter("roleNotSub=eq:ROLE1", QFParamType.RHS_COLON);
+        QueryFilter<@NonNull UserModel> qf = queryFilterProcessor.newQueryFilter("roleNotSub=eq:ROLE1",
+                QFParamType.RHS_COLON);
         assertThat(qf).isNotNull();
 
         List<UserModel> list = repository.findAll(qf);

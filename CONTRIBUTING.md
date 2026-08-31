@@ -26,12 +26,19 @@ with mostly the same class names, adapted to each Spring Boot generation's APIs 
 differences, newer Java syntax used in `sb4`, etc.). `examples/basic-example-sb-3` and
 `examples/basic-example-sb-4` are runnable demo apps for each version.
 
-### The dual-tree rule
+### ⚠️ `sb3` is in maintenance mode
 
-**When you fix a bug or add a feature that is not specific to one Spring Boot version,
-apply the change to both `sb3/.../src/main/java/...` and `sb4/.../src/main/java/...`.**
-There is no code-generation or sync tooling between the trees — this is done by hand. A
-useful habit before editing:
+Spring Boot 3 is past its official End-Of-Life. **`sb3` (`query-filter-jpa-3`,
+`query-filter-jpa-openapi-3`) only accepts bug fixes from now on — no new features.** The
+next release is planned to be the **last** one to ship Spring Boot 3 artifacts. All new
+features go into `sb4` only.
+
+### The dual-tree rule (bug fixes)
+
+**When you fix a bug that is not specific to one Spring Boot version, apply the fix to
+both `sb3/.../src/main/java/...` and `sb4/.../src/main/java/...`.** There is no
+code-generation or sync tooling between the trees — this is done by hand. A useful habit
+before editing:
 
 ```bash
 diff sb3/query-filter-jpa-3/src/main/java/io/github/acoboh/query/filter/jpa/<path>.java \
@@ -42,16 +49,20 @@ so you can see how the file has already diverged between versions before adding 
 divergence. The same rule applies to:
 
 - Tests under each module's `src/test/java/...` (often the same scenario is tested
-  independently in both trees).
+  independently in both trees) — a regression test for a shared bug fix belongs in both
+  trees too.
 - The i18n exception messages in
-  `src/main/resources/queryfilter-messages/messages_{en,es}.properties` — if you add or
-  change an exception, keep both language files and both trees in sync.
-- The two OpenAPI modules (`query-filter-jpa-openapi-3` / `-openapi-4`), when the change
+  `src/main/resources/queryfilter-messages/messages_{en,es}.properties` — if you fix a
+  message, keep both language files and both trees in sync.
+- The two OpenAPI modules (`query-filter-jpa-openapi-3` / `-openapi-4`), when the fix
   affects filter documentation generation.
 
-If a change is genuinely version-specific (e.g. adapting to an API that only changed in
-Spring Boot 4), it's fine for it to land in only one tree — just say so in the PR
-description.
+**New features are `sb4`-only.** Do not add a new `@QFxxx` annotation, operation, or
+other capability to `sb3` — only mirror it there if the maintainer explicitly says
+otherwise (e.g. to keep a specific bug-fix-adjacent behavior consistent). If you're
+unsure whether something counts as a "bug fix" (e.g. filling in test coverage for an
+existing, already-shipped code path) versus a "feature," mirror it — that keeps `sb3` at
+parity for behavior it already claims to support, without adding anything new.
 
 ## Build & test
 

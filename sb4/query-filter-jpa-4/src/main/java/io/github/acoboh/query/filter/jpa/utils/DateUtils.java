@@ -68,6 +68,8 @@ public class DateUtils {
             return LocalDate.parse(value, formatter);
         } else if (ZonedDateTime.class.isAssignableFrom(finalClass)) {
             return ZonedDateTime.parse(value, formatter);
+        } else if (OffsetDateTime.class.isAssignableFrom(finalClass)) {
+            return OffsetDateTime.parse(value, formatter);
         } else if (Date.class.isAssignableFrom(finalClass)) {
             LocalDate ld = LocalDate.parse(value, formatter);
             return Date.valueOf(ld);

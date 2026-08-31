@@ -10,6 +10,8 @@ import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoField;
 
 /**
@@ -38,6 +40,22 @@ public class FilterBlogDatesDef {
     @QFElement("instant")
     @QFDate
     private Instant instant;
+
+    @QFElement("offsetDateTime")
+    @QFDate(timeFormat = "yyyy-MM-dd'T'HH:mm")
+    private OffsetDateTime offsetDateTime;
+
+    @QFElement("zonedDateTime")
+    @QFDate(timeFormat = "yyyy-MM-dd'T'HH:mm")
+    private ZonedDateTime zonedDateTime;
+
+    @QFElement("utilDate")
+    @QFDate
+    private java.util.Date utilDate;
+
+    @QFElement("sqlDate")
+    @QFDate(timeFormat = "yyyy-MM-dd")
+    private java.sql.Date sqlDate;
 
     @QFDate(timeFormat = "yyyy/MM/dd", parseDefaulting = {
             @QFDateDefault(chronoField = ChronoField.HOUR_OF_DAY, value = 12),

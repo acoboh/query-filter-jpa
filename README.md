@@ -13,6 +13,12 @@ with OpenAPI, and use intuitive query syntax—all without writing complex speci
 
 Supports **Spring Boot 3 and Spring Boot 4** (dedicated artifacts for each version).
 
+> ⚠️ **Spring Boot 3 support notice:** Spring Boot 3 reached its official End-Of-Life
+> months ago. The `query-filter-jpa-3` and `query-filter-jpa-openapi-3` artifacts are now
+> in **maintenance-only mode**: they will keep receiving critical bug fixes, but no new
+> features will be added. The next release will be the **last one** to ship Spring Boot 3
+> artifacts. New projects should target **Spring Boot 4** (`query-filter-jpa-4`).
+
 ## ✨ Features
 
 ✅ **Easy-to-use annotations** for defining filters in your entities.  
@@ -34,7 +40,7 @@ Supports **Spring Boot 3 and Spring Boot 4** (dedicated artifacts for each versi
     <version>2.0.0</version>
 </dependency>
 
-<!-- Spring Boot 3 -->
+<!-- Spring Boot 3 (maintenance mode, EOL - bug fixes only) -->
 <dependency>
     <groupId>io.github.acoboh</groupId>
     <artifactId>query-filter-jpa-3</artifactId>
@@ -198,7 +204,7 @@ QueryFilterJPA automatically documents your filters in **Swagger-UI**. Add the f
     <version>2.0.0</version>
 </dependency>
 
-<!-- Spring Boot 3 -->
+<!-- Spring Boot 3 (maintenance mode, EOL - bug fixes only) -->
 <dependency>
     <groupId>io.github.acoboh</groupId>
     <artifactId>query-filter-jpa-openapi-3</artifactId>

@@ -6,8 +6,8 @@ import java.io.Serial;
 
 /**
  * Exception thrown when a field annotated with {@code required} on
- * {@link io.github.acoboh.query.filter.jpa.annotations.QFRequired} is missing from the
- * request filter.
+ * {@link io.github.acoboh.query.filter.jpa.annotations.QFRequired} is missing
+ * from the request filter.
  *
  * @author Adrián Cobo
  */

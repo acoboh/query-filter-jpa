@@ -131,11 +131,13 @@ public abstract class QFAbstractDefinition {
 
     /**
      * Get the default matches to apply for this field, unless
-     * {@link #isOnPresentFilterEnabled()} is active, in which case defaults are skipped
-     * and left for {@link io.github.acoboh.query.filter.jpa.annotations.QFOnFilterPresent}
+     * {@link #isOnPresentFilterEnabled()} is active, in which case defaults are
+     * skipped and left for
+     * {@link io.github.acoboh.query.filter.jpa.annotations.QFOnFilterPresent}
      * processing to decide.
      *
-     * @return list of default {@link QFSpecificationPart} matches, empty if none apply
+     * @return list of default {@link QFSpecificationPart} matches, empty if none
+     *         apply
      */
     public final List<QFSpecificationPart> getDefaultElementMatches() {
         if (isOnPresentFilterEnabled()) {
@@ -162,8 +164,8 @@ public abstract class QFAbstractDefinition {
     }
 
     /**
-     * Build the concrete default-value matches for this definition. Only called when
-     * {@link #hasDefaultValues()} returns true.
+     * Build the concrete default-value matches for this definition. Only called
+     * when {@link #hasDefaultValues()} returns true.
      *
      * @return list of default {@link QFSpecificationPart} matches
      */

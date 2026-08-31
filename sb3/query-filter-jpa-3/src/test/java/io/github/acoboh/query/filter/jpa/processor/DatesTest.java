@@ -18,11 +18,7 @@ import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.util.List;
 import java.util.UUID;
 
@@ -55,7 +51,8 @@ class DatesTest {
         POST_EXAMPLE.setInstant(LocalDateTime.of(2022, 01, 01, 12, 30, 0).toInstant(ZoneOffset.UTC));
         POST_EXAMPLE.setOffsetDateTime(OffsetDateTime.of(2022, 01, 01, 12, 30, 0, 0, ZoneOffset.UTC));
         POST_EXAMPLE.setZonedDateTime(ZonedDateTime.of(2022, 01, 01, 12, 30, 0, 0, ZoneOffset.UTC));
-        POST_EXAMPLE.setUtilDate(java.util.Date.from(LocalDateTime.of(2022, 01, 01, 12, 30, 0).toInstant(ZoneOffset.UTC)));
+        POST_EXAMPLE
+                .setUtilDate(java.util.Date.from(LocalDateTime.of(2022, 01, 01, 12, 30, 0).toInstant(ZoneOffset.UTC)));
         POST_EXAMPLE.setSqlDate(java.sql.Date.valueOf(LocalDate.of(2022, 01, 01)));
         POST_EXAMPLE.setPublished(true);
         POST_EXAMPLE.setPostType(PostBlog.PostType.TEXT);

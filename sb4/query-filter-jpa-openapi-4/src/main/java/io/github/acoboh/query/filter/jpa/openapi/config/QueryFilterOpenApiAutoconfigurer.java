@@ -4,7 +4,9 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 /**
- * Auto configuration class to enable OpenAPI customizations for Query Filter JPA.
+ * Auto configuration class to enable OpenAPI customizations for Query Filter
+ * JPA.
+ * 
  * @author Adrián Cobo
  */
 @AutoConfiguration

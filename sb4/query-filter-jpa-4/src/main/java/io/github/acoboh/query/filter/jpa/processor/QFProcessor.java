@@ -273,11 +273,11 @@ public class QFProcessor<F, E> {
 
     /**
      * Create a new {@linkplain QueryFilter} instance from an already-parsed map of
-     * request parameters, as used by {@link io.github.acoboh.query.filter.jpa.annotations.QFMultiParam}
-     * binding.
+     * request parameters, as used by
+     * {@link io.github.acoboh.query.filter.jpa.annotations.QFMultiParam} binding.
      *
-     * @param input         map of parameter name to raw parameter values, as returned by
-     *                      {@code HttpServletRequest#getParameterMap()}
+     * @param input         map of parameter name to raw parameter values, as
+     *                      returned by {@code HttpServletRequest#getParameterMap()}
      * @param ignoreUnknown if true, parameters not matching any filter field are
      *                      ignored instead of raising an error
      * @param type          standard type

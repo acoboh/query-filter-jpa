@@ -20,8 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Resolves controller method parameters annotated with
  * {@link io.github.acoboh.query.filter.jpa.annotations.QFMultiParam} into
- * {@link QueryFilter} instances, binding each filter field to its own top-level query
- * parameter.
+ * {@link QueryFilter} instances, binding each filter field to its own top-level
+ * query parameter.
  *
  * @author Adrián Cobo
  */

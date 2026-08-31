@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 /**
  * Related parent entity repository
  */
-public interface RelatedParentEntityRepository
-        extends JpaSpecificationExecutor<@NonNull RelatedParent>, JpaRepository<@NonNull RelatedParent, @NonNull String> {
+public interface RelatedParentEntityRepository extends JpaSpecificationExecutor<@NonNull RelatedParent>,
+        JpaRepository<@NonNull RelatedParent, @NonNull String> {
 
 }

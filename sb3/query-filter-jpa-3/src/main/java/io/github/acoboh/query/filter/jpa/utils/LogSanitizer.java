@@ -3,8 +3,8 @@ package io.github.acoboh.query.filter.jpa.utils;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Utility class to sanitize user-supplied values before writing them to logs, preventing
- * log forging/injection via embedded CR/LF characters.
+ * Utility class to sanitize user-supplied values before writing them to logs,
+ * preventing log forging/injection via embedded CR/LF characters.
  *
  * @author Adrián Cobo
  */

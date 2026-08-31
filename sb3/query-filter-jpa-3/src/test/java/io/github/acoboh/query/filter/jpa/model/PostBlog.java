@@ -105,9 +105,8 @@ public class PostBlog {
                 && Objects.equals(zonedDateTime, other.zonedDateTime)
                 && Objects.equals(utilDate == null ? null : utilDate.getTime(),
                         other.utilDate == null ? null : other.utilDate.getTime())
-                && Objects.equals(sqlDate, other.sqlDate)
-                && likes == other.likes && postType == other.postType && published == other.published
-                && Objects.equals(text, other.text) && Objects.equals(uuid, other.uuid)
+                && Objects.equals(sqlDate, other.sqlDate) && likes == other.likes && postType == other.postType
+                && published == other.published && Objects.equals(text, other.text) && Objects.equals(uuid, other.uuid)
                 && Arrays.equals(tags, other.tags);
     }
 

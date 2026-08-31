@@ -142,9 +142,17 @@ public class QFElementMatch implements QFSpecificationPart {
                 if (formatter != null && operation != QFOperationEnum.ISNULL) {
                     parsedPathValue.add(parseTimestamp(val, finalClass));
                 } else if (finalClass.equals(Double.class) || finalClass.equals(double.class)) {
-                    parsedPathValue.add(Double.valueOf(val));
+                    try {
+                        parsedPathValue.add(Double.valueOf(val));
+                    } catch (NumberFormatException e) {
+                        throw new QFParseException(definition.getFilterName(), val);
+                    }
                 } else if (finalClass.equals(Integer.class) || finalClass.equals(int.class)) {
-                    parsedPathValue.add(Integer.valueOf(val));
+                    try {
+                        parsedPathValue.add(Integer.valueOf(val));
+                    } catch (NumberFormatException e) {
+                        throw new QFParseException(definition.getFilterName(), val);
+                    }
                 } else if (finalClass.equals(Boolean.class) || finalClass.equals(boolean.class)
                         || operation == QFOperationEnum.ISNULL) {
                     parsedPathValue.add(Boolean.valueOf(val));
@@ -164,7 +172,11 @@ public class QFElementMatch implements QFSpecificationPart {
                     }
 
                 } else if (finalClass.equals(UUID.class)) {
-                    parsedPathValue.add(UUID.fromString(val));
+                    try {
+                        parsedPathValue.add(UUID.fromString(val));
+                    } catch (IllegalArgumentException e) {
+                        throw new QFParseException(definition.getFilterName(), val);
+                    }
                 } else { // Use as string
                     parsedPathValue.add(val);
                 }

@@ -1,6 +1,7 @@
 package io.github.acoboh.query.filter.jpa.processor;
 
 import io.github.acoboh.query.filter.jpa.domain.ExtendBaseFilterDef;
+import io.github.acoboh.query.filter.jpa.exceptions.QFParseException;
 import io.github.acoboh.query.filter.jpa.model.PostBlog;
 import io.github.acoboh.query.filter.jpa.repositories.PostBlogRepository;
 import io.github.acoboh.query.filter.jpa.spring.SpringIntegrationTestBase;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test for extends on QueryFilterDefinitions
@@ -77,6 +79,18 @@ class ExtendsFilterDefTests {
         List<PostBlog> list = repository.findAll(queryFilter);
 
         assertThat(list).containsExactly(POST_EXAMPLE);
+    }
+
+    @Test
+    @DisplayName("2. Test malformed uuid filter throws parse exception")
+    @Order(3)
+    void testMalformedUuidThrowsParseException() {
+
+        QFParseException ex = assertThrows(QFParseException.class,
+                () -> qfProcessor.newQueryFilter("uuid=eq:not-a-uuid", QFParamType.RHS_COLON));
+
+        assertThat(ex.getField()).isEqualTo("uuid");
+        assertThat(ex.getInput()).isEqualTo("not-a-uuid");
     }
 
     @Test

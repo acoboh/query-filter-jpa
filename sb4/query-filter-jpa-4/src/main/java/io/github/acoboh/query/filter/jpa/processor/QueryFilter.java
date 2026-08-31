@@ -127,7 +127,7 @@ public class QueryFilter<E> implements Specification<E> {
             int lastEnd = 0;
             while (matcher.find()) {
                 // Check if there is any unparsed gap between the last match and the current one
-                checkNoUnparsedGap(input, lastEnd, matcher.start());
+                checkNoUnparsedGap(input, /* start= */ lastEnd, /* end= */ matcher.start());
                 lastEnd = matcher.end();
 
                 if (LOGGER.isTraceEnabled()) {
@@ -219,8 +219,8 @@ public class QueryFilter<E> implements Specification<E> {
                 }
 
                 // Value param
-                String partOp = type.extractOP(value);
-                String partVal = type.extractValue(value);
+                String partOp = type.extractOP(key, value);
+                String partVal = type.extractValue(key, value);
                 parseValuePart(key, partOp, partVal);
                 initialInputBuilder.append(prefix).append(type.buildParam(key, partOp, partVal));
 
@@ -270,13 +270,30 @@ public class QueryFilter<E> implements Specification<E> {
 
         } else if (def instanceof QFDefinitionCollection qdef) {
             qfSpecificationPart = new QFCollectionMatch(qdef, QFCollectionOperationEnum.fromValue(op),
-                    Integer.parseInt(value));
+                    parseCollectionSize(field, value));
         } else {
             throw new QFNotValuable(field);
         }
 
         specificationsWarp.addSpecification(qfSpecificationPart);
 
+    }
+
+    /**
+     * Parse the raw value of a {@link QFDefinitionCollection} field (a collection
+     * size comparison) as an integer.
+     *
+     * @param field field name, used to build a helpful error message
+     * @param value raw value to parse
+     * @return parsed collection size
+     * @throws QFParseException if the value is not a valid integer
+     */
+    private static int parseCollectionSize(String field, String value) {
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            throw new QFParseException(field, value);
+        }
     }
 
     private void parseSortPart(String values)

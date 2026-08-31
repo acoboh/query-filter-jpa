@@ -126,6 +126,7 @@ public class QueryFilter<E> implements Specification<E> {
 
             int lastEnd = 0;
             while (matcher.find()) {
+                // Check if there is any unparsed gap between the last match and the current one
                 checkNoUnparsedGap(input, lastEnd, matcher.start());
                 lastEnd = matcher.end();
 
@@ -142,6 +143,7 @@ public class QueryFilter<E> implements Specification<E> {
                 }
 
             }
+            // Check the last gap after the last match
             checkNoUnparsedGap(input, lastEnd, input.length());
 
         }

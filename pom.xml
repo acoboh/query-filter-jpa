@@ -61,18 +61,18 @@
         <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
         <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
-        <maven-dependency-plugin.version>3.10.0</maven-dependency-plugin.version>
+        <maven-dependency-plugin.version>3.11.0</maven-dependency-plugin.version>
         <maven-surfire-plugin.version>3.5.5</maven-surfire-plugin.version>
-        <sonartype-publishing.version>0.10.0</sonartype-publishing.version>
+        <sonartype-publishing.version>0.11.0</sonartype-publishing.version>
 
         <!-- Guava dependencies -->
-        <guava.version>33.5.0-jre</guava.version>
+        <guava.version>33.7.1-jre</guava.version>
 
         <!-- JDBC Driver versions -->
-        <postgresql.version>42.7.10</postgresql.version>
+        <postgresql.version>42.7.13</postgresql.version>
 
         <!-- JaCoCo Properties -->
-        <jacoco.version>0.8.14</jacoco.version>
+        <jacoco.version>0.8.15</jacoco.version>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
         <sonar.coverage.jacoco.xmlReportPaths>

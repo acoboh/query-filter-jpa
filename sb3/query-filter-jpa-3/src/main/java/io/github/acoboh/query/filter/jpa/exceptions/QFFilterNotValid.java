@@ -5,6 +5,12 @@ import org.springframework.http.HttpStatus;
 
 import java.io.Serial;
 
+/**
+ * Exception thrown when the value(s) supplied for a field are not valid for the
+ * requested {@link QFOperationEnum operation}.
+ *
+ * @author Adrián Cobo
+ */
 public class QFFilterNotValid extends QueryFilterException {
 
     @Serial

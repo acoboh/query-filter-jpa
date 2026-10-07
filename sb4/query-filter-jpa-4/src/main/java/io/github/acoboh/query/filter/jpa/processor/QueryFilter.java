@@ -88,8 +88,7 @@ public class QueryFilter<E> implements Specification<E> {
 
         this.specificationsWarp = new QFSpecificationsWarp(processor.getDefaultMatches(),
                 processor.getFieldsLaunchOnPresent(), processor.getDefinitionsOnPresent());
-
-        this.defaultSorting = processor.getDefaultSorting();
+        this.defaultSorting = new ArrayList<>(processor.getDefaultSorting());
         this.entityClass = processor.getEntityClass();
         this.predicateClass = processor.getFilterClass();
         this.spelResolver = processor.getApplicationContext().getBean(SpelResolverContext.class);

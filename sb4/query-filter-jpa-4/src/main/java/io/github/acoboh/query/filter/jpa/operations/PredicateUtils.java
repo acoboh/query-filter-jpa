@@ -17,6 +17,16 @@ class PredicateUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PredicateUtils.class);
 
+    /**
+     * Explicit LIKE escape character (the JPA default).
+     * <p>
+     * It is passed explicitly to the JPA like/notLike operations, because the
+     * 2-argument like is rendered by some Hibernate versions without any usable
+     * escape (they even emit "escape ''", which deactivates the database default
+     * escape), so patterns with backslash-escaped wildcards would not work.
+     */
+    private static final char LIKE_ESCAPE_CHAR = '\\';
+
     private PredicateUtils() {
 
     }
@@ -48,6 +58,12 @@ class PredicateUtils {
     /**
      * Creates a predicate for the given expression and value using the like
      * operator.
+     * <p>
+     * The value is wrapped with {@code %} wildcards to match any string that contains it.
+     * Any LIKE special character in the value ({@code %}, {@code _} and the LIKE escape
+     * character {@code \}) is escaped, so it is matched literally: for example
+     * {@code 100%} only matches strings containing a literal {@code %}. Use
+     * {@link QFOperationEnum#REGULAR_LIKE} to keep user-provided wildcards unescaped.
      *
      * @param criteriaBuilder criteriaBuilder of the query
      * @param exp             expression to apply the predicate
@@ -59,7 +75,7 @@ class PredicateUtils {
      */
     public static Predicate parseLikePredicate(CriteriaBuilder criteriaBuilder, Expression<String> exp, String value,
             boolean caseSensitive, boolean like) {
-        String finalValue = "%".concat(value).concat("%");
+        String finalValue = "%".concat(escapeLikeWildcards(value)).concat("%");
         return finalLikeSensitive(criteriaBuilder, exp, finalValue, caseSensitive, like);
     }
 
@@ -69,7 +85,8 @@ class PredicateUtils {
      * <p>
      * This method is used to create a 'starts with' predicate. The value is
      * concatenated with a '%' character to match any string that starts with the
-     * given value.
+     * given value. LIKE special characters in the value ({@code %}, {@code _} and the
+     * LIKE escape character {@code \}) are escaped, so they are matched literally.
      * </p>
      *
      * @param criteriaBuilder criteriaBuilder of the query
@@ -81,7 +98,7 @@ class PredicateUtils {
      */
     public static Predicate parseStartsPredicate(CriteriaBuilder criteriaBuilder, Expression<String> exp, String value,
             boolean caseSensitive, boolean like) {
-        String finalValue = value.concat("%");
+        String finalValue = escapeLikeWildcards(value).concat("%");
         return finalLikeSensitive(criteriaBuilder, exp, finalValue, caseSensitive, like);
     }
 
@@ -91,7 +108,8 @@ class PredicateUtils {
      * <p>
      * This method is used to create an 'ends with' predicate. The value is
      * concatenated with a '%' character to match any string that ends with the
-     * given value.
+     * given value. LIKE special characters in the value ({@code %}, {@code _} and the
+     * LIKE escape character {@code \}) are escaped, so they are matched literally.
      * </p>
      *
      * @param criteriaBuilder criteriaBuilder of the query
@@ -104,14 +122,42 @@ class PredicateUtils {
      */
     public static Predicate parseEndsPredicate(CriteriaBuilder criteriaBuilder, Expression<String> exp, String value,
             boolean caseSensitive, boolean like) {
-        String finalValue = "%".concat(value);
+        String finalValue = "%".concat(escapeLikeWildcards(value));
         return finalLikeSensitive(criteriaBuilder, exp, finalValue, caseSensitive, like);
+    }
+
+    /**
+     * Escapes the LIKE special characters of a raw user value so the LIKE operator
+     * matches them literally: the LIKE escape character ({@code \}) is doubled, and
+     * the {@code %} and {@code _} wildcards are prefixed with the escape character.
+     * <p>
+     * The backslash must be escaped first, otherwise the escapes added for the other
+     * characters would be escaped twice.
+     * <p>
+     * The backslash is used because it is the default escape character of the main
+     * relational databases (PostgreSQL, H2...), and it is the same character that
+     * {@link #finalLikeSensitive} passes explicitly to the JPA like operations, so
+     * the escaped pattern is portable.
+     *
+     * @param value raw value coming from the user input
+     * @return the value with the LIKE escape character, the {@code %} and {@code _}
+     *         wildcards escaped
+     */
+    private static String escapeLikeWildcards(String value) {
+        return value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_");
     }
 
     /**
      * Creates a predicate for the given expression and value using the like
      * operator.
-     * 
+     * <p>
+     * The pattern is evaluated with the JPA default escape character ({@code \}),
+     * so {@code \%}, {@code \_} and {@code \\} inside it are matched literally, while
+     * an unescaped {@code %} or {@code _} keeps the wildcard behavior.
+     * <p>
+     * The escape character is passed explicitly to the JPA operations, because the
+     * 2-argument like is rendered by some Hibernate versions without any usable
+     * escape (they emit "escape ''", which deactivates the database default escape).
      *
      * @param criteriaBuilder criteriaBuilder of the query
      * @param exp             expression to apply the predicate
@@ -127,18 +173,20 @@ class PredicateUtils {
             LOGGER.trace("Case sensitive true on like expression");
             if (like) {
                 LOGGER.trace("Like is true on like expression");
-                return criteriaBuilder.like(exp, value);
+                return criteriaBuilder.like(exp, value, LIKE_ESCAPE_CHAR);
             }
-            return criteriaBuilder.notLike(exp, value);
+            return criteriaBuilder.notLike(exp, value, LIKE_ESCAPE_CHAR);
         }
 
         if (like) {
             LOGGER.trace("Case sensitive false on like expression");
-            return criteriaBuilder.like(criteriaBuilder.lower(exp), value.toLowerCase(LocaleContextHolder.getLocale()));
+            return criteriaBuilder.like(criteriaBuilder.lower(exp), value.toLowerCase(LocaleContextHolder.getLocale()),
+                    LIKE_ESCAPE_CHAR);
         }
 
         LOGGER.trace("Case sensitive false on not like expression");
-        return criteriaBuilder.notLike(criteriaBuilder.lower(exp), value.toLowerCase(LocaleContextHolder.getLocale()));
+        return criteriaBuilder.notLike(criteriaBuilder.lower(exp), value.toLowerCase(LocaleContextHolder.getLocale()),
+                LIKE_ESCAPE_CHAR);
     }
 
     /**

@@ -38,8 +38,29 @@ class SecuritySpelResolverContext extends SpelResolverContext {
      */
     public SecuritySpelResolverContext(List<SecurityExpressionHandler<?>> securityExpressionHandlers,
             HttpServletRequest request, HttpServletResponse response) {
+        this(securityExpressionHandlers, request, response, true);
+    }
+
+    private final boolean restricted;
+
+    /**
+     * Default constructor
+     *
+     * @param securityExpressionHandlers security expression handlers
+     * @param request                    request
+     * @param response                   response
+     * @param restricted                 harden the evaluation context created by
+     *                                   the security expression handler
+     */
+    public SecuritySpelResolverContext(List<SecurityExpressionHandler<?>> securityExpressionHandlers,
+            HttpServletRequest request, HttpServletResponse response, boolean restricted) {
         super(request, response);
         securityExpressionHandler = getFilterSecurityHandler(securityExpressionHandlers);
+        this.restricted = restricted;
+        if (!restricted) {
+            LOGGER.warn("query-filter.spel.restricted=false: SpEL filter expressions are evaluated without "
+                    + "restrictions. Never pass user input to SpEL fields through the programmatic API");
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -72,7 +93,9 @@ class SecuritySpelResolverContext extends SpelResolverContext {
             throw new UnsupportedOperationException();
         });
 
-        return securityExpressionHandler.createEvaluationContext(authentication, filterInvocation);
+        EvaluationContext context = securityExpressionHandler.createEvaluationContext(authentication,
+                filterInvocation);
+        return restricted ? RestrictedEvaluationContexts.restrict(context) : context;
     }
 
     /** {@inheritDoc} */

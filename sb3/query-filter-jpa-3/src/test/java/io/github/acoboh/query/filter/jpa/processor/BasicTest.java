@@ -320,12 +320,29 @@ class BasicTest {
         // A valid part followed by trailing garbage must still be rejected
         ex = assertThrows(QFParseException.class,
                 () -> queryFilterProcessor.newQueryFilter("author=eq:auth&garbage", QFParamType.RHS_COLON));
-        assertThat(ex.getField()).isEqualTo("&garbage");
+        assertThat(ex.getField()).isEqualTo("garbage");
 
         // Input that does not resemble a filter or sort expression at all
         ex = assertThrows(QFParseException.class,
                 () -> queryFilterProcessor.newQueryFilter("notAFilterAtAll", QFParamType.RHS_COLON));
         assertThat(ex.getField()).isEqualTo("notAFilterAtAll");
+
+    }
+
+    @Test
+    @DisplayName("14. Test malformed numeric filter throws parse exception instead of a raw NumberFormatException")
+    @Order(14)
+    void testMalformedNumericFilterThrowsParseException() {
+
+        QFParseException ex = assertThrows(QFParseException.class,
+                () -> queryFilterProcessor.newQueryFilter("likes=eq:notanumber", QFParamType.RHS_COLON));
+        assertThat(ex.getField()).isEqualTo("likes");
+        assertThat(ex.getInput()).isEqualTo("notanumber");
+
+        ex = assertThrows(QFParseException.class,
+                () -> queryFilterProcessor.newQueryFilter("avgNote=eq:notanumber", QFParamType.RHS_COLON));
+        assertThat(ex.getField()).isEqualTo("avgNote");
+        assertThat(ex.getInput()).isEqualTo("notanumber");
 
     }
 
@@ -406,6 +423,21 @@ class BasicTest {
         assertPostEqual(postBlog);
 
         assertThat(qf).hasToString("avgNote[eq]=2.5");
+    }
+
+    @Test
+    @DisplayName("23. Test by map constructor with malformed LHS brackets throws parse exception")
+    @Order(23)
+    void testByMapConstructorMalformedLhsBrackets() {
+
+        // Missing closing bracket must raise a QFParseException, not a raw
+        // StringIndexOutOfBoundsException
+        Map<String, String[]> map = Map.of("author", new String[] { "[eq" });
+
+        QFParseException ex = assertThrows(QFParseException.class,
+                () -> queryFilterProcessor.newQueryFilterMap(map, true, QFParamType.LHS_BRACKETS));
+        assertThat(ex.getField()).isEqualTo("author");
+        assertThat(ex.getInput()).isEqualTo("[eq");
     }
 
     @Test

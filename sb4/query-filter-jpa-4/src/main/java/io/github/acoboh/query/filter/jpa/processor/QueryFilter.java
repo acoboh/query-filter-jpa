@@ -13,6 +13,7 @@ import io.github.acoboh.query.filter.jpa.processor.match.QFCollectionMatch;
 import io.github.acoboh.query.filter.jpa.processor.match.QFDiscriminatorMatch;
 import io.github.acoboh.query.filter.jpa.processor.match.QFElementMatch;
 import io.github.acoboh.query.filter.jpa.processor.match.QFJsonElementMatch;
+import io.github.acoboh.query.filter.jpa.properties.LimitsProperties;
 import io.github.acoboh.query.filter.jpa.spel.SpelResolverContext;
 import io.github.acoboh.query.filter.jpa.utils.LogSanitizer;
 import jakarta.persistence.criteria.*;
@@ -83,14 +84,16 @@ public class QueryFilter<E> implements Specification<E> {
     private @Nullable String predicateName;
     private transient @Nullable PredicateProcessorResolutor predicate;
 
+    private final transient LimitsProperties limits;
+
     private QueryFilter(QFProcessor<?, E> processor) {
         this.definitionMap = processor.getDefinitionMap();
 
         this.specificationsWarp = new QFSpecificationsWarp(processor.getDefaultMatches(),
                 processor.getFieldsLaunchOnPresent(), processor.getDefinitionsOnPresent());
-
-        this.defaultSorting = processor.getDefaultSorting();
+        this.defaultSorting = new ArrayList<>(processor.getDefaultSorting());
         this.entityClass = processor.getEntityClass();
+        this.limits = processor.getLimits();
         this.predicateClass = processor.getFilterClass();
         this.spelResolver = processor.getApplicationContext().getBean(SpelResolverContext.class);
         this.predicateMap = processor.getPredicateMap();
@@ -122,54 +125,39 @@ public class QueryFilter<E> implements Specification<E> {
 
         if (input != null && !input.isEmpty()) {
 
-            var matcher = type.getPattern().matcher(input);
+            if (input.length() > limits.getMaxInputLength()) {
+                throw new QFLimitExceededException("max-input-length", limits.getMaxInputLength());
+            }
 
-            int lastEnd = 0;
-            while (matcher.find()) {
-                // Check if there is any unparsed gap between the last match and the current one
-                checkNoUnparsedGap(input, lastEnd, matcher.start());
-                lastEnd = matcher.end();
+            // Linear tokenizer (no regular expressions): see QFParamType.splitParts
+            int valueParts = 0;
+            for (String part : QFParamType.splitParts(input)) {
 
                 if (LOGGER.isTraceEnabled()) {
-                    LOGGER.trace("Processing part {}", LogSanitizer.sanitize(matcher.group()));
+                    LOGGER.trace("Processing part {}", LogSanitizer.sanitize(part));
                 }
 
-                if (matcher.group(1) != null) {
-                    parseValuePart(matcher.group(2), matcher.group(3), matcher.group(4));
-                } else if (matcher.group(5) != null) {
-                    parseSortPart(matcher.group(6));
-                } else {
-                    throw new QFParseException(matcher.group(), input);
+                String[] valuePart = type.parseValuePart(part);
+                if (valuePart != null) {
+                    if (++valueParts > limits.getMaxFilters()) {
+                        throw new QFLimitExceededException("max-filters", limits.getMaxFilters());
+                    }
+                    parseValuePart(valuePart[0], valuePart[1], valuePart[2]);
+                    continue;
                 }
 
+                String sortPart = QFParamType.parseSortPart(part);
+                if (sortPart != null) {
+                    parseSortPart(sortPart);
+                    continue;
+                }
+
+                throw new QFParseException(part, input);
             }
-            // Check the last gap after the last match
-            checkNoUnparsedGap(input, lastEnd, input.length());
 
         }
 
         afterPropertiesSet(processor);
-    }
-
-    /**
-     * Ensure that the region of the raw filter string between two consecutive
-     * matches (or before the first / after the last one) contains nothing but
-     * {@code &} separators. Any other leftover content means part of the input did
-     * not match any known filter or sort expression and was being silently ignored.
-     *
-     * @param input raw filter string
-     * @param start start index of the gap, inclusive
-     * @param end   end index of the gap, exclusive
-     * @throws QFParseException if the gap contains anything other than {@code &}
-     */
-    private static void checkNoUnparsedGap(String input, int start, int end) {
-        if (start == end) {
-            return;
-        }
-        String gap = input.substring(start, end);
-        if (gap.chars().anyMatch(c -> c != '&')) {
-            throw new QFParseException(gap, input);
-        }
     }
 
     protected QueryFilter(Map<String, String[]> input, boolean ignoreUnknow, QFParamType type,
@@ -178,9 +166,19 @@ public class QueryFilter<E> implements Specification<E> {
 
         var initialInputBuilder = new StringBuilder();
         String prefix = "";
+        int totalLength = 0;
+        int valueParts = 0;
 
         for (var entry : input.entrySet()) {
             String key = entry.getKey();
+
+            totalLength += key.length();
+            for (var val : entry.getValue()) {
+                totalLength += val == null ? 0 : val.length();
+            }
+            if (totalLength > limits.getMaxInputLength()) {
+                throw new QFLimitExceededException("max-input-length", limits.getMaxInputLength());
+            }
 
             // Sort param
             if (SORT_KEY.equals(key)) {
@@ -194,6 +192,10 @@ public class QueryFilter<E> implements Specification<E> {
 
             // Value param
             String[] values = entry.getValue();
+            valueParts += values.length;
+            if (valueParts > limits.getMaxFilters()) {
+                throw new QFLimitExceededException("max-filters", limits.getMaxFilters());
+            }
 
             // Check if the key is known
             QFAbstractDefinition def = definitionMap.get(key);
@@ -219,8 +221,8 @@ public class QueryFilter<E> implements Specification<E> {
                 }
 
                 // Value param
-                String partOp = type.extractOP(value);
-                String partVal = type.extractValue(value);
+                String partOp = type.extractOP(key, value);
+                String partVal = type.extractValue(key, value);
                 parseValuePart(key, partOp, partVal);
                 initialInputBuilder.append(prefix).append(type.buildParam(key, partOp, partVal));
 
@@ -260,23 +262,55 @@ public class QueryFilter<E> implements Specification<E> {
 
         QFSpecificationPart qfSpecificationPart;
         if (def instanceof QFDefinitionElement qdef) {
-            qfSpecificationPart = new QFElementMatch(Arrays.asList(value.split(",")), QFOperationEnum.fromValue(op),
-                    qdef);
+            qfSpecificationPart = new QFElementMatch(splitValues(value), QFOperationEnum.fromValue(op), qdef);
         } else if (def instanceof QFDefinitionDiscriminator qdef) {
-            qfSpecificationPart = new QFDiscriminatorMatch(Arrays.asList(value.split(",")),
+            qfSpecificationPart = new QFDiscriminatorMatch(splitValues(value),
                     QFOperationDiscriminatorEnum.fromValue(op), qdef);
         } else if (def instanceof QFDefinitionJson qdef) {
             qfSpecificationPart = new QFJsonElementMatch(value, QFOperationJsonEnum.fromValue(op), qdef);
 
         } else if (def instanceof QFDefinitionCollection qdef) {
             qfSpecificationPart = new QFCollectionMatch(qdef, QFCollectionOperationEnum.fromValue(op),
-                    Integer.parseInt(value));
+                    parseCollectionSize(field, value));
         } else {
             throw new QFNotValuable(field);
         }
 
         specificationsWarp.addSpecification(qfSpecificationPart);
 
+    }
+
+    /**
+     * Split the raw values of a part by comma, enforcing the
+     * {@code max-values-per-field} limit
+     *
+     * @param value raw value
+     * @return values
+     * @throws QFLimitExceededException if there are too many values
+     */
+    private List<String> splitValues(String value) {
+        List<String> values = Arrays.asList(value.split(","));
+        if (values.size() > limits.getMaxValuesPerField()) {
+            throw new QFLimitExceededException("max-values-per-field", limits.getMaxValuesPerField());
+        }
+        return values;
+    }
+
+    /**
+     * Parse the raw value of a {@link QFDefinitionCollection} field (a collection
+     * size comparison) as an integer.
+     *
+     * @param field field name, used to build a helpful error message
+     * @param value raw value to parse
+     * @return parsed collection size
+     * @throws QFParseException if the value is not a valid integer
+     */
+    private static int parseCollectionSize(String field, String value) {
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            throw new QFParseException(field, value);
+        }
     }
 
     private void parseSortPart(String values)
@@ -306,6 +340,10 @@ public class QueryFilter<E> implements Specification<E> {
                 dir = Direction.DESC;
             } else {
                 dir = Direction.ASC;
+            }
+
+            if (this.sortDefinitionList.size() >= limits.getMaxSortFields()) {
+                throw new QFLimitExceededException("max-sort-fields", limits.getMaxSortFields());
             }
 
             Pair<IDefinitionSortable, Direction> pair = Pair.of(idef, dir);
@@ -1120,23 +1158,23 @@ public class QueryFilter<E> implements Specification<E> {
         Map<String, Predicate> simplifiedPredicate = predicatesMap.entrySet().stream()
                 .collect(Collectors.toMap(Entry::getKey, e -> cb.and(e.getValue().toArray(new Predicate[0]))));
 
-        Predicate toRet;
+        if (simplifiedPredicate.isEmpty()) {
+            return null; // Nothing to filter
+        }
 
         final PredicateProcessorResolutor localPredicate = predicate;
 
         if (localPredicate == null) {
-            toRet = cb.and(simplifiedPredicate.values().toArray(new Predicate[0]));
-        } else {
-            toRet = localPredicate.resolvePredicate(cb, simplifiedPredicate);
+            if (simplifiedPredicate.size() == 1) {
+                return simplifiedPredicate.values().iterator().next();
+            }
+            return cb.and(simplifiedPredicate.values().toArray(new Predicate[0]));
         }
 
-        if (toRet == null || toRet.getExpressions().isEmpty()) {
-            return null;
-        } else if (toRet.getExpressions().size() == 1) {
-            return (Predicate) toRet.getExpressions().get(0);
-        }
-
-        return toRet;
+        // Do not inspect getExpressions() to detect empty predicates: simple predicates
+        // (comparisons, in, like...) always return an empty list in Hibernate. Only null
+        // means "no predicate" (e.g. includeMissing=false and none of the fields present)
+        return localPredicate.resolvePredicate(cb, simplifiedPredicate);
 
     }
 

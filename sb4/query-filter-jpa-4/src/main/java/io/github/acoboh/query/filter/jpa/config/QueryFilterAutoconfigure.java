@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Import;
 @AutoConfiguration
 @Import({ QFExceptionAdvisor.class, SpelResolverBeanConfig.class, QFBeanFactoryPostProcessor.class,
         QFWebMvcConfigurer.class, QueryFilterProperties.class, ApplicationContextAwareSupport.class,
-        HintsRegistrarDef.class })
+        HintsRegistrarDef.class, QFEndpointValidator.class })
 public class QueryFilterAutoconfigure {
 
 }

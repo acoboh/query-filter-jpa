@@ -1,5 +1,7 @@
 package io.github.acoboh.query.filter.jpa.processor;
 
+import io.github.acoboh.query.filter.jpa.properties.LimitsProperties;
+import io.github.acoboh.query.filter.jpa.properties.QueryFilterProperties;
 import io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass;
 import io.github.acoboh.query.filter.jpa.annotations.QFPredicate;
 import io.github.acoboh.query.filter.jpa.config.ApplicationContextAwareSupport;
@@ -52,8 +54,6 @@ public class QFProcessor<F, E> {
     private final Map<String, Set<String>> fieldsLaunchOnPresent;
     private final List<QFAbstractDefinition> definitionsOnPresent;
 
-    private final List<QFSpecificationPart> defaultMatches;
-
     private final Set<String> requiredOnStringFilter;
     private final Set<String> requiredOnExecution;
     private final Set<String> requiredOnSort;
@@ -61,6 +61,8 @@ public class QFProcessor<F, E> {
     private final List<Pair<IDefinitionSortable, Direction>> defaultSorting;
 
     private final ApplicationContext appContext;
+
+    private final LimitsProperties limits;
 
     private Map<String, PredicateProcessorResolutor> predicateMap;
     private String predicateName;
@@ -97,6 +99,8 @@ public class QFProcessor<F, E> {
         this.filterClass = filterClass;
         this.entityClass = entityClass;
         this.appContext = appContext;
+        this.limits = appContext.getBeanProvider(QueryFilterProperties.class)
+                .getIfAvailable(QueryFilterProperties::new).getLimits();
 
         if (!filterClass.isAnnotationPresent(QFDefinitionClass.class)) {
             throw new QFClassException(QFDefinitionClass.class, filterClass.getName());
@@ -110,7 +114,9 @@ public class QFProcessor<F, E> {
         var metamodel = appContext.getBean(EntityManager.class).getMetamodel();
 
         this.definitionMap = getDefinition(filterClass, queryFilterClass, metamodel);
-        this.defaultMatches = defaultMatches(definitionMap);
+        // Build the default matches once to validate the default values at startup. They are NOT
+        // stored: matches can hold per-request state (SpEL), so each QueryFilter gets new instances
+        defaultMatches(definitionMap);
         this.defaultSorting = getDefaultSorting(queryFilterClass, definitionMap, filterClass);
 
         LOGGER.debug("Initializing query filter predicates...");
@@ -325,12 +331,15 @@ public class QFProcessor<F, E> {
     }
 
     /**
-     * Get default matches of the processor
+     * Get new instances of the default matches of the processor.
+     * <p>
+     * A new list with new instances is returned on every call: matches must never
+     * be shared between {@link QueryFilter} instances (requests).
      *
-     * @return default matches
+     * @return new default matches
      */
     protected List<QFSpecificationPart> getDefaultMatches() {
-        return defaultMatches;
+        return defaultMatches(definitionMap);
     }
 
     /**
@@ -394,6 +403,15 @@ public class QFProcessor<F, E> {
      */
     protected ApplicationContext getApplicationContext() {
         return appContext;
+    }
+
+    /**
+     * Get the limits applied to the client input
+     *
+     * @return limits
+     */
+    protected LimitsProperties getLimits() {
+        return limits;
     }
 
     /**

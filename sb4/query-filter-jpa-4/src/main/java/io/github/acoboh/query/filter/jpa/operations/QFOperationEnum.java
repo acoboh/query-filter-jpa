@@ -142,6 +142,15 @@ public enum QFOperationEnum implements QFPredicateResolutor {
             return values != null && values.size() == 2;
         }
     },
+    /**
+     * Regular like operation: the value is used as the LIKE pattern as-is, so
+     * user-provided wildcards ({@code %} and {@code _}) are NOT escaped.
+     * <p>
+     * Use this when you need your own LIKE pattern; to match a literal {@code %}
+     * or {@code _}, escape it in the pattern (for example {@code %100\%%} matches
+     * strings that contain a literal {@code 100%}). For plain literal matching
+     * prefer {@link #LIKE}.
+     */
     REGULAR_LIKE("rlike", false, false, null) {
         @Override
         public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
@@ -154,6 +163,10 @@ public enum QFOperationEnum implements QFPredicateResolutor {
 
     /**
      * Like operation for strings
+     * <p>
+     * The value is matched as a plain substring: LIKE special characters in it
+     * ({@code %}, {@code _}, {@code \}) are escaped, so they match literally. Use
+     * {@link #REGULAR_LIKE} if you want to use your own LIKE pattern.
      */
     LIKE("like", false, false, null) {
         @Override
@@ -165,6 +178,12 @@ public enum QFOperationEnum implements QFPredicateResolutor {
         }
 
     },
+    /**
+     * Not like operation for strings
+     * <p>
+     * Negative version of {@link #LIKE}: the value is matched as a plain
+     * substring and the LIKE special characters in it are escaped.
+     */
     NOT_LIKE("nlike", false, false, null) {
         @Override
         public Predicate generatePredicate(Path<?> path, CriteriaBuilder cb, QFElementMatch match, int index,
@@ -176,6 +195,9 @@ public enum QFOperationEnum implements QFPredicateResolutor {
     },
     /**
      * Starts with operation for strings
+     * <p>
+     * Matches strings that start with the value. LIKE special characters in the
+     * value are escaped, so they match literally.
      */
     STARTS_WITH("starts", false, false, null) {
         @Override
@@ -189,6 +211,9 @@ public enum QFOperationEnum implements QFPredicateResolutor {
     },
     /**
      * Ends with operation for strings
+     * <p>
+     * Matches strings that end with the value. LIKE special characters in the
+     * value are escaped, so they match literally.
      */
     ENDS_WITH("ends", false, false, null) {
         @Override

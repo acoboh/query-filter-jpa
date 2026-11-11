@@ -73,8 +73,17 @@ public class QFElementMatch implements QFSpecificationPart {
         formatter = definition.getDateTimeFormatter();
 
         paths = definition.getPaths();
-        matchClasses = new ArrayList<>(paths.size());
-        isEnumList = new ArrayList<>(paths.size());
+
+        // Classes and enum flags only depend on the definition: computed once (never on each evaluation)
+        List<Class<?>> classes = new ArrayList<>(paths.size());
+        List<Boolean> enums = new ArrayList<>(paths.size());
+        for (var path : paths) {
+            QFAttribute lastPath = path.get(path.size() - 1);
+            classes.add(lastPath.getAttribute().getJavaType());
+            enums.add(lastPath.isEnum());
+        }
+        matchClasses = List.copyOf(classes);
+        isEnumList = List.copyOf(enums);
 
         if (!definition.isSpelExpression()) {
             initialize(null, null);
@@ -121,20 +130,16 @@ public class QFElementMatch implements QFSpecificationPart {
             processedValues = new ArrayList<>(originalValues);
         }
 
-        parsedValues = new ArrayList<>(paths.size());
-        for (var path : paths) {
+        List<List<Object>> newParsedValues = new ArrayList<>(paths.size());
+        for (int pathIndex = 0; pathIndex < paths.size(); pathIndex++) {
 
-            QFAttribute lastPath = path.get(path.size() - 1);
-            Class<?> finalClass = lastPath.getAttribute().getJavaType();
+            Class<?> finalClass = matchClasses.get(pathIndex);
 
             // Check operation
             checkOperation(finalClass);
 
-            matchClasses.add(finalClass);
-
             // Check is an enumeration
-            Boolean isEnum = lastPath.isEnum();
-            isEnumList.add(isEnum);
+            boolean isEnum = isEnumList.get(pathIndex);
 
             List<Object> parsedPathValue = new ArrayList<>(processedValues.size());
             for (String val : processedValues) {
@@ -142,9 +147,17 @@ public class QFElementMatch implements QFSpecificationPart {
                 if (formatter != null && operation != QFOperationEnum.ISNULL) {
                     parsedPathValue.add(parseTimestamp(val, finalClass));
                 } else if (finalClass.equals(Double.class) || finalClass.equals(double.class)) {
-                    parsedPathValue.add(Double.valueOf(val));
+                    try {
+                        parsedPathValue.add(Double.valueOf(val));
+                    } catch (NumberFormatException e) {
+                        throw new QFParseException(definition.getFilterName(), val);
+                    }
                 } else if (finalClass.equals(Integer.class) || finalClass.equals(int.class)) {
-                    parsedPathValue.add(Integer.valueOf(val));
+                    try {
+                        parsedPathValue.add(Integer.valueOf(val));
+                    } catch (NumberFormatException e) {
+                        throw new QFParseException(definition.getFilterName(), val);
+                    }
                 } else if (finalClass.equals(Boolean.class) || finalClass.equals(boolean.class)
                         || operation == QFOperationEnum.ISNULL) {
                     parsedPathValue.add(Boolean.valueOf(val));
@@ -164,16 +177,21 @@ public class QFElementMatch implements QFSpecificationPart {
                     }
 
                 } else if (finalClass.equals(UUID.class)) {
-                    parsedPathValue.add(UUID.fromString(val));
+                    try {
+                        parsedPathValue.add(UUID.fromString(val));
+                    } catch (IllegalArgumentException e) {
+                        throw new QFParseException(definition.getFilterName(), val);
+                    }
                 } else { // Use as string
                     parsedPathValue.add(val);
                 }
 
             }
 
-            parsedValues.add(parsedPathValue);
+            newParsedValues.add(parsedPathValue);
         }
 
+        parsedValues = newParsedValues;
         initialized = true;
         return true;
     }

@@ -5,14 +5,13 @@ import io.github.acoboh.query.filter.jpa.processor.QFProcessor;
 import io.github.acoboh.query.filter.jpa.processor.QueryFilter;
 import org.jspecify.annotations.Nullable;
 import org.springframework.core.MethodParameter;
+import org.springframework.core.ResolvableType;
 import org.springframework.data.util.Pair;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -49,31 +48,37 @@ public class QueryFilterMethodArgumentResolver implements HandlerMethodArgumentR
                 && QueryFilter.class.isAssignableFrom(parameter.getParameterType());
     }
 
+    /**
+     * Resolves the {@link QueryFilter} argument.
+     * <p>
+     * This method never returns {@code null}: a missing or misconfigured processor
+     * would otherwise execute the endpoint without any filter (fail-open). Any
+     * configuration problem raises an {@link IllegalStateException}.
+     */
     @Override
-    public @Nullable Object resolveArgument(MethodParameter parameter, @Nullable ModelAndViewContainer mavContainer,
+    public Object resolveArgument(MethodParameter parameter, @Nullable ModelAndViewContainer mavContainer,
             NativeWebRequest webRequest, @Nullable WebDataBinderFactory binderFactory) throws Exception {
 
         QFMultiParam qfMultiParam = parameter.getParameterAnnotation(QFMultiParam.class);
         if (qfMultiParam == null) {
-            return null;
+            throw new IllegalStateException("Missing @QFMultiParam annotation on parameter " + parameter);
         }
 
         Class<?> filterClass = qfMultiParam.value();
 
-        // Get the actual class used in QueryFilter<T>
-        Type[] genericTypes = parameter.getGenericParameterType() instanceof ParameterizedType pType
-                ? pType.getActualTypeArguments()
-                : null;
-        if (genericTypes == null || genericTypes.length == 0) {
-            return null;
+        // Get the actual entity class used in QueryFilter<T>
+        Class<?> entityClass = ResolvableType.forMethodParameter(parameter).getGeneric(0).resolve();
+        if (entityClass == null) {
+            throw new IllegalStateException("Unable to resolve the entity type of QueryFilter<?> on parameter "
+                    + parameter + ". Declare it as QueryFilter<YourEntity>");
         }
 
-        Class<?> actualClass = (Class<?>) genericTypes[0];
-
         // Search for QFProcessor bean
-        var processor = processorCache.get(Pair.of(filterClass, actualClass));
+        var processor = processorCache.get(Pair.of(filterClass, entityClass));
         if (processor == null) {
-            return null;
+            throw new IllegalStateException("No QFProcessor registered for filter " + filterClass.getName()
+                    + " and entity " + entityClass.getName() + " (parameter " + parameter
+                    + "). Check @EnableQueryFilter base packages");
         }
 
         // Create filter

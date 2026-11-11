@@ -3,6 +3,7 @@ package io.github.acoboh.query.filter.jpa.processor;
 import io.github.acoboh.query.filter.jpa.annotations.QFCollectionElement;
 import io.github.acoboh.query.filter.jpa.annotations.QFDefinitionClass;
 import io.github.acoboh.query.filter.jpa.domain.FilterCollectionBlogDef;
+import io.github.acoboh.query.filter.jpa.exceptions.QFParseException;
 import io.github.acoboh.query.filter.jpa.exceptions.definition.QueryFilterDefinitionException;
 import io.github.acoboh.query.filter.jpa.model.Comments;
 import io.github.acoboh.query.filter.jpa.model.PostBlog;
@@ -28,6 +29,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringJUnitWebConfig(SpringIntegrationTestBase.Config.class)
 @ExtendWith(SpringExtension.class)
@@ -263,7 +265,19 @@ class CollectionTests {
     }
 
     @Test
-    @DisplayName("5. Test by clear BBDD")
+    @DisplayName("5. Test malformed collection size throws parse exception")
+    @Order(5)
+    void testMalformedCollectionSizeThrowsParseException() {
+
+        QFParseException ex = assertThrows(QFParseException.class, () -> queryFilterProcessor
+                .newQueryFilter("commentsSize=eq:notanumber", QFParamType.RHS_COLON));
+
+        assertThat(ex.getField()).isEqualTo("commentsSize");
+        assertThat(ex.getInput()).isEqualTo("notanumber");
+    }
+
+    @Test
+    @DisplayName("6. Test by clear BBDD")
     @Order(Ordered.LOWEST_PRECEDENCE)
     void clearBBDD() {
         repository.deleteAll();

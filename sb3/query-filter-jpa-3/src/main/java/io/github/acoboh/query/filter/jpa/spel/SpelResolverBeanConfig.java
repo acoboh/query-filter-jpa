@@ -1,5 +1,6 @@
 package io.github.acoboh.query.filter.jpa.spel;
 
+import io.github.acoboh.query.filter.jpa.properties.QueryFilterProperties;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -30,8 +31,9 @@ public class SpelResolverBeanConfig {
     @ConditionalOnClass(name = SECURITY_EXPRESSION_CLASS)
     SecuritySpelResolverContext securitySpelResolverContext(
             List<SecurityExpressionHandler<?>> securityExpressionHandlers, HttpServletRequest request,
-            HttpServletResponse response) {
-        return new SecuritySpelResolverContext(securityExpressionHandlers, request, response);
+            HttpServletResponse response, QueryFilterProperties properties) {
+        return new SecuritySpelResolverContext(securityExpressionHandlers, request, response,
+                properties.getSpel().isRestricted());
     }
 
 }

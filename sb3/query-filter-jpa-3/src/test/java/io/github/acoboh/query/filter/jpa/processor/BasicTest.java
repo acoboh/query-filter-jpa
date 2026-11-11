@@ -320,7 +320,7 @@ class BasicTest {
         // A valid part followed by trailing garbage must still be rejected
         ex = assertThrows(QFParseException.class,
                 () -> queryFilterProcessor.newQueryFilter("author=eq:auth&garbage", QFParamType.RHS_COLON));
-        assertThat(ex.getField()).isEqualTo("&garbage");
+        assertThat(ex.getField()).isEqualTo("garbage");
 
         // Input that does not resemble a filter or sort expression at all
         ex = assertThrows(QFParseException.class,

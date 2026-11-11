@@ -85,7 +85,7 @@ public class PredicateProcessorResolutor {
             if (!toAdd.isEmpty()) {
                 LOGGER.trace("Adding all missing fields on expression");
 
-                if (res.getExpressions().isEmpty()) {
+                if (res == null) {
                     LOGGER.trace("Using only missing level as final filter");
 
                     res = defaultOperation.getPredicate(criteriaBuilder, toAdd);

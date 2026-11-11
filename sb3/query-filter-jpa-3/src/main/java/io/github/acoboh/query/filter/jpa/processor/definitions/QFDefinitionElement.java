@@ -108,6 +108,13 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
         blankIgnore = Stream.of(elementAnnotations).allMatch(QFElement::blankIgnore);
         order = Stream.of(elementAnnotations).mapToInt(QFElement::order).max().orElse(0);
         subQuery = Stream.of(elementAnnotations).allMatch(QFElement::subquery);
+
+        if (spelExpression && filterInfo.blockParsing() == null) {
+            LOGGER.warn(
+                    "Field {} of filter {} is a SpEL expression without @QFBlockParsing. SpEL fields are always blocked "
+                            + "for HTTP input: expressions can only come from defaultValues or the programmatic API",
+                    getFilterName(), filterInfo.filterClass().getName());
+        }
         joinTypes = Stream.of(elementAnnotations).map(e -> List.of(e.joinTypes())).toList();
 
         if (elementsAnnotation != null) {
@@ -285,6 +292,19 @@ public final class QFDefinitionElement extends QFAbstractDefinition implements I
      */
     public boolean isSpelExpression() {
         return spelExpression;
+    }
+
+    /**
+     * SpEL fields are always blocked for HTTP input, regardless of the presence of
+     * {@link io.github.acoboh.query.filter.jpa.annotations.QFBlockParsing}. A SpEL
+     * expression is code: it must only come from the definition class
+     * ({@code defaultValues}) or from the programmatic API, never from the client.
+     *
+     * @return true if the field cannot be set from the parsed input
+     */
+    @Override
+    public boolean isConstructorBlocked() {
+        return super.isConstructorBlocked() || spelExpression;
     }
 
     /**

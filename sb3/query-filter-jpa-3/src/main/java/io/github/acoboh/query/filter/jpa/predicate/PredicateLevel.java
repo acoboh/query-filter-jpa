@@ -1,174 +1,225 @@
 package io.github.acoboh.query.filter.jpa.predicate;
 
 import io.github.acoboh.query.filter.jpa.processor.definitions.QFAbstractDefinition;
-import io.github.acoboh.query.filter.jpa.utils.StringParseUtils;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
 /**
- * Predicate level class.
+ * Parsed custom predicate expression ({@code @QFPredicate}).
+ * <p>
+ * Grammar (operators are case-sensitive, identifiers are filter names):
+ *
+ * <pre>
+ * expression := term ( ( AND | OR ) term )*      (a single operator kind per level)
+ * term       := IDENTIFIER | '(' expression ')'
+ * </pre>
+ * <p>
+ * The whole expression is validated when it is built (at startup): unknown
+ * identifiers, unbalanced parenthesis, misplaced operators or mixed operators on
+ * the same level throw an {@link IllegalStateException}. At runtime a group only
+ * disappears when none of its fields have predicates.
  *
  * @author Adrián Cobo
  */
 class PredicateLevel {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PredicateLevel.class);
-
-    private final List<String> levelParts = new ArrayList<>();
-    private final List<PredicatePart> parts;
-    private List<PredicateLevel> nestedLevels;
-    private PredicateOperation levelOperator;
-    private Set<String> fieldsSet;
+    private final Node root;
+    private final Set<String> fieldsSet;
 
     /**
-     * Predicate constructor
+     * Parse and validate a predicate expression
      *
-     * @param expression expression of predicate
-     * @param fullMap    map definition of filter to be used
+     * @param expression predicate expression
+     * @param fullMap    definitions of the filter (valid identifiers)
+     * @throws IllegalStateException if the expression is not valid
      */
     public PredicateLevel(String expression, Map<String, QFAbstractDefinition> fullMap) {
-
-        parts = StringParseUtils.parseParts(expression);
-
-        if (parts.isEmpty()) {
-            return;
+        List<String> tokens = tokenize(expression);
+        if (tokens.isEmpty()) {
+            throw new IllegalStateException("Empty predicate expression");
         }
 
-        if (parts.size() == 1) {
-            LOGGER.debug("Parts has size 1, must be simplified");
-            levelParts.add(parts.get(0).part());
-
-            return;
+        Parser parser = new Parser(tokens, fullMap, expression);
+        this.root = parser.parseExpression();
+        if (parser.hasNext()) {
+            throw invalid(expression, "unexpected '" + parser.peek() + "'");
         }
 
-        for (int i = 0; i < parts.size(); i++) {
-
-            PredicatePart part = parts.get(i);
-            LOGGER.trace("Parsing parts {}", part);
-
-            if (i % 2 == 1) {
-                LOGGER.trace("Parsing part as operator {}", part.part());
-                PredicateOperation operator = PredicateOperation.getOperator(part.part());
-                if (operator == null) {
-                    LOGGER.error("Unexpected part {}. Must be an operator", part.part());
-                    throw new IllegalStateException("Unexpected part. Must be an operator");
-                }
-
-                if (levelOperator == null) {
-                    levelOperator = operator;
-                } else if (levelOperator != operator) {
-                    LOGGER.error(
-                            "Operators mixed on same level. Found {} and {} on the same level. Review the parenthesis",
-                            levelOperator, operator);
-                    throw new IllegalStateException("Mixed operators on same level");
-                }
-            } else {
-                if (part.nested()) {
-                    LOGGER.trace("Parsing nested level as new predicate");
-
-                    PredicateLevel nestedLevel = new PredicateLevel(part.part(), fullMap);
-                    switch (nestedLevel.parts.size()) {
-                    case 0:
-                        LOGGER.trace("Nested level is empty. Ignore them");
-                        continue;
-                    case 1:
-                        LOGGER.trace("Nested level must be simplified");
-                        levelParts.addAll(nestedLevel.levelParts);
-                        continue;
-                    default:
-                        LOGGER.trace("Adding as nested level");
-                        if (nestedLevels == null) {
-                            nestedLevels = new ArrayList<>();
-                        }
-
-                        nestedLevels.add(nestedLevel);
-                    }
-
-                } else {
-
-                    if (!fullMap.containsKey(part.part())) {
-                        LOGGER.error("Error missing part {} on definition map", part.part());
-                        throw new IllegalStateException("Missing part on definition map");
-                    }
-
-                    levelParts.add(part.part());
-
-                }
-            }
-        }
-
+        Set<String> fields = new LinkedHashSet<>();
+        root.collectFields(fields);
+        this.fieldsSet = Collections.unmodifiableSet(fields);
     }
 
     /**
-     * Get the filtered fields
+     * Get all the fields used on the expression
      *
-     * @return set of filtered field
+     * @return set of filter names
      */
     public Set<String> getFilteredFields() {
-        if (fieldsSet == null) { // Cache fields
-
-            fieldsSet = new LinkedHashSet<>();
-
-            fieldsSet.addAll(levelParts);
-
-            if (nestedLevels != null && !nestedLevels.isEmpty()) {
-                nestedLevels.forEach(e -> fieldsSet.addAll(e.getFilteredFields()));
-            }
-
-        }
-
         return fieldsSet;
     }
 
     /**
-     * Resolve the level of the predicate
+     * Resolve the expression with the predicates of the request
      *
-     * @param cb         Criteria builder
-     * @param predicates Predicates to be used on nested levels for resolution
-     * @return Predicate used
+     * @param cb         criteria builder
+     * @param predicates predicates of each filtered field
+     * @return the final predicate, or null if none of the fields of the expression
+     *         has predicates
      */
-    public Predicate resolveLevel(CriteriaBuilder cb, Map<String, Predicate> predicates) {
-
-        List<Predicate> expresions = new ArrayList<>();
-
-        if (!levelParts.isEmpty()) {
-
-            for (String part : levelParts) {
-                Predicate predicate = predicates.get(part);
-                if (predicate != null) {
-                    expresions.add(predicate);
-                }
-            }
-
-        }
-
-        if (nestedLevels != null && !nestedLevels.isEmpty()) {
-            for (PredicateLevel level : nestedLevels) {
-
-                Predicate customPredicate = level.resolveLevel(cb, predicates);
-                if (customPredicate.getExpressions().isEmpty()) {
-                    LOGGER.trace("Empty predicate nested level. Ignored");
-                } else if (customPredicate.getExpressions().size() == 1) {
-                    LOGGER.trace("Single expression on nested level. Unwrap predicate");
-                    expresions.add((Predicate) customPredicate.getExpressions().get(0));
-
-                } else {
-                    expresions.add(customPredicate);
-                }
-
-            }
-        }
-
-        if (expresions.isEmpty()) {
-            return null;
-        }
-
-        return levelOperator.getPredicate(cb, expresions);
-
+    public @Nullable Predicate resolveLevel(CriteriaBuilder cb, Map<String, Predicate> predicates) {
+        return root.resolve(cb, predicates);
     }
 
+    // ------------------------------------------------------------------ parsing
+
+    private static List<String> tokenize(String expression) {
+        List<String> tokens = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        for (int i = 0; i < expression.length(); i++) {
+            char c = expression.charAt(i);
+            if (c == '(' || c == ')' || Character.isWhitespace(c)) {
+                if (!current.isEmpty()) {
+                    tokens.add(current.toString());
+                    current.setLength(0);
+                }
+                if (!Character.isWhitespace(c)) {
+                    tokens.add(String.valueOf(c));
+                }
+            } else {
+                current.append(c);
+            }
+        }
+        if (!current.isEmpty()) {
+            tokens.add(current.toString());
+        }
+        return tokens;
+    }
+
+    private static IllegalStateException invalid(String expression, String reason) {
+        return new IllegalStateException("Invalid predicate expression '" + expression + "': " + reason);
+    }
+
+    private static final class Parser {
+
+        private final List<String> tokens;
+        private final Map<String, QFAbstractDefinition> fullMap;
+        private final String expression;
+        private int pos;
+
+        private Parser(List<String> tokens, Map<String, QFAbstractDefinition> fullMap, String expression) {
+            this.tokens = tokens;
+            this.fullMap = fullMap;
+            this.expression = expression;
+        }
+
+        boolean hasNext() {
+            return pos < tokens.size();
+        }
+
+        String peek() {
+            return tokens.get(pos);
+        }
+
+        Node parseExpression() {
+            List<Node> children = new ArrayList<>();
+            children.add(parseTerm());
+
+            PredicateOperation operator = null;
+            while (hasNext() && !")".equals(peek())) {
+                String token = tokens.get(pos++);
+                PredicateOperation found = PredicateOperation.getOperator(token);
+                if (found == null) {
+                    throw invalid(expression, "expected AND/OR but found '" + token + "'");
+                }
+                if (operator != null && operator != found) {
+                    throw invalid(expression, "mixed AND/OR on the same level. Use parenthesis");
+                }
+                operator = found;
+                children.add(parseTerm());
+            }
+
+            return children.size() == 1 ? children.get(0) : new Group(Objects.requireNonNull(operator), children);
+        }
+
+        Node parseTerm() {
+            if (!hasNext()) {
+                throw invalid(expression, "unexpected end of expression");
+            }
+            String token = tokens.get(pos++);
+            if ("(".equals(token)) {
+                Node inner = parseExpression();
+                if (!hasNext() || !")".equals(tokens.get(pos++))) {
+                    throw invalid(expression, "unbalanced parenthesis");
+                }
+                return inner;
+            }
+            if (")".equals(token)) {
+                throw invalid(expression, "unbalanced parenthesis or empty group");
+            }
+            if (PredicateOperation.getOperator(token) != null) {
+                throw invalid(expression, "operator '" + token + "' without left operand");
+            }
+            if (!fullMap.containsKey(token)) {
+                throw invalid(expression, "unknown filter field '" + token + "'");
+            }
+            return new Field(token);
+        }
+    }
+
+    // -------------------------------------------------------------------- nodes
+
+    private sealed interface Node permits Field, Group {
+
+        @Nullable
+        Predicate resolve(CriteriaBuilder cb, Map<String, Predicate> predicates);
+
+        void collectFields(Set<String> fields);
+    }
+
+    private record Field(String name) implements Node {
+
+        @Override
+        public @Nullable Predicate resolve(CriteriaBuilder cb, Map<String, Predicate> predicates) {
+            return predicates.get(name);
+        }
+
+        @Override
+        public void collectFields(Set<String> fields) {
+            fields.add(name);
+        }
+    }
+
+    private record Group(PredicateOperation operator, List<Node> children) implements Node {
+
+        private Group {
+            children = List.copyOf(children);
+        }
+
+        @Override
+        public @Nullable Predicate resolve(CriteriaBuilder cb, Map<String, Predicate> predicates) {
+            List<Predicate> resolved = new ArrayList<>(children.size());
+            for (Node child : children) {
+                Predicate predicate = child.resolve(cb, predicates);
+                if (predicate != null) {
+                    resolved.add(predicate);
+                }
+            }
+            if (resolved.isEmpty()) {
+                return null; // none of the fields of this group are being filtered
+            }
+            if (resolved.size() == 1) {
+                return resolved.get(0);
+            }
+            return operator.getPredicate(cb, resolved);
+        }
+
+        @Override
+        public void collectFields(Set<String> fields) {
+            children.forEach(child -> child.collectFields(fields));
+        }
+    }
 }

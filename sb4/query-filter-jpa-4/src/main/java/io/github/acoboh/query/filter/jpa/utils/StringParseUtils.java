@@ -10,8 +10,11 @@ import java.util.List;
 /**
  * Utility class to parse predicates
  *
+ * @deprecated no longer used: predicate expressions are parsed and validated by the
+ *             internal predicate parser. Will be removed in the next major version
  * @author Adrián Cobo
  */
+@Deprecated(since = "2.1.0", forRemoval = true)
 public class StringParseUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StringParseUtils.class);
